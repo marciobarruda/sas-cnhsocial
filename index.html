@@ -474,7 +474,17 @@
               </div>
               <div class="col-12 col-sm-4 col-lg-2">
                 <label for="numero" class="form-label required">Número</label>
-                <input type="text" class="form-control" id="numero" name="numero" placeholder="S/N" readonly />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="numero"
+                  name="numero"
+                  placeholder="S/N"
+                  readonly
+                  inputmode="text"
+                  pattern="^(?:[0-9]+|S/N)$"
+                  title="Informe apenas números ou S/N"
+                />
               </div>
               <div class="col-12 col-sm-8 col-lg-4">
                 <label for="complemento" class="form-label">Complemento</label>
@@ -525,6 +535,11 @@
               <div class="col-12 col-md-6">
                 <label for="email" class="form-label required">E-mail</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="nome@exemplo.com" />
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="emailConfirm" class="form-label required">Confirme o e-mail</label>
+                <input type="email" class="form-control" id="emailConfirm" name="emailConfirm" placeholder="Repita seu e-mail" aria-describedby="emailConfirmHelp" />
+                <div id="emailConfirmHelp" class="form-text">O endereço deve ser idêntico ao campo anterior.</div>
               </div>
               <div class="col-12">
                 <label for="preferenciaContato" class="form-label required">Canal de contato preferencial</label>
@@ -601,6 +616,14 @@
                 <legend class="form-label mb-1">Identidade e grupos prioritários</legend>
                 <div class="form-text">Marque se você se enquadra nas cotas adicionais previstas.</div>
                 <div class="form-check mt-2">
+                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaPretaParda" name="pessoaPretaParda" />
+                  <label class="form-check-label" for="pessoaPretaParda">Sou pessoa preta ou parda</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaIndigena" name="pessoaIndigena" />
+                  <label class="form-check-label" for="pessoaIndigena">Sou pessoa indígena</label>
+                </div>
+                <div class="form-check">
                   <input class="form-check-input" type="checkbox" value="sim" id="pessoaTrans" name="pessoaTrans" />
                   <label class="form-check-label" for="pessoaTrans">Sou pessoa trans, travesti ou não-binária</label>
                 </div>
@@ -611,6 +634,10 @@
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" value="sim" id="pessoaQuilombola" name="pessoaQuilombola" />
                   <label class="form-check-label" for="pessoaQuilombola">Sou quilombola ou pertenço a povos e comunidades tradicionais</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaRua" name="pessoaRua" />
+                  <label class="form-check-label" for="pessoaRua">Vivo em situação de rua ou em unidade de acolhimento</label>
                 </div>
               </fieldset>
             </div>
@@ -799,11 +826,20 @@
       </div>
     </main>
 
-    <div class="toast-container position-fixed top-0 end-0 p-3" aria-live="polite" aria-atomic="true">
-      <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body">Inscrição enviada com sucesso! O protocolo será enviado por e-mail/WhatsApp.</div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true" data-bs-focus="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="feedbackModalHeader">
+              <span id="feedbackModalEmoji" aria-hidden="true">⚠️</span>
+              <span id="feedbackModalLabel">Alerta</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <p id="feedbackModalMessage" class="mb-3">Por favor, preencha os campos obrigatórios destacados.</p>
+            <ul id="feedbackModalList" class="list-unstyled mb-0"></ul>
+          </div>
         </div>
       </div>
     </div>
@@ -815,6 +851,7 @@
     <script>
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
+      const numeroInput = document.getElementById("numero");
       const logradouroInput = document.getElementById("logradouro");
       const complementoInput = document.getElementById("complemento");
       const bairroInput = document.getElementById("bairro");
@@ -829,6 +866,27 @@
       const maskTelefone = IMask(document.getElementById("telefone"), {
         mask: "(00) 00000-0000",
       });
+
+      if (numeroInput) {
+        numeroInput.addEventListener("input", () => {
+          if (numeroInput.readOnly) return;
+          let value = numeroInput.value.toUpperCase();
+          if (value.startsWith("S")) {
+            const length = Math.min(value.length, 3);
+            value = "S/N".slice(0, length === 0 ? 0 : Math.max(length, 1));
+          } else {
+            value = value.replace(/[^0-9]/g, "");
+          }
+          numeroInput.value = value;
+        });
+
+        numeroInput.addEventListener("blur", () => {
+          if (numeroInput.readOnly) return;
+          if (/^S($|\/)$/.test(numeroInput.value)) {
+            numeroInput.value = "S/N";
+          }
+        });
+      }
 
       const generoSelect = document.getElementById("genero");
       const grupoMulherChefe = document.getElementById("grupoMulherChefe");
@@ -1018,16 +1076,146 @@
       };
 
       const form = document.getElementById("cnhSocialForm");
+      const feedbackModalElement = document.getElementById("feedbackModal");
+      const feedbackModalHeader = document.getElementById("feedbackModalHeader");
+      const feedbackModalEmoji = document.getElementById("feedbackModalEmoji");
+      const feedbackModalLabel = document.getElementById("feedbackModalLabel");
+      const feedbackModalMessage = document.getElementById("feedbackModalMessage");
+      const feedbackModalList = document.getElementById("feedbackModalList");
+      const feedbackModalInstance = new bootstrap.Modal(feedbackModalElement);
+      let pendingFocusElement = null;
+      let pendingModalType = null;
+
+      feedbackModalElement.addEventListener("shown.bs.modal", () => {
+        if (pendingModalType === "alert") {
+          const firstItem = feedbackModalList.querySelector("li span");
+          if (firstItem) {
+            firstItem.setAttribute("tabindex", "-1");
+            firstItem.focus({ preventScroll: true });
+            setTimeout(() => firstItem.removeAttribute("tabindex"), 0);
+          }
+        }
+      });
+
+      feedbackModalElement.addEventListener("hidden.bs.modal", () => {
+        const focusTarget = pendingFocusElement;
+        const modalType = pendingModalType;
+        pendingFocusElement = null;
+        pendingModalType = null;
+        if (focusTarget && modalType === "alert") {
+          setTimeout(() => focusTarget.focus({ preventScroll: true }), 100);
+        }
+      });
+
+      const fieldLabels = {
+        "#cpf": "CPF",
+        "#genero": "Identificação de gênero",
+        "#situacaoTrabalho": "Situação de trabalho atual",
+        "#telefone": "Telefone/WhatsApp",
+        "#email": "E-mail",
+        "#emailConfirm": "Confirmação de e-mail",
+        "#preferenciaContato": "Canal de contato preferencial",
+        "#cep": "CEP",
+        "#logradouro": "Logradouro",
+        "#numero": "Número do endereço",
+        "#bairro": "Bairro",
+        "#cidade": "Município",
+        "#rendaFamiliar": "Renda familiar mensal",
+        "#pcd": "Pessoa com deficiência (PCD)",
+        "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
+        "#vitimaViolencia": "Vínculo de violência doméstica",
+        "#racaCor": "Autodeclaração de cor/raça",
+        "#categoria": "Categoria desejada",
+        "#turno": "Turno preferencial",
+        "#polo": "Polo/CFC de preferência",
+        "#docIdentidade": "Documento de identificação oficial",
+        "#lgpd": "Consentimento LGPD",
+        "#veracidade": "Declaração de veracidade",
+        "#docResidencia": "Comprovante de residência",
+        "#laudoPcd": "Laudo médico PCD",
+        "#docResponsavel": "Comprovante de responsabilidade legal",
+        "#docViolencia": "Documento de violência doméstica",
+        "#docAcolhimento": "Declaração da unidade de acolhimento",
+        "#docDependente": "Comprovante de tratamento terapêutico contínuo",
+        "#numeroCnh": "Número da CNH",
+        "#validadeCnh": "Validade da CNH",
+        "#cnhArquivo": "Arquivo da CNH",
+      };
+
+      const getFieldLabel = (selector) => {
+        if (fieldLabels[selector]) {
+          return fieldLabels[selector];
+        }
+        const element = form.querySelector(selector);
+        if (element && element.id) {
+          const associatedLabel = form.querySelector(`label[for="${element.id}"]`);
+          if (associatedLabel) {
+            return associatedLabel.textContent.trim();
+          }
+        }
+        return element?.name || selector;
+      };
+
+      const showFeedbackModal = ({ type, message, items = [], focusElement = null }) => {
+        const isSuccess = type === "success";
+        feedbackModalHeader.classList.toggle("text-danger", !isSuccess);
+        feedbackModalHeader.classList.toggle("text-success", isSuccess);
+        feedbackModalEmoji.textContent = isSuccess ? "✅" : "⚠️";
+        feedbackModalLabel.textContent = isSuccess ? "Sucesso" : "Alerta";
+        feedbackModalMessage.textContent = message;
+        feedbackModalList.innerHTML = "";
+        if (items.length) {
+          feedbackModalList.classList.remove("d-none");
+          items.forEach((item) => {
+            const li = document.createElement("li");
+            li.className = "d-flex align-items-start gap-2 mb-1";
+            const icon = document.createElement("i");
+            icon.className = isSuccess
+              ? "bi bi-check-circle-fill text-success mt-1"
+              : "bi bi-exclamation-triangle-fill text-danger mt-1";
+            icon.setAttribute("aria-hidden", "true");
+            const span = document.createElement("span");
+            span.textContent = item;
+            li.append(icon, span);
+            feedbackModalList.appendChild(li);
+          });
+        } else {
+          feedbackModalList.classList.add("d-none");
+        }
+        pendingFocusElement = focusElement;
+        pendingModalType = type;
+        feedbackModalInstance.show();
+      };
+
       const validation = new JustValidate(form, {
         errorFieldCssClass: "is-invalid",
         errorLabelCssClass: "text-danger mt-1",
-        focusInvalidField: true,
+        focusInvalidField: false,
         lockForm: true,
       });
 
+      const collectInvalidFields = (additionalErrors = []) => {
+        const invalidMap = new Map();
+        Object.entries(validation.fields).forEach(([selector, field]) => {
+          if (!field.isValid) {
+            invalidMap.set(selector, {
+              selector,
+              element: field.elem,
+              label: getFieldLabel(selector),
+            });
+          }
+        });
+        additionalErrors.forEach((error) => {
+          if (!invalidMap.has(error.selector)) {
+            invalidMap.set(error.selector, error);
+          }
+        });
+        return Array.from(invalidMap.values());
+      };
+
       validation
         .addField("#genero", [{ rule: "required", errorMessage: "Informe a identificação de gênero" }])
-        .addField("#situacaoTrabalho", [{ rule: "required" }])
+        .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
         .addField("#telefone", [
           { rule: "required", errorMessage: "Informe um telefone válido" },
           {
@@ -1036,11 +1224,55 @@
           },
         ])
         .addField("#email", [{ rule: "required" }, { rule: "email", errorMessage: "E-mail inválido" }])
+        .addField("#emailConfirm", [
+          { rule: "required", errorMessage: "Repita o e-mail informado" },
+          {
+            validator: (value) => value.trim() === (document.getElementById("email").value || "").trim(),
+            errorMessage: "Os e-mails informados devem coincidir",
+          },
+        ])
         .addField("#preferenciaContato", [{ rule: "required" }])
+        .addField("#cep", [
+          {
+            validator: () => {
+              if (!enderecoEdicaoAtiva) return true;
+              return maskCep.unmaskedValue.length === 8;
+            },
+            errorMessage: "Informe um CEP válido",
+          },
+        ])
+        .addField("#logradouro", [
+          {
+            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+            errorMessage: "Informe o logradouro",
+          },
+        ])
+        .addField("#numero", [
+          {
+            validator: () => {
+              if (!numeroInput || numeroInput.readOnly) return true;
+              const valor = numeroInput.value.trim();
+              return /^(?:\d+|S\/N)$/.test(valor) && valor.length > 0;
+            },
+            errorMessage: "Informe o número ou S/N",
+          },
+        ])
+        .addField("#bairro", [
+          {
+            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+            errorMessage: "Informe o bairro",
+          },
+        ])
+        .addField("#cidade", [
+          {
+            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+            errorMessage: "Informe o município",
+          },
+        ])
         .addField("#rendaFamiliar", [
           { rule: "required", errorMessage: "Informe a renda familiar" },
           {
-            validator: (value) => parseFloat(value) >= 0,
+            validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
             errorMessage: "Valor inválido",
           },
         ])
@@ -1065,94 +1297,191 @@
           },
         ])
         .addField("#lgpd", [{ rule: "required", errorMessage: "Confirme o consentimento LGPD" }])
-        .addField("#veracidade", [{ rule: "required", errorMessage: "Confirme a declaração de veracidade" }])
-        .onValidate((event) => {
-          const cpfDigits = (cpfInput.value || "").replace(/\D/g, "");
-          if (cpfDigits && !cpfValidator(cpfInput.value || "")) {
-            validation.showErrors({
-              "#cpf": "CPF inválido",
+        .addField("#veracidade", [{ rule: "required", errorMessage: "Confirme a declaração de veracidade" }]);
+
+      const validateAdditionalRules = () => {
+        const extraErrors = [];
+        const cpfDigits = (cpfInput.value || "").replace(/\D/g, "");
+        if (cpfDigits && cpfDigits.length === 11 && !cpfValidator(cpfInput.value || "")) {
+          validation.showErrors({ "#cpf": "CPF inválido" });
+          extraErrors.push({
+            selector: "#cpf",
+            element: cpfInput,
+            label: getFieldLabel("#cpf"),
+          });
+        }
+        if (cpfDigits && cpfDigits.length > 0 && cpfDigits.length !== 11) {
+          validation.showErrors({ "#cpf": "CPF incompleto" });
+          extraErrors.push({
+            selector: "#cpf",
+            element: cpfInput,
+            label: getFieldLabel("#cpf"),
+          });
+        }
+        if (pcdSelect.value === "sim" && !document.getElementById("laudoPcd").files.length) {
+          validation.showErrors({ "#laudoPcd": "Anexe o laudo PCD" });
+          extraErrors.push({
+            selector: "#laudoPcd",
+            element: document.getElementById("laudoPcd"),
+            label: getFieldLabel("#laudoPcd"),
+          });
+        }
+        if (maeAtipica.value === "sim" && !document.getElementById("docResponsavel").files.length) {
+          validation.showErrors({ "#docResponsavel": "Anexe os comprovantes" });
+          extraErrors.push({
+            selector: "#docResponsavel",
+            element: document.getElementById("docResponsavel"),
+            label: getFieldLabel("#docResponsavel"),
+          });
+        }
+        if (vitimaViolencia.value === "sim" && !document.getElementById("docViolencia").files.length) {
+          validation.showErrors({ "#docViolencia": "Anexe documento comprobatório ou declaração" });
+          extraErrors.push({
+            selector: "#docViolencia",
+            element: document.getElementById("docViolencia"),
+            label: getFieldLabel("#docViolencia"),
+          });
+        }
+        if (acolhimento.checked && !document.getElementById("docAcolhimento").files.length) {
+          validation.showErrors({ "#docAcolhimento": "Anexe declaração do serviço de acolhimento" });
+          extraErrors.push({
+            selector: "#docAcolhimento",
+            element: document.getElementById("docAcolhimento"),
+            label: getFieldLabel("#docAcolhimento"),
+          });
+        }
+        if (dependenteTratamento.checked && !document.getElementById("docDependente").files.length) {
+          validation.showErrors({ "#docDependente": "Anexe comprovante do tratamento" });
+          extraErrors.push({
+            selector: "#docDependente",
+            element: document.getElementById("docDependente"),
+            label: getFieldLabel("#docDependente"),
+          });
+        }
+        if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
+          validation.showErrors({ "#docResidencia": "Comprovante obrigatório quando atualizar endereço" });
+          extraErrors.push({
+            selector: "#docResidencia",
+            element: document.getElementById("docResidencia"),
+            label: getFieldLabel("#docResidencia"),
+          });
+        }
+        if (["adicao_a", "adicao_b"].includes(categoriaSelect.value)) {
+          const numeroCnhField = document.getElementById("numeroCnh");
+          if (!numeroCnhField.value.trim()) {
+            validation.showErrors({ "#numeroCnh": "Informe o número da CNH" });
+            extraErrors.push({
+              selector: "#numeroCnh",
+              element: numeroCnhField,
+              label: getFieldLabel("#numeroCnh"),
             });
-            return false;
           }
-
-          if (pcdSelect.value === "sim" && !document.getElementById("laudoPcd").files.length) {
-            validation.showErrors({ "#laudoPcd": "Anexe o laudo PCD" });
-            return false;
-          }
-
-          if (maeAtipica.value === "sim" && !document.getElementById("docResponsavel").files.length) {
-            validation.showErrors({ "#docResponsavel": "Anexe os comprovantes" });
-            return false;
-          }
-
-          if (acolhimento.checked && !document.getElementById("docAcolhimento").files.length) {
-            validation.showErrors({ "#docAcolhimento": "Anexe declaração do serviço de acolhimento" });
-            return false;
-          }
-
-          if (dependenteTratamento.checked && !document.getElementById("docDependente").files.length) {
-            validation.showErrors({ "#docDependente": "Anexe comprovante do tratamento" });
-            return false;
-          }
-
-          if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
-            validation.showErrors({ "#docResidencia": "Comprovante obrigatório quando atualizar endereço" });
-            return false;
-          }
-
-          if (["adicao_a", "adicao_b"].includes(categoriaSelect.value)) {
-            if (!document.getElementById("numeroCnh").value.trim()) {
-              validation.showErrors({ "#numeroCnh": "Informe o número da CNH" });
-              return false;
-            }
-            const validade = document.getElementById("validadeCnh").value;
-            if (!validade) {
-              validation.showErrors({ "#validadeCnh": "Informe a validade da CNH" });
-              return false;
-            }
+          const validadeField = document.getElementById("validadeCnh");
+          const validade = validadeField.value;
+          if (!validade) {
+            validation.showErrors({ "#validadeCnh": "Informe a validade da CNH" });
+            extraErrors.push({
+              selector: "#validadeCnh",
+              element: validadeField,
+              label: getFieldLabel("#validadeCnh"),
+            });
+          } else {
             const diff = dayjs(validade).diff(dayjs(), "day");
             if (diff <= 30) {
               validation.showErrors({ "#validadeCnh": "A CNH deve ter validade superior a 30 dias" });
-              return false;
-            }
-            if (!document.getElementById("cnhArquivo").files.length) {
-              validation.showErrors({ "#cnhArquivo": "Anexe a CNH" });
-              return false;
+              extraErrors.push({
+                selector: "#validadeCnh",
+                element: validadeField,
+                label: getFieldLabel("#validadeCnh"),
+              });
             }
           }
+          if (!document.getElementById("cnhArquivo").files.length) {
+            validation.showErrors({ "#cnhArquivo": "Anexe a CNH" });
+            extraErrors.push({
+              selector: "#cnhArquivo",
+              element: document.getElementById("cnhArquivo"),
+              label: getFieldLabel("#cnhArquivo"),
+            });
+          }
+        }
+        return extraErrors;
+      };
 
-          return true;
-        })
-        .onSuccess((event) => {
-          event.preventDefault();
-          const formData = new FormData(form);
-          const data = {};
-          formData.forEach((value, key) => {
-            if (value instanceof File) {
-              data[key] = value.name || null;
-            } else if (data[key]) {
-              if (Array.isArray(data[key])) {
-                data[key].push(value);
-              } else {
-                data[key] = [data[key], value];
-              }
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const isValid = await validation.revalidate();
+        const extraErrors = validateAdditionalRules();
+        const invalidFields = collectInvalidFields(extraErrors);
+        if (!isValid || extraErrors.length) {
+          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
+          showFeedbackModal({
+            type: "alert",
+            message: "Por favor, verifique os campos obrigatórios listados abaixo.",
+            items: invalidFields.map((field) => field.label),
+            focusElement: focusField ? focusField.element : null,
+          });
+          return;
+        }
+
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+          if (value instanceof File) {
+            data[key] = value.name || null;
+          } else if (Object.prototype.hasOwnProperty.call(data, key)) {
+            if (Array.isArray(data[key])) {
+              data[key].push(value);
             } else {
-              data[key] = value;
+              data[key] = [data[key], value];
             }
-          });
-          console.log("Inscrição CNH Social", data);
-          const toast = new bootstrap.Toast(document.getElementById("successToast"));
-          toast.show();
-          event.target.reset();
-          const docResidenciaLabel = document.getElementById("docResidenciaLabel");
-          if (docResidenciaLabel) {
-            docResidenciaLabel.classList.remove("required");
+          } else {
+            data[key] = value;
           }
-          ["docResidenciaWrapper","laudoPcdWrapper","docResponsavelWrapper","docViolenciaWrapper","docAcolhimentoWrapper","docDependenteWrapper","cnhNumeroWrapper","cnhValidadeWrapper","cnhArquivoWrapper"].forEach((id) => {
-            toggleFileSection(false, id);
-          });
-          grupoMulherChefe.classList.add("d-none");
         });
+        console.log("Inscrição CNH Social", data);
+
+        showFeedbackModal({
+          type: "success",
+          message: "Sua inscrição foi enviada com sucesso. Você receberá o protocolo por e-mail e WhatsApp.",
+        });
+
+        form.reset();
+        const docResidenciaLabel = document.getElementById("docResidenciaLabel");
+        if (docResidenciaLabel) {
+          docResidenciaLabel.classList.remove("required");
+        }
+        [
+          "docResidenciaWrapper",
+          "laudoPcdWrapper",
+          "docResponsavelWrapper",
+          "docViolenciaWrapper",
+          "docAcolhimentoWrapper",
+          "docDependenteWrapper",
+          "cnhNumeroWrapper",
+          "cnhValidadeWrapper",
+          "cnhArquivoWrapper",
+        ].forEach((id) => {
+          toggleFileSection(false, id);
+        });
+        grupoMulherChefe.classList.add("d-none");
+        editableFields.forEach((fieldId) => {
+          const field = document.getElementById(fieldId);
+          if (field) {
+            field.readOnly = true;
+            field.setAttribute("aria-readonly", "true");
+          }
+        });
+        ufSelect.disabled = true;
+        enderecoEdicaoAtiva = false;
+        btnAtualizarEndereco.setAttribute("aria-pressed", "false");
+        if (cepStatus) {
+          cepStatus.textContent = "";
+        }
+        document.querySelectorAll(".file-name").forEach((holder) => {
+          holder.textContent = "";
+        });
+      });
     </script>
   </body>
 </html>
