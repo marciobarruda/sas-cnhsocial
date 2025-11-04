@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Secretaria de Administração - SAD — Seleção Simplificada Hospital Veterinário do Recife</title>
+    <link
+      rel="icon"
+      href="https://statics.recife.pe.gov.br/images/dynamics/conecta/icons/favicon.png?w=32&h=32&fit=fill&border=2,transparent,shrink"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      :root {
+        --brand-primary: #0053a4;
+        --brand-secondary: #003a73;
+        --brand-highlight: #00a3ff;
+        --surface: #f4f7fb;
+        --surface-strong: #ffffff;
+        --border-color: #d0d7e2;
+        --text-strong: #1b263b;
+        --text-muted: #5b6c8c;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--surface);
+        color: var(--text-strong);
+        min-height: 100vh;
+      }
+
+      header.site-header {
+        background: url("https://statics.recife.pe.gov.br/images/dynamics/automacao/header.png?w=3000")
+          center/cover no-repeat;
+        color: #ffffff;
+        padding: 3.5rem 0 2.75rem;
+      }
+
+      header .lead {
+        color: rgba(255, 255, 255, 0.82);
+        max-width: 100%;
+        font-size: 1rem;
+        line-height: 1.65;
+        text-align: justify;
+      }
+
+      .badge-open {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        background-color: rgba(255, 255, 255, 0.14);
+      }
+
+      .user-greeting {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        padding: 1rem 1.5rem;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, rgba(0, 83, 164, 0.09), rgba(0, 163, 255, 0.12));
+        color: var(--text-strong);
+        box-shadow: 0 10px 30px rgba(0, 45, 98, 0.08);
+      }
+
+      .user-greeting::before {
+        content: "👋";
+        font-size: 1.4rem;
+      }
+
+      .minhas-inscricoes-grid {
+        margin-top: 1rem;
+      }
+
+      .minhas-inscricao-card {
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        border: 1px solid rgba(0, 83, 164, 0.12);
+        border-radius: 4px;
+      }
+
+      .minhas-inscricao-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(0, 45, 98, 0.12);
+      }
+
+      .minhas-inscricao-card.is-loading {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .minhas-inscricoes-placeholder {
+        padding: 1.25rem;
+        border-radius: 4px;
+        background: rgba(0, 83, 164, 0.05);
+        border: 1px dashed rgba(0, 83, 164, 0.2);
+        color: var(--text-muted);
+      }
+
+      .resumo-inscricao-list dt {
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .resumo-inscricao-list dd {
+        font-weight: 600;
+        color: var(--text-strong);
+      }
+
+      .resumo-inscricao-pre {
+        white-space: pre-wrap;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.95rem;
+        background: rgba(0, 83, 164, 0.08);
+        color: var(--brand-secondary);
+        padding: 1rem;
+        border-radius: 0.75rem;
+      }
+
+      .publicacoes-panel,
+      .updates-panel {
+        border-radius: 4px;
+      }
+
+      .download-card strong {
+        font-size: 1rem;
+        color: var(--text-strong);
+      }
+
+      .download-card p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+
+      .download-card a {
+        font-weight: 600;
+      }
+
+      #publicacoes-list li + li {
+        margin-top: 0.75rem;
+      }
+
+      .publicacoes-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .publicacoes-item-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+      }
+
+      .publicacoes-item-icon {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        flex-shrink: 0;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+      }
+
+      .publicacoes-item-icon--pdf {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23d32f2f' d='M6 2h7l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%23ef5350' d='M13 2v5h5'/%3E%3Ctext x='12' y='17' text-anchor='middle' font-family='Arial, sans-serif' font-size='7' font-weight='700' fill='%23fff'%3EPDF%3C/text%3E%3C/svg%3E");
+      }
+
+      .publicacoes-item-icon--image {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3' y='4' width='18' height='16' rx='2' fill='%23215695'/%3E%3Crect x='4.5' y='5.5' width='15' height='13' rx='1.2' fill='%233968c8'/%3E%3Ccircle cx='9' cy='11' r='2.2' fill='%23fff59d'/%3E%3Cpath fill='%23c5cae9' d='M6 18l4.2-4.6 2.7 3.2 2.6-3L18 18z'/%3E%3C/svg%3E");
+      }
+
+      .publicacoes-item-icon--generic {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233f51b5' d='M7 2h7l5 5v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%235c6bc0' d='M14 2v5h5'/%3E%3Crect x='8.5' y='12' width='7' height='1.5' rx='.75' fill='%23c5cae9'/%3E%3Crect x='8.5' y='15' width='5' height='1.5' rx='.75' fill='%23c5cae9'/%3E%3C/svg%3E");
+      }
+
+      .publicacoes-item time {
+        flex-shrink: 0;
+      }
+
+      @media (min-width: 576px) {
+        .publicacoes-item {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .publicacoes-item-link {
+          align-items: flex-start;
+        }
+      }
+
+      .updates-panel {
+        border-left: 3px solid var(--brand-highlight);
+        padding-left: 1.2rem;
+        color: var(--text-muted);
+      }
+
+      .updates-panel time {
+        font-size: 0.85rem;
+        color: var(--brand-secondary);
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      footer {
+        color: var(--text-muted);
+        padding: 2.5rem 0 2rem;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        header.site-header {
+          padding: 2.5rem 0 2rem;
+        }
+
+        .badge-open {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .section-title {
+          justify-content: flex-start;
+        }
+      }
+
+      main {
+        padding-bottom: 4rem;
+      }
+
+      .card-section {
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        background: var(--surface-strong);
+        box-shadow: 0 12px 30px rgba(24, 64, 120, 0.08);
+      }
+
+      .card-section + .card-section {
+        margin-top: 1.5rem;
+      }
+
+      .section-header {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .required::after {
+        content: "*";
+        color: #d32f2f;
+        margin-left: 0.25rem;
+      }
+
+      .form-text {
+        color: var(--text-muted);
+      }
+
+      .file-input-wrapper {
+        border: 1px dashed var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        background: rgba(0, 83, 164, 0.03);
+      }
+
+      .file-input-wrapper label {
+        font-weight: 600;
+      }
+
+      .file-name {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+      }
+
+      .toast-container {
+        z-index: 1080;
+      }
+
+      .legend-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.85rem;
+        color: var(--brand-secondary);
+        background: rgba(0, 83, 164, 0.12);
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+      }
+
+      .tooltip-inner {
+        text-align: left;
+      }
+
+      .btn-outline-primary:focus-visible,
+      .form-control:focus,
+      .form-select:focus,
+      .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(0, 83, 164, 0.25);
+        border-color: var(--brand-highlight);
+      }
+
+      .border-dashed {
+        border-style: dashed !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="badge-open mb-3" role="status" aria-live="polite">
+          <i class="bi bi-info-circle"></i>
+          Inscrições abertas — CNH Social
+        </div>
+        <h1 class="display-5 fw-bold">CNH Social – Secretaria de Assistência Social e Combate à Fome</h1>
+        <p class="lead mt-3">
+          Programa municipal que oferta vagas gratuitas para obtenção ou adição de categorias da Carteira Nacional de Habilitação
+          (CNH) às pessoas em situação de vulnerabilidade social, com prioridade para famílias inscritas no CadÚnico e beneficiárias
+          de políticas socioassistenciais no Recife.
+        </p>
+      </div>
+    </header>
+    <main class="py-5">
+      <div class="container">
+        <section class="mb-5">
+          <div class="row g-4 align-items-start">
+            <div class="col-12 col-lg-7">
+              <div class="card card-section p-4 p-md-5">
+                <div class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                  <h2 class="h4 mb-0">Como funciona</h2>
+                  <span class="legend-badge"><i class="bi bi-calendar-event"></i> Edital vigente</span>
+                </div>
+                <ul class="list-unstyled mb-4 d-grid gap-3">
+                  <li class="d-flex gap-3">
+                    <i class="bi bi-patch-check-fill text-primary fs-5" aria-hidden="true"></i>
+                    <div>
+                      <strong>Vagas 100% gratuitas.</strong> Incluem aulas teóricas, exames, 01 reteste gratuito e emissão do documento
+                      conforme cronograma do edital.
+                    </div>
+                  </li>
+                  <li class="d-flex gap-3">
+                    <i class="bi bi-people-fill text-primary fs-5" aria-hidden="true"></i>
+                    <div>
+                      <strong>Público prioritário.</strong> Pessoas com renda familiar per capita de até meio salário mínimo, inscritas no CadÚnico,
+                      residentes no Recife há pelo menos 12 meses e com idade a partir de 18 anos na data da inscrição.
+                    </div>
+                  </li>
+                  <li class="d-flex gap-3">
+                    <i class="bi bi-award-fill text-primary fs-5" aria-hidden="true"></i>
+                    <div>
+                      <strong>Cotas e pontuações adicionais.</strong> Pontos extras para mulheres chefes de família, pessoas com deficiência,
+                      responsáveis legais por pessoas com deficiência/autismo, vítimas de violência doméstica, acolhidos institucionalmente e famílias com dependentes em tratamento continuado.
+                    </div>
+                  </li>
+                  <li class="d-flex gap-3">
+                    <i class="bi bi-flag-fill text-primary fs-5" aria-hidden="true"></i>
+                    <div>
+                      <strong>Compromissos.</strong> Frequência mínima de 75% em todas as etapas, entrega de documentos comprobatórios quando solicitados
+                      e respeito aos prazos de matrícula definidos pelos Centros de Formação de Condutores (CFCs) parceiros.
+                    </div>
+                  </li>
+                </ul>
+                <div class="alert alert-info border-0" role="status">
+                  <i class="bi bi-clock-history me-2" aria-hidden="true"></i>
+                  Inscrições até <strong>30/11/2025</strong>. Resultado preliminar divulgado no portal da Prefeitura e canais oficiais da Secretaria de Assistência Social e Combate à Fome.
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-5">
+              <div class="card card-section p-4 h-100">
+                <h3 class="h5 mb-3">Checklist de elegibilidade</h3>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Residir no Recife e comprovar vínculo de, no mínimo, 1 ano.</li>
+                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Estar inscrito(a) no CadÚnico atualizado (até 24 meses).</li>
+                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Ter renda familiar per capita até 1/2 salário mínimo.</li>
+                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Não possuir CNH ativa (para 1ª habilitação) ou possuir CNH válida com mais de 30 dias (para adição).</li>
+                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Não ter sido beneficiário(a) do CNH Social nos últimos 5 anos.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <form id="cnhSocialForm" class="needs-validation" novalidate>
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Dados pessoais (pré-preenchidos)</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-lg-6">
+                <label for="nomeCompleto" class="form-label required">Nome completo</label>
+                <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto" placeholder="Nome cadastrado no CadÚnico" value="" readonly aria-readonly="true" />
+                <div class="form-text">Informações sincronizadas do CadÚnico/Conecta. Campo apenas para conferência.</div>
+              </div>
+              <div class="col-12 col-sm-6 col-lg-3">
+                <label for="cpf" class="form-label required">CPF</label>
+                <input type="text" class="form-control" id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" readonly aria-readonly="true" />
+              </div>
+              <div class="col-12 col-sm-6 col-lg-3">
+                <label for="nis" class="form-label required">NIS/PIS</label>
+                <input type="text" class="form-control" id="nis" name="nis" placeholder="Número do CadÚnico" readonly aria-readonly="true" />
+              </div>
+              <div class="col-12 col-sm-6 col-lg-3">
+                <label for="dataNascimento" class="form-label required">Data de nascimento</label>
+                <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" readonly aria-readonly="true" />
+              </div>
+              <div class="col-12 col-sm-6 col-lg-3">
+                <label for="genero" class="form-label required">Identificação de gênero</label>
+                <select class="form-select" id="genero" name="genero" aria-describedby="generoHelp">
+                  <option value="">Selecione</option>
+                  <option value="feminino">Mulher</option>
+                  <option value="masculino">Homem</option>
+                  <option value="outro">Outro / Não-binário</option>
+                  <option value="nao_informar">Prefiro não informar</option>
+                </select>
+                <small id="generoHelp" class="form-text">Usado apenas para regras de pontuação previstas no edital.</small>
+              </div>
+              <div class="col-12 col-lg-9">
+                <label for="nomeSocial" class="form-label">Nome social</label>
+                <input type="text" class="form-control" id="nomeSocial" name="nomeSocial" maxlength="120" placeholder="Informe se desejar atendimento com nome social" />
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <h2 class="h4 mb-0">Endereço</h2>
+              <button class="btn btn-outline-primary btn-sm" type="button" id="btnAtualizarEndereco">
+                <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>Atualizar endereço
+              </button>
+            </div>
+            <div class="alert alert-light border-dashed" role="note">
+              Confirme os dados residenciais. Caso tenha mudado, clique em "Atualizar endereço" e informe o novo endereço. Um comprovante recente poderá ser solicitado.
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-sm-4">
+                <label for="cep" class="form-label required">CEP</label>
+                <input type="text" class="form-control" id="cep" name="cep" inputmode="numeric" placeholder="00000-000" readonly />
+              </div>
+              <div class="col-12 col-sm-8">
+                <label for="logradouro" class="form-label required">Logradouro</label>
+                <input type="text" class="form-control" id="logradouro" name="logradouro" placeholder="Rua, avenida, travessa" readonly />
+              </div>
+              <div class="col-12 col-sm-4 col-lg-2">
+                <label for="numero" class="form-label required">Número</label>
+                <input type="text" class="form-control" id="numero" name="numero" placeholder="S/N" readonly />
+              </div>
+              <div class="col-12 col-sm-8 col-lg-4">
+                <label for="complemento" class="form-label">Complemento</label>
+                <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Apartamento, bloco" readonly />
+              </div>
+              <div class="col-12 col-md-4">
+                <label for="bairro" class="form-label required">Bairro</label>
+                <input type="text" class="form-control" id="bairro" name="bairro" readonly />
+              </div>
+              <div class="col-12 col-md-5">
+                <label for="cidade" class="form-label required">Município</label>
+                <input type="text" class="form-control" id="cidade" name="cidade" readonly value="Recife" />
+              </div>
+              <div class="col-12 col-md-3">
+                <label for="uf" class="form-label required">UF</label>
+                <select class="form-select" id="uf" name="uf" disabled>
+                  <option value="PE">PE</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="sim" id="enderecoAtualizado" name="enderecoAtualizado" />
+                  <label class="form-check-label" for="enderecoAtualizado">Meu endereço informado acima está diferente do CadÚnico</label>
+                </div>
+                <small class="form-text">Se marcado, será obrigatório anexar comprovante atualizado (até 90 dias).</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Contatos</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label for="telefone" class="form-label required">Telefone/WhatsApp</label>
+                <input type="text" class="form-control" id="telefone" name="telefone" inputmode="tel" placeholder="(81) 90000-0000" />
+                <div class="form-text">Informe um número ativo para contato e envio de protocolo.</div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="email" class="form-label required">E-mail</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="nome@exemplo.com" />
+              </div>
+              <div class="col-12">
+                <label for="preferenciaContato" class="form-label required">Canal de contato preferencial</label>
+                <select class="form-select" id="preferenciaContato" name="preferenciaContato">
+                  <option value="">Selecione</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="email">E-mail</option>
+                  <option value="ligacao">Ligação telefônica</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Critérios socioassistenciais</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label for="situacaoTrabalho" class="form-label required">Situação de trabalho atual</label>
+                <select class="form-select" id="situacaoTrabalho" name="situacaoTrabalho">
+                  <option value="">Selecione</option>
+                  <option value="emprego_formal">Emprego formal</option>
+                  <option value="trabalho_informal">Trabalho informal</option>
+                  <option value="desempregado">Desempregado(a)</option>
+                  <option value="aplicativo">Trabalhador(a) de aplicativo</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
+                <div class="form-check pt-4">
+                  <input class="form-check-input" type="checkbox" value="sim" id="mulherChefe" name="mulherChefe" />
+                  <label class="form-check-label" for="mulherChefe">Sou mulher e responsável pela renda familiar (chefe de família)</label>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="sim" id="acolhimento" name="acolhimento" />
+                  <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="sim" id="dependenteTratamento" name="dependenteTratamento" />
+                  <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
+                </div>
+              </div>
+              <div class="col-12">
+                <label for="rendaFamiliar" class="form-label required">Renda familiar mensal (R$)</label>
+                <input type="number" class="form-control" id="rendaFamiliar" name="rendaFamiliar" min="0" step="0.01" placeholder="Informe o valor total da renda familiar" aria-describedby="rendaHelp" />
+                <small id="rendaHelp" class="form-text">Será comparada com o número de integrantes registrado no CadÚnico para verificação do critério de renda per capita.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <h2 class="h4 mb-0">Grupos e condições especiais</h2>
+              <span class="legend-badge"><i class="bi bi-paperclip"></i> Anexe os comprovantes solicitados</span>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
+                <select class="form-select" id="pcd" name="pcd" aria-describedby="pcdHelp">
+                  <option value="">Selecione</option>
+                  <option value="sim">Sim</option>
+                  <option value="nao">Não</option>
+                </select>
+                <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label required" for="maeAtipica">Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)</label>
+                <select class="form-select" id="maeAtipica" name="maeAtipica">
+                  <option value="">Selecione</option>
+                  <option value="sim">Sim</option>
+                  <option value="nao">Não</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label required" for="vitimaViolencia">Vítima de violência doméstica</label>
+                <select class="form-select" id="vitimaViolencia" name="vitimaViolencia">
+                  <option value="">Selecione</option>
+                  <option value="sim">Sim</option>
+                  <option value="nao">Não</option>
+                </select>
+                <small class="form-text">A identidade das candidatas será preservada conforme edital.</small>
+              </div>
+              <div class="col-12">
+                <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
+                <textarea class="form-control" id="necessidadesEspeciais" name="necessidadesEspeciais" rows="3" maxlength="500" placeholder="Descreva necessidades específicas de atendimento, adaptações ou informações relevantes"></textarea>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
+                <div class="file-input-wrapper">
+                  <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
+                  <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
+                  <div class="file-name" id="laudoPcdName"></div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docResponsavelWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docResponsavel" class="form-label required">Comprovante de responsabilidade legal (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docResponsavel" name="docResponsavel" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docResponsavelName"></div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docViolenciaWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docViolencia" class="form-label">Documento comprobatório ou declaração (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docViolencia" name="docViolencia" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docViolenciaName"></div>
+                  <small class="form-text">Caso não possua boletim ou medida protetiva, envie declaração simples assinada.</small>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docAcolhimentoWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docAcolhimento" class="form-label required">Declaração da unidade de acolhimento (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docAcolhimento" name="docAcolhimento" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docAcolhimentoName"></div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docDependente" class="form-label required">Comprovante de tratamento terapêutico contínuo (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docDependenteName"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Categoria de habilitação</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label for="categoria" class="form-label required">Categoria desejada</label>
+                <select class="form-select" id="categoria" name="categoria">
+                  <option value="">Selecione</option>
+                  <option value="a_primeira">Categoria A (1ª habilitação)</option>
+                  <option value="b_primeira">Categoria B (1ª habilitação)</option>
+                  <option value="adicao_a">Adição de categoria A</option>
+                  <option value="adicao_b">Adição de categoria B</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="turno" class="form-label required">Turno preferencial</label>
+                <select class="form-select" id="turno" name="turno">
+                  <option value="">Selecione</option>
+                  <option value="manha">Manhã</option>
+                  <option value="tarde">Tarde</option>
+                  <option value="noite">Noite</option>
+                  <option value="indiferente">Indiferente</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label for="polo" class="form-label required">Polo/CFC de preferência</label>
+                <select class="form-select" id="polo" name="polo">
+                  <option value="">Selecione</option>
+                  <option value="cfc_santo_amaro">CFC Santo Amaro – Bairro Santo Amaro</option>
+                  <option value="cfc_ibura">CFC Ibura – Ibura</option>
+                  <option value="cfc_casa_amarela">CFC Casa Amarela – Casa Amarela</option>
+                  <option value="cfc_pina">CFC Pina – Pina</option>
+                  <option value="cfc_varzea">CFC Várzea – Várzea</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 d-none" id="cnhNumeroWrapper">
+                <label for="numeroCnh" class="form-label required">Número da CNH (para adição)</label>
+                <input type="text" class="form-control" id="numeroCnh" name="numeroCnh" inputmode="numeric" placeholder="Informe conforme CNH" />
+              </div>
+              <div class="col-12 col-md-6 d-none" id="cnhValidadeWrapper">
+                <label for="validadeCnh" class="form-label required">Validade da CNH</label>
+                <input type="date" class="form-control" id="validadeCnh" name="validadeCnh" aria-describedby="validadeHelp" />
+                <small id="validadeHelp" class="form-text">A CNH precisa ter validade superior a 30 dias na data de inscrição.</small>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="cnhArquivoWrapper">
+                <div class="file-input-wrapper">
+                  <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
+                  <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="cnhArquivoName"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Documentos complementares</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-lg-6">
+                <div class="file-input-wrapper">
+                  <label for="docResidencia" class="form-label" id="docResidenciaLabel">Comprovante de residência recente (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docResidencia" name="docResidencia" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docResidenciaHelp" />
+                  <div id="docResidenciaHelp" class="form-text">Anexe quando houver divergência de endereço ou atualização cadastral.</div>
+                  <div class="file-name" id="docResidenciaName"></div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6">
+                <div class="file-input-wrapper">
+                  <label for="docIdentidade" class="form-label required">Documento oficial com foto (RG ou passaporte) – PDF/JPG/PNG até 5 MB</label>
+                  <input class="form-control" type="file" id="docIdentidade" name="docIdentidade" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docIdentidadeName"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Declarações e consentimentos</h2>
+            </div>
+            <div class="d-grid gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="sim" id="lgpd" name="lgpd" required />
+                <label class="form-check-label" for="lgpd">
+                  Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Social, conforme a Lei Geral de Proteção de Dados.
+                </label>
+                <a href="#" class="d-block small mt-1">Consultar política de privacidade</a>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="sim" id="veracidade" name="veracidade" required />
+                <label class="form-check-label" for="veracidade">
+                  Declaro verdadeiras todas as informações prestadas e estou ciente de que a falsidade implicará desclassificação e sanções legais.
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="sim" id="imagem" name="imagem" />
+                <label class="form-check-label" for="imagem">Autorizo o uso da minha imagem para divulgação institucional do programa.</label>
+              </div>
+              <div class="form-text">Após o envio, o protocolo será encaminhado para seu e-mail e WhatsApp cadastrados.</div>
+            </div>
+            <div class="mt-4 d-flex flex-column flex-md-row gap-3">
+              <button type="submit" class="btn btn-primary btn-lg px-4" id="submitButton">
+                <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
+              </button>
+              <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
+                Limpar campos editáveis
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" aria-live="polite" aria-atomic="true">
+      <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body">Inscrição enviada com sucesso! O protocolo será enviado por e-mail/WhatsApp.</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+    <script>
+      const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
+      const maskCpf = IMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
+      const maskCep = IMask(document.getElementById("cep"), { mask: "00000-000" });
+      const maskTelefone = IMask(document.getElementById("telefone"), {
+        mask: "(00) 00000-0000",
+      });
+
+      const generoSelect = document.getElementById("genero");
+      const grupoMulherChefe = document.getElementById("grupoMulherChefe");
+      generoSelect.addEventListener("change", () => {
+        if (generoSelect.value === "feminino") {
+          grupoMulherChefe.classList.remove("d-none");
+        } else {
+          grupoMulherChefe.classList.add("d-none");
+          document.getElementById("mulherChefe").checked = false;
+        }
+      });
+
+      document.getElementById("btnAtualizarEndereco").addEventListener("click", () => {
+        editableFields.forEach((fieldId) => {
+          const field = document.getElementById(fieldId);
+          field.readOnly = false;
+          field.removeAttribute("aria-readonly");
+        });
+        document.getElementById("uf").disabled = false;
+        document.getElementById("cep").focus();
+      });
+
+      const toggleFileSection = (condition, wrapperId) => {
+        const wrapper = document.getElementById(wrapperId);
+        if (!wrapper) return;
+        if (condition) {
+          wrapper.classList.remove("d-none");
+        } else {
+          wrapper.classList.add("d-none");
+          const input = wrapper.querySelector("input[type='file']");
+          if (input) {
+            input.value = "";
+            const nameHolder = wrapper.querySelector(".file-name");
+            if (nameHolder) nameHolder.textContent = "";
+          }
+        }
+      };
+
+      const addFileNameListener = (inputId, displayId) => {
+        const input = document.getElementById(inputId);
+        const display = document.getElementById(displayId);
+        if (!input || !display) return;
+        input.addEventListener("change", () => {
+          const file = input.files && input.files[0];
+          display.textContent = file ? `Arquivo selecionado: ${file.name}` : "";
+        });
+      };
+
+      [
+        ["laudoPcd", "laudoPcdName"],
+        ["docResponsavel", "docResponsavelName"],
+        ["docViolencia", "docViolenciaName"],
+        ["docAcolhimento", "docAcolhimentoName"],
+        ["docDependente", "docDependenteName"],
+        ["docResidencia", "docResidenciaName"],
+        ["docIdentidade", "docIdentidadeName"],
+        ["cnhArquivo", "cnhArquivoName"],
+      ].forEach(([inputId, displayId]) => addFileNameListener(inputId, displayId));
+
+      const pcdSelect = document.getElementById("pcd");
+      pcdSelect.addEventListener("change", () => {
+        toggleFileSection(pcdSelect.value === "sim", "laudoPcdWrapper");
+      });
+
+      const maeAtipica = document.getElementById("maeAtipica");
+      maeAtipica.addEventListener("change", () => {
+        toggleFileSection(maeAtipica.value === "sim", "docResponsavelWrapper");
+      });
+
+      const vitimaViolencia = document.getElementById("vitimaViolencia");
+      vitimaViolencia.addEventListener("change", () => {
+        toggleFileSection(vitimaViolencia.value === "sim", "docViolenciaWrapper");
+      });
+
+      const acolhimento = document.getElementById("acolhimento");
+      acolhimento.addEventListener("change", () => {
+        toggleFileSection(acolhimento.checked, "docAcolhimentoWrapper");
+      });
+
+      const dependenteTratamento = document.getElementById("dependenteTratamento");
+      dependenteTratamento.addEventListener("change", () => {
+        toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
+      });
+
+      const enderecoAtualizado = document.getElementById("enderecoAtualizado");
+      enderecoAtualizado.addEventListener("change", () => {
+        const label = document.getElementById("docResidenciaLabel");
+        if (enderecoAtualizado.checked) {
+          label.classList.add("required");
+        } else {
+          label.classList.remove("required");
+        }
+      });
+
+      const categoriaSelect = document.getElementById("categoria");
+      categoriaSelect.addEventListener("change", () => {
+        const isAdicao = ["adicao_a", "adicao_b"].includes(categoriaSelect.value);
+        toggleFileSection(isAdicao, "cnhNumeroWrapper");
+        toggleFileSection(isAdicao, "cnhValidadeWrapper");
+        toggleFileSection(isAdicao, "cnhArquivoWrapper");
+      });
+
+      const cpfInput = document.getElementById("cpf");
+      const cpfValidator = (value) => {
+        const digits = value.replace(/\D/g, "");
+        if (digits.length !== 11 || /^([0-9])\1+$/.test(digits)) return false;
+        let sum = 0;
+        for (let i = 0; i < 9; i++) sum += parseInt(digits.charAt(i), 10) * (10 - i);
+        let firstDigit = (sum * 10) % 11;
+        if (firstDigit === 10) firstDigit = 0;
+        if (firstDigit !== parseInt(digits.charAt(9), 10)) return false;
+        sum = 0;
+        for (let i = 0; i < 10; i++) sum += parseInt(digits.charAt(i), 10) * (11 - i);
+        let secondDigit = (sum * 10) % 11;
+        if (secondDigit === 10) secondDigit = 0;
+        return secondDigit === parseInt(digits.charAt(10), 10);
+      };
+
+      const form = document.getElementById("cnhSocialForm");
+      const validation = new JustValidate(form, {
+        errorFieldCssClass: "is-invalid",
+        errorLabelCssClass: "text-danger mt-1",
+        focusInvalidField: true,
+        lockForm: true,
+      });
+
+      validation
+        .addField("#genero", [{ rule: "required", errorMessage: "Informe a identificação de gênero" }])
+        .addField("#situacaoTrabalho", [{ rule: "required" }])
+        .addField("#telefone", [
+          { rule: "required", errorMessage: "Informe um telefone válido" },
+          {
+            validator: (value) => value.replace(/\D/g, "").length >= 10,
+            errorMessage: "Informe DDD e número",
+          },
+        ])
+        .addField("#email", [{ rule: "required" }, { rule: "email", errorMessage: "E-mail inválido" }])
+        .addField("#preferenciaContato", [{ rule: "required" }])
+        .addField("#rendaFamiliar", [
+          { rule: "required", errorMessage: "Informe a renda familiar" },
+          {
+            validator: (value) => parseFloat(value) >= 0,
+            errorMessage: "Valor inválido",
+          },
+        ])
+        .addField("#pcd", [{ rule: "required" }])
+        .addField("#maeAtipica", [{ rule: "required" }])
+        .addField("#vitimaViolencia", [{ rule: "required" }])
+        .addField("#categoria", [{ rule: "required" }])
+        .addField("#turno", [{ rule: "required" }])
+        .addField("#polo", [{ rule: "required" }])
+        .addField("#docIdentidade", [
+          { rule: "required", errorMessage: "Anexe um documento oficial" },
+          {
+            rule: "files",
+            value: {
+              files: {
+                extensions: ["pdf", "jpg", "jpeg", "png"],
+                maxSize: 5 * 1024 * 1024,
+              },
+            },
+            errorMessage: "Formato ou tamanho inválido (máx. 5 MB)",
+          },
+        ])
+        .addField("#lgpd", [{ rule: "required", errorMessage: "Confirme o consentimento LGPD" }])
+        .addField("#veracidade", [{ rule: "required", errorMessage: "Confirme a declaração de veracidade" }])
+        .onValidate((event) => {
+          const cpfDigits = (cpfInput.value || "").replace(/\D/g, "");
+          if (cpfDigits && !cpfValidator(cpfInput.value || "")) {
+            validation.showErrors({
+              "#cpf": "CPF inválido",
+            });
+            return false;
+          }
+
+          if (pcdSelect.value === "sim" && !document.getElementById("laudoPcd").files.length) {
+            validation.showErrors({ "#laudoPcd": "Anexe o laudo PCD" });
+            return false;
+          }
+
+          if (maeAtipica.value === "sim" && !document.getElementById("docResponsavel").files.length) {
+            validation.showErrors({ "#docResponsavel": "Anexe os comprovantes" });
+            return false;
+          }
+
+          if (acolhimento.checked && !document.getElementById("docAcolhimento").files.length) {
+            validation.showErrors({ "#docAcolhimento": "Anexe declaração do serviço de acolhimento" });
+            return false;
+          }
+
+          if (dependenteTratamento.checked && !document.getElementById("docDependente").files.length) {
+            validation.showErrors({ "#docDependente": "Anexe comprovante do tratamento" });
+            return false;
+          }
+
+          if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
+            validation.showErrors({ "#docResidencia": "Comprovante obrigatório quando atualizar endereço" });
+            return false;
+          }
+
+          if (["adicao_a", "adicao_b"].includes(categoriaSelect.value)) {
+            if (!document.getElementById("numeroCnh").value.trim()) {
+              validation.showErrors({ "#numeroCnh": "Informe o número da CNH" });
+              return false;
+            }
+            const validade = document.getElementById("validadeCnh").value;
+            if (!validade) {
+              validation.showErrors({ "#validadeCnh": "Informe a validade da CNH" });
+              return false;
+            }
+            const diff = dayjs(validade).diff(dayjs(), "day");
+            if (diff <= 30) {
+              validation.showErrors({ "#validadeCnh": "A CNH deve ter validade superior a 30 dias" });
+              return false;
+            }
+            if (!document.getElementById("cnhArquivo").files.length) {
+              validation.showErrors({ "#cnhArquivo": "Anexe a CNH" });
+              return false;
+            }
+          }
+
+          return true;
+        })
+        .onSuccess((event) => {
+          event.preventDefault();
+          const formData = new FormData(form);
+          const data = {};
+          formData.forEach((value, key) => {
+            if (value instanceof File) {
+              data[key] = value.name || null;
+            } else if (data[key]) {
+              if (Array.isArray(data[key])) {
+                data[key].push(value);
+              } else {
+                data[key] = [data[key], value];
+              }
+            } else {
+              data[key] = value;
+            }
+          });
+          console.log("Inscrição CNH Social", data);
+          const toast = new bootstrap.Toast(document.getElementById("successToast"));
+          toast.show();
+          event.target.reset();
+          document.getElementById("docResidenciaLabel").classList.remove("required");
+          ["laudoPcdWrapper","docResponsavelWrapper","docViolenciaWrapper","docAcolhimentoWrapper","docDependenteWrapper","cnhNumeroWrapper","cnhValidadeWrapper","cnhArquivoWrapper"].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add("d-none");
+          });
+          grupoMulherChefe.classList.add("d-none");
+        });
+    </script>
+  </body>
+</html>
