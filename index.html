@@ -153,6 +153,16 @@
         font-weight: 600;
       }
 
+      .btn-submit[aria-disabled="true"] {
+        cursor: not-allowed;
+        opacity: 0.65;
+        box-shadow: none;
+      }
+
+      .btn-submit[aria-disabled="true"]:focus-visible {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
+      }
+
       #publicacoes-list li + li {
         margin-top: 0.75rem;
       }
@@ -814,7 +824,13 @@
               <div class="form-text">Após o envio, o protocolo será encaminhado para seu e-mail e WhatsApp cadastrados.</div>
             </div>
             <div class="mt-4 d-flex flex-column flex-md-row gap-3">
-              <button type="submit" class="btn btn-primary btn-lg px-4" id="submitButton">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg px-4 btn-submit"
+                id="submitButton"
+                aria-disabled="true"
+                data-ready="false"
+              >
                 <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
               </button>
               <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
@@ -955,6 +971,7 @@
         btnAtualizarEndereco.setAttribute("aria-pressed", "true");
         atualizarStatusCep("Informe o CEP e aguarde o preenchimento automático.", "text-muted");
         cepInput.focus();
+        updateSubmitState();
       });
 
       maskCep.on("accept", () => {
@@ -987,8 +1004,10 @@
             } else {
               input.value = "";
             }
+            input.classList.remove("is-invalid");
           });
         }
+        updateSubmitState();
       };
 
       toggleFileSection(false, "docResidenciaWrapper");
@@ -1076,6 +1095,17 @@
       };
 
       const form = document.getElementById("cnhSocialForm");
+      const submitButton = document.getElementById("submitButton");
+      let submitReady = false;
+      let validation;
+
+      const setSubmitButtonState = (isReady) => {
+        submitReady = isReady;
+        submitButton.setAttribute("data-ready", isReady ? "true" : "false");
+        submitButton.setAttribute("aria-disabled", isReady ? "false" : "true");
+      };
+
+      setSubmitButtonState(false);
       const feedbackModalElement = document.getElementById("feedbackModal");
       const feedbackModalHeader = document.getElementById("feedbackModalHeader");
       const feedbackModalEmoji = document.getElementById("feedbackModalEmoji");
@@ -1187,7 +1217,7 @@
         feedbackModalInstance.show();
       };
 
-      const validation = new JustValidate(form, {
+      validation = new JustValidate(form, {
         errorFieldCssClass: "is-invalid",
         errorLabelCssClass: "text-danger mt-1",
         focusInvalidField: false,
@@ -1211,6 +1241,16 @@
           }
         });
         return Array.from(invalidMap.values());
+      };
+
+      const updateSubmitState = () => {
+        if (!validation) {
+          setSubmitButtonState(false);
+          return;
+        }
+        const extraErrors = validateAdditionalRules(false);
+        const invalidFields = collectInvalidFields(extraErrors);
+        setSubmitButtonState(invalidFields.length === 0);
       };
 
       validation
@@ -1299,114 +1339,146 @@
         .addField("#lgpd", [{ rule: "required", errorMessage: "Confirme o consentimento LGPD" }])
         .addField("#veracidade", [{ rule: "required", errorMessage: "Confirme a declaração de veracidade" }]);
 
-      const validateAdditionalRules = () => {
+      const handleFormInteraction = async (event) => {
+        const target = event.target;
+        if (!target) return;
+        const selector = target.id ? `#${target.id}` : null;
+        if (selector && validation.fields[selector] && typeof validation.revalidateField === "function") {
+          try {
+            await validation.revalidateField(selector);
+          } catch (error) {
+            /* Ignora erros de revalidação não críticos */
+          }
+        }
+        if (
+          selector === "#email" &&
+          validation.fields["#emailConfirm"] &&
+          typeof validation.revalidateField === "function"
+        ) {
+          try {
+            await validation.revalidateField("#emailConfirm");
+          } catch (error) {
+            /* Ignora erros de revalidação não críticos */
+          }
+        }
+        updateSubmitState();
+      };
+
+      form.addEventListener("input", handleFormInteraction, true);
+      form.addEventListener("change", handleFormInteraction, true);
+      form.addEventListener("reset", () => {
+        setSubmitButtonState(false);
+        setTimeout(() => updateSubmitState(), 0);
+      });
+
+      submitButton.addEventListener("click", async (event) => {
+        if (submitReady) {
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        let isValid = false;
+        if (typeof validation.revalidate === "function") {
+          isValid = await validation.revalidate();
+        } else {
+          isValid = await validation.validate();
+        }
+        const extraErrors = validateAdditionalRules(true);
+        const invalidFields = collectInvalidFields(extraErrors);
+        if (!isValid || invalidFields.length) {
+          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
+          showFeedbackModal({
+            type: "alert",
+            message: "Por favor, preencha os campos obrigatórios listados antes de enviar.",
+            items: invalidFields.map((field) => field.label),
+            focusElement: focusField ? focusField.element : null,
+          });
+        }
+        updateSubmitState();
+      });
+
+      function validateAdditionalRules(shouldShowErrors = true) {
         const extraErrors = [];
+        const registerError = (selector, message, element) => {
+          extraErrors.push({
+            selector,
+            element,
+            label: getFieldLabel(selector),
+          });
+          if (shouldShowErrors && validation && typeof validation.showErrors === "function") {
+            validation.showErrors({ [selector]: message });
+          }
+        };
         const cpfDigits = (cpfInput.value || "").replace(/\D/g, "");
         if (cpfDigits && cpfDigits.length === 11 && !cpfValidator(cpfInput.value || "")) {
-          validation.showErrors({ "#cpf": "CPF inválido" });
-          extraErrors.push({
-            selector: "#cpf",
-            element: cpfInput,
-            label: getFieldLabel("#cpf"),
-          });
+          registerError("#cpf", "CPF inválido", cpfInput);
         }
         if (cpfDigits && cpfDigits.length > 0 && cpfDigits.length !== 11) {
-          validation.showErrors({ "#cpf": "CPF incompleto" });
-          extraErrors.push({
-            selector: "#cpf",
-            element: cpfInput,
-            label: getFieldLabel("#cpf"),
-          });
+          registerError("#cpf", "CPF incompleto", cpfInput);
         }
         if (pcdSelect.value === "sim" && !document.getElementById("laudoPcd").files.length) {
-          validation.showErrors({ "#laudoPcd": "Anexe o laudo PCD" });
-          extraErrors.push({
-            selector: "#laudoPcd",
-            element: document.getElementById("laudoPcd"),
-            label: getFieldLabel("#laudoPcd"),
-          });
+          registerError("#laudoPcd", "Anexe o laudo PCD", document.getElementById("laudoPcd"));
         }
         if (maeAtipica.value === "sim" && !document.getElementById("docResponsavel").files.length) {
-          validation.showErrors({ "#docResponsavel": "Anexe os comprovantes" });
-          extraErrors.push({
-            selector: "#docResponsavel",
-            element: document.getElementById("docResponsavel"),
-            label: getFieldLabel("#docResponsavel"),
-          });
+          registerError(
+            "#docResponsavel",
+            "Anexe os comprovantes",
+            document.getElementById("docResponsavel")
+          );
         }
         if (vitimaViolencia.value === "sim" && !document.getElementById("docViolencia").files.length) {
-          validation.showErrors({ "#docViolencia": "Anexe documento comprobatório ou declaração" });
-          extraErrors.push({
-            selector: "#docViolencia",
-            element: document.getElementById("docViolencia"),
-            label: getFieldLabel("#docViolencia"),
-          });
+          registerError(
+            "#docViolencia",
+            "Anexe documento comprobatório ou declaração",
+            document.getElementById("docViolencia")
+          );
         }
         if (acolhimento.checked && !document.getElementById("docAcolhimento").files.length) {
-          validation.showErrors({ "#docAcolhimento": "Anexe declaração do serviço de acolhimento" });
-          extraErrors.push({
-            selector: "#docAcolhimento",
-            element: document.getElementById("docAcolhimento"),
-            label: getFieldLabel("#docAcolhimento"),
-          });
+          registerError(
+            "#docAcolhimento",
+            "Anexe declaração do serviço de acolhimento",
+            document.getElementById("docAcolhimento")
+          );
         }
         if (dependenteTratamento.checked && !document.getElementById("docDependente").files.length) {
-          validation.showErrors({ "#docDependente": "Anexe comprovante do tratamento" });
-          extraErrors.push({
-            selector: "#docDependente",
-            element: document.getElementById("docDependente"),
-            label: getFieldLabel("#docDependente"),
-          });
+          registerError(
+            "#docDependente",
+            "Anexe comprovante do tratamento",
+            document.getElementById("docDependente")
+          );
         }
         if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
-          validation.showErrors({ "#docResidencia": "Comprovante obrigatório quando atualizar endereço" });
-          extraErrors.push({
-            selector: "#docResidencia",
-            element: document.getElementById("docResidencia"),
-            label: getFieldLabel("#docResidencia"),
-          });
+          registerError(
+            "#docResidencia",
+            "Comprovante obrigatório quando atualizar endereço",
+            document.getElementById("docResidencia")
+          );
         }
         if (["adicao_a", "adicao_b"].includes(categoriaSelect.value)) {
           const numeroCnhField = document.getElementById("numeroCnh");
           if (!numeroCnhField.value.trim()) {
-            validation.showErrors({ "#numeroCnh": "Informe o número da CNH" });
-            extraErrors.push({
-              selector: "#numeroCnh",
-              element: numeroCnhField,
-              label: getFieldLabel("#numeroCnh"),
-            });
+            registerError("#numeroCnh", "Informe o número da CNH", numeroCnhField);
           }
           const validadeField = document.getElementById("validadeCnh");
           const validade = validadeField.value;
           if (!validade) {
-            validation.showErrors({ "#validadeCnh": "Informe a validade da CNH" });
-            extraErrors.push({
-              selector: "#validadeCnh",
-              element: validadeField,
-              label: getFieldLabel("#validadeCnh"),
-            });
+            registerError("#validadeCnh", "Informe a validade da CNH", validadeField);
           } else {
             const diff = dayjs(validade).diff(dayjs(), "day");
             if (diff <= 30) {
-              validation.showErrors({ "#validadeCnh": "A CNH deve ter validade superior a 30 dias" });
-              extraErrors.push({
-                selector: "#validadeCnh",
-                element: validadeField,
-                label: getFieldLabel("#validadeCnh"),
-              });
+              registerError(
+                "#validadeCnh",
+                "A CNH deve ter validade superior a 30 dias",
+                validadeField
+              );
             }
           }
           if (!document.getElementById("cnhArquivo").files.length) {
-            validation.showErrors({ "#cnhArquivo": "Anexe a CNH" });
-            extraErrors.push({
-              selector: "#cnhArquivo",
-              element: document.getElementById("cnhArquivo"),
-              label: getFieldLabel("#cnhArquivo"),
-            });
+            registerError("#cnhArquivo", "Anexe a CNH", document.getElementById("cnhArquivo"));
           }
         }
         return extraErrors;
-      };
+      }
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -1416,9 +1488,10 @@
         } else {
           isValid = await validation.validate();
         }
-        const extraErrors = validateAdditionalRules();
+        const extraErrors = validateAdditionalRules(true);
         const invalidFields = collectInvalidFields(extraErrors);
         if (!isValid || extraErrors.length) {
+          setSubmitButtonState(false);
           const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
           showFeedbackModal({
             type: "alert",
@@ -1426,6 +1499,7 @@
             items: invalidFields.map((field) => field.label),
             focusElement: focusField ? focusField.element : null,
           });
+          updateSubmitState();
           return;
         }
 
@@ -1452,6 +1526,17 @@
         });
 
         form.reset();
+        if (typeof validation.refreshAll === "function") {
+          validation.refreshAll();
+        } else if (typeof validation.refresh === "function") {
+          validation.refresh();
+        } else {
+          Object.values(validation.fields).forEach((field) => {
+            field.isValid = false;
+            field.elem?.classList.remove("is-invalid");
+          });
+        }
+        setSubmitButtonState(false);
         const docResidenciaLabel = document.getElementById("docResidenciaLabel");
         if (docResidenciaLabel) {
           docResidenciaLabel.classList.remove("required");
@@ -1486,7 +1571,10 @@
         document.querySelectorAll(".file-name").forEach((holder) => {
           holder.textContent = "";
         });
+        setTimeout(() => updateSubmitState(), 0);
       });
+
+      updateSubmitState();
     </script>
   </body>
 </html>
