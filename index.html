@@ -369,7 +369,8 @@
                     <i class="bi bi-award-fill text-primary fs-5" aria-hidden="true"></i>
                     <div>
                       <strong>Cotas e pontuações adicionais.</strong> Pontos extras para mulheres chefes de família, pessoas com deficiência,
-                      responsáveis legais por pessoas com deficiência/autismo, vítimas de violência doméstica, acolhidos institucionalmente e famílias com dependentes em tratamento continuado.
+                      responsáveis legais por pessoas com deficiência/autismo, vítimas de violência doméstica, acolhidos institucionalmente,
+                      famílias com dependentes em tratamento continuado e autodeclarados pretos, pardos, indígenas, trans/travestis ou quilombolas.
                     </div>
                   </li>
                   <li class="d-flex gap-3">
@@ -500,6 +501,14 @@
                 </div>
                 <small class="form-text">Se marcado, será obrigatório anexar comprovante atualizado (até 90 dias).</small>
               </div>
+              <div class="col-12 col-lg-6 d-none" id="docResidenciaWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docResidencia" class="form-label" id="docResidenciaLabel">Comprovante de residência recente (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docResidencia" name="docResidencia" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docResidenciaHelp" />
+                  <div id="docResidenciaHelp" class="form-text">Envie conta de consumo ou declaração emitida há até 90 dias.</div>
+                  <div class="file-name" id="docResidenciaName"></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -567,6 +576,43 @@
                 <input type="number" class="form-control" id="rendaFamiliar" name="rendaFamiliar" min="0" step="0.01" placeholder="Informe o valor total da renda familiar" aria-describedby="rendaHelp" />
                 <small id="rendaHelp" class="form-text">Será comparada com o número de integrantes registrado no CadÚnico para verificação do critério de renda per capita.</small>
               </div>
+            </div>
+          </div>
+
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Critérios de priorização e diversidade</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label for="racaCor" class="form-label required">Autodeclaração de cor/raça</label>
+                <select class="form-select" id="racaCor" name="racaCor" aria-describedby="racaCorHelp">
+                  <option value="">Selecione</option>
+                  <option value="branca">Branca</option>
+                  <option value="preta">Preta</option>
+                  <option value="parda">Parda</option>
+                  <option value="amarela">Amarela</option>
+                  <option value="indigena">Indígena</option>
+                  <option value="nao_informar">Prefiro não informar</option>
+                </select>
+                <small id="racaCorHelp" class="form-text">Informação usada para ranqueamento e políticas afirmativas conforme edital.</small>
+              </div>
+              <fieldset class="col-12 col-md-6">
+                <legend class="form-label mb-1">Identidade e grupos prioritários</legend>
+                <div class="form-text">Marque se você se enquadra nas cotas adicionais previstas.</div>
+                <div class="form-check mt-2">
+                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaTrans" name="pessoaTrans" />
+                  <label class="form-check-label" for="pessoaTrans">Sou pessoa trans, travesti ou não-binária</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="sim" id="egressoSocioeducativo" name="egressoSocioeducativo" />
+                  <label class="form-check-label" for="egressoSocioeducativo">Sou egresso(a) do sistema socioeducativo</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaQuilombola" name="pessoaQuilombola" />
+                  <label class="form-check-label" for="pessoaQuilombola">Sou quilombola ou pertenço a povos e comunidades tradicionais</label>
+                </div>
+              </fieldset>
             </div>
           </div>
 
@@ -706,14 +752,6 @@
               <h2 class="h4 mb-0">Documentos complementares</h2>
             </div>
             <div class="row g-4">
-              <div class="col-12 col-lg-6">
-                <div class="file-input-wrapper">
-                  <label for="docResidencia" class="form-label" id="docResidenciaLabel">Comprovante de residência recente (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docResidencia" name="docResidencia" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docResidenciaHelp" />
-                  <div id="docResidenciaHelp" class="form-text">Anexe quando houver divergência de endereço ou atualização cadastral.</div>
-                  <div class="file-name" id="docResidenciaName"></div>
-                </div>
-              </div>
               <div class="col-12 col-lg-6">
                 <div class="file-input-wrapper">
                   <label for="docIdentidade" class="form-label required">Documento oficial com foto (RG ou passaporte) – PDF/JPG/PNG até 5 MB</label>
@@ -880,14 +918,22 @@
           wrapper.classList.remove("d-none");
         } else {
           wrapper.classList.add("d-none");
-          const input = wrapper.querySelector("input[type='file']");
-          if (input) {
-            input.value = "";
-            const nameHolder = wrapper.querySelector(".file-name");
-            if (nameHolder) nameHolder.textContent = "";
-          }
+          const inputs = wrapper.querySelectorAll("input, select, textarea");
+          inputs.forEach((input) => {
+            if (input.type === "checkbox" || input.type === "radio") {
+              input.checked = false;
+            } else if (input.type === "file") {
+              input.value = "";
+              const nameHolder = wrapper.querySelector(".file-name");
+              if (nameHolder) nameHolder.textContent = "";
+            } else {
+              input.value = "";
+            }
+          });
         }
       };
+
+      toggleFileSection(false, "docResidenciaWrapper");
 
       const addFileNameListener = (inputId, displayId) => {
         const input = document.getElementById(inputId);
@@ -937,7 +983,9 @@
 
       const enderecoAtualizado = document.getElementById("enderecoAtualizado");
       enderecoAtualizado.addEventListener("change", () => {
+        toggleFileSection(enderecoAtualizado.checked, "docResidenciaWrapper");
         const label = document.getElementById("docResidenciaLabel");
+        if (!label) return;
         if (enderecoAtualizado.checked) {
           label.classList.add("required");
         } else {
@@ -999,6 +1047,7 @@
         .addField("#pcd", [{ rule: "required" }])
         .addField("#maeAtipica", [{ rule: "required" }])
         .addField("#vitimaViolencia", [{ rule: "required" }])
+        .addField("#racaCor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
         .addField("#categoria", [{ rule: "required" }])
         .addField("#turno", [{ rule: "required" }])
         .addField("#polo", [{ rule: "required" }])
@@ -1095,10 +1144,12 @@
           const toast = new bootstrap.Toast(document.getElementById("successToast"));
           toast.show();
           event.target.reset();
-          document.getElementById("docResidenciaLabel").classList.remove("required");
-          ["laudoPcdWrapper","docResponsavelWrapper","docViolenciaWrapper","docAcolhimentoWrapper","docDependenteWrapper","cnhNumeroWrapper","cnhValidadeWrapper","cnhArquivoWrapper"].forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) el.classList.add("d-none");
+          const docResidenciaLabel = document.getElementById("docResidenciaLabel");
+          if (docResidenciaLabel) {
+            docResidenciaLabel.classList.remove("required");
+          }
+          ["docResidenciaWrapper","laudoPcdWrapper","docResponsavelWrapper","docViolenciaWrapper","docAcolhimentoWrapper","docDependenteWrapper","cnhNumeroWrapper","cnhValidadeWrapper","cnhArquivoWrapper"].forEach((id) => {
+            toggleFileSection(false, id);
           });
           grupoMulherChefe.classList.add("d-none");
         });
