@@ -437,7 +437,14 @@
               </div>
               <div class="col-12 col-sm-6 col-lg-3">
                 <label for="genero" class="form-label required">Identificação de gênero</label>
-                <select class="form-select" id="genero" name="genero" aria-describedby="generoHelp">
+                <select
+                  class="form-select"
+                  id="genero"
+                  name="genero"
+                  aria-describedby="generoHelp"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="feminino">Mulher</option>
                   <option value="masculino">Homem</option>
@@ -539,21 +546,53 @@
             <div class="row g-4">
               <div class="col-12 col-md-6">
                 <label for="telefone" class="form-label required">Telefone/WhatsApp</label>
-                <input type="text" class="form-control" id="telefone" name="telefone" inputmode="tel" placeholder="(81) 90000-0000" />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="telefone"
+                  name="telefone"
+                  inputmode="tel"
+                  placeholder="(81) 90000-0000"
+                  data-required-field="true"
+                  required
+                />
                 <div class="form-text">Informe um número ativo para contato e envio de protocolo.</div>
               </div>
               <div class="col-12 col-md-6">
                 <label for="email" class="form-label required">E-mail</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="nome@exemplo.com" />
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  placeholder="nome@exemplo.com"
+                  data-required-field="true"
+                  required
+                />
               </div>
               <div class="col-12 col-md-6">
                 <label for="emailConfirm" class="form-label required">Confirme o e-mail</label>
-                <input type="email" class="form-control" id="emailConfirm" name="emailConfirm" placeholder="Repita seu e-mail" aria-describedby="emailConfirmHelp" />
+                <input
+                  type="email"
+                  class="form-control"
+                  id="emailConfirm"
+                  name="emailConfirm"
+                  placeholder="Repita seu e-mail"
+                  aria-describedby="emailConfirmHelp"
+                  data-required-field="true"
+                  required
+                />
                 <div id="emailConfirmHelp" class="form-text">O endereço deve ser idêntico ao campo anterior.</div>
               </div>
               <div class="col-12">
                 <label for="preferenciaContato" class="form-label required">Canal de contato preferencial</label>
-                <select class="form-select" id="preferenciaContato" name="preferenciaContato">
+                <select
+                  class="form-select"
+                  id="preferenciaContato"
+                  name="preferenciaContato"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="whatsapp">WhatsApp</option>
                   <option value="email">E-mail</option>
@@ -570,7 +609,13 @@
             <div class="row g-4">
               <div class="col-12 col-md-6">
                 <label for="situacaoTrabalho" class="form-label required">Situação de trabalho atual</label>
-                <select class="form-select" id="situacaoTrabalho" name="situacaoTrabalho">
+                <select
+                  class="form-select"
+                  id="situacaoTrabalho"
+                  name="situacaoTrabalho"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="emprego_formal">Emprego formal</option>
                   <option value="trabalho_informal">Trabalho informal</option>
@@ -598,7 +643,18 @@
               </div>
               <div class="col-12">
                 <label for="rendaFamiliar" class="form-label required">Renda familiar mensal (R$)</label>
-                <input type="number" class="form-control" id="rendaFamiliar" name="rendaFamiliar" min="0" step="0.01" placeholder="Informe o valor total da renda familiar" aria-describedby="rendaHelp" />
+                <input
+                  type="number"
+                  class="form-control"
+                  id="rendaFamiliar"
+                  name="rendaFamiliar"
+                  min="0"
+                  step="0.01"
+                  placeholder="Informe o valor total da renda familiar"
+                  aria-describedby="rendaHelp"
+                  data-required-field="true"
+                  required
+                />
                 <small id="rendaHelp" class="form-text">Será comparada com o número de integrantes registrado no CadÚnico para verificação do critério de renda per capita.</small>
               </div>
             </div>
@@ -611,7 +667,14 @@
             <div class="row g-4">
               <div class="col-12 col-md-6">
                 <label for="racaCor" class="form-label required">Autodeclaração de cor/raça</label>
-                <select class="form-select" id="racaCor" name="racaCor" aria-describedby="racaCorHelp">
+                <select
+                  class="form-select"
+                  id="racaCor"
+                  name="racaCor"
+                  aria-describedby="racaCorHelp"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="branca">Branca</option>
                   <option value="preta">Preta</option>
@@ -661,7 +724,14 @@
             <div class="row g-4">
               <div class="col-12 col-md-6">
                 <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
-                <select class="form-select" id="pcd" name="pcd" aria-describedby="pcdHelp">
+                <select
+                  class="form-select"
+                  id="pcd"
+                  name="pcd"
+                  aria-describedby="pcdHelp"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="sim">Sim</option>
                   <option value="nao">Não</option>
@@ -670,7 +740,13 @@
               </div>
               <div class="col-12 col-md-6">
                 <label class="form-label required" for="maeAtipica">Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)</label>
-                <select class="form-select" id="maeAtipica" name="maeAtipica">
+                <select
+                  class="form-select"
+                  id="maeAtipica"
+                  name="maeAtipica"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="sim">Sim</option>
                   <option value="nao">Não</option>
@@ -678,7 +754,13 @@
               </div>
               <div class="col-12 col-md-6">
                 <label class="form-label required" for="vitimaViolencia">Vítima de violência doméstica</label>
-                <select class="form-select" id="vitimaViolencia" name="vitimaViolencia">
+                <select
+                  class="form-select"
+                  id="vitimaViolencia"
+                  name="vitimaViolencia"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="sim">Sim</option>
                   <option value="nao">Não</option>
@@ -736,7 +818,13 @@
             <div class="row g-4">
               <div class="col-12 col-md-6">
                 <label for="categoria" class="form-label required">Categoria desejada</label>
-                <select class="form-select" id="categoria" name="categoria">
+                <select
+                  class="form-select"
+                  id="categoria"
+                  name="categoria"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="a_primeira">Categoria A (1ª habilitação)</option>
                   <option value="b_primeira">Categoria B (1ª habilitação)</option>
@@ -746,7 +834,13 @@
               </div>
               <div class="col-12 col-md-6">
                 <label for="turno" class="form-label required">Turno preferencial</label>
-                <select class="form-select" id="turno" name="turno">
+                <select
+                  class="form-select"
+                  id="turno"
+                  name="turno"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="manha">Manhã</option>
                   <option value="tarde">Tarde</option>
@@ -756,7 +850,13 @@
               </div>
               <div class="col-12">
                 <label for="polo" class="form-label required">Polo/CFC de preferência</label>
-                <select class="form-select" id="polo" name="polo">
+                <select
+                  class="form-select"
+                  id="polo"
+                  name="polo"
+                  data-required-field="true"
+                  required
+                >
                   <option value="">Selecione</option>
                   <option value="cfc_santo_amaro">CFC Santo Amaro – Bairro Santo Amaro</option>
                   <option value="cfc_ibura">CFC Ibura – Ibura</option>
@@ -792,7 +892,15 @@
               <div class="col-12 col-lg-6">
                 <div class="file-input-wrapper">
                   <label for="docIdentidade" class="form-label required">Documento oficial com foto (RG ou passaporte) – PDF/JPG/PNG até 5 MB</label>
-                  <input class="form-control" type="file" id="docIdentidade" name="docIdentidade" accept=".pdf,.jpg,.jpeg,.png" />
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="docIdentidade"
+                    name="docIdentidade"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    data-required-field="true"
+                    required
+                  />
                   <div class="file-name" id="docIdentidadeName"></div>
                 </div>
               </div>
@@ -805,14 +913,30 @@
             </div>
             <div class="d-grid gap-3">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="sim" id="lgpd" name="lgpd" required />
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="sim"
+                  id="lgpd"
+                  name="lgpd"
+                  required
+                  data-required-field="true"
+                />
                 <label class="form-check-label" for="lgpd">
                   Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Social, conforme a Lei Geral de Proteção de Dados.
                 </label>
                 <a href="#" class="d-block small mt-1">Consultar política de privacidade</a>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="sim" id="veracidade" name="veracidade" required />
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="sim"
+                  id="veracidade"
+                  name="veracidade"
+                  required
+                  data-required-field="true"
+                />
                 <label class="form-check-label" for="veracidade">
                   Declaro verdadeiras todas as informações prestadas e estou ciente de que a falsidade implicará desclassificação e sanções legais.
                 </label>
@@ -825,7 +949,7 @@
             </div>
             <div class="mt-4 d-flex flex-column flex-md-row gap-3">
               <button
-                type="submit"
+                type="button"
                 class="btn btn-primary btn-lg px-4 btn-submit"
                 id="submitButton"
                 aria-disabled="true"
@@ -1010,8 +1134,6 @@
         updateSubmitState();
       };
 
-      toggleFileSection(false, "docResidenciaWrapper");
-
       const addFileNameListener = (inputId, displayId) => {
         const input = document.getElementById(inputId);
         const display = document.getElementById(displayId);
@@ -1099,10 +1221,48 @@
       let submitReady = false;
       let validation;
 
+      const isElementVisible = (element) => {
+        if (!element) return false;
+        let current = element;
+        while (current && current !== document.body) {
+          if (current.hasAttribute && current.hasAttribute("hidden")) {
+            return false;
+          }
+          if (current.classList && current.classList.contains("d-none")) {
+            return false;
+          }
+          current = current.parentElement;
+        }
+        return true;
+      };
+
+      const isFieldFilled = (element) => {
+        if (!element) return true;
+        if (!isElementVisible(element)) return true;
+        if (element.disabled) return true;
+        if (element.type === "checkbox" || element.type === "radio") {
+          if (element.checked) return true;
+          const group = element.name
+            ? form.querySelectorAll(`[name="${CSS.escape(element.name)}"]`)
+            : [];
+          if (group.length) {
+            return Array.from(group).some((input) => input.checked);
+          }
+          return false;
+        }
+        if (element.type === "file") {
+          return element.files && element.files.length > 0;
+        }
+        const value = element.value != null ? String(element.value).trim() : "";
+        return value.length > 0;
+      };
+
       const setSubmitButtonState = (isReady) => {
         submitReady = isReady;
         submitButton.setAttribute("data-ready", isReady ? "true" : "false");
         submitButton.setAttribute("aria-disabled", isReady ? "false" : "true");
+        submitButton.type = isReady ? "submit" : "button";
+        submitButton.classList.toggle("disabled", !isReady);
       };
 
       setSubmitButtonState(false);
@@ -1231,6 +1391,24 @@
             invalidMap.set(selector, {
               selector,
               element: field.elem,
+              label: getFieldLabel(selector),
+            });
+          }
+        });
+        const requiredElements = Array.from(form.querySelectorAll("[data-required-field=\"true\"]"));
+        requiredElements.forEach((element) => {
+          const selector = element.id
+            ? `#${element.id}`
+            : element.name
+            ? `[name='${CSS.escape(element.name)}']`
+            : null;
+          if (!selector || invalidMap.has(selector)) {
+            return;
+          }
+          if (!isFieldFilled(element)) {
+            invalidMap.set(selector, {
+              selector,
+              element,
               label: getFieldLabel(selector),
             });
           }
