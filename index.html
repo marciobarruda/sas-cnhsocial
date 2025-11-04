@@ -1410,7 +1410,12 @@
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        const isValid = await validation.revalidate();
+        let isValid = false;
+        if (typeof validation.revalidate === "function") {
+          isValid = await validation.revalidate();
+        } else {
+          isValid = await validation.validate();
+        }
         const extraErrors = validateAdditionalRules();
         const invalidFields = collectInvalidFields(extraErrors);
         if (!isValid || extraErrors.length) {
