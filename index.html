@@ -455,7 +455,17 @@
             <div class="row g-4">
               <div class="col-12 col-sm-4">
                 <label for="cep" class="form-label required">CEP</label>
-                <input type="text" class="form-control" id="cep" name="cep" inputmode="numeric" placeholder="00000-000" readonly />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cep"
+                  name="cep"
+                  inputmode="numeric"
+                  placeholder="00000-000"
+                  readonly
+                  aria-describedby="cepStatus"
+                />
+                <div id="cepStatus" class="form-text" aria-live="polite"></div>
               </div>
               <div class="col-12 col-sm-8">
                 <label for="logradouro" class="form-label required">Logradouro</label>
@@ -766,8 +776,18 @@
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script>
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
+      const cepInput = document.getElementById("cep");
+      const logradouroInput = document.getElementById("logradouro");
+      const complementoInput = document.getElementById("complemento");
+      const bairroInput = document.getElementById("bairro");
+      const cidadeInput = document.getElementById("cidade");
+      const ufSelect = document.getElementById("uf");
+      const cepStatus = document.getElementById("cepStatus");
+      const btnAtualizarEndereco = document.getElementById("btnAtualizarEndereco");
+      let enderecoEdicaoAtiva = false;
+
       const maskCpf = IMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
-      const maskCep = IMask(document.getElementById("cep"), { mask: "00000-000" });
+      const maskCep = IMask(cepInput, { mask: "00000-000" });
       const maskTelefone = IMask(document.getElementById("telefone"), {
         mask: "(00) 00000-0000",
       });
@@ -783,14 +803,74 @@
         }
       });
 
-      document.getElementById("btnAtualizarEndereco").addEventListener("click", () => {
+      const atualizarStatusCep = (mensagem, classe) => {
+        if (!cepStatus) return;
+        cepStatus.classList.remove("text-danger", "text-success", "text-muted");
+        if (classe) {
+          cepStatus.classList.add(classe);
+        }
+        cepStatus.textContent = mensagem;
+      };
+
+      const preencherEndereco = (dados) => {
+        if (dados.street || dados.logradouro) logradouroInput.value = dados.street || dados.logradouro;
+        if (dados.neighborhood || dados.bairro) bairroInput.value = dados.neighborhood || dados.bairro;
+        if (dados.city || dados.localidade) cidadeInput.value = dados.city || dados.localidade;
+        if (dados.complement || dados.complemento) complementoInput.value = dados.complement || dados.complemento;
+        if (dados.state && ufSelect) {
+          const possuiOpcao = Array.from(ufSelect.options).some((option) => option.value === dados.state);
+          if (!possuiOpcao) {
+            const novaOpcao = document.createElement("option");
+            novaOpcao.value = dados.state;
+            novaOpcao.textContent = dados.state;
+            ufSelect.appendChild(novaOpcao);
+          }
+          ufSelect.value = dados.state;
+        }
+      };
+
+      const consultarCepBrasilApi = async (cepLimpo) => {
+        if (!cepLimpo || cepLimpo.length !== 8) return;
+        atualizarStatusCep("Consultando CEP na BrasilAPI...", "text-muted");
+        try {
+          const resposta = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepLimpo}`);
+          if (!resposta.ok) {
+            throw new Error("CEP não encontrado");
+          }
+          const endereco = await resposta.json();
+          preencherEndereco(endereco);
+          atualizarStatusCep("Endereço localizado automaticamente.", "text-success");
+        } catch (erro) {
+          atualizarStatusCep("Não foi possível localizar o CEP. Preencha os campos manualmente.", "text-danger");
+          if (logradouroInput) {
+            logradouroInput.focus();
+          }
+        }
+      };
+
+      btnAtualizarEndereco.addEventListener("click", () => {
         editableFields.forEach((fieldId) => {
           const field = document.getElementById(fieldId);
           field.readOnly = false;
           field.removeAttribute("aria-readonly");
         });
-        document.getElementById("uf").disabled = false;
-        document.getElementById("cep").focus();
+        ufSelect.disabled = false;
+        enderecoEdicaoAtiva = true;
+        btnAtualizarEndereco.setAttribute("aria-pressed", "true");
+        atualizarStatusCep("Informe o CEP e aguarde o preenchimento automático.", "text-muted");
+        cepInput.focus();
+      });
+
+      maskCep.on("accept", () => {
+        if (!enderecoEdicaoAtiva) return;
+        if (maskCep.unmaskedValue.length < 8) {
+          atualizarStatusCep("Digite o CEP completo para buscar automaticamente.", "text-muted");
+        }
+      });
+
+      maskCep.on("complete", () => {
+        if (!enderecoEdicaoAtiva) return;
+        consultarCepBrasilApi(maskCep.unmaskedValue);
       });
 
       const toggleFileSection = (condition, wrapperId) => {
