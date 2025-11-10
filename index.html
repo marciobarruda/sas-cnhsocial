@@ -998,58 +998,64 @@
       </div>
     </div>
 
+    <script id="prefillData" type="application/json">
+      {{ JSON.stringify($json.data || {}) }}
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script>
       const resolvePrefillValues = () => {
-        const rawExpression = `{{ JSON.stringify($json.data || {}) }}`.trim();
-        if (rawExpression && !rawExpression.startsWith("{{")) {
-          try {
-            const parsed = JSON.parse(rawExpression || "{}");
-            if (parsed && typeof parsed === "object") {
-              return parsed;
+        const inlinePrefillHolder = document.getElementById("prefillData");
+        if (inlinePrefillHolder) {
+          const inlineContent = inlinePrefillHolder.textContent.trim();
+          if (inlineContent && !inlineContent.startsWith("{{")) {
+            try {
+              const parsedInline = JSON.parse(inlineContent);
+              if (parsedInline && typeof parsedInline === "object") {
+                return parsedInline;
+              }
+            } catch (error) {
+              console.warn("Não foi possível interpretar o JSON de pré-preenchimento embutido.", error);
             }
-          } catch (error) {
-            console.warn("Não foi possível interpretar os dados de pré-preenchimento provenientes do n8n.", error);
           }
         }
 
         const expressionSource = {
-          nomeCompleto: `{{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }}`,
-          cpf: `{{ JSON.stringify((($json.data || {}).cpf) || "") }}`,
-          nis: `{{ JSON.stringify((($json.data || {}).nis) || "") }}`,
-          dataNascimento: `{{ JSON.stringify((($json.data || {}).dataNascimento) || "") }}`,
-          genero: `{{ JSON.stringify((($json.data || {}).genero) || "") }}`,
-          nomeSocial: `{{ JSON.stringify((($json.data || {}).nomeSocial) || "") }}`,
-          cep: `{{ JSON.stringify((($json.data || {}).cep) || "") }}`,
-          logradouro: `{{ JSON.stringify((($json.data || {}).logradouro) || "") }}`,
-          numero: `{{ JSON.stringify((($json.data || {}).numero) || "") }}`,
-          complemento: `{{ JSON.stringify((($json.data || {}).complemento) || "") }}`,
-          bairro: `{{ JSON.stringify((($json.data || {}).bairro) || "") }}`,
-          cidade: `{{ JSON.stringify((($json.data || {}).cidade) || "") }}`,
-          uf: `{{ JSON.stringify((($json.data || {}).uf) || "") }}`,
-          enderecoAtualizado: `{{ JSON.stringify((($json.data || {}).enderecoAtualizado) || "") }}`,
-          telefone: `{{ JSON.stringify((($json.data || {}).telefone) || "") }}`,
-          email: `{{ JSON.stringify((($json.data || {}).email) || "") }}`,
-          preferenciaContato: `{{ JSON.stringify((($json.data || {}).preferenciaContato) || "") }}`,
-          situacaoTrabalho: `{{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }}`,
-          mulherChefe: `{{ JSON.stringify((($json.data || {}).mulherChefe) || "") }}`,
-          acolhimento: `{{ JSON.stringify((($json.data || {}).acolhimento) || "") }}`,
-          dependenteTratamento: `{{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }}`,
-          rendaFamiliar: `{{ JSON.stringify((($json.data || {}).rendaFamiliar) != null ? ($json.data || {}).rendaFamiliar : "") }}`,
-          racaCor: `{{ JSON.stringify((($json.data || {}).racaCor) || "") }}`,
-          pessoaPretaParda: `{{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }}`,
-          pessoaIndigena: `{{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }}`,
-          pessoaTrans: `{{ JSON.stringify((($json.data || {}).pessoaTrans) || "") }}`,
-          egressoSocioeducativo: `{{ JSON.stringify((($json.data || {}).egressoSocioeducativo) || "") }}`,
-          pessoaQuilombola: `{{ JSON.stringify((($json.data || {}).pessoaQuilombola) || "") }}`,
-          pessoaRua: `{{ JSON.stringify((($json.data || {}).pessoaRua) || "") }}`,
-          pcd: `{{ JSON.stringify((($json.data || {}).pcd) || "") }}`,
-          maeAtipica: `{{ JSON.stringify((($json.data || {}).maeAtipica) || "") }}`,
-          vitimaViolencia: `{{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }}`,
-          necessidadesEspeciais: `{{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }}`,
+          nomeCompleto: `{{ $json.data.nomeCompleto }}`,
+          cpf: `{{ $json.data.cpf }}`,
+          nis: `{{ $json.data.nis }}`,
+          dataNascimento: `{{ $json.data.dataNascimento }}`,
+          genero: `{{ $json.data.genero }}`,
+          nomeSocial: `{{ $json.data.nomeSocial }}`,
+          cep: `{{ $json.data.cep }}`,
+          logradouro: `{{ $json.data.logradouro }}`,
+          numero: `{{ $json.data.numero }}`,
+          complemento: `{{ $json.data.complemento }}`,
+          bairro: `{{ $json.data.bairro }}`,
+          cidade: `{{ $json.data.cidade }}`,
+          uf: `{{ $json.data.uf }}`,
+          enderecoAtualizado: `{{ $json.data.enderecoAtualizado }}`,
+          telefone: `{{ $json.data.telefone }}`,
+          email: `{{ $json.data.email }}`,
+          preferenciaContato: `{{ $json.data.preferenciaContato }}`,
+          situacaoTrabalho: `{{ $json.data.situacaoTrabalho }}`,
+          mulherChefe: `{{ $json.data.mulherChefe }}`,
+          acolhimento: `{{ $json.data.acolhimento }}`,
+          dependenteTratamento: `{{ $json.data.dependenteTratamento }}`,
+          rendaFamiliar: `{{ $json.data.rendaFamiliar }}`,
+          racaCor: `{{ $json.data.racaCor }}`,
+          pessoaPretaParda: `{{ $json.data.pessoaPretaParda }}`,
+          pessoaIndigena: `{{ $json.data.pessoaIndigena }}`,
+          pessoaTrans: `{{ $json.data.pessoaTrans }}`,
+          egressoSocioeducativo: `{{ $json.data.egressoSocioeducativo }}`,
+          pessoaQuilombola: `{{ $json.data.pessoaQuilombola }}`,
+          pessoaRua: `{{ $json.data.pessoaRua }}`,
+          pcd: `{{ $json.data.pcd }}`,
+          maeAtipica: `{{ $json.data.maeAtipica }}`,
+          vitimaViolencia: `{{ $json.data.vitimaViolencia }}`,
+          necessidadesEspeciais: `{{ $json.data.necessidadesEspeciais }}`,
         };
 
         const expressionValues = {};
@@ -1058,22 +1064,25 @@
           if (typeof expression !== "string") {
             return;
           }
-          const trimmed = expression.trim();
+          let trimmed = expression.trim();
           if (!trimmed || trimmed.startsWith("{{")) {
             return;
           }
-          try {
-            const parsed = JSON.parse(trimmed);
-            if (parsed !== "" && parsed !== null && parsed !== undefined) {
-              expressionHasData = true;
-            }
-            expressionValues[key] = parsed;
-          } catch (error) {
-            expressionValues[key] = trimmed;
-            if (trimmed !== "") {
-              expressionHasData = true;
-            }
+
+          if (
+            (trimmed.startsWith("\"") && trimmed.endsWith("\"")) ||
+            (trimmed.startsWith("'") && trimmed.endsWith("'"))
+          ) {
+            trimmed = trimmed.slice(1, -1);
           }
+          let normalized = trimmed.replace(/\\"/g, '"').replace(/\\n/g, "\n");
+          if (normalized === "null" || normalized === "undefined") {
+            normalized = "";
+          }
+          if (normalized !== "") {
+            expressionHasData = true;
+          }
+          expressionValues[key] = normalized;
         });
         if (expressionHasData) {
           return expressionValues;
