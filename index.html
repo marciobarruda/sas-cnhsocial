@@ -431,20 +431,56 @@
             <div class="row g-4">
               <div class="col-12 col-lg-6">
                 <label for="nomeCompleto" class="form-label required">Nome completo</label>
-                <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto" placeholder="Nome cadastrado no CadÚnico" value="" readonly aria-readonly="true" />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nomeCompleto"
+                  name="nomeCompleto"
+                  placeholder="Nome cadastrado no CadÚnico"
+                  value="{{ $json.data.nomeCompleto || '' }}"
+                  readonly
+                  aria-readonly="true"
+                />
                 <div class="form-text">Informações sincronizadas do CadÚnico/Conecta. Campo apenas para conferência.</div>
               </div>
               <div class="col-12 col-sm-6 col-lg-3">
                 <label for="cpf" class="form-label required">CPF</label>
-                <input type="text" class="form-control" id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" readonly aria-readonly="true" />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cpf"
+                  name="cpf"
+                  inputmode="numeric"
+                  placeholder="000.000.000-00"
+                  value="{{ $json.data.cpf || '' }}"
+                  readonly
+                  aria-readonly="true"
+                />
               </div>
               <div class="col-12 col-sm-6 col-lg-3">
                 <label for="nis" class="form-label required">NIS/PIS</label>
-                <input type="text" class="form-control" id="nis" name="nis" placeholder="Número do CadÚnico" readonly aria-readonly="true" />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nis"
+                  name="nis"
+                  placeholder="Número do CadÚnico"
+                  value="{{ $json.data.nis || '' }}"
+                  readonly
+                  aria-readonly="true"
+                />
               </div>
               <div class="col-12 col-sm-6 col-lg-3">
                 <label for="dataNascimento" class="form-label required">Data de nascimento</label>
-                <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" readonly aria-readonly="true" />
+                <input
+                  type="date"
+                  class="form-control"
+                  id="dataNascimento"
+                  name="dataNascimento"
+                  value="{{ $json.data.dataNascimento || '' }}"
+                  readonly
+                  aria-readonly="true"
+                />
               </div>
               <div class="col-12 col-sm-6 col-lg-3">
                 <label for="genero" class="form-label required">Identificação de gênero</label>
@@ -457,16 +493,24 @@
                   required
                 >
                   <option value="">Selecione</option>
-                  <option value="feminino">Mulher</option>
-                  <option value="masculino">Homem</option>
-                  <option value="outro">Outro / Não-binário</option>
-                  <option value="nao_informar">Prefiro não informar</option>
+                  <option value="feminino" {{ $json.data.genero === "feminino" ? "selected" : "" }}>Mulher</option>
+                  <option value="masculino" {{ $json.data.genero === "masculino" ? "selected" : "" }}>Homem</option>
+                  <option value="outro" {{ $json.data.genero === "outro" ? "selected" : "" }}>Outro / Não-binário</option>
+                  <option value="nao_informar" {{ $json.data.genero === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
                 </select>
                 <small id="generoHelp" class="form-text">Usado apenas para regras de pontuação previstas no edital.</small>
               </div>
               <div class="col-12 col-lg-9">
                 <label for="nomeSocial" class="form-label">Nome social</label>
-                <input type="text" class="form-control" id="nomeSocial" name="nomeSocial" maxlength="120" placeholder="Informe se desejar atendimento com nome social" />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nomeSocial"
+                  name="nomeSocial"
+                  maxlength="120"
+                  placeholder="Informe se desejar atendimento com nome social"
+                  value="{{ $json.data.nomeSocial || '' }}"
+                />
               </div>
             </div>
           </div>
@@ -491,6 +535,7 @@
                   name="cep"
                   inputmode="numeric"
                   placeholder="00000-000"
+                  value="{{ $json.data.cep || '' }}"
                   readonly
                   aria-describedby="cepStatus"
                 />
@@ -498,7 +543,15 @@
               </div>
               <div class="col-12 col-sm-8">
                 <label for="logradouro" class="form-label required">Logradouro</label>
-                <input type="text" class="form-control" id="logradouro" name="logradouro" placeholder="Rua, avenida, travessa" readonly />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="logradouro"
+                  name="logradouro"
+                  placeholder="Rua, avenida, travessa"
+                  value="{{ $json.data.logradouro || '' }}"
+                  readonly
+                />
               </div>
               <div class="col-12 col-sm-4 col-lg-2">
                 <label for="numero" class="form-label required">Número</label>
@@ -508,6 +561,7 @@
                   id="numero"
                   name="numero"
                   placeholder="S/N"
+                  value="{{ $json.data.numero || '' }}"
                   readonly
                   inputmode="text"
                   pattern="^(?:[0-9]+|S/N)$"
@@ -516,25 +570,54 @@
               </div>
               <div class="col-12 col-sm-8 col-lg-4">
                 <label for="complemento" class="form-label">Complemento</label>
-                <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Apartamento, bloco" readonly />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="complemento"
+                  name="complemento"
+                  placeholder="Apartamento, bloco"
+                  value="{{ $json.data.complemento || '' }}"
+                  readonly
+                />
               </div>
               <div class="col-12 col-md-4">
                 <label for="bairro" class="form-label required">Bairro</label>
-                <input type="text" class="form-control" id="bairro" name="bairro" readonly />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="bairro"
+                  name="bairro"
+                  value="{{ $json.data.bairro || '' }}"
+                  readonly
+                />
               </div>
               <div class="col-12 col-md-5">
                 <label for="cidade" class="form-label required">Município</label>
-                <input type="text" class="form-control" id="cidade" name="cidade" readonly value="Recife" />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cidade"
+                  name="cidade"
+                  value="{{ $json.data.cidade || 'Recife' }}"
+                  readonly
+                />
               </div>
               <div class="col-12 col-md-3">
                 <label for="uf" class="form-label required">UF</label>
                 <select class="form-select" id="uf" name="uf" disabled>
-                  <option value="PE">PE</option>
+                  <option value="PE" {{ $json.data.uf === "PE" ? "selected" : "" }}>PE</option>
                 </select>
               </div>
               <div class="col-12">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="enderecoAtualizado" name="enderecoAtualizado" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="enderecoAtualizado"
+                    name="enderecoAtualizado"
+                    {{ $json.data.enderecoAtualizado === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="enderecoAtualizado">Meu endereço informado acima está diferente do CadÚnico</label>
                 </div>
                 <small class="form-text">Se marcado, será obrigatório anexar comprovante atualizado (até 90 dias).</small>
@@ -564,6 +647,7 @@
                   name="telefone"
                   inputmode="tel"
                   placeholder="(81) 90000-0000"
+                  value="{{ $json.data.telefone || '' }}"
                   data-required-field="true"
                   required
                 />
@@ -577,6 +661,7 @@
                   id="email"
                   name="email"
                   placeholder="nome@exemplo.com"
+                  value="{{ $json.data.email || '' }}"
                   data-required-field="true"
                   required
                 />
@@ -590,6 +675,7 @@
                   name="emailConfirm"
                   placeholder="Repita seu e-mail"
                   aria-describedby="emailConfirmHelp"
+                  value="{{ $json.data.email || '' }}"
                   data-required-field="true"
                   required
                 />
@@ -605,9 +691,9 @@
                   required
                 >
                   <option value="">Selecione</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="email">E-mail</option>
-                  <option value="ligacao">Ligação telefônica</option>
+                  <option value="whatsapp" {{ $json.data.preferenciaContato === "whatsapp" ? "selected" : "" }}>WhatsApp</option>
+                  <option value="email" {{ $json.data.preferenciaContato === "email" ? "selected" : "" }}>E-mail</option>
+                  <option value="ligacao" {{ $json.data.preferenciaContato === "ligacao" ? "selected" : "" }}>Ligação telefônica</option>
                 </select>
               </div>
             </div>
@@ -628,27 +714,48 @@
                   required
                 >
                   <option value="">Selecione</option>
-                  <option value="emprego_formal">Emprego formal</option>
-                  <option value="trabalho_informal">Trabalho informal</option>
-                  <option value="desempregado">Desempregado(a)</option>
-                  <option value="aplicativo">Trabalhador(a) de aplicativo</option>
+                  <option value="emprego_formal" {{ $json.data.situacaoTrabalho === "emprego_formal" ? "selected" : "" }}>Emprego formal</option>
+                  <option value="trabalho_informal" {{ $json.data.situacaoTrabalho === "trabalho_informal" ? "selected" : "" }}>Trabalho informal</option>
+                  <option value="desempregado" {{ $json.data.situacaoTrabalho === "desempregado" ? "selected" : "" }}>Desempregado(a)</option>
+                  <option value="aplicativo" {{ $json.data.situacaoTrabalho === "aplicativo" ? "selected" : "" }}>Trabalhador(a) de aplicativo</option>
                 </select>
               </div>
               <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
                 <div class="form-check pt-4">
-                  <input class="form-check-input" type="checkbox" value="sim" id="mulherChefe" name="mulherChefe" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="mulherChefe"
+                    name="mulherChefe"
+                    {{ $json.data.mulherChefe === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="mulherChefe">Sou mulher e responsável pela renda familiar (chefe de família)</label>
                 </div>
               </div>
               <div class="col-12 col-md-6">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="acolhimento" name="acolhimento" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="acolhimento"
+                    name="acolhimento"
+                    {{ $json.data.acolhimento === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
                 </div>
               </div>
               <div class="col-12 col-md-6">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="dependenteTratamento" name="dependenteTratamento" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="dependenteTratamento"
+                    name="dependenteTratamento"
+                    {{ $json.data.dependenteTratamento === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
                 </div>
               </div>
@@ -662,6 +769,7 @@
                   min="0"
                   step="0.01"
                   placeholder="Informe o valor total da renda familiar"
+                  value="{{ $json.data.rendaFamiliar || '' }}"
                   aria-describedby="rendaHelp"
                   data-required-field="true"
                   required
@@ -688,12 +796,12 @@
                   required
                 >
                   <option value="">Selecione</option>
-                  <option value="branca">Branca</option>
-                  <option value="preta">Preta</option>
-                  <option value="parda">Parda</option>
-                  <option value="amarela">Amarela</option>
-                  <option value="indigena">Indígena</option>
-                  <option value="nao_informar">Prefiro não informar</option>
+                  <option value="branca" {{ $json.data.racaCor === "branca" ? "selected" : "" }}>Branca</option>
+                  <option value="preta" {{ $json.data.racaCor === "preta" ? "selected" : "" }}>Preta</option>
+                  <option value="parda" {{ $json.data.racaCor === "parda" ? "selected" : "" }}>Parda</option>
+                  <option value="amarela" {{ $json.data.racaCor === "amarela" ? "selected" : "" }}>Amarela</option>
+                  <option value="indigena" {{ $json.data.racaCor === "indigena" ? "selected" : "" }}>Indígena</option>
+                  <option value="nao_informar" {{ $json.data.racaCor === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
                 </select>
                 <small id="racaCorHelp" class="form-text">
                   Informação carregada a partir do CadÚnico para ranqueamento e políticas afirmativas conforme edital.
@@ -703,27 +811,69 @@
                 <legend class="form-label mb-1">Identidade e grupos prioritários</legend>
                 <div class="form-text">Marque se você se enquadra nas cotas adicionais previstas.</div>
                 <div class="form-check mt-2">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaPretaParda" name="pessoaPretaParda" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="pessoaPretaParda"
+                    name="pessoaPretaParda"
+                    {{ $json.data.pessoaPretaParda === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="pessoaPretaParda">Sou pessoa preta ou parda</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaIndigena" name="pessoaIndigena" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="pessoaIndigena"
+                    name="pessoaIndigena"
+                    {{ $json.data.pessoaIndigena === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="pessoaIndigena">Sou pessoa indígena</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaTrans" name="pessoaTrans" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="pessoaTrans"
+                    name="pessoaTrans"
+                    {{ $json.data.pessoaTrans === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="pessoaTrans">Sou pessoa trans, travesti ou não-binária</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="egressoSocioeducativo" name="egressoSocioeducativo" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="egressoSocioeducativo"
+                    name="egressoSocioeducativo"
+                    {{ $json.data.egressoSocioeducativo === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="egressoSocioeducativo">Sou egresso(a) do sistema socioeducativo</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaQuilombola" name="pessoaQuilombola" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="pessoaQuilombola"
+                    name="pessoaQuilombola"
+                    {{ $json.data.pessoaQuilombola === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="pessoaQuilombola">Sou quilombola ou pertenço a povos e comunidades tradicionais</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaRua" name="pessoaRua" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="pessoaRua"
+                    name="pessoaRua"
+                    {{ $json.data.pessoaRua === "sim" ? "checked" : "" }}
+                  />
                   <label class="form-check-label" for="pessoaRua">Vivo em situação de rua ou em unidade de acolhimento</label>
                 </div>
               </fieldset>
@@ -747,8 +897,8 @@
                   required
                 >
                   <option value="">Selecione</option>
-                  <option value="sim">Sim</option>
-                  <option value="nao">Não</option>
+                  <option value="sim" {{ $json.data.pcd === "sim" ? "selected" : "" }}>Sim</option>
+                  <option value="nao" {{ $json.data.pcd === "nao" ? "selected" : "" }}>Não</option>
                 </select>
                 <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
               </div>
@@ -762,8 +912,8 @@
                   required
                 >
                   <option value="">Selecione</option>
-                  <option value="sim">Sim</option>
-                  <option value="nao">Não</option>
+                  <option value="sim" {{ $json.data.maeAtipica === "sim" ? "selected" : "" }}>Sim</option>
+                  <option value="nao" {{ $json.data.maeAtipica === "nao" ? "selected" : "" }}>Não</option>
                 </select>
               </div>
               <div class="col-12 col-md-6">
@@ -776,14 +926,21 @@
                   required
                 >
                   <option value="">Selecione</option>
-                  <option value="sim">Sim</option>
-                  <option value="nao">Não</option>
+                  <option value="sim" {{ $json.data.vitimaViolencia === "sim" ? "selected" : "" }}>Sim</option>
+                  <option value="nao" {{ $json.data.vitimaViolencia === "nao" ? "selected" : "" }}>Não</option>
                 </select>
                 <small class="form-text">A identidade das candidatas será preservada conforme edital.</small>
               </div>
               <div class="col-12">
                 <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
-                <textarea class="form-control" id="necessidadesEspeciais" name="necessidadesEspeciais" rows="3" maxlength="500" placeholder="Descreva necessidades específicas de atendimento, adaptações ou informações relevantes"></textarea>
+                <textarea
+                  class="form-control"
+                  id="necessidadesEspeciais"
+                  name="necessidadesEspeciais"
+                  rows="3"
+                  maxlength="500"
+                  placeholder="Descreva necessidades específicas de atendimento, adaptações ou informações relevantes"
+                >{{ $json.data.necessidadesEspeciais || '' }}</textarea>
               </div>
               <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
                 <div class="file-input-wrapper">
@@ -998,130 +1155,130 @@
       </div>
     </div>
 
-    <script id="prefillData" type="application/json">
-      {{ JSON.stringify($json.data || {}) }}
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script>
-      const resolvePrefillValues = () => {
-        const inlinePrefillHolder = document.getElementById("prefillData");
-        if (inlinePrefillHolder) {
-          const inlineContent = inlinePrefillHolder.textContent.trim();
-          if (inlineContent && !inlineContent.startsWith("{{")) {
-            try {
-              const parsedInline = JSON.parse(inlineContent);
-              if (parsedInline && typeof parsedInline === "object") {
-                return parsedInline;
-              }
-            } catch (error) {
-              console.warn("Não foi possível interpretar o JSON de pré-preenchimento embutido.", error);
-            }
-          }
+      const sanitizePrefillObject = (values) => {
+        if (!values || typeof values !== "object") {
+          return {};
         }
-
-        const expressionSource = {
-          nomeCompleto: `{{ $json.data.nomeCompleto }}`,
-          cpf: `{{ $json.data.cpf }}`,
-          nis: `{{ $json.data.nis }}`,
-          dataNascimento: `{{ $json.data.dataNascimento }}`,
-          genero: `{{ $json.data.genero }}`,
-          nomeSocial: `{{ $json.data.nomeSocial }}`,
-          cep: `{{ $json.data.cep }}`,
-          logradouro: `{{ $json.data.logradouro }}`,
-          numero: `{{ $json.data.numero }}`,
-          complemento: `{{ $json.data.complemento }}`,
-          bairro: `{{ $json.data.bairro }}`,
-          cidade: `{{ $json.data.cidade }}`,
-          uf: `{{ $json.data.uf }}`,
-          enderecoAtualizado: `{{ $json.data.enderecoAtualizado }}`,
-          telefone: `{{ $json.data.telefone }}`,
-          email: `{{ $json.data.email }}`,
-          preferenciaContato: `{{ $json.data.preferenciaContato }}`,
-          situacaoTrabalho: `{{ $json.data.situacaoTrabalho }}`,
-          mulherChefe: `{{ $json.data.mulherChefe }}`,
-          acolhimento: `{{ $json.data.acolhimento }}`,
-          dependenteTratamento: `{{ $json.data.dependenteTratamento }}`,
-          rendaFamiliar: `{{ $json.data.rendaFamiliar }}`,
-          racaCor: `{{ $json.data.racaCor }}`,
-          pessoaPretaParda: `{{ $json.data.pessoaPretaParda }}`,
-          pessoaIndigena: `{{ $json.data.pessoaIndigena }}`,
-          pessoaTrans: `{{ $json.data.pessoaTrans }}`,
-          egressoSocioeducativo: `{{ $json.data.egressoSocioeducativo }}`,
-          pessoaQuilombola: `{{ $json.data.pessoaQuilombola }}`,
-          pessoaRua: `{{ $json.data.pessoaRua }}`,
-          pcd: `{{ $json.data.pcd }}`,
-          maeAtipica: `{{ $json.data.maeAtipica }}`,
-          vitimaViolencia: `{{ $json.data.vitimaViolencia }}`,
-          necessidadesEspeciais: `{{ $json.data.necessidadesEspeciais }}`,
-        };
-
-        const expressionValues = {};
-        let expressionHasData = false;
-        Object.entries(expressionSource).forEach(([key, expression]) => {
-          if (typeof expression !== "string") {
+        const sanitized = {};
+        Object.entries(values).forEach(([key, value]) => {
+          if (value == null) {
+            sanitized[key] = "";
             return;
           }
-          let trimmed = expression.trim();
-          if (!trimmed || trimmed.startsWith("{{")) {
+          if (typeof value === "string") {
+            let trimmed = value.trim();
+            if (!trimmed || trimmed.startsWith("{{")) {
+              sanitized[key] = "";
+              return;
+            }
+            if (
+              (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+              (trimmed.startsWith("'") && trimmed.endsWith("'"))
+            ) {
+              trimmed = trimmed.slice(1, -1);
+            }
+            trimmed = trimmed.replace(/\\"/g, '"').replace(/\\n/g, "\n");
+            if (trimmed === "null" || trimmed === "undefined") {
+              trimmed = "";
+            }
+            sanitized[key] = trimmed;
             return;
           }
-
-          if (
-            (trimmed.startsWith("\"") && trimmed.endsWith("\"")) ||
-            (trimmed.startsWith("'") && trimmed.endsWith("'"))
-          ) {
-            trimmed = trimmed.slice(1, -1);
-          }
-          let normalized = trimmed.replace(/\\"/g, '"').replace(/\\n/g, "\n");
-          if (normalized === "null" || normalized === "undefined") {
-            normalized = "";
-          }
-          if (normalized !== "") {
-            expressionHasData = true;
-          }
-          expressionValues[key] = normalized;
+          sanitized[key] = value;
         });
-        if (expressionHasData) {
-          return expressionValues;
-        }
-
-        let globalPayload = window.prefillPayload || window.initialPrefillPayload || window.initialPayload;
-        if (typeof globalPayload === "string") {
-          try {
-            globalPayload = JSON.parse(globalPayload);
-          } catch (error) {
-            globalPayload = null;
-          }
-        }
-        if (Array.isArray(globalPayload) && globalPayload.length) {
-          const firstItem = globalPayload[0];
-          if (firstItem && typeof firstItem === "object") {
-            if (firstItem.data && typeof firstItem.data === "object") {
-              return firstItem.data;
-            }
-            return firstItem;
-          }
-        }
-
-        let globalValues = window.prefillValues;
-        if (typeof globalValues === "string") {
-          try {
-            globalValues = JSON.parse(globalValues);
-          } catch (error) {
-            globalValues = null;
-          }
-        }
-        if (globalValues && typeof globalValues === "object") {
-          return globalValues;
-        }
-
-        return {};
+        return sanitized;
       };
 
-      let prefillValues = resolvePrefillValues();
+      const hasPrefillContent = (values) => {
+        if (!values || typeof values !== "object") {
+          return false;
+        }
+        return Object.values(values).some((value) => {
+          if (value == null) return false;
+          if (typeof value === "string") return value.trim() !== "";
+          return true;
+        });
+      };
+
+      const rawPrefillValues = {
+        nomeCompleto: `{{ $json.data.nomeCompleto || '' }}`,
+        cpf: `{{ $json.data.cpf || '' }}`,
+        nis: `{{ $json.data.nis || '' }}`,
+        dataNascimento: `{{ $json.data.dataNascimento || '' }}`,
+        genero: `{{ $json.data.genero || '' }}`,
+        nomeSocial: `{{ $json.data.nomeSocial || '' }}`,
+        cep: `{{ $json.data.cep || '' }}`,
+        logradouro: `{{ $json.data.logradouro || '' }}`,
+        numero: `{{ $json.data.numero || '' }}`,
+        complemento: `{{ $json.data.complemento || '' }}`,
+        bairro: `{{ $json.data.bairro || '' }}`,
+        cidade: `{{ $json.data.cidade || '' }}`,
+        uf: `{{ $json.data.uf || '' }}`,
+        enderecoAtualizado: `{{ $json.data.enderecoAtualizado || '' }}`,
+        telefone: `{{ $json.data.telefone || '' }}`,
+        email: `{{ $json.data.email || '' }}`,
+        preferenciaContato: `{{ $json.data.preferenciaContato || '' }}`,
+        situacaoTrabalho: `{{ $json.data.situacaoTrabalho || '' }}`,
+        mulherChefe: `{{ $json.data.mulherChefe || '' }}`,
+        acolhimento: `{{ $json.data.acolhimento || '' }}`,
+        dependenteTratamento: `{{ $json.data.dependenteTratamento || '' }}`,
+        rendaFamiliar: `{{ $json.data.rendaFamiliar || '' }}`,
+        racaCor: `{{ $json.data.racaCor || '' }}`,
+        pessoaPretaParda: `{{ $json.data.pessoaPretaParda || '' }}`,
+        pessoaIndigena: `{{ $json.data.pessoaIndigena || '' }}`,
+        pessoaTrans: `{{ $json.data.pessoaTrans || '' }}`,
+        egressoSocioeducativo: `{{ $json.data.egressoSocioeducativo || '' }}`,
+        pessoaQuilombola: `{{ $json.data.pessoaQuilombola || '' }}`,
+        pessoaRua: `{{ $json.data.pessoaRua || '' }}`,
+        pcd: `{{ $json.data.pcd || '' }}`,
+        maeAtipica: `{{ $json.data.maeAtipica || '' }}`,
+        vitimaViolencia: `{{ $json.data.vitimaViolencia || '' }}`,
+        necessidadesEspeciais: `{{ $json.data.necessidadesEspeciais || '' }}`,
+      };
+
+      let prefillValues = sanitizePrefillObject(rawPrefillValues);
+      if (!hasPrefillContent(prefillValues)) {
+        prefillValues = {};
+      }
+
+      if (!hasPrefillContent(prefillValues)) {
+        const fallbackSources = [
+          window.prefillPayload,
+          window.initialPrefillPayload,
+          window.initialPayload,
+          window.prefillValues,
+        ];
+        for (const source of fallbackSources) {
+          if (!source) continue;
+          let candidate = source;
+          if (typeof candidate === "string") {
+            try {
+              candidate = JSON.parse(candidate);
+            } catch (error) {
+              candidate = null;
+            }
+          }
+          if (Array.isArray(candidate) && candidate.length) {
+            const firstItem = candidate[0];
+            candidate =
+              firstItem && typeof firstItem === "object"
+                ? firstItem.data && typeof firstItem.data === "object"
+                  ? firstItem.data
+                  : firstItem
+                : null;
+          }
+          const sanitizedCandidate = sanitizePrefillObject(candidate);
+          if (hasPrefillContent(sanitizedCandidate)) {
+            prefillValues = sanitizedCandidate;
+            break;
+          }
+        }
+      }
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
       const numeroInput = document.getElementById("numero");
@@ -1701,7 +1858,11 @@
         if (!values || typeof values !== "object") {
           return;
         }
-        prefillValues = values;
+        const sanitized = sanitizePrefillObject(values);
+        if (!hasPrefillContent(sanitized)) {
+          return;
+        }
+        prefillValues = sanitized;
         applyPrefillValues();
         updateSubmitState();
       };
