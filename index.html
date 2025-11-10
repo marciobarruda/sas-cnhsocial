@@ -1530,9 +1530,9 @@
 
       const showFeedbackModal = ({ type, message, items = [], focusElement = null }) => {
         const isSuccess = type === "success";
-        feedbackModalHeader.classList.toggle("text-danger", !isSuccess);
-        feedbackModalHeader.classList.toggle("text-success", isSuccess);
-        feedbackModalEmoji.textContent = isSuccess ? "✅" : "⚠️";
+        feedbackModalHeader.classList.remove("text-danger", "text-success");
+        feedbackModalHeader.classList.add(isSuccess ? "text-success" : "text-danger");
+        feedbackModalEmoji.textContent = isSuccess ? "🎉" : "🚨";
         feedbackModalLabel.textContent = isSuccess ? "Sucesso" : "Alerta";
         feedbackModalMessage.textContent = message;
         feedbackModalList.innerHTML = "";
