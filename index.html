@@ -989,6 +989,40 @@
     <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script>
+      const prefillValues = {
+        nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
+        cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
+        nis: {{ JSON.stringify((($json.data || {}).nis) || "") }},
+        dataNascimento: {{ JSON.stringify((($json.data || {}).dataNascimento) || "") }},
+        genero: {{ JSON.stringify((($json.data || {}).genero) || "") }},
+        nomeSocial: {{ JSON.stringify((($json.data || {}).nomeSocial) || "") }},
+        cep: {{ JSON.stringify((($json.data || {}).cep) || "") }},
+        logradouro: {{ JSON.stringify((($json.data || {}).logradouro) || "") }},
+        numero: {{ JSON.stringify((($json.data || {}).numero) || "") }},
+        complemento: {{ JSON.stringify((($json.data || {}).complemento) || "") }},
+        bairro: {{ JSON.stringify((($json.data || {}).bairro) || "") }},
+        cidade: {{ JSON.stringify((($json.data || {}).cidade) || "") }},
+        uf: {{ JSON.stringify((($json.data || {}).uf) || "") }},
+        enderecoAtualizado: {{ JSON.stringify((($json.data || {}).enderecoAtualizado) || "") }},
+        telefone: {{ JSON.stringify((($json.data || {}).telefone) || "") }},
+        email: {{ JSON.stringify((($json.data || {}).email) || "") }},
+        situacaoTrabalho: {{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }},
+        mulherChefe: {{ JSON.stringify((($json.data || {}).mulherChefe) || "") }},
+        acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
+        dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
+        rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaFamiliar) != null ? ($json.data || {}).rendaFamiliar : "") }},
+        racaCor: {{ JSON.stringify((($json.data || {}).racaCor) || "") }},
+        pessoaPretaParda: {{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }},
+        pessoaIndigena: {{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }},
+        pessoaTrans: {{ JSON.stringify((($json.data || {}).pessoaTrans) || "") }},
+        egressoSocioeducativo: {{ JSON.stringify((($json.data || {}).egressoSocioeducativo) || "") }},
+        pessoaQuilombola: {{ JSON.stringify((($json.data || {}).pessoaQuilombola) || "") }},
+        pessoaRua: {{ JSON.stringify((($json.data || {}).pessoaRua) || "") }},
+        pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
+        maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
+        vitimaViolencia: {{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }},
+        necessidadesEspeciais: {{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }},
+      };
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
       const numeroInput = document.getElementById("numero");
@@ -1431,6 +1465,113 @@
         setSubmitButtonState(invalidFields.length === 0);
       };
 
+      const applyPrefillValues = () => {
+        if (!prefillValues || typeof prefillValues !== "object") {
+          return;
+        }
+        const hasContent = Object.values(prefillValues).some((value) => {
+          if (value == null) return false;
+          if (typeof value === "string") return value.trim() !== "";
+          return true;
+        });
+        if (!hasContent) {
+          return;
+        }
+
+        const setTextValue = (id, value) => {
+          if (value == null) return;
+          if (typeof value === "string" && value.trim() === "") return;
+          const element = document.getElementById(id);
+          if (!element) return;
+          element.value = value;
+        };
+
+        const setMaskedValue = (maskInstance, fallbackId, value) => {
+          if (value == null) return;
+          if (typeof value === "string" && value.trim() === "") return;
+          if (maskInstance && typeof maskInstance.updateValue === "function") {
+            maskInstance.value = value;
+            maskInstance.updateValue();
+          } else if (maskInstance) {
+            maskInstance.value = value;
+          } else if (fallbackId) {
+            const element = document.getElementById(fallbackId);
+            if (element) {
+              element.value = value;
+            }
+          }
+        };
+
+        const setSelectValue = (id, value, triggerChange = false) => {
+          if (value == null) return;
+          if (typeof value === "string" && value.trim() === "") return;
+          const element = document.getElementById(id);
+          if (!element) return;
+          element.value = value;
+          if (triggerChange) {
+            element.dispatchEvent(new Event("change"));
+          }
+        };
+
+        const setCheckboxValue = (id, value) => {
+          if (value == null) return;
+          const element = document.getElementById(id);
+          if (!element) return;
+          const normalized = typeof value === "string" ? value.toLowerCase() : value;
+          const shouldCheck = normalized === "sim" || normalized === "true" || normalized === true || normalized === 1 || normalized === "1";
+          element.checked = shouldCheck;
+          element.dispatchEvent(new Event("change"));
+        };
+
+        setTextValue("nomeCompleto", prefillValues.nomeCompleto);
+        if (prefillValues.cpf && prefillValues.cpf.trim() !== "") {
+          setMaskedValue(maskCpf, "cpf", prefillValues.cpf);
+        }
+        setTextValue("nis", prefillValues.nis);
+        setTextValue("dataNascimento", prefillValues.dataNascimento);
+        setSelectValue("genero", prefillValues.genero, true);
+        setTextValue("nomeSocial", prefillValues.nomeSocial);
+        if (prefillValues.cep && prefillValues.cep.trim() !== "") {
+          setMaskedValue(maskCep, "cep", prefillValues.cep);
+        }
+        setTextValue("logradouro", prefillValues.logradouro);
+        setTextValue("numero", prefillValues.numero);
+        setTextValue("complemento", prefillValues.complemento);
+        setTextValue("bairro", prefillValues.bairro);
+        setTextValue("cidade", prefillValues.cidade);
+        setSelectValue("uf", prefillValues.uf);
+        setCheckboxValue("enderecoAtualizado", prefillValues.enderecoAtualizado);
+        if (prefillValues.telefone && prefillValues.telefone.trim() !== "") {
+          setMaskedValue(maskTelefone, "telefone", prefillValues.telefone);
+        }
+        setTextValue("email", prefillValues.email);
+        setTextValue("emailConfirm", prefillValues.email);
+        setSelectValue("situacaoTrabalho", prefillValues.situacaoTrabalho);
+        setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
+        setCheckboxValue("acolhimento", prefillValues.acolhimento);
+        setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
+        setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
+        setSelectValue("racaCor", prefillValues.racaCor);
+        setCheckboxValue("pessoaPretaParda", prefillValues.pessoaPretaParda);
+        setCheckboxValue("pessoaIndigena", prefillValues.pessoaIndigena);
+        setCheckboxValue("pessoaTrans", prefillValues.pessoaTrans);
+        setCheckboxValue("egressoSocioeducativo", prefillValues.egressoSocioeducativo);
+        setCheckboxValue("pessoaQuilombola", prefillValues.pessoaQuilombola);
+        setCheckboxValue("pessoaRua", prefillValues.pessoaRua);
+        setSelectValue("pcd", prefillValues.pcd, true);
+        setSelectValue("maeAtipica", prefillValues.maeAtipica, true);
+        setSelectValue("vitimaViolencia", prefillValues.vitimaViolencia, true);
+        setTextValue("necessidadesEspeciais", prefillValues.necessidadesEspeciais);
+
+        if (validation) {
+          if (typeof validation.refreshAll === "function") {
+            validation.refreshAll();
+          } else if (typeof validation.refresh === "function") {
+            validation.refresh();
+          }
+        }
+      };
+
       validation
         .addField("#genero", [{ rule: "required", errorMessage: "Informe a identificação de gênero" }])
         .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
@@ -1752,6 +1893,7 @@
         setTimeout(() => updateSubmitState(), 0);
       });
 
+      applyPrefillValues();
       updateSubmitState();
     </script>
   </body>
