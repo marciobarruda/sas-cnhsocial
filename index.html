@@ -1265,11 +1265,29 @@
       const btnAtualizarEndereco = document.getElementById("btnAtualizarEndereco");
       let enderecoEdicaoAtiva = false;
 
-      const maskCpf = IMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
-      const maskCep = IMask(cepInput, { mask: "00000-000" });
-      const maskTelefone = IMask(document.getElementById("telefone"), {
+      const createMask = (element, options) => {
+        if (typeof IMask === "function" && element) {
+          try {
+            return IMask(element, options);
+          } catch (error) {
+            console.error("Falha ao aplicar máscara", error);
+          }
+        }
+        return null;
+      };
+
+      const maskCpf = createMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
+      const maskCep = createMask(cepInput, { mask: "00000-000" });
+      const maskTelefone = createMask(document.getElementById("telefone"), {
         mask: "(00) 00000-0000",
       });
+
+      const getCepDigits = () => {
+        if (maskCep && typeof maskCep.unmaskedValue === "string") {
+          return maskCep.unmaskedValue;
+        }
+        return (cepInput.value || "").replace(/\D/g, "");
+      };
 
       if (numeroInput) {
         numeroInput.addEventListener("input", () => {
@@ -1362,17 +1380,30 @@
         updateSubmitState();
       });
 
-      maskCep.on("accept", () => {
+      const handleCepAccept = () => {
         if (!enderecoEdicaoAtiva) return;
-        if (maskCep.unmaskedValue.length < 8) {
+        if (getCepDigits().length < 8) {
           atualizarStatusCep("Digite o CEP completo para buscar automaticamente.", "text-muted");
         }
-      });
+      };
 
-      maskCep.on("complete", () => {
+      const handleCepComplete = () => {
         if (!enderecoEdicaoAtiva) return;
-        consultarCepBrasilApi(maskCep.unmaskedValue);
-      });
+        const digits = getCepDigits();
+        if (digits.length === 8) {
+          consultarCepBrasilApi(digits);
+        }
+      };
+
+      if (maskCep && typeof maskCep.on === "function") {
+        maskCep.on("accept", handleCepAccept);
+        maskCep.on("complete", handleCepComplete);
+      } else if (cepInput) {
+        cepInput.addEventListener("input", () => {
+          handleCepAccept();
+          handleCepComplete();
+        });
+      }
 
       const toggleFileSection = (condition, wrapperId) => {
         const wrapper = document.getElementById(wrapperId);
@@ -2038,18 +2069,18 @@
         return Array.from(invalidMap.values());
       };
 
-      validation = new JustValidate(form, {
-        errorFieldCssClass: "js-validate-error-field",
-        errorLabelCssClass: "error-text d-none",
-        focusInvalidField: false,
-        lockForm: true,
-      });
+      if (typeof JustValidate === "function" && form) {
+        validation = new JustValidate(form, {
+          errorFieldCssClass: "js-validate-error-field",
+          errorLabelCssClass: "error-text d-none",
+          focusInvalidField: false,
+          lockForm: true,
+        });
+      } else {
+        console.warn("Biblioteca JustValidate não carregada. Prosseguindo com validação customizada.");
+      }
 
       const updateSubmitState = () => {
-        if (!validation) {
-          setSubmitButtonState(false);
-          return;
-        }
         const extraErrors = validateAdditionalRules();
         const invalidFields = getInvalidFields(extraErrors);
         setSubmitButtonState(invalidFields.length === 0);
@@ -2165,95 +2196,101 @@
         }
       };
 
-      validation
-        .addField("#genero", [{ rule: "required", errorMessage: "Informe a identificação de gênero" }])
-        .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
-        .addField("#telefone", [
-          { rule: "required", errorMessage: "Informe um telefone válido" },
-          {
-            validator: (value) => value.replace(/\D/g, "").length >= 10,
-            errorMessage: "Informe DDD e número",
-          },
-        ])
-        .addField("#email", [{ rule: "required" }, { rule: "email", errorMessage: "E-mail inválido" }])
-        .addField("#emailConfirm", [
-          { rule: "required", errorMessage: "Repita o e-mail informado" },
-          {
-            validator: (value) => value.trim() === (document.getElementById("email").value || "").trim(),
-            errorMessage: "Os e-mails informados devem coincidir",
-          },
-        ])
-        .addField("#preferenciaContato", [{ rule: "required" }])
-        .addField("#cep", [
-          {
-            validator: () => {
-              if (!enderecoEdicaoAtiva) return true;
-              return maskCep.unmaskedValue.length === 8;
+      if (validation) {
+        validation
+          .addField("#genero", [{ rule: "required", errorMessage: "Informe a identificação de gênero" }])
+          .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
+          .addField("#telefone", [
+            { rule: "required", errorMessage: "Informe um telefone válido" },
+            {
+              validator: (value) => value.replace(/\D/g, "").length >= 10,
+              errorMessage: "Informe DDD e número",
             },
-            errorMessage: "Informe um CEP válido",
-          },
-        ])
-        .addField("#logradouro", [
-          {
-            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
-            errorMessage: "Informe o logradouro",
-          },
-        ])
-        .addField("#numero", [
-          {
-            validator: () => {
-              if (!numeroInput || numeroInput.readOnly) return true;
-              const valor = numeroInput.value.trim();
-              return /^(?:\d+|S\/N)$/.test(valor) && valor.length > 0;
+          ])
+          .addField("#email", [{ rule: "required" }, { rule: "email", errorMessage: "E-mail inválido" }])
+          .addField("#emailConfirm", [
+            { rule: "required", errorMessage: "Repita o e-mail informado" },
+            {
+              validator: (value) => value.trim() === (document.getElementById("email").value || "").trim(),
+              errorMessage: "Os e-mails informados devem coincidir",
             },
-            errorMessage: "Informe o número ou S/N",
-          },
-        ])
-        .addField("#bairro", [
-          {
-            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
-            errorMessage: "Informe o bairro",
-          },
-        ])
-        .addField("#cidade", [
-          {
-            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
-            errorMessage: "Informe o município",
-          },
-        ])
-        .addField("#rendaFamiliar", [
-          { rule: "required", errorMessage: "Informe a renda familiar" },
-          {
-            validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
-            errorMessage: "Valor inválido",
-          },
-        ])
-        .addField("#pcd", [{ rule: "required" }])
-        .addField("#maeAtipica", [{ rule: "required" }])
-        .addField("#vitimaViolencia", [{ rule: "required" }])
-        .addField("#racaCor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
-        .addField("#categoria", [{ rule: "required" }])
-        .addField("#turno", [{ rule: "required" }])
-        .addField("#polo", [{ rule: "required" }])
-        .addField("#docIdentidade", [
-          { rule: "required", errorMessage: "Anexe um documento oficial" },
-          {
-            rule: "files",
-            value: {
-              files: {
-                extensions: ["pdf", "jpg", "jpeg", "png"],
-                maxSize: 5 * 1024 * 1024,
+          ])
+          .addField("#preferenciaContato", [{ rule: "required" }])
+          .addField("#cep", [
+            {
+              validator: () => {
+                if (!enderecoEdicaoAtiva) return true;
+                return getCepDigits().length === 8;
               },
+              errorMessage: "Informe um CEP válido",
             },
-            errorMessage: "Formato ou tamanho inválido (máx. 5 MB)",
-          },
-        ])
-        .addField("#lgpd", [{ rule: "required", errorMessage: "Confirme o consentimento LGPD" }])
-        .addField("#veracidade", [{ rule: "required", errorMessage: "Confirme a declaração de veracidade" }]);
+          ])
+          .addField("#logradouro", [
+            {
+              validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+              errorMessage: "Informe o logradouro",
+            },
+          ])
+          .addField("#numero", [
+            {
+              validator: () => {
+                if (!numeroInput || numeroInput.readOnly) return true;
+                const valor = numeroInput.value.trim();
+                return /^(?:\d+|S\/N)$/.test(valor) && valor.length > 0;
+              },
+              errorMessage: "Informe o número ou S/N",
+            },
+          ])
+          .addField("#bairro", [
+            {
+              validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+              errorMessage: "Informe o bairro",
+            },
+          ])
+          .addField("#cidade", [
+            {
+              validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+              errorMessage: "Informe o município",
+            },
+          ])
+          .addField("#rendaFamiliar", [
+            { rule: "required", errorMessage: "Informe a renda familiar" },
+            {
+              validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+              errorMessage: "Valor inválido",
+            },
+          ])
+          .addField("#pcd", [{ rule: "required" }])
+          .addField("#maeAtipica", [{ rule: "required" }])
+          .addField("#vitimaViolencia", [{ rule: "required" }])
+          .addField("#racaCor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
+          .addField("#categoria", [{ rule: "required" }])
+          .addField("#turno", [{ rule: "required" }])
+          .addField("#polo", [{ rule: "required" }])
+          .addField("#docIdentidade", [
+            { rule: "required", errorMessage: "Anexe um documento oficial" },
+            {
+              rule: "files",
+              value: {
+                files: {
+                  extensions: ["pdf", "jpg", "jpeg", "png"],
+                  maxSize: 5 * 1024 * 1024,
+                },
+              },
+              errorMessage: "Formato ou tamanho inválido (máx. 5 MB)",
+            },
+          ])
+          .addField("#lgpd", [{ rule: "required", errorMessage: "Confirme o consentimento LGPD" }])
+          .addField("#veracidade", [{ rule: "required", errorMessage: "Confirme a declaração de veracidade" }]);
+      }
 
       const handleFormInteraction = async (event) => {
         const target = event.target;
         if (!target) return;
+        if (!validation) {
+          updateSubmitState();
+          return;
+        }
         const selector = target.id ? `#${target.id}` : null;
         if (selector && validation.fields[selector] && typeof validation.revalidateField === "function") {
           try {
