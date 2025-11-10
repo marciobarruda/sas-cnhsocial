@@ -163,6 +163,17 @@
         box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
       }
 
+      input[readonly],
+      select[aria-readonly="true"] {
+        background-color: rgba(0, 83, 164, 0.08);
+        cursor: not-allowed;
+      }
+
+      select[aria-readonly="true"] {
+        pointer-events: none;
+        user-select: none;
+      }
+
       #publicacoes-list li + li {
         margin-top: 0.75rem;
       }
@@ -672,6 +683,7 @@
                   id="racaCor"
                   name="racaCor"
                   aria-describedby="racaCorHelp"
+                  aria-readonly="true"
                   data-required-field="true"
                   required
                 >
@@ -683,7 +695,9 @@
                   <option value="indigena">Indígena</option>
                   <option value="nao_informar">Prefiro não informar</option>
                 </select>
-                <small id="racaCorHelp" class="form-text">Informação usada para ranqueamento e políticas afirmativas conforme edital.</small>
+                <small id="racaCorHelp" class="form-text">
+                  Informação carregada a partir do CadÚnico para ranqueamento e políticas afirmativas conforme edital.
+                </small>
               </div>
               <fieldset class="col-12 col-md-6">
                 <legend class="form-label mb-1">Identidade e grupos prioritários</legend>
@@ -989,40 +1003,116 @@
     <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script>
-      const prefillValues = {
-        nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
-        cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
-        nis: {{ JSON.stringify((($json.data || {}).nis) || "") }},
-        dataNascimento: {{ JSON.stringify((($json.data || {}).dataNascimento) || "") }},
-        genero: {{ JSON.stringify((($json.data || {}).genero) || "") }},
-        nomeSocial: {{ JSON.stringify((($json.data || {}).nomeSocial) || "") }},
-        cep: {{ JSON.stringify((($json.data || {}).cep) || "") }},
-        logradouro: {{ JSON.stringify((($json.data || {}).logradouro) || "") }},
-        numero: {{ JSON.stringify((($json.data || {}).numero) || "") }},
-        complemento: {{ JSON.stringify((($json.data || {}).complemento) || "") }},
-        bairro: {{ JSON.stringify((($json.data || {}).bairro) || "") }},
-        cidade: {{ JSON.stringify((($json.data || {}).cidade) || "") }},
-        uf: {{ JSON.stringify((($json.data || {}).uf) || "") }},
-        enderecoAtualizado: {{ JSON.stringify((($json.data || {}).enderecoAtualizado) || "") }},
-        telefone: {{ JSON.stringify((($json.data || {}).telefone) || "") }},
-        email: {{ JSON.stringify((($json.data || {}).email) || "") }},
-        situacaoTrabalho: {{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }},
-        mulherChefe: {{ JSON.stringify((($json.data || {}).mulherChefe) || "") }},
-        acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
-        dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
-        rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaFamiliar) != null ? ($json.data || {}).rendaFamiliar : "") }},
-        racaCor: {{ JSON.stringify((($json.data || {}).racaCor) || "") }},
-        pessoaPretaParda: {{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }},
-        pessoaIndigena: {{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }},
-        pessoaTrans: {{ JSON.stringify((($json.data || {}).pessoaTrans) || "") }},
-        egressoSocioeducativo: {{ JSON.stringify((($json.data || {}).egressoSocioeducativo) || "") }},
-        pessoaQuilombola: {{ JSON.stringify((($json.data || {}).pessoaQuilombola) || "") }},
-        pessoaRua: {{ JSON.stringify((($json.data || {}).pessoaRua) || "") }},
-        pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
-        maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
-        vitimaViolencia: {{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }},
-        necessidadesEspeciais: {{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }},
+      const resolvePrefillValues = () => {
+        const rawExpression = `{{ JSON.stringify($json.data || {}) }}`.trim();
+        if (rawExpression && !rawExpression.startsWith("{{")) {
+          try {
+            const parsed = JSON.parse(rawExpression || "{}");
+            if (parsed && typeof parsed === "object") {
+              return parsed;
+            }
+          } catch (error) {
+            console.warn("Não foi possível interpretar os dados de pré-preenchimento provenientes do n8n.", error);
+          }
+        }
+
+        const expressionSource = {
+          nomeCompleto: `{{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }}`,
+          cpf: `{{ JSON.stringify((($json.data || {}).cpf) || "") }}`,
+          nis: `{{ JSON.stringify((($json.data || {}).nis) || "") }}`,
+          dataNascimento: `{{ JSON.stringify((($json.data || {}).dataNascimento) || "") }}`,
+          genero: `{{ JSON.stringify((($json.data || {}).genero) || "") }}`,
+          nomeSocial: `{{ JSON.stringify((($json.data || {}).nomeSocial) || "") }}`,
+          cep: `{{ JSON.stringify((($json.data || {}).cep) || "") }}`,
+          logradouro: `{{ JSON.stringify((($json.data || {}).logradouro) || "") }}`,
+          numero: `{{ JSON.stringify((($json.data || {}).numero) || "") }}`,
+          complemento: `{{ JSON.stringify((($json.data || {}).complemento) || "") }}`,
+          bairro: `{{ JSON.stringify((($json.data || {}).bairro) || "") }}`,
+          cidade: `{{ JSON.stringify((($json.data || {}).cidade) || "") }}`,
+          uf: `{{ JSON.stringify((($json.data || {}).uf) || "") }}`,
+          enderecoAtualizado: `{{ JSON.stringify((($json.data || {}).enderecoAtualizado) || "") }}`,
+          telefone: `{{ JSON.stringify((($json.data || {}).telefone) || "") }}`,
+          email: `{{ JSON.stringify((($json.data || {}).email) || "") }}`,
+          preferenciaContato: `{{ JSON.stringify((($json.data || {}).preferenciaContato) || "") }}`,
+          situacaoTrabalho: `{{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }}`,
+          mulherChefe: `{{ JSON.stringify((($json.data || {}).mulherChefe) || "") }}`,
+          acolhimento: `{{ JSON.stringify((($json.data || {}).acolhimento) || "") }}`,
+          dependenteTratamento: `{{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }}`,
+          rendaFamiliar: `{{ JSON.stringify((($json.data || {}).rendaFamiliar) != null ? ($json.data || {}).rendaFamiliar : "") }}`,
+          racaCor: `{{ JSON.stringify((($json.data || {}).racaCor) || "") }}`,
+          pessoaPretaParda: `{{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }}`,
+          pessoaIndigena: `{{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }}`,
+          pessoaTrans: `{{ JSON.stringify((($json.data || {}).pessoaTrans) || "") }}`,
+          egressoSocioeducativo: `{{ JSON.stringify((($json.data || {}).egressoSocioeducativo) || "") }}`,
+          pessoaQuilombola: `{{ JSON.stringify((($json.data || {}).pessoaQuilombola) || "") }}`,
+          pessoaRua: `{{ JSON.stringify((($json.data || {}).pessoaRua) || "") }}`,
+          pcd: `{{ JSON.stringify((($json.data || {}).pcd) || "") }}`,
+          maeAtipica: `{{ JSON.stringify((($json.data || {}).maeAtipica) || "") }}`,
+          vitimaViolencia: `{{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }}`,
+          necessidadesEspeciais: `{{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }}`,
+        };
+
+        const expressionValues = {};
+        let expressionHasData = false;
+        Object.entries(expressionSource).forEach(([key, expression]) => {
+          if (typeof expression !== "string") {
+            return;
+          }
+          const trimmed = expression.trim();
+          if (!trimmed || trimmed.startsWith("{{")) {
+            return;
+          }
+          try {
+            const parsed = JSON.parse(trimmed);
+            if (parsed !== "" && parsed !== null && parsed !== undefined) {
+              expressionHasData = true;
+            }
+            expressionValues[key] = parsed;
+          } catch (error) {
+            expressionValues[key] = trimmed;
+            if (trimmed !== "") {
+              expressionHasData = true;
+            }
+          }
+        });
+        if (expressionHasData) {
+          return expressionValues;
+        }
+
+        let globalPayload = window.prefillPayload || window.initialPrefillPayload || window.initialPayload;
+        if (typeof globalPayload === "string") {
+          try {
+            globalPayload = JSON.parse(globalPayload);
+          } catch (error) {
+            globalPayload = null;
+          }
+        }
+        if (Array.isArray(globalPayload) && globalPayload.length) {
+          const firstItem = globalPayload[0];
+          if (firstItem && typeof firstItem === "object") {
+            if (firstItem.data && typeof firstItem.data === "object") {
+              return firstItem.data;
+            }
+            return firstItem;
+          }
+        }
+
+        let globalValues = window.prefillValues;
+        if (typeof globalValues === "string") {
+          try {
+            globalValues = JSON.parse(globalValues);
+          } catch (error) {
+            globalValues = null;
+          }
+        }
+        if (globalValues && typeof globalValues === "object") {
+          return globalValues;
+        }
+
+        return {};
       };
+
+      let prefillValues = resolvePrefillValues();
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
       const numeroInput = document.getElementById("numero");
@@ -1072,6 +1162,25 @@
           document.getElementById("mulherChefe").checked = false;
         }
       });
+
+      const racaCorSelect = document.getElementById("racaCor");
+      if (racaCorSelect) {
+        const blockSelectInteraction = (event) => {
+          if (event.type === "keydown") {
+            if (event.key === "Tab" || event.key === "Shift") {
+              return;
+            }
+          }
+          event.preventDefault();
+        };
+        racaCorSelect.addEventListener("mousedown", blockSelectInteraction);
+        racaCorSelect.addEventListener("keydown", blockSelectInteraction);
+        racaCorSelect.addEventListener("change", () => {
+          if (racaCorSelect.dataset.lockedValue) {
+            racaCorSelect.value = racaCorSelect.dataset.lockedValue;
+          }
+        });
+      }
 
       const atualizarStatusCep = (mensagem, classe) => {
         if (!cepStatus) return;
@@ -1483,21 +1592,23 @@
           if (typeof value === "string" && value.trim() === "") return;
           const element = document.getElementById(id);
           if (!element) return;
-          element.value = value;
+          const normalized = typeof value === "number" ? String(value) : value;
+          element.value = normalized;
         };
 
         const setMaskedValue = (maskInstance, fallbackId, value) => {
           if (value == null) return;
           if (typeof value === "string" && value.trim() === "") return;
+          const normalized = typeof value === "number" ? String(value) : value;
           if (maskInstance && typeof maskInstance.updateValue === "function") {
-            maskInstance.value = value;
+            maskInstance.value = normalized;
             maskInstance.updateValue();
           } else if (maskInstance) {
-            maskInstance.value = value;
+            maskInstance.value = normalized;
           } else if (fallbackId) {
             const element = document.getElementById(fallbackId);
             if (element) {
-              element.value = value;
+              element.value = normalized;
             }
           }
         };
@@ -1507,7 +1618,8 @@
           if (typeof value === "string" && value.trim() === "") return;
           const element = document.getElementById(id);
           if (!element) return;
-          element.value = value;
+          const normalized = typeof value === "number" ? String(value) : value;
+          element.value = normalized;
           if (triggerChange) {
             element.dispatchEvent(new Event("change"));
           }
@@ -1546,12 +1658,16 @@
         }
         setTextValue("email", prefillValues.email);
         setTextValue("emailConfirm", prefillValues.email);
+        setSelectValue("preferenciaContato", prefillValues.preferenciaContato);
         setSelectValue("situacaoTrabalho", prefillValues.situacaoTrabalho);
         setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
         setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
         setSelectValue("racaCor", prefillValues.racaCor);
+        if (racaCorSelect) {
+          racaCorSelect.dataset.lockedValue = racaCorSelect.value;
+        }
         setCheckboxValue("pessoaPretaParda", prefillValues.pessoaPretaParda);
         setCheckboxValue("pessoaIndigena", prefillValues.pessoaIndigena);
         setCheckboxValue("pessoaTrans", prefillValues.pessoaTrans);
@@ -1570,6 +1686,38 @@
             validation.refresh();
           }
         }
+      };
+
+      const updatePrefillFromSource = (values) => {
+        if (!values || typeof values !== "object") {
+          return;
+        }
+        prefillValues = values;
+        applyPrefillValues();
+        updateSubmitState();
+      };
+
+      window.setCnhSocialPrefill = (payload) => {
+        let normalizedPayload = payload;
+        if (typeof normalizedPayload === "string") {
+          try {
+            normalizedPayload = JSON.parse(normalizedPayload);
+          } catch (error) {
+            console.warn("Não foi possível interpretar o payload de pré-preenchimento informado dinamicamente.", error);
+            return;
+          }
+        }
+        if (Array.isArray(normalizedPayload) && normalizedPayload.length) {
+          const firstItem = normalizedPayload[0];
+          if (firstItem && typeof firstItem === "object") {
+            normalizedPayload =
+              firstItem.data && typeof firstItem.data === "object" ? firstItem.data : firstItem;
+          }
+        }
+        if (!normalizedPayload || typeof normalizedPayload !== "object") {
+          return;
+        }
+        updatePrefillFromSource(normalizedPayload);
       };
 
       validation
@@ -1687,7 +1835,10 @@
       form.addEventListener("change", handleFormInteraction, true);
       form.addEventListener("reset", () => {
         setSubmitButtonState(false);
-        setTimeout(() => updateSubmitState(), 0);
+        setTimeout(() => {
+          applyPrefillValues();
+          updateSubmitState();
+        }, 0);
       });
 
       submitButton.addEventListener("click", async (event) => {
@@ -1845,6 +1996,7 @@
         });
 
         form.reset();
+        applyPrefillValues();
         if (typeof validation.refreshAll === "function") {
           validation.refreshAll();
         } else if (typeof validation.refresh === "function") {
