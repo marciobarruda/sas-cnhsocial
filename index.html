@@ -153,14 +153,114 @@
         font-weight: 600;
       }
 
-      .btn-submit[aria-disabled="true"] {
+      .btn-submit.is-disabled {
         cursor: not-allowed;
         opacity: 0.65;
         box-shadow: none;
       }
 
-      .btn-submit[aria-disabled="true"]:focus-visible {
+      .btn-submit.is-disabled:focus-visible {
         box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background-color: rgba(17, 24, 39, 0.6);
+        z-index: 2000;
+      }
+
+      .modal-backdrop.is-open {
+        display: flex;
+      }
+
+      .modal-card {
+        width: min(32rem, 100%);
+        max-height: 90vh;
+        overflow-y: auto;
+        background: var(--surface-strong);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.28);
+        outline: none;
+        position: relative;
+      }
+
+      .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .title--alerta {
+        color: #c53030;
+      }
+
+      .title--sucesso {
+        color: #1b873f;
+      }
+
+      .modal-message {
+        margin-bottom: 1rem;
+        color: var(--text-strong);
+      }
+
+      .modal-list {
+        padding-left: 1.25rem;
+        margin: 0;
+        color: var(--text-strong);
+        list-style: disc;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+
+      .modal-close-button {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.5rem;
+        cursor: pointer;
+        line-height: 1;
+      }
+
+      .modal-close-button:focus-visible {
+        outline: 2px solid var(--brand-highlight);
+        outline-offset: 2px;
+      }
+
+      .error-text {
+        display: block;
+        margin-top: 0.35rem;
+        font-size: 0.85rem;
+        color: #c53030;
+      }
+
+      .is-invalid {
+        border-color: #c53030 !important;
+      }
+
+      .form-check-input.is-invalid {
+        border-color: #c53030;
+        box-shadow: none;
+      }
+
+      .form-check .error-text {
+        margin-left: 1.75rem;
       }
 
       #publicacoes-list li + li {
@@ -1114,24 +1214,6 @@
       </div>
     </main>
 
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true" data-bs-focus="false">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="feedbackModalHeader">
-              <span id="feedbackModalEmoji" aria-hidden="true">⚠️</span>
-              <span id="feedbackModalLabel">Alerta</span>
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-          </div>
-          <div class="modal-body">
-            <p id="feedbackModalMessage" class="mb-3">Por favor, preencha os campos obrigatórios destacados.</p>
-            <ul id="feedbackModalList" class="list-unstyled mb-0"></ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
@@ -1400,20 +1482,35 @@
 
       const form = document.getElementById("cnhSocialForm");
       const submitButton = document.getElementById("submitButton");
-      let submitReady = false;
       let validation;
+      let submitAttempted = false;
 
       const isElementVisible = (element) => {
         if (!element) return false;
+        if (element.hidden) return false;
+        if (element.getAttribute && element.getAttribute("aria-hidden") === "true") return false;
+        if (element.type === "hidden") return false;
         let current = element;
         while (current && current !== document.body) {
           if (current.hasAttribute && current.hasAttribute("hidden")) {
             return false;
           }
+          if (current.getAttribute && current.getAttribute("aria-hidden") === "true") {
+            return false;
+          }
           if (current.classList && current.classList.contains("d-none")) {
             return false;
           }
+          if (typeof window !== "undefined" && window.getComputedStyle) {
+            const styles = window.getComputedStyle(current);
+            if (styles.display === "none" || styles.visibility === "hidden") {
+              return false;
+            }
+          }
           current = current.parentElement;
+        }
+        if (typeof element.getClientRects === "function" && element.getClientRects().length === 0) {
+          return false;
         }
         return true;
       };
@@ -1440,44 +1537,235 @@
       };
 
       const setSubmitButtonState = (isReady) => {
-        submitReady = isReady;
         submitButton.setAttribute("data-ready", isReady ? "true" : "false");
         submitButton.setAttribute("aria-disabled", isReady ? "false" : "true");
-        submitButton.type = isReady ? "submit" : "button";
-        submitButton.classList.toggle("disabled", !isReady);
+        submitButton.classList.toggle("is-disabled", !isReady);
       };
 
       setSubmitButtonState(false);
-      const feedbackModalElement = document.getElementById("feedbackModal");
-      const feedbackModalHeader = document.getElementById("feedbackModalHeader");
-      const feedbackModalEmoji = document.getElementById("feedbackModalEmoji");
-      const feedbackModalLabel = document.getElementById("feedbackModalLabel");
-      const feedbackModalMessage = document.getElementById("feedbackModalMessage");
-      const feedbackModalList = document.getElementById("feedbackModalList");
-      const feedbackModalInstance = new bootstrap.Modal(feedbackModalElement);
-      let pendingFocusElement = null;
-      let pendingModalType = null;
-
-      feedbackModalElement.addEventListener("shown.bs.modal", () => {
-        if (pendingModalType === "alert") {
-          const firstItem = feedbackModalList.querySelector("li span");
-          if (firstItem) {
-            firstItem.setAttribute("tabindex", "-1");
-            firstItem.focus({ preventScroll: true });
-            setTimeout(() => firstItem.removeAttribute("tabindex"), 0);
+      const createFeedbackModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
           }
-        }
-      });
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.feedbackModal = "true";
+          backdrop.setAttribute("data-testid", "modal");
+          backdrop.setAttribute("hidden", "");
 
-      feedbackModalElement.addEventListener("hidden.bs.modal", () => {
-        const focusTarget = pendingFocusElement;
-        const modalType = pendingModalType;
-        pendingFocusElement = null;
-        pendingModalType = null;
-        if (focusTarget && modalType === "alert") {
-          setTimeout(() => focusTarget.focus({ preventScroll: true }), 100);
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "modalTitle");
+          card.setAttribute("aria-describedby", "modalMessage");
+          card.tabIndex = -1;
+
+          const closeIconButton = document.createElement("button");
+          closeIconButton.type = "button";
+          closeIconButton.className = "modal-close-button";
+          closeIconButton.setAttribute("aria-label", "Fechar modal");
+          closeIconButton.innerHTML = "&times;";
+
+          const title = document.createElement("p");
+          title.className = "modal-title";
+          title.id = "modalTitle";
+          title.setAttribute("data-testid", "modal-title");
+
+          const emojiSpan = document.createElement("span");
+          emojiSpan.setAttribute("aria-hidden", "true");
+
+          const titleText = document.createElement("span");
+
+          title.append(emojiSpan, titleText);
+
+          const message = document.createElement("p");
+          message.className = "modal-message";
+          message.id = "modalMessage";
+
+          const list = document.createElement("ul");
+          list.className = "modal-list";
+          list.setAttribute("data-testid", "lista-faltantes");
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const closeButton = document.createElement("button");
+          closeButton.type = "button";
+          closeButton.className = "btn btn-primary";
+          closeButton.textContent = "Fechar";
+
+          actions.append(closeButton);
+          card.append(closeIconButton, title, message, list, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = {
+            backdrop,
+            card,
+            closeIconButton,
+            closeButton,
+            emojiSpan,
+            titleText,
+            message,
+            list,
+          };
+          return modalElements;
+        };
+      })();
+
+      let activeModal = null;
+      let allowExternalFocusElement = null;
+
+      const getModalFocusableElements = (container) =>
+        Array.from(
+          container.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((element) => !element.hasAttribute("disabled") && !element.getAttribute("aria-hidden"));
+
+      const handleModalKeydown = (event) => {
+        if (!activeModal) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          activeModal.close();
+          return;
         }
-      });
+        if (event.key !== "Tab") {
+          return;
+        }
+        const focusable = getModalFocusableElements(activeModal.card);
+        if (!focusable.length) {
+          event.preventDefault();
+          activeModal.card.focus({ preventScroll: true });
+          return;
+        }
+        const currentIndex = focusable.indexOf(document.activeElement);
+        let nextIndex = 0;
+        if (event.shiftKey) {
+          nextIndex = currentIndex <= 0 ? focusable.length - 1 : currentIndex - 1;
+        } else {
+          nextIndex = currentIndex === focusable.length - 1 ? 0 : currentIndex + 1;
+        }
+        event.preventDefault();
+        focusable[nextIndex].focus({ preventScroll: true });
+      };
+
+      const handleModalFocusIn = (event) => {
+        if (!activeModal) return;
+        const { card } = activeModal;
+        if (card.contains(event.target)) {
+          return;
+        }
+        if (allowExternalFocusElement && event.target === allowExternalFocusElement) {
+          return;
+        }
+        const focusable = getModalFocusableElements(card);
+        const target = focusable[0] || card;
+        target.focus({ preventScroll: true });
+      };
+
+      const closeModal = () => {
+        if (!activeModal) return;
+        const { backdrop, returnFocusElement, cleanup } = activeModal;
+        if (typeof cleanup === "function") {
+          cleanup();
+        }
+        backdrop.classList.remove("is-open");
+        backdrop.setAttribute("hidden", "");
+        document.removeEventListener("keydown", handleModalKeydown, true);
+        document.removeEventListener("focusin", handleModalFocusIn, true);
+        document.body.style.removeProperty("overflow");
+        allowExternalFocusElement = null;
+        activeModal = null;
+        if (returnFocusElement && typeof returnFocusElement.focus === "function") {
+          returnFocusElement.focus({ preventScroll: true });
+        }
+      };
+
+      const showFeedbackModal = ({ type, message, items = [], focusElement = null, triggerElement = submitButton }) => {
+        const {
+          backdrop,
+          card,
+          closeIconButton,
+          closeButton,
+          emojiSpan,
+          titleText,
+          message: messageElement,
+          list,
+        } = createFeedbackModal();
+
+        const isSuccess = type === "success";
+        messageElement.textContent = message;
+        list.innerHTML = "";
+        if (items.length && !isSuccess) {
+          list.hidden = false;
+          items.forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            list.appendChild(li);
+          });
+        } else {
+          list.hidden = true;
+        }
+
+        emojiSpan.textContent = isSuccess ? "✅" : "⚠️";
+        titleText.textContent = isSuccess ? "Sucesso" : "Alerta";
+        titleText.classList.remove("title--sucesso", "title--alerta");
+        titleText.classList.add(isSuccess ? "title--sucesso" : "title--alerta");
+
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        allowExternalFocusElement = type === "alert" ? focusElement || null : null;
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          returnFocusElement: triggerElement || previousActive,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        if (type === "alert" && focusElement) {
+          focusElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => {
+            if (focusElement && typeof focusElement.focus === "function") {
+              focusElement.focus({ preventScroll: true });
+            }
+          }, 400);
+        }
+
+        const closeHandler = () => closeModal();
+        const onBackdropClick = (event) => {
+          if (event.target === backdrop) {
+            closeModal();
+          }
+        };
+
+        const cleanup = () => {
+          closeIconButton.removeEventListener("click", closeHandler);
+          closeButton.removeEventListener("click", closeHandler);
+          backdrop.removeEventListener("click", onBackdropClick);
+        };
+
+        closeIconButton.addEventListener("click", closeHandler);
+        closeButton.addEventListener("click", closeHandler);
+        backdrop.addEventListener("click", onBackdropClick);
+
+        activeModal.cleanup = cleanup;
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
 
       const fieldLabels = {
         "#cpf": "CPF",
@@ -1514,71 +1802,167 @@
         "#cnhArquivo": "Arquivo da CNH",
       };
 
+      const humanizeName = (value) =>
+        value
+          .split(/[_-]+/)
+          .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+          .join(" ");
+
       const getFieldLabel = (selector) => {
         if (fieldLabels[selector]) {
           return fieldLabels[selector];
         }
-        const element = form.querySelector(selector);
-        if (element && element.id) {
-          const associatedLabel = form.querySelector(`label[for="${element.id}"]`);
-          if (associatedLabel) {
-            return associatedLabel.textContent.trim();
+        let element;
+        try {
+          element = form.querySelector(selector);
+        } catch (error) {
+          element = null;
+        }
+        if (element) {
+          if (element.id) {
+            const associatedLabel = form.querySelector(`label[for="${element.id}"]`);
+            if (associatedLabel) {
+              return associatedLabel.textContent.trim();
+            }
+          }
+          const ariaLabel = element.getAttribute("aria-label");
+          if (ariaLabel) {
+            return ariaLabel.trim();
+          }
+          const placeholder = element.getAttribute("placeholder");
+          if (placeholder) {
+            return placeholder.trim();
+          }
+          if (element.name) {
+            return humanizeName(element.name);
           }
         }
-        return element?.name || selector;
+        return selector;
       };
 
-      const showFeedbackModal = ({ type, message, items = [], focusElement = null }) => {
-        const isSuccess = type === "success";
-        feedbackModalHeader.classList.remove("text-danger", "text-success");
-        feedbackModalHeader.classList.add(isSuccess ? "text-success" : "text-danger");
-        feedbackModalEmoji.textContent = isSuccess ? "🎉" : "🚨";
-        feedbackModalLabel.textContent = isSuccess ? "Sucesso" : "Alerta";
-        feedbackModalMessage.textContent = message;
-        feedbackModalList.innerHTML = "";
-        if (items.length) {
-          feedbackModalList.classList.remove("d-none");
-          items.forEach((item) => {
-            const li = document.createElement("li");
-            li.className = "d-flex align-items-start gap-2 mb-1";
-            const icon = document.createElement("i");
-            icon.className = isSuccess
-              ? "bi bi-check-circle-fill text-success mt-1"
-              : "bi bi-exclamation-triangle-fill text-danger mt-1";
-            icon.setAttribute("aria-hidden", "true");
-            const span = document.createElement("span");
-            span.textContent = item;
-            li.append(icon, span);
-            feedbackModalList.appendChild(li);
+      const getElementKey = (element) => {
+        if (!element) return null;
+        return element.id || element.name || null;
+      };
+
+      const getRequiredElements = () => {
+        const elements = new Set();
+        form.querySelectorAll("input[required], select[required], textarea[required]").forEach((item) => {
+          elements.add(item);
+        });
+        form.querySelectorAll("[data-required-field=\"true\"]").forEach((item) => {
+          elements.add(item);
+        });
+        return Array.from(elements);
+      };
+
+      const getGroupElements = (name) =>
+        Array.from(form.querySelectorAll(`[name='${CSS.escape(name)}']`));
+
+      const clearFieldError = (element) => {
+        const key = getElementKey(element);
+        if (!key) return;
+        if (element && (element.type === "checkbox" || element.type === "radio")) {
+          const group = element.name ? getGroupElements(element.name) : [element];
+          group.forEach((input) => {
+            input.classList.remove("is-invalid", "js-validate-error-field");
           });
-        } else {
-          feedbackModalList.classList.add("d-none");
+        } else if (element) {
+          element.classList.remove("is-invalid", "js-validate-error-field");
         }
-        pendingFocusElement = focusElement;
-        pendingModalType = type;
-        feedbackModalInstance.show();
+        form.querySelectorAll(`.error-text[data-error-for='${CSS.escape(key)}']`).forEach((node) => node.remove());
       };
 
-      validation = new JustValidate(form, {
-        errorFieldCssClass: "is-invalid",
-        errorLabelCssClass: "text-danger mt-1",
-        focusInvalidField: false,
-        lockForm: true,
-      });
+      const showFieldError = (element, message, groupElements = null) => {
+        if (!element) return;
+        const key = getElementKey(element);
+        if (!key) return;
+        const targets = Array.isArray(groupElements) && groupElements.length ? groupElements : [element];
+        targets.forEach((target) => target.classList.add("is-invalid"));
+        const errorMessage = message || "Preenchimento obrigatório";
+        let container = null;
+        if (Array.isArray(groupElements) && groupElements.length) {
+          container = element.closest("fieldset") || element.closest(".form-check")?.parentElement || element.closest(".col-12");
+        }
+        if (!container && (element.type === "checkbox" || element.type === "radio")) {
+          container = element.closest(".form-check") || element.parentElement;
+        }
+        if (!container) {
+          container = element.parentElement || element;
+        }
+        let error = container.querySelector(`.error-text[data-error-for='${CSS.escape(key)}']`);
+        if (!error) {
+          error = document.createElement("small");
+          error.className = "error-text";
+          error.dataset.errorFor = key;
+          if (element.type === "checkbox" || element.type === "radio" || (Array.isArray(groupElements) && groupElements.length)) {
+            container.appendChild(error);
+          } else {
+            element.insertAdjacentElement("afterend", error);
+          }
+        }
+        error.textContent = errorMessage;
+      };
 
-      const collectInvalidFields = (additionalErrors = []) => {
-        const invalidMap = new Map();
-        Object.entries(validation.fields).forEach(([selector, field]) => {
-          if (!field.isValid) {
-            invalidMap.set(selector, {
-              selector,
-              element: field.elem,
-              label: getFieldLabel(selector),
-            });
+      const applyValidationUI = (invalidFields) => {
+        const trackedElements = new Set(getRequiredElements());
+        form.querySelectorAll(".is-invalid").forEach((element) => trackedElements.add(element));
+        form.querySelectorAll(".error-text[data-error-for]").forEach((node) => {
+          const key = node.getAttribute("data-error-for");
+          if (!key) return;
+          const elementById = form.querySelector(`#${CSS.escape(key)}`);
+          if (elementById) {
+            trackedElements.add(elementById);
+            return;
+          }
+          const elementsByName = form.querySelectorAll(`[name='${CSS.escape(key)}']`);
+          if (elementsByName.length) {
+            elementsByName.forEach((el) => trackedElements.add(el));
           }
         });
-        const requiredElements = Array.from(form.querySelectorAll("[data-required-field=\"true\"]"));
-        requiredElements.forEach((element) => {
+        invalidFields.forEach((field) => {
+          if (field.element) {
+            trackedElements.add(field.element);
+          }
+          if (Array.isArray(field.groupElements)) {
+            field.groupElements.forEach((item) => trackedElements.add(item));
+          }
+        });
+        trackedElements.forEach((element) => clearFieldError(element));
+        invalidFields.forEach((field) => {
+          showFieldError(field.element, field.message, field.groupElements);
+        });
+      };
+
+      const getInvalidFields = (additionalErrors = []) => {
+        const invalidMap = new Map();
+        if (validation && validation.fields) {
+          Object.entries(validation.fields).forEach(([selector, field]) => {
+            if (!field.isValid) {
+              const messages = Array.isArray(field.messagesShown) ? field.messagesShown : [];
+              const message = messages.length ? messages[messages.length - 1] : "Preenchimento obrigatório";
+              invalidMap.set(selector, {
+                selector,
+                element: field.elem,
+                label: getFieldLabel(selector),
+                message,
+              });
+            }
+          });
+        }
+
+        const processedGroups = new Set();
+        getRequiredElements().forEach((element) => {
+          if (!element) return;
+          if (element.disabled || element.getAttribute("aria-hidden") === "true") {
+            return;
+          }
+          if (element.type === "hidden") {
+            return;
+          }
+          if (!isElementVisible(element)) {
+            return;
+          }
           const selector = element.id
             ? `#${element.id}`
             : element.name
@@ -1587,30 +1971,91 @@
           if (!selector || invalidMap.has(selector)) {
             return;
           }
+          if (element.type === "radio" || element.type === "checkbox") {
+            const name = element.name;
+            if (name) {
+              if (processedGroups.has(name)) {
+                return;
+              }
+              const group = getGroupElements(name).filter(
+                (input) => !input.disabled && isElementVisible(input) && input.type !== "hidden"
+              );
+              processedGroups.add(name);
+              if (group.length && !group.some((input) => input.checked)) {
+                invalidMap.set(selector, {
+                  selector,
+                  element: group[0],
+                  groupElements: group,
+                  label: getFieldLabel(selector),
+                  message: "Preenchimento obrigatório",
+                });
+              }
+              return;
+            }
+            if (!element.checked) {
+              invalidMap.set(selector, {
+                selector,
+                element,
+                label: getFieldLabel(selector),
+                message: "Preenchimento obrigatório",
+              });
+            }
+            return;
+          }
           if (!isFieldFilled(element)) {
             invalidMap.set(selector, {
               selector,
               element,
               label: getFieldLabel(selector),
+              message: "Preenchimento obrigatório",
             });
           }
         });
+
         additionalErrors.forEach((error) => {
-          if (!invalidMap.has(error.selector)) {
-            invalidMap.set(error.selector, error);
+          if (!error || !error.selector) return;
+          const existing = invalidMap.get(error.selector);
+          const element = error.element || (typeof error.selector === "string" ? form.querySelector(error.selector) : null);
+          if (existing) {
+            existing.message = error.message || existing.message;
+            if (element) {
+              existing.element = element;
+            }
+            if (Array.isArray(error.groupElements)) {
+              existing.groupElements = error.groupElements;
+            }
+            return;
           }
+          invalidMap.set(error.selector, {
+            selector: error.selector,
+            element,
+            label: error.label || getFieldLabel(error.selector),
+            message: error.message || "Preenchimento obrigatório",
+            groupElements: error.groupElements,
+          });
         });
+
         return Array.from(invalidMap.values());
       };
+
+      validation = new JustValidate(form, {
+        errorFieldCssClass: "js-validate-error-field",
+        errorLabelCssClass: "error-text d-none",
+        focusInvalidField: false,
+        lockForm: true,
+      });
 
       const updateSubmitState = () => {
         if (!validation) {
           setSubmitButtonState(false);
           return;
         }
-        const extraErrors = validateAdditionalRules(false);
-        const invalidFields = collectInvalidFields(extraErrors);
+        const extraErrors = validateAdditionalRules();
+        const invalidFields = getInvalidFields(extraErrors);
         setSubmitButtonState(invalidFields.length === 0);
+        if (submitAttempted) {
+          applyValidationUI(invalidFields);
+        }
       };
 
       const applyPrefillValues = () => {
@@ -1834,47 +2279,21 @@
       form.addEventListener("input", handleFormInteraction, true);
       form.addEventListener("change", handleFormInteraction, true);
       form.addEventListener("reset", () => {
+        submitAttempted = false;
+        applyValidationUI([]);
         setSubmitButtonState(false);
         setTimeout(() => updateSubmitState(), 0);
       });
 
-      submitButton.addEventListener("click", async (event) => {
-        if (submitReady) {
-          return;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        let isValid = false;
-        if (typeof validation.revalidate === "function") {
-          isValid = await validation.revalidate();
-        } else {
-          isValid = await validation.validate();
-        }
-        const extraErrors = validateAdditionalRules(true);
-        const invalidFields = collectInvalidFields(extraErrors);
-        if (!isValid || invalidFields.length) {
-          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
-          showFeedbackModal({
-            type: "alert",
-            message: "Por favor, preencha os campos obrigatórios listados antes de enviar.",
-            items: invalidFields.map((field) => field.label),
-            focusElement: focusField ? focusField.element : null,
-          });
-        }
-        updateSubmitState();
-      });
-
-      function validateAdditionalRules(shouldShowErrors = true) {
+      function validateAdditionalRules() {
         const extraErrors = [];
         const registerError = (selector, message, element) => {
           extraErrors.push({
             selector,
             element,
             label: getFieldLabel(selector),
+            message,
           });
-          if (shouldShowErrors && validation && typeof validation.showErrors === "function") {
-            validation.showErrors({ [selector]: message });
-          }
         };
         const cpfDigits = (cpfInput.value || "").replace(/\D/g, "");
         if (cpfDigits && cpfDigits.length === 11 && !cpfValidator(cpfInput.value || "")) {
@@ -1947,17 +2366,21 @@
         return extraErrors;
       }
 
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        let isValid = false;
-        if (typeof validation.revalidate === "function") {
-          isValid = await validation.revalidate();
-        } else {
-          isValid = await validation.validate();
+      const processSubmissionAttempt = async () => {
+        let isValid = true;
+        if (validation) {
+          if (typeof validation.revalidate === "function") {
+            isValid = await validation.revalidate();
+          } else if (typeof validation.validate === "function") {
+            isValid = await validation.validate();
+          }
         }
-        const extraErrors = validateAdditionalRules(true);
-        const invalidFields = collectInvalidFields(extraErrors);
-        if (!isValid || extraErrors.length) {
+        const extraErrors = validateAdditionalRules();
+        const invalidFields = getInvalidFields(extraErrors);
+        submitAttempted = true;
+        applyValidationUI(invalidFields);
+
+        if (!isValid || invalidFields.length) {
           setSubmitButtonState(false);
           const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
           showFeedbackModal({
@@ -1965,9 +2388,10 @@
             message: "Por favor, verifique os campos obrigatórios listados abaixo.",
             items: invalidFields.map((field) => field.label),
             focusElement: focusField ? focusField.element : null,
+            triggerElement: submitButton,
           });
           updateSubmitState();
-          return;
+          return false;
         }
 
         const formData = new FormData(form);
@@ -1989,20 +2413,25 @@
 
         showFeedbackModal({
           type: "success",
-          message: "Sua inscrição foi enviada com sucesso. Você receberá o protocolo por e-mail e WhatsApp.",
+          message: "Envio bem-sucedido da inscrição.",
+          triggerElement: submitButton,
         });
 
         form.reset();
-        if (typeof validation.refreshAll === "function") {
-          validation.refreshAll();
-        } else if (typeof validation.refresh === "function") {
-          validation.refresh();
-        } else {
-          Object.values(validation.fields).forEach((field) => {
-            field.isValid = false;
-            field.elem?.classList.remove("is-invalid");
-          });
+        if (validation) {
+          if (typeof validation.refreshAll === "function") {
+            validation.refreshAll();
+          } else if (typeof validation.refresh === "function") {
+            validation.refresh();
+          } else {
+            Object.values(validation.fields).forEach((field) => {
+              field.isValid = false;
+              field.elem?.classList.remove("is-invalid", "js-validate-error-field");
+            });
+          }
         }
+        submitAttempted = false;
+        applyValidationUI([]);
         setSubmitButtonState(false);
         const docResidenciaLabel = document.getElementById("docResidenciaLabel");
         if (docResidenciaLabel) {
@@ -2039,7 +2468,26 @@
           holder.textContent = "";
         });
         setTimeout(() => updateSubmitState(), 0);
-      });
+        return true;
+      };
+
+      const validarEExibirModal = (formSelector, botaoSelector) => {
+        const targetForm = document.querySelector(formSelector);
+        const targetButton = document.querySelector(botaoSelector);
+        if (!targetForm || !targetButton) {
+          return;
+        }
+        targetButton.addEventListener("click", async (event) => {
+          event.preventDefault();
+          await processSubmissionAttempt();
+        });
+        targetForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          await processSubmissionAttempt();
+        });
+      };
+
+      validarEExibirModal("#cnhSocialForm", "#submitButton");
 
       applyPrefillValues();
       updateSubmitState();
