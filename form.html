@@ -29,6 +29,10 @@
         box-sizing: border-box;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         background: var(--surface);
@@ -354,21 +358,6 @@
         font-size: 0.9rem;
       }
 
-      @media (max-width: 768px) {
-        header.site-header {
-          padding: 0;
-        }
-
-        .badge-open {
-          width: 100%;
-          justify-content: center;
-        }
-
-        .section-title {
-          justify-content: flex-start;
-        }
-      }
-
       main {
         padding: 0.75rem 0 4rem;
       }
@@ -384,6 +373,82 @@
         margin: 0;
       }
 
+      .section-nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--surface);
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      .section-nav__list {
+        display: flex;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        counter-reset: section-nav;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .section-nav__item {
+        counter-increment: section-nav;
+      }
+
+      .section-nav__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        color: var(--text-muted);
+        font-weight: 600;
+        white-space: nowrap;
+        background: rgba(0, 83, 164, 0.08);
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      }
+
+      .section-nav__link::before {
+        content: counter(section-nav);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        background: var(--surface-strong);
+        border: 2px solid var(--brand-primary);
+        color: var(--brand-primary);
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .section-nav__link:hover,
+      .section-nav__link:focus-visible {
+        border-color: var(--brand-highlight);
+        background: rgba(0, 83, 164, 0.12);
+        color: var(--brand-secondary);
+        text-decoration: none;
+        outline: none;
+      }
+
+      .section-nav__link.is-active {
+        border-color: var(--brand-primary);
+        background: var(--surface-strong);
+        color: var(--brand-primary);
+      }
+
+      .section-nav__link.is-active::before {
+        background: var(--brand-primary);
+        color: #ffffff;
+      }
+
       .card-section {
         border: 1px solid var(--border-color);
         border-radius: 1rem;
@@ -391,8 +456,60 @@
         box-shadow: 0 12px 30px rgba(24, 64, 120, 0.08);
       }
 
-      .card-section + .card-section {
+      .form-section {
+        scroll-margin-top: 7rem;
+      }
+
+      .form-section + .form-section {
         margin-top: 1.5rem;
+      }
+
+      .section-divider {
+        margin: 2rem 0 1.5rem;
+        border: 0;
+        border-top: 1px dashed var(--border-color);
+      }
+
+      .form-subsection {
+        margin-top: 1.5rem;
+      }
+
+      .subsection-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        header.site-header {
+          padding: 0;
+        }
+
+        .badge-open {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .section-title {
+          justify-content: flex-start;
+        }
+
+        .section-nav {
+          padding: 0.75rem 0;
+        }
+
+        .section-nav__link {
+          padding: 0.5rem 0.9rem;
+        }
+
+        .section-nav__link::before {
+          width: 1.5rem;
+          height: 1.5rem;
+          font-size: 0.8rem;
+        }
       }
 
       .section-header {
@@ -473,12 +590,41 @@
     <main>
       <div class="container">
         <div class="form-wrapper">
+          <nav class="section-nav" aria-label="Seções do formulário">
+            <ol class="section-nav__list">
+              <li class="section-nav__item">
+                <a class="section-nav__link" href="#sec-identificacao">Identificação</a>
+              </li>
+              <li class="section-nav__item">
+                <a class="section-nav__link" href="#sec-contatos-residencia">Contatos e residência</a>
+              </li>
+              <li class="section-nav__item">
+                <a class="section-nav__link" href="#sec-socioassistencial">Contexto socioassistencial</a>
+              </li>
+              <li class="section-nav__item">
+                <a class="section-nav__link" href="#sec-prioridades">Diversidade e priorização</a>
+              </li>
+              <li class="section-nav__item">
+                <a class="section-nav__link" href="#sec-condicoes">Condições especiais e anexos</a>
+              </li>
+              <li class="section-nav__item">
+                <a class="section-nav__link" href="#sec-cnh">Informações da CNH</a>
+              </li>
+              <li class="section-nav__item">
+                <a class="section-nav__link" href="#sec-documentos">Documentos obrigatórios</a>
+              </li>
+              <li class="section-nav__item">
+                <a class="section-nav__link" href="#sec-declaracoes">Declarações e consentimentos</a>
+              </li>
+            </ol>
+          </nav>
           <form id="cnhSocialForm" class="needs-validation" novalidate>
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Dados pessoais (pré-preenchidos)</h2>
-            </div>
-            <div class="row g-4">
+            <section id="sec-identificacao" class="form-section">
+              <div class="card card-section p-4 p-md-5">
+                <div class="section-header">
+                  <h2 class="h4 mb-0">Identificação do candidato</h2>
+                </div>
+                <div class="row g-4">
               <div class="col-12 col-lg-6">
                 <label for="nomeCompleto" class="form-label required">Nome completo</label>
                 <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto" placeholder="Nome cadastrado no CadÚnico" value="{{ $json.data.nomeCompleto || "" }}" readonly aria-readonly="true" />
@@ -555,18 +701,85 @@
               </div>
             </div>
           </div>
+        </section>
 
+        <section id="sec-contatos-residencia" class="form-section">
           <div class="card card-section p-4 p-md-5">
-            <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-              <h2 class="h4 mb-0">Endereço</h2>
-              <button class="btn btn-outline-primary btn-sm" type="button" id="btnAtualizarEndereco">
-                <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>Atualizar endereço
-              </button>
-            </div>
-            <div class="alert alert-light border-dashed" role="note">
-              Confirme os dados residenciais. Caso tenha mudado, clique em "Atualizar endereço" e informe o novo endereço. Um comprovante recente poderá ser solicitado.
-            </div>
-            <div class="row g-4">
+              <div class="section-header">
+                <h2 class="h4 mb-0">Contatos e residência</h2>
+              </div>
+              <div class="row g-4">
+                <div class="col-12 col-md-6">
+                  <label for="telefone" class="form-label required">Telefone/WhatsApp</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="telefone"
+                    name="telefone"
+                    inputmode="tel"
+                    placeholder="(81) 90000-0000"
+                    value="{{ $json.data.telefone || "" }}"
+                    data-required-field="true"
+                    required
+                  />
+                  <div class="form-text">Informe um número ativo para contato e envio de protocolo.</div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label for="email" class="form-label required">E-mail</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="nome@exemplo.com"
+                    value="{{ $json.data.email || "" }}"
+                    data-required-field="true"
+                    required
+                  />
+                </div>
+                <div class="col-12 col-md-6">
+                  <label for="emailConfirm" class="form-label required">Confirme o e-mail</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="emailConfirm"
+                    name="emailConfirm"
+                    placeholder="Repita seu e-mail"
+                    value="{{ $json.data.email || "" }}"
+                    aria-describedby="emailConfirmHelp"
+                    data-required-field="true"
+                    required
+                  />
+                  <div id="emailConfirmHelp" class="form-text">O endereço deve ser idêntico ao campo anterior.</div>
+                </div>
+                <div class="col-12">
+                  <label for="preferenciaContato" class="form-label required">Canal de contato preferencial</label>
+                  <select
+                    class="form-select"
+                    id="preferenciaContato"
+                    name="preferenciaContato"
+                    data-required-field="true"
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="email">E-mail</option>
+                    <option value="ligacao">Ligação telefônica</option>
+                  </select>
+                </div>
+              </div>
+              <hr class="section-divider" />
+              <div class="form-subsection">
+                <div class="subsection-header">
+                  <h3 class="h5 mb-0">Endereço residencial</h3>
+                  <button class="btn btn-outline-primary btn-sm" type="button" id="btnAtualizarEndereco">
+                    <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>Atualizar endereço
+                  </button>
+                </div>
+                <div class="alert alert-light border-dashed" role="note">
+                  Confirme os dados residenciais. Caso tenha mudado, clique em "Atualizar endereço" e informe o novo endereço. Um comprovante recente poderá ser solicitado.
+                </div>
+                <div class="row g-4">
               <div class="col-12 col-sm-4">
                 <label for="cep" class="form-label required">CEP</label>
                 <input
@@ -673,76 +886,12 @@
               </div>
             </div>
           </div>
+        </section>
 
+        <section id="sec-socioassistencial" class="form-section">
           <div class="card card-section p-4 p-md-5">
             <div class="section-header">
-              <h2 class="h4 mb-0">Contatos</h2>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label for="telefone" class="form-label required">Telefone/WhatsApp</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="telefone"
-                  name="telefone"
-                  inputmode="tel"
-                  placeholder="(81) 90000-0000"
-                  value="{{ $json.data.telefone || "" }}"
-                  data-required-field="true"
-                  required
-                />
-                <div class="form-text">Informe um número ativo para contato e envio de protocolo.</div>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="email" class="form-label required">E-mail</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="email"
-                  name="email"
-                  placeholder="nome@exemplo.com"
-                  value="{{ $json.data.email || "" }}"
-                  data-required-field="true"
-                  required
-                />
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="emailConfirm" class="form-label required">Confirme o e-mail</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="emailConfirm"
-                  name="emailConfirm"
-                  placeholder="Repita seu e-mail"
-                  value="{{ $json.data.email || "" }}"
-                  aria-describedby="emailConfirmHelp"
-                  data-required-field="true"
-                  required
-                />
-                <div id="emailConfirmHelp" class="form-text">O endereço deve ser idêntico ao campo anterior.</div>
-              </div>
-              <div class="col-12">
-                <label for="preferenciaContato" class="form-label required">Canal de contato preferencial</label>
-                <select
-                  class="form-select"
-                  id="preferenciaContato"
-                  name="preferenciaContato"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="email">E-mail</option>
-                  <option value="ligacao">Ligação telefônica</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Critérios socioassistenciais</h2>
+              <h2 class="h4 mb-0">Contexto socioassistencial</h2>
             </div>
             <div class="row g-4">
               <div class="col-12 col-md-6">
@@ -819,10 +968,12 @@
               </div>
             </div>
           </div>
+        </section>
 
+        <section id="sec-prioridades" class="form-section">
           <div class="card card-section p-4 p-md-5">
             <div class="section-header">
-              <h2 class="h4 mb-0">Critérios de priorização e diversidade</h2>
+              <h2 class="h4 mb-0">Diversidade e priorização</h2>
             </div>
             <div class="row g-4">
               <div class="col-12 col-md-6">
@@ -917,10 +1068,12 @@
               </fieldset>
             </div>
           </div>
+        </section>
 
+        <section id="sec-condicoes" class="form-section">
           <div class="card card-section p-4 p-md-5">
             <div class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-              <h2 class="h4 mb-0">Grupos e condições especiais</h2>
+              <h2 class="h4 mb-0">Condições especiais e anexos</h2>
               <span class="legend-badge"><i class="bi bi-paperclip"></i> Anexe os comprovantes solicitados</span>
             </div>
             <div class="row g-4">
@@ -1019,10 +1172,12 @@
               </div>
             </div>
           </div>
+        </section>
 
+        <section id="sec-cnh" class="form-section">
           <div class="card card-section p-4 p-md-5">
             <div class="section-header">
-              <h2 class="h4 mb-0">Categoria de habilitação</h2>
+              <h2 class="h4 mb-0">Informações da CNH</h2>
             </div>
             <div class="row g-4">
               <div class="col-12 col-md-6">
@@ -1092,10 +1247,12 @@
               </div>
             </div>
           </div>
+        </section>
 
+        <section id="sec-documentos" class="form-section">
           <div class="card card-section p-4 p-md-5">
             <div class="section-header">
-              <h2 class="h4 mb-0">Documentos complementares</h2>
+              <h2 class="h4 mb-0">Documentos obrigatórios</h2>
             </div>
             <div class="row g-4">
               <div class="col-12 col-lg-6">
@@ -1115,7 +1272,9 @@
               </div>
             </div>
           </div>
+        </section>
 
+        <section id="sec-declaracoes" class="form-section">
           <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Declarações e consentimentos</h2>
@@ -1171,6 +1330,7 @@
               </button>
             </div>
           </div>
+        </section>
           </form>
         </div>
       </div>
@@ -1181,6 +1341,73 @@
     <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script>
+      const sectionNavLinks = Array.from(document.querySelectorAll(".section-nav__link"));
+      const formSections = sectionNavLinks
+        .map((link) => {
+          const selector = link.getAttribute("href");
+          if (!selector || !selector.startsWith("#")) {
+            return null;
+          }
+          return document.querySelector(selector);
+        })
+        .filter((section) => section instanceof HTMLElement);
+
+      const setActiveNavLink = (sectionId) => {
+        const target = sectionId ? `#${sectionId}` : null;
+        sectionNavLinks.forEach((link) => {
+          const isActive = link.getAttribute("href") === target;
+          link.classList.toggle("is-active", isActive);
+          if (isActive) {
+            link.setAttribute("aria-current", "step");
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        });
+      };
+
+      if (sectionNavLinks.length) {
+        if (formSections.length && typeof IntersectionObserver === "function") {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries
+                .filter((entry) => entry.isIntersecting)
+                .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+                .forEach((entry) => setActiveNavLink(entry.target.id));
+            },
+            { rootMargin: "-45% 0px -45% 0px", threshold: [0.1, 0.3, 0.6] }
+          );
+          formSections.forEach((section) => observer.observe(section));
+        } else {
+          const firstLink = sectionNavLinks[0];
+          if (firstLink) {
+            firstLink.classList.add("is-active");
+            firstLink.setAttribute("aria-current", "step");
+          }
+        }
+
+        sectionNavLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            const target = link.getAttribute("href");
+            if (!target) return;
+            const sectionId = target.startsWith("#") ? target.slice(1) : target;
+            setActiveNavLink(sectionId);
+          });
+        });
+
+        const firstSection = formSections.length ? formSections[0] : null;
+        const firstSectionId = firstSection && firstSection.id
+          ? firstSection.id
+          : (() => {
+              const firstLink = sectionNavLinks[0];
+              if (!firstLink) return null;
+              const href = firstLink.getAttribute("href") || "";
+              return href.startsWith("#") ? href.slice(1) : href;
+            })();
+        if (firstSectionId) {
+          setActiveNavLink(firstSectionId);
+        }
+      }
+
       const prefillValues = {
         nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
         cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
