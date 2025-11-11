@@ -359,6 +359,17 @@
         padding-bottom: 4rem;
       }
 
+      .form-wrapper {
+        background: #ffedd4;
+        border-radius: 1.5rem;
+        padding: clamp(1.5rem, 2vw + 1rem, 3rem);
+        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
+      }
+
+      .form-wrapper form {
+        margin: 0;
+      }
+
       .card-section {
         border: 1px solid var(--border-color);
         border-radius: 1rem;
@@ -512,7 +523,8 @@
           </div>
         </section>
 
-        <form id="cnhSocialForm" class="needs-validation" novalidate>
+        <div class="form-wrapper mt-5">
+          <form id="cnhSocialForm" class="needs-validation" novalidate>
           <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Dados pessoais (pré-preenchidos)</h2>
@@ -1210,7 +1222,8 @@
               </button>
             </div>
           </div>
-        </form>
+          </form>
+        </div>
       </div>
     </main>
 
@@ -1264,6 +1277,51 @@
       const cepStatus = document.getElementById("cepStatus");
       const btnAtualizarEndereco = document.getElementById("btnAtualizarEndereco");
       let enderecoEdicaoAtiva = false;
+
+      const escapeSelector = (value) => {
+        const string = value == null ? "" : String(value);
+        if (typeof window !== "undefined" && window.CSS && typeof window.CSS.escape === "function") {
+          return window.CSS.escape(string);
+        }
+        const length = string.length;
+        let index = -1;
+        let result = "";
+        let codeUnit;
+        const firstCodeUnit = string.charCodeAt(0);
+        while (++index < length) {
+          codeUnit = string.charCodeAt(index);
+          if (codeUnit === 0x0000) {
+            result += "\uFFFD";
+            continue;
+          }
+          if (
+            (codeUnit >= 0x0001 && codeUnit <= 0x001f) ||
+            codeUnit === 0x007f ||
+            (index === 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039) ||
+            (index === 1 && codeUnit >= 0x0030 && codeUnit <= 0x0039 && firstCodeUnit === 0x002d)
+          ) {
+            result += `\\${codeUnit.toString(16)} `;
+            continue;
+          }
+          if (index === 0 && codeUnit === 0x002d && length === 1) {
+            result += `\\${string.charAt(index)}`;
+            continue;
+          }
+          if (
+            codeUnit >= 0x0080 ||
+            codeUnit === 0x002d ||
+            codeUnit === 0x005f ||
+            (codeUnit >= 0x0030 && codeUnit <= 0x0039) ||
+            (codeUnit >= 0x0041 && codeUnit <= 0x005a) ||
+            (codeUnit >= 0x0061 && codeUnit <= 0x007a)
+          ) {
+            result += string.charAt(index);
+            continue;
+          }
+          result += `\\${string.charAt(index)}`;
+        }
+        return result;
+      };
 
       const createMask = (element, options) => {
         if (typeof IMask === "function" && element) {
@@ -1553,7 +1611,7 @@
         if (element.type === "checkbox" || element.type === "radio") {
           if (element.checked) return true;
           const group = element.name
-            ? form.querySelectorAll(`[name="${CSS.escape(element.name)}"]`)
+            ? form.querySelectorAll(`[name="${escapeSelector(element.name)}"]`)
             : [];
           if (group.length) {
             return Array.from(group).some((input) => input.checked);
@@ -1888,7 +1946,7 @@
       };
 
       const getGroupElements = (name) =>
-        Array.from(form.querySelectorAll(`[name='${CSS.escape(name)}']`));
+        Array.from(form.querySelectorAll(`[name='${escapeSelector(name)}']`));
 
       const clearFieldError = (element) => {
         const key = getElementKey(element);
@@ -1901,7 +1959,7 @@
         } else if (element) {
           element.classList.remove("is-invalid", "js-validate-error-field");
         }
-        form.querySelectorAll(`.error-text[data-error-for='${CSS.escape(key)}']`).forEach((node) => node.remove());
+        form.querySelectorAll(`.error-text[data-error-for='${escapeSelector(key)}']`).forEach((node) => node.remove());
       };
 
       const showFieldError = (element, message, groupElements = null) => {
@@ -1921,7 +1979,7 @@
         if (!container) {
           container = element.parentElement || element;
         }
-        let error = container.querySelector(`.error-text[data-error-for='${CSS.escape(key)}']`);
+        let error = container.querySelector(`.error-text[data-error-for='${escapeSelector(key)}']`);
         if (!error) {
           error = document.createElement("small");
           error.className = "error-text";
@@ -1941,12 +1999,12 @@
         form.querySelectorAll(".error-text[data-error-for]").forEach((node) => {
           const key = node.getAttribute("data-error-for");
           if (!key) return;
-          const elementById = form.querySelector(`#${CSS.escape(key)}`);
+          const elementById = form.querySelector(`#${escapeSelector(key)}`);
           if (elementById) {
             trackedElements.add(elementById);
             return;
           }
-          const elementsByName = form.querySelectorAll(`[name='${CSS.escape(key)}']`);
+          const elementsByName = form.querySelectorAll(`[name='${escapeSelector(key)}']`);
           if (elementsByName.length) {
             elementsByName.forEach((el) => trackedElements.add(el));
           }
@@ -1995,9 +2053,9 @@
             return;
           }
           const selector = element.id
-            ? `#${element.id}`
+            ? `#${escapeSelector(element.id)}`
             : element.name
-            ? `[name='${CSS.escape(element.name)}']`
+            ? `[name='${escapeSelector(element.name)}']`
             : null;
           if (!selector || invalidMap.has(selector)) {
             return;
