@@ -29,6 +29,18 @@
         box-sizing: border-box;
       }
 
+      .visually-hidden {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
       html {
         scroll-behavior: smooth;
       }
@@ -386,7 +398,7 @@
 
       .section-nav__list {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.75rem;
         list-style: none;
         padding: 0;
         margin: 0;
@@ -401,52 +413,56 @@
       }
 
       .section-nav__link {
+        position: relative;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.6rem 1rem;
-        border-radius: 999px;
-        border: 1px solid transparent;
-        color: var(--text-muted);
-        font-weight: 600;
-        white-space: nowrap;
-        background: rgba(0, 83, 164, 0.08);
-        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 50%;
+        border: none;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+        transition: transform 0.2s ease;
       }
 
       .section-nav__link::before {
         content: counter(section-nav);
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
-        width: 1.75rem;
-        height: 1.75rem;
+        width: 100%;
+        height: 100%;
         border-radius: 50%;
-        background: var(--surface-strong);
         border: 2px solid var(--brand-primary);
+        background: var(--surface-strong);
         color: var(--brand-primary);
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 700;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
       }
 
-      .section-nav__link:hover,
-      .section-nav__link:focus-visible {
+      .section-nav__link:hover::before,
+      .section-nav__link:focus-visible::before {
         border-color: var(--brand-highlight);
-        background: rgba(0, 83, 164, 0.12);
         color: var(--brand-secondary);
         text-decoration: none;
         outline: none;
       }
 
-      .section-nav__link.is-active {
-        border-color: var(--brand-primary);
-        background: var(--surface-strong);
-        color: var(--brand-primary);
+      .section-nav__link:focus-visible {
+        outline: none;
       }
 
       .section-nav__link.is-active::before {
         background: var(--brand-primary);
         color: #ffffff;
+        border-color: var(--brand-primary);
+      }
+
+      .section-nav__link.is-active {
+        transform: translateY(-4px);
       }
 
       .card-section {
@@ -454,6 +470,14 @@
         border-radius: 1rem;
         background: var(--surface-strong);
         box-shadow: 0 12px 30px rgba(24, 64, 120, 0.08);
+      }
+
+      .form-step {
+        display: none;
+      }
+
+      .form-step.is-active {
+        display: block;
       }
 
       .form-section {
@@ -502,13 +526,12 @@
         }
 
         .section-nav__link {
-          padding: 0.5rem 0.9rem;
+          width: 2.5rem;
+          height: 2.5rem;
         }
 
         .section-nav__link::before {
-          width: 1.5rem;
-          height: 1.5rem;
-          font-size: 0.8rem;
+          font-size: 0.9rem;
         }
       }
 
@@ -590,39 +613,77 @@
     <main>
       <div class="container">
         <div class="form-wrapper">
-          <nav class="section-nav" aria-label="Seções do formulário">
+          <nav class="section-nav" aria-label="Progresso do formulário">
             <ol class="section-nav__list">
               <li class="section-nav__item">
-                <a class="section-nav__link" href="#sec-identificacao">Identificação</a>
+                <button
+                  type="button"
+                  class="section-nav__link is-active"
+                  data-step="1"
+                  aria-controls="form-step-1"
+                  aria-label="Identificação do candidato"
+                  aria-pressed="true"
+                  aria-current="step"
+                >
+                  <span class="visually-hidden">Identificação do candidato</span>
+                </button>
               </li>
               <li class="section-nav__item">
-                <a class="section-nav__link" href="#sec-contatos-residencia">Contatos e residência</a>
+                <button
+                  type="button"
+                  class="section-nav__link"
+                  data-step="2"
+                  aria-controls="form-step-2"
+                  aria-label="Contatos e residência"
+                  aria-pressed="false"
+                >
+                  <span class="visually-hidden">Contatos e residência</span>
+                </button>
               </li>
               <li class="section-nav__item">
-                <a class="section-nav__link" href="#sec-socioassistencial">Contexto socioassistencial</a>
+                <button
+                  type="button"
+                  class="section-nav__link"
+                  data-step="3"
+                  aria-controls="form-step-3"
+                  aria-label="Contexto socioassistencial e diversidade"
+                  aria-pressed="false"
+                >
+                  <span class="visually-hidden">Contexto socioassistencial e diversidade</span>
+                </button>
               </li>
               <li class="section-nav__item">
-                <a class="section-nav__link" href="#sec-prioridades">Diversidade e priorização</a>
+                <button
+                  type="button"
+                  class="section-nav__link"
+                  data-step="4"
+                  aria-controls="form-step-4"
+                  aria-label="Condições especiais e anexos"
+                  aria-pressed="false"
+                >
+                  <span class="visually-hidden">Condições especiais e anexos</span>
+                </button>
               </li>
               <li class="section-nav__item">
-                <a class="section-nav__link" href="#sec-condicoes">Condições especiais e anexos</a>
-              </li>
-              <li class="section-nav__item">
-                <a class="section-nav__link" href="#sec-cnh">Informações da CNH</a>
-              </li>
-              <li class="section-nav__item">
-                <a class="section-nav__link" href="#sec-documentos">Documentos obrigatórios</a>
-              </li>
-              <li class="section-nav__item">
-                <a class="section-nav__link" href="#sec-declaracoes">Declarações e consentimentos</a>
+                <button
+                  type="button"
+                  class="section-nav__link"
+                  data-step="5"
+                  aria-controls="form-step-5"
+                  aria-label="Informações da CNH, documentos e declarações"
+                  aria-pressed="false"
+                >
+                  <span class="visually-hidden">Informações da CNH, documentos e declarações</span>
+                </button>
               </li>
             </ol>
           </nav>
           <form id="cnhSocialForm" class="needs-validation" novalidate>
-            <section id="sec-identificacao" class="form-section">
-              <div class="card card-section p-4 p-md-5">
-                <div class="section-header">
-                  <h2 class="h4 mb-0">Identificação do candidato</h2>
+            <div class="form-step is-active" id="form-step-1" data-step="1" aria-hidden="false">
+              <section id="sec-identificacao" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+                  <div class="section-header">
+                    <h2 class="h4 mb-0">Identificação do candidato</h2>
                 </div>
                 <div class="row g-4">
               <div class="col-12 col-lg-6">
@@ -699,16 +760,18 @@
                   value="{{ $json.data.nomeSocial || "" }}"
                 />
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="sec-contatos-residencia" class="form-section">
-          <div class="card card-section p-4 p-md-5">
-              <div class="section-header">
-                <h2 class="h4 mb-0">Contatos e residência</h2>
               </div>
-              <div class="row g-4">
+            </div>
+            </section>
+            </div>
+
+            <div class="form-step" id="form-step-2" data-step="2" hidden aria-hidden="true">
+              <section id="sec-contatos-residencia" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+                  <div class="section-header">
+                    <h2 class="h4 mb-0">Contatos e residência</h2>
+                  </div>
+                  <div class="row g-4">
                 <div class="col-12 col-md-6">
                   <label for="telefone" class="form-label required">Telefone/WhatsApp</label>
                   <input
@@ -883,13 +946,14 @@
                   <div id="docResidenciaHelp" class="form-text">Envie conta de consumo ou declaração emitida há até 90 dias.</div>
                   <div class="file-name" id="docResidenciaName"></div>
                 </div>
+                </div>
               </div>
+            </section>
             </div>
-          </div>
-        </section>
 
-        <section id="sec-socioassistencial" class="form-section">
-          <div class="card card-section p-4 p-md-5">
+            <div class="form-step" id="form-step-3" data-step="3" hidden aria-hidden="true">
+              <section id="sec-socioassistencial" class="form-section">
+                <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
             </div>
@@ -1068,10 +1132,12 @@
               </fieldset>
             </div>
           </div>
-        </section>
+          </section>
+            </div>
 
-        <section id="sec-condicoes" class="form-section">
-          <div class="card card-section p-4 p-md-5">
+            <div class="form-step" id="form-step-4" data-step="4" hidden aria-hidden="true">
+              <section id="sec-condicoes" class="form-section">
+                <div class="card card-section p-4 p-md-5">
             <div class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
               <h2 class="h4 mb-0">Condições especiais e anexos</h2>
               <span class="legend-badge"><i class="bi bi-paperclip"></i> Anexe os comprovantes solicitados</span>
@@ -1170,12 +1236,13 @@
                   <div class="file-name" id="docDependenteName"></div>
                 </div>
               </div>
+              </div>
+            </section>
             </div>
-          </div>
-        </section>
 
-        <section id="sec-cnh" class="form-section">
-          <div class="card card-section p-4 p-md-5">
+            <div class="form-step" id="form-step-5" data-step="5" hidden aria-hidden="true">
+              <section id="sec-cnh" class="form-section">
+                <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Informações da CNH</h2>
             </div>
@@ -1249,88 +1316,89 @@
           </div>
         </section>
 
-        <section id="sec-documentos" class="form-section">
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Documentos obrigatórios</h2>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-lg-6">
-                <div class="file-input-wrapper">
-                  <label for="docIdentidade" class="form-label required">Documento oficial com foto (RG ou passaporte) – PDF/JPG/PNG até 5 MB</label>
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="docIdentidade"
-                    name="docIdentidade"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    data-required-field="true"
-                    required
-                  />
-                  <div class="file-name" id="docIdentidadeName"></div>
+              <section id="sec-documentos" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+                  <div class="section-header">
+                    <h2 class="h4 mb-0">Documentos obrigatórios</h2>
+                  </div>
+                  <div class="row g-4">
+                    <div class="col-12 col-lg-6">
+                      <div class="file-input-wrapper">
+                        <label for="docIdentidade" class="form-label required">Documento oficial com foto (RG ou passaporte) – PDF/JPG/PNG até 5 MB</label>
+                        <input
+                          class="form-control"
+                          type="file"
+                          id="docIdentidade"
+                          name="docIdentidade"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          data-required-field="true"
+                          required
+                        />
+                        <div class="file-name" id="docIdentidadeName"></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
+              </section>
 
-        <section id="sec-declaracoes" class="form-section">
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Declarações e consentimentos</h2>
+              <section id="sec-declaracoes" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+                  <div class="section-header">
+                    <h2 class="h4 mb-0">Declarações e consentimentos</h2>
+                  </div>
+                  <div class="d-grid gap-3">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="sim"
+                        id="lgpd"
+                        name="lgpd"
+                        required
+                        data-required-field="true"
+                      />
+                      <label class="form-check-label" for="lgpd">
+                        Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Social, conforme a Lei Geral de Proteção de Dados.
+                      </label>
+                      <a href="#" class="d-block small mt-1">Consultar política de privacidade</a>
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="sim"
+                        id="veracidade"
+                        name="veracidade"
+                        required
+                        data-required-field="true"
+                      />
+                      <label class="form-check-label" for="veracidade">
+                        Declaro verdadeiras todas as informações prestadas e estou ciente de que a falsidade implicará desclassificação e sanções legais.
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="sim" id="imagem" name="imagem" />
+                      <label class="form-check-label" for="imagem">Autorizo o uso da minha imagem para divulgação institucional do programa.</label>
+                    </div>
+                    <div class="form-text">Após o envio, o protocolo será encaminhado para seu e-mail e WhatsApp cadastrados.</div>
+                  </div>
+                  <div class="mt-4 d-flex flex-column flex-md-row gap-3">
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-lg px-4 btn-submit"
+                      id="submitButton"
+                      aria-disabled="true"
+                      data-ready="false"
+                    >
+                      <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
+                    </button>
+                    <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
+                      Limpar campos editáveis
+                    </button>
+                  </div>
+                </div>
+              </section>
             </div>
-            <div class="d-grid gap-3">
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="sim"
-                  id="lgpd"
-                  name="lgpd"
-                  required
-                  data-required-field="true"
-                />
-                <label class="form-check-label" for="lgpd">
-                  Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Social, conforme a Lei Geral de Proteção de Dados.
-                </label>
-                <a href="#" class="d-block small mt-1">Consultar política de privacidade</a>
-              </div>
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="sim"
-                  id="veracidade"
-                  name="veracidade"
-                  required
-                  data-required-field="true"
-                />
-                <label class="form-check-label" for="veracidade">
-                  Declaro verdadeiras todas as informações prestadas e estou ciente de que a falsidade implicará desclassificação e sanções legais.
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="sim" id="imagem" name="imagem" />
-                <label class="form-check-label" for="imagem">Autorizo o uso da minha imagem para divulgação institucional do programa.</label>
-              </div>
-              <div class="form-text">Após o envio, o protocolo será encaminhado para seu e-mail e WhatsApp cadastrados.</div>
-            </div>
-            <div class="mt-4 d-flex flex-column flex-md-row gap-3">
-              <button
-                type="button"
-                class="btn btn-primary btn-lg px-4 btn-submit"
-                id="submitButton"
-                aria-disabled="true"
-                data-ready="false"
-              >
-                <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
-              </button>
-              <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
-                Limpar campos editáveis
-              </button>
-            </div>
-          </div>
-        </section>
           </form>
         </div>
       </div>
@@ -1342,70 +1410,106 @@
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script>
       const sectionNavLinks = Array.from(document.querySelectorAll(".section-nav__link"));
-      const formSections = sectionNavLinks
-        .map((link) => {
-          const selector = link.getAttribute("href");
-          if (!selector || !selector.startsWith("#")) {
-            return null;
-          }
-          return document.querySelector(selector);
-        })
-        .filter((section) => section instanceof HTMLElement);
+      const formSteps = Array.from(document.querySelectorAll(".form-step"));
 
-      const setActiveNavLink = (sectionId) => {
-        const target = sectionId ? `#${sectionId}` : null;
-        sectionNavLinks.forEach((link) => {
-          const isActive = link.getAttribute("href") === target;
-          link.classList.toggle("is-active", isActive);
+      const sectionIdToStep = new Map();
+      formSteps.forEach((step) => {
+        const stepId = step.dataset.step;
+        if (!stepId) return;
+        step.querySelectorAll(".form-section[id]").forEach((section) => {
+          sectionIdToStep.set(section.id, stepId);
+        });
+      });
+
+      const setActiveStep = (stepId, { scroll = true, focusField = false, focusNav = false } = {}) => {
+        if (!stepId) return;
+        let activeStep = null;
+        formSteps.forEach((step) => {
+          const isActive = step.dataset.step === stepId;
+          step.classList.toggle("is-active", isActive);
+          step.hidden = !isActive;
+          step.setAttribute("aria-hidden", isActive ? "false" : "true");
           if (isActive) {
-            link.setAttribute("aria-current", "step");
-          } else {
-            link.removeAttribute("aria-current");
+            activeStep = step;
           }
         });
-      };
 
-      if (sectionNavLinks.length) {
-        if (formSections.length && typeof IntersectionObserver === "function") {
-          const observer = new IntersectionObserver(
-            (entries) => {
-              entries
-                .filter((entry) => entry.isIntersecting)
-                .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-                .forEach((entry) => setActiveNavLink(entry.target.id));
-            },
-            { rootMargin: "-45% 0px -45% 0px", threshold: [0.1, 0.3, 0.6] }
-          );
-          formSections.forEach((section) => observer.observe(section));
-        } else {
-          const firstLink = sectionNavLinks[0];
-          if (firstLink) {
-            firstLink.classList.add("is-active");
-            firstLink.setAttribute("aria-current", "step");
+        sectionNavLinks.forEach((button) => {
+          const isActive = button.dataset.step === stepId;
+          button.classList.toggle("is-active", isActive);
+          button.setAttribute("aria-pressed", isActive ? "true" : "false");
+          if (isActive) {
+            button.setAttribute("aria-current", "step");
+            if (focusNav && typeof button.focus === "function") {
+              button.focus();
+            }
+          } else {
+            button.removeAttribute("aria-current");
+          }
+        });
+
+        if (scroll && activeStep) {
+          const wrapper = document.querySelector(".form-wrapper");
+          if (wrapper && typeof wrapper.scrollIntoView === "function") {
+            wrapper.scrollIntoView({ behavior: "smooth", block: "start" });
           }
         }
 
-        sectionNavLinks.forEach((link) => {
-          link.addEventListener("click", () => {
-            const target = link.getAttribute("href");
-            if (!target) return;
-            const sectionId = target.startsWith("#") ? target.slice(1) : target;
-            setActiveNavLink(sectionId);
+        if (focusField && activeStep) {
+          const focusable = activeStep.querySelector(
+            "input:not([type='hidden']):not([disabled]), select:not([disabled]), textarea:not([disabled])"
+          );
+          if (focusable && typeof focusable.focus === "function") {
+            focusable.focus();
+          }
+        }
+      };
+
+      const getStepByHash = (hash) => {
+        if (!hash) return null;
+        const cleaned = hash.startsWith("#") ? hash.slice(1) : hash;
+        return sectionIdToStep.get(cleaned) || null;
+      };
+
+      if (formSteps.length && sectionNavLinks.length) {
+        formSteps.forEach((step, index) => {
+          const isActive = step.classList.contains("is-active") || (!index && !document.querySelector(".form-step.is-active"));
+          step.hidden = !isActive;
+          step.setAttribute("aria-hidden", isActive ? "false" : "true");
+        });
+
+        const initialStep = getStepByHash(window.location.hash)
+          || sectionNavLinks.find((button) => button.classList.contains("is-active"))?.dataset.step
+          || formSteps[0]?.dataset.step;
+
+        if (initialStep) {
+          setActiveStep(initialStep, { scroll: false });
+        }
+
+        sectionNavLinks.forEach((button) => {
+          button.addEventListener("click", () => {
+            const stepId = button.dataset.step;
+            if (!stepId) return;
+            setActiveStep(stepId, { focusField: true });
+
+            const step = formSteps.find((item) => item.dataset.step === stepId);
+            const primarySection = step?.querySelector(".form-section[id]");
+            if (primarySection && primarySection.id) {
+              if (typeof window.history?.replaceState === "function") {
+                window.history.replaceState(null, "", `#${primarySection.id}`);
+              } else {
+                window.location.hash = primarySection.id;
+              }
+            }
           });
         });
 
-        const firstSection = formSections.length ? formSections[0] : null;
-        const firstSectionId = firstSection && firstSection.id
-          ? firstSection.id
-          : (() => {
-              const firstLink = sectionNavLinks[0];
-              if (!firstLink) return null;
-              const href = firstLink.getAttribute("href") || "";
-              return href.startsWith("#") ? href.slice(1) : href;
-            })();
-        if (firstSectionId) {
-          setActiveNavLink(firstSectionId);
-        }
+        window.addEventListener("hashchange", () => {
+          const targetStep = getStepByHash(window.location.hash);
+          if (targetStep) {
+            setActiveStep(targetStep, { focusNav: true });
+          }
+        });
       }
 
       const prefillValues = {
