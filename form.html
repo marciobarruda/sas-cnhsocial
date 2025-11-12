@@ -462,6 +462,7 @@
         padding: 0;
         margin: 0;
         overflow-x: auto;
+        overflow-y: visible;
         scrollbar-width: thin;
         -webkit-overflow-scrolling: touch;
       }
@@ -481,7 +482,7 @@
         position: absolute;
         top: calc(var(--step-size) / 2);
         left: calc(50% + var(--step-size) / 2);
-        width: var(--connector-gap);
+        width: calc(100% + var(--connector-gap) - var(--step-size) / 2);
         height: 2px;
         background: linear-gradient(90deg, rgba(0, 83, 164, 0.15), rgba(0, 163, 255, 0.35));
         transform: translateY(-50%);
