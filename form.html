@@ -475,7 +475,7 @@
         content: "";
         position: absolute;
         top: calc(var(--step-size) / 2);
-        left: 50%;
+        left: calc(50% + var(--step-size) / 2);
         width: calc(var(--connector-gap) + var(--step-size));
         height: 2px;
         background: linear-gradient(90deg, rgba(0, 83, 164, 0.15), rgba(0, 163, 255, 0.35));
@@ -498,6 +498,7 @@
         justify-content: center;
         width: var(--step-size);
         height: var(--step-size);
+        margin: 0 auto;
         border-radius: 50%;
         border: 2px solid rgba(0, 83, 164, 0.35);
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 246, 230, 0.92));
