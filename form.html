@@ -389,65 +389,107 @@
         position: sticky;
         top: 0;
         z-index: 50;
-        padding: clamp(0.75rem, 0.5rem + 1vw, 1.25rem) 0;
+        padding: clamp(1rem, 0.75rem + 1vw, 1.5rem) 0;
         margin-bottom: clamp(1.5rem, 1.25rem + 1vw, 2.25rem);
-        background: linear-gradient(120deg, rgba(255, 255, 255, 0.9), rgba(255, 244, 228, 0.85));
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
+        background: linear-gradient(180deg, rgba(255, 237, 212, 0.9), rgba(255, 237, 212, 0.98));
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
       }
 
-      .section-nav::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 1px;
-        background: linear-gradient(90deg, rgba(0, 83, 164, 0), rgba(0, 83, 164, 0.25), rgba(0, 83, 164, 0));
-        pointer-events: none;
+      .section-nav__inner {
+        background: var(--surface-strong);
+        border-radius: 1.5rem;
+        padding: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+        box-shadow: 0 20px 45px rgba(24, 64, 120, 0.12);
+        border: 1px solid rgba(0, 83, 164, 0.12);
+        display: flex;
+        flex-direction: column;
+        gap: clamp(1rem, 0.75rem + 0.5vw, 1.5rem);
+      }
+
+      .section-nav__top {
+        display: flex;
+        align-items: center;
+        gap: clamp(1rem, 0.75rem + 1vw, 2rem);
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .section-nav__eyebrow {
+        font-size: 0.95rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: var(--brand-secondary);
+      }
+
+      .section-nav__registration {
+        margin-left: auto;
+        padding: 0.75rem 1.25rem;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, rgba(0, 83, 164, 0.12), rgba(0, 163, 255, 0.12));
+        border: 1px solid rgba(0, 83, 164, 0.2);
+        min-width: clamp(14rem, 12rem + 6vw, 18rem);
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      }
+
+      .section-nav__registration-label {
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .section-nav__registration-value {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--brand-secondary);
+        letter-spacing: 0.02em;
       }
 
       .section-nav__list {
         --step-size: 3rem;
-        --step-gap: clamp(1rem, 0.75rem + 1.5vw, 2.75rem);
+        --connector-gap: clamp(1.5rem, 1rem + 1.5vw, 3rem);
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
-        gap: var(--step-gap);
+        gap: var(--connector-gap);
         list-style: none;
         padding: 0;
         margin: 0;
         overflow-x: auto;
         scrollbar-width: thin;
-        counter-reset: section-nav;
         -webkit-overflow-scrolling: touch;
-        position: relative;
       }
 
       .section-nav__item {
-        counter-increment: section-nav;
         position: relative;
         flex: 0 0 auto;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
+        gap: 0.75rem;
+        min-width: max(6.25rem, calc(var(--step-size) + 1.5rem));
       }
 
       .section-nav__item::after {
         content: "";
         position: absolute;
-        top: 50%;
-        left: var(--step-size);
-        width: var(--step-gap);
+        top: calc(var(--step-size) / 2);
+        left: calc(50% + var(--step-size) / 2);
+        width: var(--connector-gap);
         height: 2px;
-        background: linear-gradient(90deg, rgba(0, 83, 164, 0.1), rgba(0, 163, 255, 0.4));
+        background: linear-gradient(90deg, rgba(0, 83, 164, 0.15), rgba(0, 163, 255, 0.35));
         transform: translateY(-50%);
         pointer-events: none;
-        z-index: 0;
       }
 
       .section-nav__item.is-complete::after {
-        background: linear-gradient(90deg, rgba(0, 83, 164, 0.25), rgba(0, 163, 255, 0.55));
+        background: linear-gradient(90deg, rgba(0, 83, 164, 0.35), rgba(0, 163, 255, 0.65));
       }
 
       .section-nav__item:last-child::after {
@@ -455,65 +497,61 @@
       }
 
       .section-nav__link {
-        position: relative;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: var(--step-size);
         height: var(--step-size);
         border-radius: 50%;
-        border: none;
-        padding: 0;
-        background: transparent;
-        cursor: pointer;
-        transition: transform 0.25s ease, filter 0.25s ease;
-        z-index: 1;
-      }
-
-      .section-nav__link::before {
-        content: counter(section-nav);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 246, 230, 0.95));
-        border: 2px solid rgba(0, 83, 164, 0.4);
+        border: 2px solid rgba(0, 83, 164, 0.35);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 246, 230, 0.92));
         color: var(--brand-secondary);
-        font-size: 1rem;
         font-weight: 700;
-        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
-        transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+        font-size: 1.05rem;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
+        cursor: pointer;
       }
 
-      .section-nav__link.is-complete::before {
-        border-color: rgba(0, 83, 164, 0.55);
-        color: var(--brand-primary);
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
-      }
-
-      .section-nav__link:hover::before,
-      .section-nav__link:focus-visible::before {
+      .section-nav__link:hover,
+      .section-nav__link:focus-visible {
         border-color: var(--brand-highlight);
         color: var(--brand-primary);
-        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
         outline: none;
       }
 
-      .section-nav__link:focus-visible {
-        outline: none;
-      }
-
-      .section-nav__link.is-active::before {
-        background: linear-gradient(135deg, var(--brand-primary), var(--brand-highlight));
-        color: #ffffff;
-        border-color: transparent;
-        box-shadow: 0 16px 32px rgba(0, 83, 164, 0.35);
+      .section-nav__link.is-complete {
+        border-color: rgba(0, 83, 164, 0.5);
+        color: var(--brand-primary);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
       }
 
       .section-nav__link.is-active {
+        background: linear-gradient(135deg, var(--brand-primary), var(--brand-highlight));
+        color: #ffffff;
+        border-color: transparent;
         transform: translateY(-3px);
+        box-shadow: 0 18px 36px rgba(0, 83, 164, 0.35);
+      }
+
+      .section-nav__label {
+        font-size: 0.95rem;
+        text-align: center;
+        color: var(--brand-secondary);
+        font-weight: 600;
+        line-height: 1.35;
+        max-width: 9.5rem;
+      }
+
+      .section-nav__item.is-complete .section-nav__label {
+        color: var(--brand-primary);
+      }
+
+      .section-nav__item.is-active .section-nav__label {
+        color: var(--brand-primary);
+        font-weight: 700;
       }
 
       .step-actions {
@@ -655,12 +693,26 @@
         }
 
         .section-nav {
-          padding: 0.75rem 0;
+          padding: 0.75rem 0 1rem;
+        }
+
+        .section-nav__inner {
+          padding: 1rem;
+        }
+
+        .section-nav__top {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        .section-nav__registration {
+          width: 100%;
         }
 
         .section-nav__list {
-          --step-size: 2.5rem;
-          --step-gap: 1.5rem;
+          --step-size: 2.65rem;
+          --connector-gap: 1.5rem;
           justify-content: flex-start;
         }
 
@@ -668,7 +720,8 @@
           display: none;
         }
 
-        .section-nav__link::before {
+        .section-nav__label {
+          max-width: none;
           font-size: 0.9rem;
         }
       }
@@ -751,70 +804,89 @@
     <main>
       <div class="container">
         <div class="form-wrapper">
-          <nav class="section-nav" aria-label="Progresso do formulário">
-            <ol class="section-nav__list">
-              <li class="section-nav__item">
-                <button
-                  type="button"
-                  class="section-nav__link is-active"
-                  data-step="1"
-                  aria-controls="form-step-1"
-                  aria-label="Identificação do candidato"
-                  aria-pressed="true"
-                  aria-current="step"
-                >
-                  <span class="visually-hidden">Identificação do candidato</span>
-                </button>
-              </li>
-              <li class="section-nav__item">
-                <button
-                  type="button"
-                  class="section-nav__link"
-                  data-step="2"
-                  aria-controls="form-step-2"
-                  aria-label="Contatos e residência"
-                  aria-pressed="false"
-                >
-                  <span class="visually-hidden">Contatos e residência</span>
-                </button>
-              </li>
-              <li class="section-nav__item">
-                <button
-                  type="button"
-                  class="section-nav__link"
-                  data-step="3"
-                  aria-controls="form-step-3"
-                  aria-label="Contexto socioassistencial e diversidade"
-                  aria-pressed="false"
-                >
-                  <span class="visually-hidden">Contexto socioassistencial e diversidade</span>
-                </button>
-              </li>
-              <li class="section-nav__item">
-                <button
-                  type="button"
-                  class="section-nav__link"
-                  data-step="4"
-                  aria-controls="form-step-4"
-                  aria-label="Condições especiais e anexos"
-                  aria-pressed="false"
-                >
-                  <span class="visually-hidden">Condições especiais e anexos</span>
-                </button>
-              </li>
-              <li class="section-nav__item">
-                <button
-                  type="button"
-                  class="section-nav__link"
-                  data-step="5"
-                  aria-controls="form-step-5"
-                  aria-label="Informações da CNH, documentos e declarações"
-                  aria-pressed="false"
-                >
-                  <span class="visually-hidden">Informações da CNH, documentos e declarações</span>
-                </button>
-              </li>
-            </ol>
+          <nav class="section-nav" aria-label="Etapas da inscrição">
+            <div class="section-nav__inner">
+              <div class="section-nav__top">
+                <span class="section-nav__eyebrow">Etapas da inscrição</span>
+                <div class="section-nav__registration" role="status" aria-live="polite">
+                  <span class="section-nav__registration-label">Nº da inscrição</span>
+                  <span class="section-nav__registration-value">{{ $json.data.numeroInscricao || $json.data.protocolo || "—" }}</span>
+                </div>
+              </div>
+              <ol class="section-nav__list">
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link is-active"
+                    data-step="1"
+                    aria-controls="form-step-1"
+                    aria-label="Dados pessoais"
+                    aria-describedby="step-label-1"
+                    aria-pressed="true"
+                    aria-current="step"
+                  >
+                    1
+                  </button>
+                  <span class="section-nav__label" id="step-label-1">Dados pessoais</span>
+                </li>
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link"
+                    data-step="2"
+                    aria-controls="form-step-2"
+                    aria-label="Contatos e residência"
+                    aria-describedby="step-label-2"
+                    aria-pressed="false"
+                  >
+                    2
+                  </button>
+                  <span class="section-nav__label" id="step-label-2">Contatos e endereço</span>
+                </li>
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link"
+                    data-step="3"
+                    aria-controls="form-step-3"
+                    aria-label="Perfil socioassistencial"
+                    aria-describedby="step-label-3"
+                    aria-pressed="false"
+                  >
+                    3
+                  </button>
+                  <span class="section-nav__label" id="step-label-3">Perfil socioassistencial</span>
+                </li>
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link"
+                    data-step="4"
+                    aria-controls="form-step-4"
+                    aria-label="Condições especiais e anexos"
+                    aria-describedby="step-label-4"
+                    aria-pressed="false"
+                  >
+                    4
+                  </button>
+                  <span class="section-nav__label" id="step-label-4">Condições especiais</span>
+                </li>
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link"
+                    data-step="5"
+                    aria-controls="form-step-5"
+                    aria-label="Documentos e envio"
+                    aria-describedby="step-label-5"
+                    aria-pressed="false"
+                  >
+                    5
+                  </button>
+                  <span class="section-nav__label" id="step-label-5">Documentos e envio</span>
+                </li>
+              </ol>
+            </div>
           </nav>
           <form id="cnhSocialForm" class="needs-validation" novalidate>
             <div class="form-step is-active" id="form-step-1" data-step="1" aria-hidden="false">
@@ -1666,6 +1738,7 @@
           const parentItem = button.closest(".section-nav__item");
           if (parentItem) {
             parentItem.classList.toggle("is-complete", isComplete);
+            parentItem.classList.toggle("is-active", isActive);
           }
           if (isActive) {
             button.setAttribute("aria-current", "step");
