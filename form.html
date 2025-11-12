@@ -1469,7 +1469,15 @@
               <div class="col-12 col-lg-6 d-none" id="docResponsavelWrapper">
                 <div class="file-input-wrapper">
                   <label for="docResponsavel" class="form-label required">Comprovante de responsabilidade legal (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docResponsavel" name="docResponsavel" accept=".pdf,.jpg,.jpeg,.png" />
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="docResponsavel"
+                    name="docResponsavel"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    aria-describedby="docResponsavelInfo"
+                  />
+                  <div id="docResponsavelInfo" class="form-text">Certidão, termo judicial ou documento equivalente que comprove tutela, curatela ou guarda.</div>
                   <div class="file-name" id="docResponsavelName"></div>
                 </div>
               </div>
