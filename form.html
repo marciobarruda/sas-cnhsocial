@@ -388,11 +388,11 @@
         position: sticky;
         top: 0;
         z-index: 50;
-        padding: clamp(1rem, 0.75rem + 1vw, 1.5rem) 0;
+        padding: 0;
         margin-bottom: clamp(1.5rem, 1.25rem + 1vw, 2.25rem);
-        background: linear-gradient(180deg, rgba(255, 237, 212, 0.9), rgba(255, 237, 212, 0.98));
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
       }
 
       .section-nav__inner {
@@ -464,6 +464,7 @@
         overflow-y: visible;
         scrollbar-width: thin;
         -webkit-overflow-scrolling: touch;
+        position: relative;
       }
 
       .section-nav__item {
@@ -474,6 +475,7 @@
         align-items: center;
         gap: 0.75rem;
         min-width: max(6.25rem, calc(var(--step-size) + 1.5rem));
+        z-index: 1;
       }
 
       .section-nav__item::after {
@@ -486,6 +488,7 @@
         background: linear-gradient(90deg, rgba(0, 83, 164, 0.15), rgba(0, 163, 255, 0.35));
         transform: translateY(-50%);
         pointer-events: none;
+        z-index: 0;
       }
 
       .section-nav__item.is-complete::after {
@@ -513,6 +516,19 @@
         cursor: pointer;
         position: relative;
         z-index: 1;
+      }
+
+      .section-nav__list::before {
+        content: "";
+        position: absolute;
+        top: calc(var(--step-size) / 2);
+        left: calc(var(--step-size) / 2);
+        right: calc(var(--step-size) / 2);
+        height: 2px;
+        background: linear-gradient(90deg, rgba(0, 83, 164, 0.12), rgba(0, 163, 255, 0.28));
+        transform: translateY(-50%);
+        pointer-events: none;
+        z-index: 0;
       }
 
       .section-nav__link:hover,
@@ -693,7 +709,7 @@
         }
 
         .section-nav {
-          padding: 0.75rem 0 1rem;
+          padding: 0;
         }
 
         .section-nav__inner {
@@ -717,6 +733,10 @@
         }
 
         .section-nav__item::after {
+          display: none;
+        }
+
+        .section-nav__list::before {
           display: none;
         }
 
