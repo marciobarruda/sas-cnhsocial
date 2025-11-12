@@ -516,6 +516,88 @@
         transform: translateY(-3px);
       }
 
+      .step-actions {
+        margin-top: clamp(1.5rem, 1.1rem + 1vw, 2.5rem);
+        padding: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+        border-radius: 1rem;
+        background: linear-gradient(120deg, rgba(255, 255, 255, 0.92), rgba(255, 244, 228, 0.88));
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        border: 1px solid rgba(0, 83, 164, 0.12);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .step-actions__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.6rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 246, 230, 0.9));
+        color: var(--brand-secondary);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease;
+      }
+
+      .step-actions__button--next {
+        margin-left: auto;
+      }
+
+      .step-actions__button:hover,
+      .step-actions__button:focus-visible {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px rgba(15, 23, 42, 0.18);
+        outline: none;
+      }
+
+      .step-actions__button:focus-visible {
+        filter: brightness(1.03);
+      }
+
+      .step-actions__button--next {
+        background: linear-gradient(135deg, var(--brand-primary), var(--brand-highlight));
+        color: #ffffff;
+      }
+
+      .step-actions__button--next:hover,
+      .step-actions__button--next:focus-visible {
+        filter: saturate(1.05);
+      }
+
+      .step-actions__button--prev {
+        border: 1px solid rgba(0, 83, 164, 0.25);
+        color: var(--brand-secondary);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 246, 230, 0.88));
+      }
+
+      .step-actions__button--prev:hover,
+      .step-actions__button--prev:focus-visible {
+        border-color: rgba(0, 163, 255, 0.55);
+        color: var(--brand-primary);
+      }
+
+      .step-actions__button i {
+        font-size: 1.25rem;
+      }
+
+      @media (max-width: 575.98px) {
+        .step-actions {
+          padding: 0.75rem 0.875rem;
+        }
+
+        .step-actions__button {
+          width: 100%;
+          margin-left: 0;
+        }
+      }
+
       .card-section {
         border: 1px solid var(--border-color);
         border-radius: 1rem;
@@ -819,6 +901,17 @@
               </div>
             </div>
             </section>
+              <div class="step-actions" aria-label="Controles da etapa Identificação do candidato">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  data-step-target="2"
+                  aria-label="Avançar para Contatos e residência"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
 
             <div class="form-step" id="form-step-2" data-step="2" hidden aria-hidden="true">
@@ -1003,8 +1096,28 @@
                   <div class="file-name" id="docResidenciaName"></div>
                 </div>
                 </div>
+            </div>
+          </section>
+              <div class="step-actions" aria-label="Controles da etapa Contatos e residência">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--prev"
+                  data-step-target="1"
+                  aria-label="Voltar para Identificação do candidato"
+                >
+                  <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  data-step-target="3"
+                  aria-label="Avançar para Contexto socioassistencial"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
+                </button>
               </div>
-            </section>
             </div>
 
             <div class="form-step" id="form-step-3" data-step="3" hidden aria-hidden="true">
@@ -1188,7 +1301,27 @@
               </fieldset>
             </div>
           </div>
-          </section>
+        </section>
+              <div class="step-actions" aria-label="Controles da etapa Contexto socioassistencial e diversidade">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--prev"
+                  data-step-target="2"
+                  aria-label="Voltar para Contatos e residência"
+                >
+                  <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  data-step-target="4"
+                  aria-label="Avançar para Condições especiais e anexos"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
 
             <div class="form-step" id="form-step-4" data-step="4" hidden aria-hidden="true">
@@ -1294,6 +1427,26 @@
               </div>
               </div>
             </section>
+              <div class="step-actions" aria-label="Controles da etapa Condições especiais e anexos">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--prev"
+                  data-step-target="3"
+                  aria-label="Voltar para Contexto socioassistencial e diversidade"
+                >
+                  <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  data-step-target="5"
+                  aria-label="Avançar para Informações da CNH, documentos e declarações"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
 
             <div class="form-step" id="form-step-5" data-step="5" hidden aria-hidden="true">
@@ -1454,6 +1607,17 @@
                   </div>
                 </div>
               </section>
+              <div class="step-actions" aria-label="Controles finais da etapa Informações da CNH, documentos e declarações">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--prev"
+                  data-step-target="4"
+                  aria-label="Voltar para Condições especiais e anexos"
+                >
+                  <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+                  Voltar
+                </button>
+              </div>
             </div>
           </form>
         </div>
@@ -1530,6 +1694,19 @@
         }
       };
 
+      const updateHashForStep = (stepId) => {
+        if (!stepId) return;
+        const step = formSteps.find((item) => item.dataset.step === stepId);
+        const primarySection = step?.querySelector(".form-section[id]");
+        if (primarySection && primarySection.id) {
+          if (typeof window.history?.replaceState === "function") {
+            window.history.replaceState(null, "", `#${primarySection.id}`);
+          } else {
+            window.location.hash = primarySection.id;
+          }
+        }
+      };
+
       const getStepByHash = (hash) => {
         if (!hash) return null;
         const cleaned = hash.startsWith("#") ? hash.slice(1) : hash;
@@ -1556,16 +1733,17 @@
             const stepId = button.dataset.step;
             if (!stepId) return;
             setActiveStep(stepId, { focusField: true });
+            updateHashForStep(stepId);
+          });
+        });
 
-            const step = formSteps.find((item) => item.dataset.step === stepId);
-            const primarySection = step?.querySelector(".form-section[id]");
-            if (primarySection && primarySection.id) {
-              if (typeof window.history?.replaceState === "function") {
-                window.history.replaceState(null, "", `#${primarySection.id}`);
-              } else {
-                window.location.hash = primarySection.id;
-              }
-            }
+        const stepActionButtons = Array.from(document.querySelectorAll(".step-actions__button[data-step-target]"));
+        stepActionButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const targetStep = button.dataset.stepTarget;
+            if (!targetStep) return;
+            setActiveStep(targetStep, { focusField: true });
+            updateHashForStep(targetStep);
           });
         });
 
