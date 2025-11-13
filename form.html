@@ -967,6 +967,18 @@
                 />
               </div>
               <div class="col-12 col-sm-6 col-lg-3">
+                <label for="idade" class="form-label">Idade</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="idade"
+                  name="idade"
+                  value=""
+                  readonly
+                  aria-readonly="true"
+                />
+              </div>
+              <div class="col-12 col-sm-6 col-lg-3">
                 <label for="genero" class="form-label required">Identificação de gênero</label>
                 <select
                   class="form-select"
@@ -1236,7 +1248,6 @@
                   readonly
                   aria-readonly="true"
                 />
-                <div class="form-text">Informação preenchida automaticamente a partir do CadÚnico.</div>
               </div>
               <div class="col-12 col-md-4">
                 <label for="dataInscricaoCadunico" class="form-label">Data da inscrição</label>
@@ -1249,7 +1260,6 @@
                   readonly
                   aria-readonly="true"
                 />
-                <div class="form-text">Gerada automaticamente conforme registro da família.</div>
               </div>
               <div class="col-12 col-md-4">
                 <label for="dataAtualizacaoCadunico" class="form-label">Data da atualização</label>
@@ -1262,7 +1272,6 @@
                   readonly
                   aria-readonly="true"
                 />
-                <div class="form-text">Última atualização disponível no CadÚnico.</div>
               </div>
             </div>
             <div class="row g-4">
@@ -1986,6 +1995,55 @@
         });
       }
 
+      const parseDateFromString = (value) => {
+        if (!value && value !== 0) return null;
+        if (value instanceof Date && !Number.isNaN(value.getTime())) {
+          return value;
+        }
+        const stringValue = typeof value === "string" ? value.trim() : String(value || "").trim();
+        if (!stringValue) return null;
+        const isoMatch = stringValue.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (isoMatch) {
+          const [, year, month, day] = isoMatch;
+          const date = new Date(Number(year), Number(month) - 1, Number(day));
+          return Number.isNaN(date.getTime()) ? null : date;
+        }
+        const brMatch = stringValue.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (brMatch) {
+          const [, day, month, year] = brMatch;
+          const date = new Date(Number(year), Number(month) - 1, Number(day));
+          return Number.isNaN(date.getTime()) ? null : date;
+        }
+        const timestamp = Date.parse(stringValue);
+        if (!Number.isNaN(timestamp)) {
+          return new Date(timestamp);
+        }
+        return null;
+      };
+
+      const formatDateToBrazil = (value) => {
+        const date = parseDateFromString(value);
+        if (!date) {
+          return typeof value === "string" ? value : "";
+        }
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      };
+
+      const calculateAgeFromDate = (value) => {
+        const birthDate = parseDateFromString(value);
+        if (!birthDate) return null;
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age -= 1;
+        }
+        return age >= 0 ? age : null;
+      };
+
       const prefillValues = {
         nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
         cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
@@ -2019,6 +2077,9 @@
         maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
         vitimaViolencia: {{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }},
         necessidadesEspeciais: {{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }},
+        inscricaoCadunico: {{ JSON.stringify((($json.data || {}).codigoFamilia) || "") }},
+        dataInscricaoCadunico: {{ JSON.stringify((($json.data || {}).familiaDataCadastramento) || "") }},
+        dataAtualizacaoCadunico: {{ JSON.stringify((($json.data || {}).familiaDataAtualizacao) || "") }},
       };
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
@@ -2028,6 +2089,8 @@
       const bairroInput = document.getElementById("bairro");
       const cidadeInput = document.getElementById("cidade");
       const ufSelect = document.getElementById("uf");
+      const birthdateInput = document.getElementById("dataNascimento");
+      const ageInput = document.getElementById("idade");
       const cepStatus = document.getElementById("cepStatus");
       const btnAtualizarEndereco = document.getElementById("btnAtualizarEndereco");
       let enderecoEdicaoAtiva = false;
@@ -3000,6 +3063,17 @@
           element.dispatchEvent(new Event("change"));
         };
 
+        const setFormattedDateValue = (id, rawValue) => {
+          const element = document.getElementById(id);
+          if (!element) return;
+          if (rawValue == null || (typeof rawValue === "string" && rawValue.trim() === "")) {
+            element.value = "";
+            return;
+          }
+          const formatted = formatDateToBrazil(rawValue);
+          element.value = formatted || String(rawValue);
+        };
+
         setTextValue("nomeCompleto", prefillValues.nomeCompleto);
         if (prefillValues.cpf && prefillValues.cpf.trim() !== "") {
           setMaskedValue(maskCpf, "cpf", prefillValues.cpf);
@@ -3008,6 +3082,9 @@
         setTextValue("dataNascimento", prefillValues.dataNascimento);
         setSelectValue("genero", prefillValues.genero, true);
         setTextValue("nomeSocial", prefillValues.nomeSocial);
+        setTextValue("inscricaoCadunico", prefillValues.inscricaoCadunico);
+        setFormattedDateValue("dataInscricaoCadunico", prefillValues.dataInscricaoCadunico);
+        setFormattedDateValue("dataAtualizacaoCadunico", prefillValues.dataAtualizacaoCadunico);
         if (prefillValues.cep && prefillValues.cep.trim() !== "") {
           setMaskedValue(maskCep, "cep", prefillValues.cep);
         }
@@ -3361,6 +3438,17 @@
         return true;
       };
 
+      const updateAgeFieldFromBirthdate = () => {
+        if (!ageInput || !birthdateInput) return;
+        const referenceValue = birthdateInput.value || prefillValues.dataNascimento;
+        const age = calculateAgeFromDate(referenceValue);
+        ageInput.value = age != null ? `${age}` : "";
+      };
+
+      if (birthdateInput) {
+        birthdateInput.addEventListener("change", updateAgeFieldFromBirthdate);
+      }
+
       const validarEExibirModal = (formSelector, botaoSelector) => {
         const targetForm = document.querySelector(formSelector);
         const targetButton = document.querySelector(botaoSelector);
@@ -3380,6 +3468,7 @@
       validarEExibirModal("#cnhSocialForm", "#submitButton");
 
       applyPrefillValues();
+      updateAgeFieldFromBirthdate();
       updateSubmitState();
     </script>
   </body>
