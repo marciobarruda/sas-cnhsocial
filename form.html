@@ -990,6 +990,18 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="tempoAtualizacaoCadunico" class="form-label">Tempo desde a atualização</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="tempoAtualizacaoCadunico"
+                      name="tempoAtualizacaoCadunico"
+                      value=""
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-lg-3">
                     <label for="dataNascimento" class="form-label required">Data de nascimento</label>
                     <input
                       type="date"
@@ -2029,6 +2041,29 @@
         return age >= 0 ? age : null;
       };
 
+      const formatElapsedTimeSinceDate = (value) => {
+        if (typeof dayjs !== "function") {
+          return "";
+        }
+        const referenceDate = parseDateFromString(value);
+        if (!referenceDate) {
+          return "";
+        }
+        const now = dayjs();
+        const reference = dayjs(referenceDate);
+        if (reference.isAfter(now)) {
+          return "";
+        }
+        const years = now.diff(reference, "year");
+        const afterYears = reference.add(years, "year");
+        const months = now.diff(afterYears, "month");
+        const afterMonths = afterYears.add(months, "month");
+        const days = now.diff(afterMonths, "day");
+
+        const formatUnit = (amount, singular, plural) => `${amount} ${amount === 1 ? singular : plural}`;
+        return `${formatUnit(years, "ano", "anos")}, ${formatUnit(months, "mês", "meses")} e ${formatUnit(days, "dia", "dias")}`;
+      };
+
       const prefillValues = {
         nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
         cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
@@ -2074,6 +2109,8 @@
       const ufSelect = document.getElementById("uf");
       const birthdateInput = document.getElementById("dataNascimento");
       const ageInput = document.getElementById("idade");
+      const dataAtualizacaoInput = document.getElementById("dataAtualizacaoCadunico");
+      const tempoAtualizacaoInput = document.getElementById("tempoAtualizacaoCadunico");
       const cepStatus = document.getElementById("cepStatus");
       const btnAtualizarEndereco = document.getElementById("btnAtualizarEndereco");
       let enderecoEdicaoAtiva = false;
@@ -3051,10 +3088,16 @@
           if (!element) return;
           if (rawValue == null || (typeof rawValue === "string" && rawValue.trim() === "")) {
             element.value = "";
+            if (element.dataset) {
+              element.dataset.rawValue = "";
+            }
             return;
           }
           const formatted = formatDateToBrazil(rawValue);
           element.value = formatted || String(rawValue);
+          if (element.dataset) {
+            element.dataset.rawValue = typeof rawValue === "string" ? rawValue : String(rawValue);
+          }
         };
 
         setTextValue("nomeCompleto", prefillValues.nomeCompleto);
@@ -3430,6 +3473,18 @@
         birthdateInput.addEventListener("change", updateAgeFieldFromBirthdate);
       }
 
+      const updateTempoAtualizacaoField = () => {
+        if (!tempoAtualizacaoInput) return;
+        const referenceValue =
+          (dataAtualizacaoInput && (dataAtualizacaoInput.dataset?.rawValue || dataAtualizacaoInput.value))
+            || prefillValues.dataAtualizacaoCadunico;
+        tempoAtualizacaoInput.value = formatElapsedTimeSinceDate(referenceValue);
+      };
+
+      if (dataAtualizacaoInput) {
+        dataAtualizacaoInput.addEventListener("change", updateTempoAtualizacaoField);
+      }
+
       const validarEExibirModal = (formSelector, botaoSelector) => {
         const targetForm = document.querySelector(formSelector);
         const targetButton = document.querySelector(botaoSelector);
@@ -3450,6 +3505,7 @@
 
       applyPrefillValues();
       updateAgeFieldFromBirthdate();
+      updateTempoAtualizacaoField();
       updateSubmitState();
     </script>
   </body>
