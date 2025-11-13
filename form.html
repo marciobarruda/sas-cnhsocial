@@ -2390,6 +2390,38 @@
       const cpfInput = document.getElementById("cpf");
       const emailInput = document.getElementById("email");
       const emailConfirmInput = document.getElementById("emailConfirm");
+
+      const clearEmailConfirmationField = () => {
+        if (!emailConfirmInput) return false;
+        const emailValue = (emailInput?.value || "").trim();
+        const confirmValue = (emailConfirmInput.value || "").trim();
+        if (!emailValue || !confirmValue) {
+          return false;
+        }
+        if (emailValue.toLowerCase() === confirmValue.toLowerCase()) {
+          return false;
+        }
+        emailConfirmInput.value = "";
+        emailConfirmInput.classList.add("is-invalid");
+        emailConfirmInput.setAttribute("aria-invalid", "true");
+        emailConfirmInput.dispatchEvent(new Event("input", { bubbles: true }));
+        return true;
+      };
+
+      const enforceEmailConfirmationConsistency = () => {
+        if (!emailInput || !emailConfirmInput) return;
+        const resetIfMismatch = () => {
+          clearEmailConfirmationField();
+        };
+        emailConfirmInput.addEventListener("blur", resetIfMismatch);
+        emailConfirmInput.addEventListener("change", resetIfMismatch);
+        emailInput.addEventListener("change", () => {
+          if ((emailConfirmInput.value || "").trim()) {
+            resetIfMismatch();
+          }
+        });
+      };
+
       const cpfValidator = (value) => {
         const digits = value.replace(/\D/g, "");
         if (digits.length !== 11 || /^([0-9])\1+$/.test(digits)) return false;
@@ -2786,6 +2818,41 @@
           elements.add(item);
         });
         return Array.from(elements);
+      };
+
+      const highlightRequiredFieldIfEmpty = (element) => {
+        if (!element) return;
+        const isRequired = element.hasAttribute("required") || element.dataset.requiredField === "true";
+        if (!isRequired) return;
+        const shouldHighlight = !isFieldFilled(element, { bypassVisibilityCheck: true });
+        if (shouldHighlight) {
+          element.classList.add("is-invalid");
+          element.setAttribute("aria-invalid", "true");
+        } else {
+          element.classList.remove("is-invalid");
+          element.removeAttribute("aria-invalid");
+        }
+      };
+
+      const attachRequiredFieldFocusHandlers = () => {
+        getRequiredElements().forEach((element) => {
+          if (!element || element.dataset.requiredFieldHandler === "true") {
+            return;
+          }
+          element.dataset.requiredFieldHandler = "true";
+          element.addEventListener("focus", () => {
+            highlightRequiredFieldIfEmpty(element);
+          });
+          const clearHighlightIfFilled = () => {
+            if (isFieldFilled(element, { bypassVisibilityCheck: true })) {
+              element.classList.remove("is-invalid");
+              element.removeAttribute("aria-invalid");
+            }
+          };
+          element.addEventListener("input", clearHighlightIfFilled);
+          element.addEventListener("change", clearHighlightIfFilled);
+          element.addEventListener("blur", clearHighlightIfFilled);
+        });
       };
 
       const getGroupElements = (name) =>
@@ -3337,6 +3404,7 @@
           emailConfirmValue &&
           emailValue.toLowerCase() !== emailConfirmValue.toLowerCase()
         ) {
+          clearEmailConfirmationField();
           registerError(
             "#emailConfirm",
             "Os e-mails informados devem coincidir",
@@ -3514,6 +3582,9 @@
       };
 
       validarEExibirModal("#cnhSocialForm", "#submitButton");
+
+      attachRequiredFieldFocusHandlers();
+      enforceEmailConfirmationConsistency();
 
       applyPrefillValues();
       updateAgeFieldFromBirthdate();
