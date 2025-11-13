@@ -471,25 +471,21 @@
         z-index: 1;
       }
 
-      .section-nav__item::after {
+      .section-nav__item + .section-nav__item::before {
         content: "";
         position: absolute;
         top: calc(var(--step-size) / 2);
-        left: calc(50% + var(--step-size) / 2);
+        left: 50%;
         width: calc(var(--connector-gap) + var(--step-size));
         height: 2px;
         background: linear-gradient(90deg, rgba(0, 83, 164, 0.15), rgba(0, 163, 255, 0.35));
-        transform: translateY(-50%);
+        transform: translate(-100%, -50%);
         pointer-events: none;
         z-index: 0;
       }
 
-      .section-nav__item.is-complete::after {
+      .section-nav__item.is-complete + .section-nav__item::before {
         background: linear-gradient(90deg, rgba(0, 83, 164, 0.35), rgba(0, 163, 255, 0.65));
-      }
-
-      .section-nav__item:last-child::after {
-        display: none;
       }
 
       .section-nav__link {
@@ -708,11 +704,7 @@
           justify-content: flex-start;
         }
 
-        .section-nav__item::after {
-          display: none;
-        }
-
-        .section-nav__list::before {
+        .section-nav__item + .section-nav__item::before {
           display: none;
         }
 
@@ -2204,9 +2196,16 @@
         return true;
       };
 
-      const isFieldFilled = (element) => {
+      const isInInactiveStep = (element) => {
+        if (!element) return false;
+        const parentStep = element.closest(".form-step");
+        if (!parentStep) return false;
+        return !parentStep.classList.contains("is-active");
+      };
+
+      const isFieldFilled = (element, { bypassVisibilityCheck = false } = {}) => {
         if (!element) return true;
-        if (!isElementVisible(element)) return true;
+        if (!bypassVisibilityCheck && !isElementVisible(element)) return true;
         if (element.disabled) return true;
         if (element.type === "checkbox" || element.type === "radio") {
           if (element.checked) return true;
@@ -2649,7 +2648,8 @@
           if (element.type === "hidden") {
             return;
           }
-          if (!isElementVisible(element)) {
+          const elementInInactiveStep = isInInactiveStep(element);
+          if (!elementInInactiveStep && !isElementVisible(element)) {
             return;
           }
           const selector = element.id
@@ -2666,9 +2666,17 @@
               if (processedGroups.has(name)) {
                 return;
               }
-              const group = getGroupElements(name).filter(
-                (input) => !input.disabled && isElementVisible(input) && input.type !== "hidden"
-              );
+              const group = getGroupElements(name).filter((input) => {
+                if (!input) return false;
+                if (input.disabled || input.type === "hidden") {
+                  return false;
+                }
+                const inInactiveStep = isInInactiveStep(input);
+                if (!inInactiveStep && !isElementVisible(input)) {
+                  return false;
+                }
+                return true;
+              });
               processedGroups.add(name);
               if (group.length && !group.some((input) => input.checked)) {
                 invalidMap.set(selector, {
@@ -2691,7 +2699,7 @@
             }
             return;
           }
-          if (!isFieldFilled(element)) {
+          if (!isFieldFilled(element, { bypassVisibilityCheck: elementInInactiveStep })) {
             invalidMap.set(selector, {
               selector,
               element,
