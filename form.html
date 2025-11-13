@@ -506,12 +506,17 @@
         position: relative;
       }
 
-      .section-nav__index {
+      .section-nav__icon {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 100%;
+        font-size: 1.2rem;
+      }
+
+      .section-nav__icon i {
+        line-height: 1;
       }
 
       .section-nav__link:hover,
@@ -533,7 +538,7 @@
         color: #ffffff;
       }
 
-      .section-nav__link.is-complete .section-nav__index {
+      .section-nav__link.is-complete .section-nav__icon {
         opacity: 0;
       }
 
@@ -836,7 +841,9 @@
                     aria-pressed="true"
                     aria-current="step"
                   >
-                    <span class="section-nav__index" aria-hidden="true">1</span>
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-person-badge"></i>
+                    </span>
                   </button>
                   <span class="section-nav__label" id="step-label-1">Dados pessoais</span>
                 </li>
@@ -850,7 +857,9 @@
                     aria-describedby="step-label-2"
                     aria-pressed="false"
                   >
-                    <span class="section-nav__index" aria-hidden="true">2</span>
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-geo-alt"></i>
+                    </span>
                   </button>
                   <span class="section-nav__label" id="step-label-2">Contatos e endereço</span>
                 </li>
@@ -864,7 +873,9 @@
                     aria-describedby="step-label-3"
                     aria-pressed="false"
                   >
-                    <span class="section-nav__index" aria-hidden="true">3</span>
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-people"></i>
+                    </span>
                   </button>
                   <span class="section-nav__label" id="step-label-3">Perfil socioassistencial</span>
                 </li>
@@ -878,7 +889,9 @@
                     aria-describedby="step-label-4"
                     aria-pressed="false"
                   >
-                    <span class="section-nav__index" aria-hidden="true">4</span>
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-shield-check"></i>
+                    </span>
                   </button>
                   <span class="section-nav__label" id="step-label-4">Condições especiais</span>
                 </li>
@@ -892,7 +905,9 @@
                     aria-describedby="step-label-5"
                     aria-pressed="false"
                   >
-                    <span class="section-nav__index" aria-hidden="true">5</span>
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-cloud-arrow-up"></i>
+                    </span>
                   </button>
                   <span class="section-nav__label" id="step-label-5">Documentos e envio</span>
                 </li>
@@ -1724,6 +1739,9 @@
       const sectionNavList = document.querySelector(".section-nav__list");
       const totalSteps = sectionNavLinks.length;
       const formSteps = Array.from(document.querySelectorAll(".form-step"));
+      let currentStepId = null;
+
+      const getStepElementById = (stepId) => formSteps.find((step) => step.dataset.step === stepId);
 
       const sectionIdToStep = new Map();
       formSteps.forEach((step) => {
@@ -1791,11 +1809,13 @@
             focusable.focus();
           }
         }
+        currentStepId = stepId;
+        return activeStep;
       };
 
       const updateHashForStep = (stepId) => {
         if (!stepId) return;
-        const step = formSteps.find((item) => item.dataset.step === stepId);
+        const step = getStepElementById(stepId);
         const primarySection = step?.querySelector(".form-section[id]");
         if (primarySection && primarySection.id) {
           if (typeof window.history?.replaceState === "function") {
@@ -1810,6 +1830,79 @@
         if (!hash) return null;
         const cleaned = hash.startsWith("#") ? hash.slice(1) : hash;
         return sectionIdToStep.get(cleaned) || null;
+      };
+
+      const getFirstInvalidFieldElement = (invalidFields) => {
+        for (const field of invalidFields) {
+          if (field?.element && typeof field.element.focus === "function") {
+            return field.element;
+          }
+          if (Array.isArray(field?.groupElements)) {
+            const candidate = field.groupElements.find(
+              (item) => item && typeof item.focus === "function"
+            );
+            if (candidate) {
+              return candidate;
+            }
+          }
+        }
+        return null;
+      };
+
+      const attemptStepChange = ({
+        targetStepId,
+        triggerElement = null,
+        focusField = true,
+        focusNav = false,
+        scroll = true,
+        updateHash = true,
+      } = {}) => {
+        if (!targetStepId) return;
+        const currentId =
+          currentStepId || formSteps.find((step) => step.classList.contains("is-active"))?.dataset.step;
+        const currentNumber = Number.parseInt(currentId || "", 10);
+        const targetNumber = Number.parseInt(targetStepId, 10);
+
+        const proceedWithoutValidation =
+          !Number.isFinite(currentNumber) || !Number.isFinite(targetNumber) || targetNumber <= currentNumber;
+
+        const goToStep = () => {
+          setActiveStep(targetStepId, { focusField, focusNav, scroll });
+          if (updateHash) {
+            updateHashForStep(targetStepId);
+          }
+        };
+
+        if (proceedWithoutValidation) {
+          goToStep();
+          return;
+        }
+
+        const currentStepElement = getStepElementById(currentId);
+        if (!currentStepElement) {
+          goToStep();
+          return;
+        }
+
+        const extraErrors = validateAdditionalRules();
+        const invalidFields = getInvalidFields(extraErrors, { stepElement: currentStepElement });
+
+        if (invalidFields.length) {
+          const focusTarget = getFirstInvalidFieldElement(invalidFields);
+          showFeedbackModal({
+            type: "alert",
+            message: "Conclua os campos obrigatórios desta etapa antes de avançar.",
+            items: invalidFields.map((field) => field.label || "Campo obrigatório"),
+            focusElement: focusTarget,
+            triggerElement: triggerElement || null,
+          });
+          if (!updateHash) {
+            updateHashForStep(currentId);
+          }
+          return;
+        }
+
+        goToStep();
       };
 
       if (formSteps.length && sectionNavLinks.length) {
@@ -1831,8 +1924,7 @@
           button.addEventListener("click", () => {
             const stepId = button.dataset.step;
             if (!stepId) return;
-            setActiveStep(stepId, { focusField: true });
-            updateHashForStep(stepId);
+            attemptStepChange({ targetStepId: stepId, triggerElement: button });
           });
         });
 
@@ -1841,15 +1933,14 @@
           button.addEventListener("click", () => {
             const targetStep = button.dataset.stepTarget;
             if (!targetStep) return;
-            setActiveStep(targetStep, { focusField: true });
-            updateHashForStep(targetStep);
+            attemptStepChange({ targetStepId: targetStep, triggerElement: button });
           });
         });
 
         window.addEventListener("hashchange", () => {
           const targetStep = getStepByHash(window.location.hash);
           if (targetStep) {
-            setActiveStep(targetStep, { focusNav: true });
+            attemptStepChange({ targetStepId: targetStep, focusNav: true, focusField: false, updateHash: false });
           }
         });
       }
@@ -2652,16 +2743,31 @@
         });
       };
 
-      const getInvalidFields = (additionalErrors = []) => {
+      const getInvalidFields = (additionalErrors = [], options = {}) => {
+        const { stepElement = null } = options;
+        const isElementWithinStep = (element) => {
+          if (!stepElement) return true;
+          if (!element) return false;
+          return stepElement.contains(element);
+        };
+        const groupMatchesStep = (groupElements) => {
+          if (!stepElement) return true;
+          if (!Array.isArray(groupElements)) return false;
+          return groupElements.some((item) => item && stepElement.contains(item));
+        };
         const invalidMap = new Map();
         if (validation && validation.fields) {
           Object.entries(validation.fields).forEach(([selector, field]) => {
             if (!field.isValid) {
+              const element = field.elem || (typeof selector === "string" ? form.querySelector(selector) : null);
+              if (!isElementWithinStep(element)) {
+                return;
+              }
               const messages = Array.isArray(field.messagesShown) ? field.messagesShown : [];
               const message = messages.length ? messages[messages.length - 1] : "Preenchimento obrigatório";
               invalidMap.set(selector, {
                 selector,
-                element: field.elem,
+                element,
                 label: getFieldLabel(selector),
                 message,
               });
@@ -2672,6 +2778,9 @@
         const processedGroups = new Set();
         getRequiredElements().forEach((element) => {
           if (!element) return;
+          if (!isElementWithinStep(element)) {
+            return;
+          }
           if (element.disabled || element.getAttribute("aria-hidden") === "true") {
             return;
           }
@@ -2698,6 +2807,9 @@
               }
               const group = getGroupElements(name).filter((input) => {
                 if (!input) return false;
+                if (!isElementWithinStep(input)) {
+                  return false;
+                }
                 if (input.disabled || input.type === "hidden") {
                   return false;
                 }
@@ -2743,13 +2855,17 @@
           if (!error || !error.selector) return;
           const existing = invalidMap.get(error.selector);
           const element = error.element || (typeof error.selector === "string" ? form.querySelector(error.selector) : null);
+          const groupElements = Array.isArray(error.groupElements) ? error.groupElements : null;
+          if (stepElement && !isElementWithinStep(element) && !groupMatchesStep(groupElements)) {
+            return;
+          }
           if (existing) {
             existing.message = error.message || existing.message;
             if (element) {
               existing.element = element;
             }
-            if (Array.isArray(error.groupElements)) {
-              existing.groupElements = error.groupElements;
+            if (groupElements) {
+              existing.groupElements = groupElements;
             }
             return;
           }
@@ -2758,7 +2874,7 @@
             element,
             label: error.label || getFieldLabel(error.selector),
             message: error.message || "Preenchimento obrigatório",
-            groupElements: error.groupElements,
+            groupElements,
           });
         });
 
