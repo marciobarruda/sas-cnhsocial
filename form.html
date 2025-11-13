@@ -1224,6 +1224,47 @@
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
             </div>
+            <div class="row g-4 mb-4">
+              <div class="col-12 col-md-4">
+                <label for="inscricaoCadunico" class="form-label">Inscrição CadÚnico</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inscricaoCadunico"
+                  name="inscricaoCadunico"
+                  value="{{ $json.data.codigoFamilia || "" }}"
+                  readonly
+                  aria-readonly="true"
+                />
+                <div class="form-text">Informação preenchida automaticamente a partir do CadÚnico.</div>
+              </div>
+              <div class="col-12 col-md-4">
+                <label for="dataInscricaoCadunico" class="form-label">Data da inscrição</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="dataInscricaoCadunico"
+                  name="dataInscricaoCadunico"
+                  value="{{ $json.data.familiaDataCadastramento || "" }}"
+                  readonly
+                  aria-readonly="true"
+                />
+                <div class="form-text">Gerada automaticamente conforme registro da família.</div>
+              </div>
+              <div class="col-12 col-md-4">
+                <label for="dataAtualizacaoCadunico" class="form-label">Data da atualização</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="dataAtualizacaoCadunico"
+                  name="dataAtualizacaoCadunico"
+                  value="{{ $json.data.familiaDataAtualizacao || "" }}"
+                  readonly
+                  aria-readonly="true"
+                />
+                <div class="form-text">Última atualização disponível no CadÚnico.</div>
+              </div>
+            </div>
             <div class="row g-4">
               <div class="col-12 col-md-6">
                 <label for="situacaoTrabalho" class="form-label required">Situação de trabalho atual</label>
