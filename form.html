@@ -948,7 +948,6 @@
                       readonly
                       aria-readonly="true"
                     />
-                    <div class="form-text">Informações sincronizadas do CadÚnico/Conecta. Campo apenas para conferência.</div>
                   </div>
                   <div class="col-12 col-md-4 col-lg-4">
                     <label for="nomeSocial" class="form-label">Nome social</label>
@@ -964,6 +963,30 @@
                   </div>
                 </div>
                 <div class="row g-4">
+                  <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="dataNascimento" class="form-label required">Data de nascimento</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="dataNascimento"
+                      name="dataNascimento"
+                      value="{{ $json.data.dataNascimento || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="idade" class="form-label">Idade</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="idade"
+                      name="idade"
+                      value=""
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
                   <div class="col-12 col-sm-6 col-lg-3">
                     <label for="nis" class="form-label required">NIS/PIS</label>
                     <input
@@ -1002,36 +1025,11 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6 col-lg-3">
-                    <label for="dataNascimento" class="form-label required">Data de nascimento</label>
-                    <input
-                      type="date"
-                      class="form-control"
-                      id="dataNascimento"
-                      name="dataNascimento"
-                      value="{{ $json.data.dataNascimento || "" }}"
-                      readonly
-                      aria-readonly="true"
-                    />
-                  </div>
-                  <div class="col-12 col-sm-6 col-lg-3">
-                    <label for="idade" class="form-label">Idade</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="idade"
-                      name="idade"
-                      value=""
-                      readonly
-                      aria-readonly="true"
-                    />
-                  </div>
-                  <div class="col-12 col-sm-6 col-lg-3">
                     <label for="genero" class="form-label required">Identificação de gênero</label>
                     <select
                       class="form-select"
                       id="genero"
                       name="genero"
-                      aria-describedby="generoHelp"
                       data-required-field="true"
                       required
                     >
@@ -1041,7 +1039,6 @@
                       <option value="outro" {{ ($json.data.genero || "") === "outro" ? "selected" : "" }}>Outro / Não-binário</option>
                       <option value="nao_informar" {{ ($json.data.genero || "") === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
                     </select>
-                    <small id="generoHelp" class="form-text">Usado apenas para regras de pontuação previstas no edital.</small>
                   </div>
                 </div>
             </div>
