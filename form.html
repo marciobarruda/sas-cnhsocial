@@ -1104,7 +1104,7 @@
                     data-required-field="true"
                     required
                   />
-                  <div id="emailConfirmHelp" class="form-text">O endereço deve ser idêntico ao campo anterior.</div>
+                  <div id="emailConfirmHelp" class="form-text">O email deve ser idêntico ao campo anterior.</div>
                 </div>
                 <div class="col-12">
                   <label for="preferenciaContato" class="form-label required">Canal de contato preferencial</label>
@@ -1200,7 +1200,7 @@
                 />
               </div>
               <div class="col-12 col-md-5">
-                <label for="cidade" class="form-label required">Município</label>
+                <label for="cidade" class="form-label required">Cidade</label>
                 <input
                   type="text"
                   class="form-control"
@@ -2388,6 +2388,8 @@
       });
 
       const cpfInput = document.getElementById("cpf");
+      const emailInput = document.getElementById("email");
+      const emailConfirmInput = document.getElementById("emailConfirm");
       const cpfValidator = (value) => {
         const digits = value.replace(/\D/g, "");
         if (digits.length !== 11 || /^([0-9])\1+$/.test(digits)) return false;
@@ -2709,7 +2711,7 @@
         "#logradouro": "Logradouro",
         "#numero": "Número do endereço",
         "#bairro": "Bairro",
-        "#cidade": "Município",
+        "#cidade": "Cidade",
         "#rendaFamiliar": "Renda familiar mensal",
         "#pcd": "Pessoa com deficiência (PCD)",
         "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
@@ -3326,6 +3328,19 @@
             "#docResidencia",
             "Comprovante obrigatório quando atualizar endereço",
             document.getElementById("docResidencia")
+          );
+        }
+        const emailValue = (emailInput?.value || "").trim();
+        const emailConfirmValue = (emailConfirmInput?.value || "").trim();
+        if (
+          emailValue &&
+          emailConfirmValue &&
+          emailValue.toLowerCase() !== emailConfirmValue.toLowerCase()
+        ) {
+          registerError(
+            "#emailConfirm",
+            "Os e-mails informados devem coincidir",
+            emailConfirmInput
           );
         }
         if (["adicao_a", "adicao_b"].includes(categoriaSelect.value)) {
