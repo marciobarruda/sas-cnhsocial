@@ -921,94 +921,117 @@
                   <div class="section-header">
                     <h2 class="h4 mb-0">Identificação do candidato</h2>
                 </div>
+                <div class="row g-4 align-items-end">
+                  <div class="col-12 col-md-4 col-lg-3">
+                    <label for="cpf" class="form-label required">CPF</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cpf"
+                      name="cpf"
+                      inputmode="numeric"
+                      placeholder="000.000.000-00"
+                      value="{{ $json.data.cpf || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-md-4 col-lg-5">
+                    <label for="nomeCompleto" class="form-label required">Nome completo</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nomeCompleto"
+                      name="nomeCompleto"
+                      placeholder="Nome cadastrado no CadÚnico"
+                      value="{{ $json.data.nomeCompleto || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                    <div class="form-text">Informações sincronizadas do CadÚnico/Conecta. Campo apenas para conferência.</div>
+                  </div>
+                  <div class="col-12 col-md-4 col-lg-4">
+                    <label for="nomeSocial" class="form-label">Nome social</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nomeSocial"
+                      name="nomeSocial"
+                      maxlength="120"
+                      placeholder="Informe se desejar atendimento com nome social"
+                      value="{{ $json.data.nomeSocial || "" }}"
+                    />
+                  </div>
+                </div>
                 <div class="row g-4">
-              <div class="col-12 col-lg-6">
-                <label for="nomeCompleto" class="form-label required">Nome completo</label>
-                <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto" placeholder="Nome cadastrado no CadÚnico" value="{{ $json.data.nomeCompleto || "" }}" readonly aria-readonly="true" />
-                <div class="form-text">Informações sincronizadas do CadÚnico/Conecta. Campo apenas para conferência.</div>
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="cpf" class="form-label required">CPF</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="cpf"
-                  name="cpf"
-                  inputmode="numeric"
-                  placeholder="000.000.000-00"
-                  value="{{ $json.data.cpf || "" }}"
-                  readonly
-                  aria-readonly="true"
-                />
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="nis" class="form-label required">NIS/PIS</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="nis"
-                  name="nis"
-                  placeholder="Número do CadÚnico"
-                  value="{{ $json.data.nis || "" }}"
-                  readonly
-                  aria-readonly="true"
-                />
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="dataNascimento" class="form-label required">Data de nascimento</label>
-                <input
-                  type="date"
-                  class="form-control"
-                  id="dataNascimento"
-                  name="dataNascimento"
-                  value="{{ $json.data.dataNascimento || "" }}"
-                  readonly
-                  aria-readonly="true"
-                />
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="idade" class="form-label">Idade</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="idade"
-                  name="idade"
-                  value=""
-                  readonly
-                  aria-readonly="true"
-                />
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="genero" class="form-label required">Identificação de gênero</label>
-                <select
-                  class="form-select"
-                  id="genero"
-                  name="genero"
-                  aria-describedby="generoHelp"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="feminino" {{ ($json.data.genero || "") === "feminino" ? "selected" : "" }}>Mulher</option>
-                  <option value="masculino" {{ ($json.data.genero || "") === "masculino" ? "selected" : "" }}>Homem</option>
-                  <option value="outro" {{ ($json.data.genero || "") === "outro" ? "selected" : "" }}>Outro / Não-binário</option>
-                  <option value="nao_informar" {{ ($json.data.genero || "") === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
-                </select>
-                <small id="generoHelp" class="form-text">Usado apenas para regras de pontuação previstas no edital.</small>
-              </div>
-              <div class="col-12 col-lg-9">
-                <label for="nomeSocial" class="form-label">Nome social</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="nomeSocial"
-                  name="nomeSocial"
-                  maxlength="120"
-                  placeholder="Informe se desejar atendimento com nome social"
-                  value="{{ $json.data.nomeSocial || "" }}"
-                />
-              </div>
-              </div>
+                  <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="nis" class="form-label required">NIS/PIS</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nis"
+                      name="nis"
+                      placeholder="Número do CadÚnico"
+                      value="{{ $json.data.nis || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="dataAtualizacaoCadunico" class="form-label">Data da atualização</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="dataAtualizacaoCadunico"
+                      name="dataAtualizacaoCadunico"
+                      value="{{ $json.data.familiaDataAtualizacao || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="dataNascimento" class="form-label required">Data de nascimento</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="dataNascimento"
+                      name="dataNascimento"
+                      value="{{ $json.data.dataNascimento || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="idade" class="form-label">Idade</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="idade"
+                      name="idade"
+                      value=""
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="genero" class="form-label required">Identificação de gênero</label>
+                    <select
+                      class="form-select"
+                      id="genero"
+                      name="genero"
+                      aria-describedby="generoHelp"
+                      data-required-field="true"
+                      required
+                    >
+                      <option value="">Selecione</option>
+                      <option value="feminino" {{ ($json.data.genero || "") === "feminino" ? "selected" : "" }}>Mulher</option>
+                      <option value="masculino" {{ ($json.data.genero || "") === "masculino" ? "selected" : "" }}>Homem</option>
+                      <option value="outro" {{ ($json.data.genero || "") === "outro" ? "selected" : "" }}>Outro / Não-binário</option>
+                      <option value="nao_informar" {{ ($json.data.genero || "") === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
+                    </select>
+                    <small id="generoHelp" class="form-text">Usado apenas para regras de pontuação previstas no edital.</small>
+                  </div>
+                </div>
             </div>
             </section>
               <div class="step-actions" aria-label="Controles da etapa Identificação do candidato">
@@ -1235,44 +1258,6 @@
                 <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
-            </div>
-            <div class="row g-4 mb-4">
-              <div class="col-12 col-md-4">
-                <label for="inscricaoCadunico" class="form-label">Inscrição CadÚnico</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="inscricaoCadunico"
-                  name="inscricaoCadunico"
-                  value="{{ $json.data.codigoFamilia || "" }}"
-                  readonly
-                  aria-readonly="true"
-                />
-              </div>
-              <div class="col-12 col-md-4">
-                <label for="dataInscricaoCadunico" class="form-label">Data da inscrição</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="dataInscricaoCadunico"
-                  name="dataInscricaoCadunico"
-                  value="{{ $json.data.familiaDataCadastramento || "" }}"
-                  readonly
-                  aria-readonly="true"
-                />
-              </div>
-              <div class="col-12 col-md-4">
-                <label for="dataAtualizacaoCadunico" class="form-label">Data da atualização</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="dataAtualizacaoCadunico"
-                  name="dataAtualizacaoCadunico"
-                  value="{{ $json.data.familiaDataAtualizacao || "" }}"
-                  readonly
-                  aria-readonly="true"
-                />
-              </div>
             </div>
             <div class="row g-4">
               <div class="col-12 col-md-6">
@@ -2077,8 +2062,6 @@
         maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
         vitimaViolencia: {{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }},
         necessidadesEspeciais: {{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }},
-        inscricaoCadunico: {{ JSON.stringify((($json.data || {}).codigoFamilia) || "") }},
-        dataInscricaoCadunico: {{ JSON.stringify((($json.data || {}).familiaDataCadastramento) || "") }},
         dataAtualizacaoCadunico: {{ JSON.stringify((($json.data || {}).familiaDataAtualizacao) || "") }},
       };
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
@@ -3082,8 +3065,6 @@
         setTextValue("dataNascimento", prefillValues.dataNascimento);
         setSelectValue("genero", prefillValues.genero, true);
         setTextValue("nomeSocial", prefillValues.nomeSocial);
-        setTextValue("inscricaoCadunico", prefillValues.inscricaoCadunico);
-        setFormattedDateValue("dataInscricaoCadunico", prefillValues.dataInscricaoCadunico);
         setFormattedDateValue("dataAtualizacaoCadunico", prefillValues.dataAtualizacaoCadunico);
         if (prefillValues.cep && prefillValues.cep.trim() !== "") {
           setMaskedValue(maskCep, "cep", prefillValues.cep);
