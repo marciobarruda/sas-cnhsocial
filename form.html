@@ -1324,7 +1324,7 @@
                   <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
                 </div>
               </div>
-              <div class="col-12">
+              <div class="col-12 col-md-6">
                 <label for="rendaFamiliar" class="form-label required">Renda familiar mensal (R$)</label>
                 <input
                   type="number"
@@ -1333,13 +1333,30 @@
                   name="rendaFamiliar"
                   min="0"
                   step="0.01"
-                  placeholder="Informe o valor total da renda familiar"
-                  value="{{ $json.data.rendaFamiliar || "" }}"
+                  placeholder="Valor carregado automaticamente"
+                  value="{{ $json.data.rendaPerCapita || "" }}"
                   aria-describedby="rendaHelp"
                   data-required-field="true"
+                  readonly
+                  aria-readonly="true"
                   required
                 />
-                <small id="rendaHelp" class="form-text">Será comparada com o número de integrantes registrado no CadÚnico para verificação do critério de renda per capita.</small>
+                <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="rendaPerCapitaAtualizada" class="form-label">Atualize a renda per capita (R$)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="rendaPerCapitaAtualizada"
+                  name="rendaPerCapitaAtualizada"
+                  min="0"
+                  step="0.01"
+                  placeholder="Informe apenas se houver alteração"
+                  value="{{ $json.data.rendaPerCapitaAtualizada || "" }}"
+                  aria-describedby="rendaPerCapitaHelp"
+                />
+                <small id="rendaPerCapitaHelp" class="form-text">Utilize este campo apenas se a renda per capita da família estiver diferente da registrada no CadÚnico.</small>
               </div>
             </div>
           </div>
@@ -2082,7 +2099,8 @@
         mulherChefe: {{ JSON.stringify((($json.data || {}).mulherChefe) || "") }},
         acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
         dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
-        rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaFamiliar) != null ? ($json.data || {}).rendaFamiliar : "") }},
+        rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaPerCapita) != null ? ($json.data || {}).rendaPerCapita : "") }},
+        rendaPerCapitaAtualizada: {{ JSON.stringify((($json.data || {}).rendaPerCapitaAtualizada) != null ? ($json.data || {}).rendaPerCapitaAtualizada : "") }},
         racaCor: {{ JSON.stringify((($json.data || {}).racaCor) || "") }},
         pessoaPretaParda: {{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }},
         pessoaIndigena: {{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }},
@@ -2255,6 +2273,31 @@
           if (logradouroInput) {
             logradouroInput.focus();
           }
+        }
+      };
+
+      const preencherCidadePorCepSeNecessario = async () => {
+        if (!cidadeInput || (cidadeInput.value || "").trim() !== "") {
+          return;
+        }
+        const cepDigits = getCepDigits();
+        if (cepDigits.length !== 8) {
+          return;
+        }
+        try {
+          const resposta = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepDigits}`);
+          if (!resposta.ok) {
+            return;
+          }
+          const endereco = await resposta.json();
+          const nomeCidade = endereco.city || endereco.localidade || endereco.city_name;
+          if (nomeCidade && (cidadeInput.value || "").trim() === "") {
+            cidadeInput.value = nomeCidade;
+            cidadeInput.dispatchEvent(new Event("input", { bubbles: true }));
+            cidadeInput.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        } catch (error) {
+          console.warn("Não foi possível complementar a cidade a partir do CEP carregado", error);
         }
       };
 
@@ -2745,6 +2788,7 @@
         "#bairro": "Bairro",
         "#cidade": "Cidade",
         "#rendaFamiliar": "Renda familiar mensal",
+        "#rendaPerCapitaAtualizada": "Renda per capita atualizada",
         "#pcd": "Pessoa com deficiência (PCD)",
         "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
         "#vitimaViolencia": "Vínculo de violência doméstica",
@@ -3195,6 +3239,7 @@
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
         setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
+        setTextValue("rendaPerCapitaAtualizada", prefillValues.rendaPerCapitaAtualizada);
         setSelectValue("racaCor", prefillValues.racaCor);
         setCheckboxValue("pessoaPretaParda", prefillValues.pessoaPretaParda);
         setCheckboxValue("pessoaIndigena", prefillValues.pessoaIndigena);
@@ -3206,6 +3251,7 @@
         setSelectValue("maeAtipica", prefillValues.maeAtipica, true);
         setSelectValue("vitimaViolencia", prefillValues.vitimaViolencia, true);
         setTextValue("necessidadesEspeciais", prefillValues.necessidadesEspeciais);
+        preencherCidadePorCepSeNecessario();
 
         if (validation) {
           if (typeof validation.refreshAll === "function") {
@@ -3278,6 +3324,12 @@
             {
               validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
               errorMessage: "Valor inválido",
+            },
+          ])
+          .addField("#rendaPerCapitaAtualizada", [
+            {
+              validator: (value) => value === "" || (!Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0),
+              errorMessage: "Informe um valor válido",
             },
           ])
           .addField("#pcd", [{ rule: "required" }])
