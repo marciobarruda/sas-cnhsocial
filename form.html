@@ -745,6 +745,18 @@
         }
       }
 
+      @media (max-width: 480px) {
+        header.site-header {
+          height: 184px;
+          min-height: 184px;
+        }
+
+        header.site-header picture {
+          max-width: 375px;
+          margin: 0 auto;
+        }
+      }
+
       .section-header {
         border-bottom: 1px solid var(--border-color);
         padding-bottom: 0.75rem;
@@ -813,6 +825,10 @@
   <body>
     <header class="site-header" aria-hidden="true">
       <picture>
+        <source
+          media="(max-width: 479.98px)"
+          srcset="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero5.png"
+        />
         <source
           media="(max-width: 767.98px)"
           srcset="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero-mobile.png"
