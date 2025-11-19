@@ -59,6 +59,12 @@
         width: 100%;
       }
 
+      header.site-header picture {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
       header.site-header .hero-image {
         display: block;
         width: 100%;
@@ -806,13 +812,19 @@
   </head>
   <body>
     <header class="site-header" aria-hidden="true">
-      <img
-        src="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero5.png"
-        alt=""
-        class="hero-image"
-        aria-hidden="true"
-        role="presentation"
-      />
+      <picture>
+        <source
+          media="(max-width: 767.98px)"
+          srcset="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero-mobile.png"
+        />
+        <img
+          src="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero5.png"
+          alt=""
+          class="hero-image"
+          aria-hidden="true"
+          role="presentation"
+        />
+      </picture>
     </header>
     <main>
       <div class="container">
@@ -1415,44 +1427,11 @@
                     class="form-check-input"
                     type="checkbox"
                     value="sim"
-                    id="pessoaTrans"
-                    name="pessoaTrans"
-                    {{ ($json.data.pessoaTrans || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="pessoaTrans">Sou pessoa trans, travesti ou não-binária</label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="egressoSocioeducativo"
-                    name="egressoSocioeducativo"
-                    {{ ($json.data.egressoSocioeducativo || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="egressoSocioeducativo">Sou egresso(a) do sistema socioeducativo</label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="pessoaQuilombola"
-                    name="pessoaQuilombola"
-                    {{ ($json.data.pessoaQuilombola || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="pessoaQuilombola">Sou quilombola ou pertenço a povos e comunidades tradicionais</label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
                     id="pessoaRua"
                     name="pessoaRua"
                     {{ ($json.data.pessoaRua || "").toLowerCase() === "sim" ? "checked" : "" }}
                   />
-                  <label class="form-check-label" for="pessoaRua">Vivo em situação de rua ou em unidade de acolhimento</label>
+                  <label class="form-check-label" for="pessoaRua">Vivo em unidade de acolhimento</label>
                 </div>
               </fieldset>
             </div>
@@ -2094,9 +2073,6 @@
         racaCor: {{ JSON.stringify((($json.data || {}).racaCor) || "") }},
         pessoaPretaParda: {{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }},
         pessoaIndigena: {{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }},
-        pessoaTrans: {{ JSON.stringify((($json.data || {}).pessoaTrans) || "") }},
-        egressoSocioeducativo: {{ JSON.stringify((($json.data || {}).egressoSocioeducativo) || "") }},
-        pessoaQuilombola: {{ JSON.stringify((($json.data || {}).pessoaQuilombola) || "") }},
         pessoaRua: {{ JSON.stringify((($json.data || {}).pessoaRua) || "") }},
         pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
         maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
@@ -3233,9 +3209,6 @@
         setSelectValue("racaCor", prefillValues.racaCor);
         setCheckboxValue("pessoaPretaParda", prefillValues.pessoaPretaParda);
         setCheckboxValue("pessoaIndigena", prefillValues.pessoaIndigena);
-        setCheckboxValue("pessoaTrans", prefillValues.pessoaTrans);
-        setCheckboxValue("egressoSocioeducativo", prefillValues.egressoSocioeducativo);
-        setCheckboxValue("pessoaQuilombola", prefillValues.pessoaQuilombola);
         setCheckboxValue("pessoaRua", prefillValues.pessoaRua);
         setSelectValue("pcd", prefillValues.pcd, true);
         setSelectValue("maeAtipica", prefillValues.maeAtipica, true);
