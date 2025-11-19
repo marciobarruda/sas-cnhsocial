@@ -70,6 +70,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center;
       }
 
       header .lead {
@@ -745,15 +746,10 @@
         }
       }
 
-      @media (max-width: 480px) {
+      @media (max-width: 767.98px) {
         header.site-header {
           height: 184px;
           min-height: 184px;
-        }
-
-        header.site-header picture {
-          max-width: 375px;
-          margin: 0 auto;
         }
       }
 
@@ -825,10 +821,6 @@
   <body>
     <header class="site-header" aria-hidden="true">
       <picture>
-        <source
-          media="(max-width: 479.98px)"
-          srcset="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero5.png"
-        />
         <source
           media="(max-width: 767.98px)"
           srcset="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero-mobile.png"
