@@ -1322,7 +1322,7 @@
                 </div>
               </div>
               <div class="col-12 col-md-6">
-                <label for="rendaFamiliar" class="form-label required">Renda familiar mensal (R$)</label>
+                <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
                 <input
                   type="number"
                   class="form-control"
@@ -1519,7 +1519,9 @@
                 </select>
               </div>
               <div class="col-12 col-md-6">
-                <label class="form-label required" for="vitimaViolencia">Vítima de violência doméstica</label>
+                <label class="form-label required" for="vitimaViolencia"
+                  >Vítima de violência doméstica atendida pelos órgãos e serviços especializados do Recife</label
+                >
                 <select
                   class="form-select"
                   id="vitimaViolencia"
@@ -1650,23 +1652,6 @@
                   <option value="tarde">Tarde</option>
                   <option value="noite">Noite</option>
                   <option value="indiferente">Indiferente</option>
-                </select>
-              </div>
-              <div class="col-12">
-                <label for="polo" class="form-label required">Polo/CFC de preferência</label>
-                <select
-                  class="form-select"
-                  id="polo"
-                  name="polo"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="cfc_santo_amaro">CFC Santo Amaro – Bairro Santo Amaro</option>
-                  <option value="cfc_ibura">CFC Ibura – Ibura</option>
-                  <option value="cfc_casa_amarela">CFC Casa Amarela – Casa Amarela</option>
-                  <option value="cfc_pina">CFC Pina – Pina</option>
-                  <option value="cfc_varzea">CFC Várzea – Várzea</option>
                 </select>
               </div>
               <div class="col-12 col-md-6 d-none" id="cnhNumeroWrapper">
@@ -2792,15 +2777,14 @@
         "#numero": "Número do endereço",
         "#bairro": "Bairro",
         "#cidade": "Cidade",
-        "#rendaFamiliar": "Renda familiar mensal",
+        "#rendaFamiliar": "Renda per capita mensal",
         "#rendaPerCapitaAtualizada": "Renda per capita atualizada",
         "#pcd": "Pessoa com deficiência (PCD)",
         "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
-        "#vitimaViolencia": "Vínculo de violência doméstica",
+        "#vitimaViolencia": "Vínculo com serviços especializados de violência doméstica",
         "#racaCor": "Autodeclaração de cor/raça",
         "#categoria": "Categoria desejada",
         "#turno": "Turno preferencial",
-        "#polo": "Polo/CFC de preferência",
         "#docIdentidade": "Documento de identificação oficial",
         "#lgpd": "Consentimento LGPD",
         "#veracidade": "Declaração de veracidade",
@@ -3344,7 +3328,6 @@
           .addField("#racaCor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
           .addField("#categoria", [{ rule: "required" }])
           .addField("#turno", [{ rule: "required" }])
-          .addField("#polo", [{ rule: "required" }])
           .addField("#docIdentidade", [
             { rule: "required", errorMessage: "Anexe um documento oficial" },
             {
@@ -3425,13 +3408,6 @@
             "#docResponsavel",
             "Anexe os comprovantes",
             document.getElementById("docResponsavel")
-          );
-        }
-        if (vitimaViolencia.value === "sim" && !document.getElementById("docViolencia").files.length) {
-          registerError(
-            "#docViolencia",
-            "Anexe documento comprobatório ou declaração",
-            document.getElementById("docViolencia")
           );
         }
         if (acolhimento.checked && !document.getElementById("docAcolhimento").files.length) {
