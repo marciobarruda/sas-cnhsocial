@@ -1310,7 +1310,7 @@
                   <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
                 </div>
               </div>
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-md-4">
                 <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
                 <input
                   type="number"
@@ -1329,7 +1329,22 @@
                 />
                 <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
               </div>
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-md-4">
+                <label for="componentesFamiliares" class="form-label">Componentes familiares</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="componentesFamiliares"
+                  name="componentesFamiliares"
+                  min="0"
+                  step="1"
+                  placeholder="Total de pessoas no núcleo familiar"
+                  value="{{ $json.data.componentesFamiliares || "" }}"
+                  readonly
+                  aria-readonly="true"
+                />
+              </div>
+              <div class="col-12 col-md-4">
                 <label for="rendaPerCapitaAtualizada" class="form-label">Atualize a renda per capita (R$)</label>
                 <input
                   type="number"
@@ -2069,6 +2084,7 @@
         dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
         rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaPerCapita) != null ? ($json.data || {}).rendaPerCapita : "") }},
         rendaPerCapitaAtualizada: {{ JSON.stringify((($json.data || {}).rendaPerCapitaAtualizada) != null ? ($json.data || {}).rendaPerCapitaAtualizada : "") }},
+        componentesFamiliares: {{ JSON.stringify((($json.data || {}).componentesFamiliares) != null ? ($json.data || {}).componentesFamiliares : "") }},
         racaCor: {{ JSON.stringify((($json.data || {}).racaCor) || "") }},
         pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
         maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
@@ -3219,6 +3235,7 @@
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
         setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
+        setTextValue("componentesFamiliares", prefillValues.componentesFamiliares);
         setTextValue("rendaPerCapitaAtualizada", prefillValues.rendaPerCapitaAtualizada);
         setSelectValue("racaCor", prefillValues.racaCor);
         setSelectValue("pcd", prefillValues.pcd, true);
