@@ -404,7 +404,7 @@
         display: flex;
         align-items: center;
         gap: clamp(0.75rem, 0.5rem + 1vw, 2rem);
-        justify-content: space-between;
+        justify-content: flex-start;
         flex-wrap: wrap;
       }
 
@@ -416,32 +416,6 @@
         color: var(--brand-secondary);
       }
 
-      .section-nav__registration {
-        margin-left: auto;
-        padding: 0.65rem 1rem;
-        border-radius: 0.85rem;
-        background: rgba(0, 83, 164, 0.06);
-        border: 1px solid rgba(0, 83, 164, 0.2);
-        min-width: clamp(12rem, 11rem + 4vw, 16rem);
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-
-      .section-nav__registration-label {
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-        font-weight: 600;
-      }
-
-      .section-nav__registration-value {
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--brand-secondary);
-        letter-spacing: 0.02em;
-      }
 
       .section-nav__list {
         --step-size: 2.75rem;
@@ -841,10 +815,6 @@
             <div class="section-nav__inner">
               <div class="section-nav__top">
                 <span class="section-nav__eyebrow">Etapas da inscrição</span>
-                <div class="section-nav__registration" role="status" aria-live="polite">
-                  <span class="section-nav__registration-label">Nº da inscrição</span>
-                  <span class="section-nav__registration-value">{{ $json.data.numeroInscricao || $json.data.protocolo || "—" }}</span>
-                </div>
               </div>
               <ol class="section-nav__list">
                 <li class="section-nav__item">
@@ -1943,6 +1913,8 @@
 
         const extraErrors = validateAdditionalRules();
         const invalidFields = getInvalidFields(extraErrors, { stepElement: currentStepElement });
+
+        applyValidationUI(invalidFields);
 
         if (invalidFields.length) {
           const focusTarget = getFirstInvalidFieldElement(invalidFields);
@@ -3613,6 +3585,9 @@
       if (dataAtualizacaoInput) {
         dataAtualizacaoInput.addEventListener("change", updateTempoAtualizacaoField);
       }
+
+      updateAgeFieldFromBirthdate();
+      updateTempoAtualizacaoField();
 
       const validarEExibirModal = (formSelector, botaoSelector) => {
         const targetForm = document.querySelector(formSelector);
