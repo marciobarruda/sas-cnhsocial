@@ -3162,7 +3162,29 @@
             return;
           }
           const formatted = formatDateToBrazil(rawValue);
-          element.value = formatted || String(rawValue);
+          const normalizedRaw = typeof rawValue === "string" ? rawValue : String(rawValue);
+          element.value = formatted || normalizedRaw;
+          if (element.dataset) {
+            element.dataset.rawValue = normalizedRaw;
+          }
+        };
+
+        const setDateInputValue = (id, rawValue) => {
+          const element = document.getElementById(id);
+          if (!element) return;
+          if (rawValue == null || (typeof rawValue === "string" && rawValue.trim() === "")) {
+            element.value = "";
+            if (element.dataset) {
+              element.dataset.rawValue = "";
+            }
+            return;
+          }
+          const parsed = parseDateFromString(rawValue);
+          if (parsed) {
+            element.value = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, "0")}-${String(parsed.getDate()).padStart(2, "0")}`;
+          } else {
+            element.value = typeof rawValue === "string" ? rawValue : String(rawValue);
+          }
           if (element.dataset) {
             element.dataset.rawValue = typeof rawValue === "string" ? rawValue : String(rawValue);
           }
@@ -3173,7 +3195,7 @@
           setMaskedValue(maskCpf, "cpf", prefillValues.cpf);
         }
         setTextValue("nis", prefillValues.nis);
-        setTextValue("dataNascimento", prefillValues.dataNascimento);
+        setDateInputValue("dataNascimento", prefillValues.dataNascimento);
         setSelectValue("genero", prefillValues.genero, true);
         setTextValue("nomeSocial", prefillValues.nomeSocial);
         setFormattedDateValue("dataAtualizacaoCadunico", prefillValues.dataAtualizacaoCadunico);
@@ -3565,7 +3587,12 @@
 
       const updateAgeFieldFromBirthdate = () => {
         if (!ageInput || !birthdateInput) return;
-        const referenceValue = birthdateInput.value || prefillValues.dataNascimento;
+        const referenceValue =
+          (birthdateInput.dataset?.rawValue && birthdateInput.dataset.rawValue.trim() !== ""
+            ? birthdateInput.dataset.rawValue
+            : null)
+          || birthdateInput.value
+          || prefillValues.dataNascimento;
         const age = calculateAgeFromDate(referenceValue);
         ageInput.value = age != null ? `${age}` : "";
       };
@@ -3577,8 +3604,11 @@
       const updateTempoAtualizacaoField = () => {
         if (!tempoAtualizacaoInput) return;
         const referenceValue =
-          (dataAtualizacaoInput && (dataAtualizacaoInput.dataset?.rawValue || dataAtualizacaoInput.value))
-            || prefillValues.dataAtualizacaoCadunico;
+          (dataAtualizacaoInput
+            && ((dataAtualizacaoInput.dataset?.rawValue && dataAtualizacaoInput.dataset.rawValue.trim() !== "")
+              ? dataAtualizacaoInput.dataset.rawValue
+              : dataAtualizacaoInput.value))
+          || prefillValues.dataAtualizacaoCadunico;
         tempoAtualizacaoInput.value = formatElapsedTimeSinceDate(referenceValue);
       };
 
