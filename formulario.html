@@ -193,6 +193,12 @@
         box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
       }
 
+      input[type="text"],
+      input[type="email"],
+      textarea {
+        text-transform: uppercase;
+      }
+
       .modal-backdrop {
         position: fixed;
         inset: 0;
@@ -841,10 +847,6 @@
             <div class="section-nav__inner">
               <div class="section-nav__top">
                 <span class="section-nav__eyebrow">Etapas da inscrição</span>
-                <div class="section-nav__registration" role="status" aria-live="polite">
-                  <span class="section-nav__registration-label">Nº da inscrição</span>
-                  <span class="section-nav__registration-value">{{ $json.data.numeroInscricao || $json.data.protocolo || "—" }}</span>
-                </div>
               </div>
               <ol class="section-nav__list">
                 <li class="section-nav__item">
@@ -1047,9 +1049,9 @@
                     <select
                       class="form-select"
                       id="genero"
-                      name="genero"
-                      data-required-field="true"
-                      required
+                      name="generoExibicao"
+                      aria-readonly="true"
+                      disabled
                     >
                       <option value="">Selecione</option>
                       <option value="feminino" {{ ($json.data.genero || "") === "feminino" ? "selected" : "" }}>Mulher</option>
@@ -1057,6 +1059,7 @@
                       <option value="outro" {{ ($json.data.genero || "") === "outro" ? "selected" : "" }}>Outro / Não-binário</option>
                       <option value="nao_informar" {{ ($json.data.genero || "") === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
                     </select>
+                    <input type="hidden" id="generoValor" name="genero" value="{{ $json.data.genero || "" }}" />
                   </div>
                 </div>
             </div>
@@ -1308,17 +1311,17 @@
                     value="sim"
                     id="semTrabalhoFormal"
                     name="semTrabalhoFormal"
-                    {{ (((($json.result || {}).dadosComplementares || {}).teveEmpregoCarteiraAssinada || ($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase()) === "nao" ? "checked" : "" }}
+                    {{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "checked" : "" }}
                     disabled
                     aria-disabled="true"
                   />
-                  <label class="form-check-label" for="semTrabalhoFormal">Não tem trabalho formal</label>
+                  <label class="form-check-label text-danger fw-bold" for="semTrabalhoFormal">Não tem trabalho formal</label>
                   <small class="form-text">Informação carregada automaticamente a partir do CadÚnico.</small>
                 </div>
                 <input
                   type="hidden"
                   name="semTrabalhoFormalValor"
-                  value="{{ (((($json.result || {}).dadosComplementares || {}).teveEmpregoCarteiraAssinada || ($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase()) === "nao" ? "sim" : "nao" }}"
+                  value="{{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "sim" : "nao" }}"
                 />
               </div>
               <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
@@ -1380,7 +1383,7 @@
                   class="form-control"
                   id="composicaoFamiliar"
                   name="composicaoFamiliar"
-                  value="{{ ((($json.result || {}).familia || {}).quantidadePessoaDomicilio || ($json.data || {}).quantidadePessoaDomicilio || "") }}"
+                  value="{{ ($json.data || {}).quantidadePessoaDomicilio || "" }}"
                   readonly
                   aria-readonly="true"
                   inputmode="numeric"
@@ -1397,7 +1400,7 @@
                   class="form-control"
                   id="programasSociais"
                   name="programasSociais"
-                  value="{{ (((($json.result || {}).familia || {}).programaBolsaFamilia || (((($json.result || {}).dadosPessoais || {}).programaBolsaFamilia)) || ($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? "Sim" : "Não" }}"
+                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? "Sim" : "Não" }}"
                   readonly
                   aria-readonly="true"
                   aria-describedby="programasSociaisHelp"
@@ -1467,7 +1470,7 @@
                   <option value="nao_informar" {{ ($json.data.racaCor || "") === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
                 </select>
                 <small id="racaCorHelp" class="form-text">Informação usada para ranqueamento e políticas afirmativas conforme edital.</small>
-                <input type="hidden" id="racaCorValor" name="racaCor" value="{{ (((($json.result || {}).dadosPessoais) || {}).racaCor) || (($json.data || {}).racaCor || "") }}" />
+                <input type="hidden" id="racaCorValor" name="racaCor" value="{{ ($json.data || {}).racaCor || "" }}" />
               </div>
             </div>
           </div>
@@ -2105,37 +2108,37 @@
       };
 
       const prefillValues = {
-        nomeCompleto: {{ JSON.stringify((((($json.result || {}).dadosPessoais) || {}).nome) || (($json.data || {}).nomeCompleto) || "") }},
-        cpf: {{ JSON.stringify((((($json.result || {}).documento) || {}).cpf) || (($json.data || {}).cpf) || "") }},
-        nis: {{ JSON.stringify((((($json.result || {}).documento) || {}).nis) || (($json.data || {}).nis) || "") }},
-        dataNascimento: {{ JSON.stringify((((($json.result || {}).dadosPessoais) || {}).dataNascimento) || (($json.data || {}).dataNascimento) || "") }},
-        genero: {{ JSON.stringify((((($json.result || {}).dadosPessoais) || {}).sexo || "").toLowerCase() || (($json.data || {}).genero) || "") }},
-        nomeSocial: {{ JSON.stringify((((($json.result || {}).dadosPessoais) || {}).nomeSocial) || (($json.data || {}).nomeSocial) || "") }},
-        cep: {{ JSON.stringify((((($json.result || {}).endereco) || {}).cep) || (($json.data || {}).cep) || "") }},
-        logradouro: {{ JSON.stringify((((($json.result || {}).endereco) || {}).logradouro) || (($json.data || {}).logradouro) || "") }},
-        numero: {{ JSON.stringify((((($json.result || {}).endereco) || {}).numero) || (($json.data || {}).numero) || "") }},
-        complemento: {{ JSON.stringify((((($json.result || {}).endereco) || {}).complemento) || (($json.data || {}).complemento) || "") }},
-        bairro: {{ JSON.stringify((((($json.result || {}).endereco) || {}).bairro) || (($json.data || {}).bairro) || "") }},
-        cidade: {{ JSON.stringify((((($json.result || {}).endereco) || {}).cidade) || (((($json.result || {}).endereco) || {}).municipio) || (($json.data || {}).cidade) || "") }},
-        uf: {{ JSON.stringify((((($json.result || {}).endereco) || {}).uf) || (($json.data || {}).uf) || "") }},
+        nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
+        cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
+        nis: {{ JSON.stringify((($json.data || {}).nis) || "") }},
+        dataNascimento: {{ JSON.stringify((($json.data || {}).dataNascimento) || "") }},
+        genero: {{ JSON.stringify((($json.data || {}).genero || "").toLowerCase()) }},
+        nomeSocial: {{ JSON.stringify((($json.data || {}).nomeSocial) || "") }},
+        cep: {{ JSON.stringify((($json.data || {}).cep) || "") }},
+        logradouro: {{ JSON.stringify((($json.data || {}).logradouro) || "") }},
+        numero: {{ JSON.stringify((($json.data || {}).numero) || "") }},
+        complemento: {{ JSON.stringify((($json.data || {}).complemento) || "") }},
+        bairro: {{ JSON.stringify((($json.data || {}).bairro) || "") }},
+        cidade: {{ JSON.stringify((($json.data || {}).cidade) || "") }},
+        uf: {{ JSON.stringify((($json.data || {}).uf) || "") }},
         enderecoAtualizado: {{ JSON.stringify((($json.data || {}).enderecoAtualizado) || "") }},
-        telefone: {{ JSON.stringify((((($json.result || {}).dadosPessoais) || {}).telefone) || (($json.data || {}).telefone) || "") }},
-        email: {{ JSON.stringify((((($json.result || {}).dadosPessoais) || {}).email) || (($json.data || {}).email) || "") }},
+        telefone: {{ JSON.stringify((($json.data || {}).telefone) || "") }},
+        email: {{ JSON.stringify((($json.data || {}).email) || "") }},
         situacaoTrabalho: {{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }},
         mulherChefe: {{ JSON.stringify((($json.data || {}).mulherChefe) || "") }},
-        acolhimento: {{ JSON.stringify((((($json.result || {}).dadosComplementares) || {}).situacaoDeRua) || (($json.data || {}).acolhimento) || "") }},
+        acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
         dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
-        rendaFamiliar: {{ JSON.stringify((((($json.result || {}).familia || {}).rendaPerCapita || {}).valor) || (($json.data || {}).rendaPerCapita) || "") }},
+        rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaPerCapita) || "") }},
         rendaPerCapitaAtualizada: {{ JSON.stringify((($json.data || {}).rendaPerCapitaAtualizada) != null ? ($json.data || {}).rendaPerCapitaAtualizada : "") }},
-        racaCor: {{ JSON.stringify((((($json.result || {}).dadosPessoais) || {}).racaCor || "").toLowerCase() || (($json.data || {}).racaCor) || "") }},
-        pcd: {{ JSON.stringify((($json.data || {}).pcd) || (((($json.result || {}).dadosComplementares) || {}).pcd) || "") }},
-        maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || (((($json.result || {}).dadosComplementares) || {}).maeAtipica) || "") }},
+        racaCor: {{ JSON.stringify((($json.data || {}).racaCor || "").toLowerCase()) }},
+        pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
+        maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
         vitimaViolencia: {{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }},
         necessidadesEspeciais: {{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }},
-        dataAtualizacaoCadunico: {{ JSON.stringify((((($json.result || {}).familia) || {}).dataAtualizacao) || (($json.data || {}).familiaDataAtualizacao) || "") }},
-        semTrabalhoFormal: {{ JSON.stringify((((($json.result || {}).dadosComplementares) || {}).teveEmpregoCarteiraAssinada) || (($json.data || {}).teveEmpregoCarteiraAssinada) || "") }},
-        composicaoFamiliar: {{ JSON.stringify((((($json.result || {}).familia) || {}).quantidadePessoaDomicilio) || (($json.data || {}).quantidadePessoaDomicilio) || "") }},
-        programasSociais: {{ JSON.stringify((((($json.result || {}).familia) || {}).programaBolsaFamilia) || (((($json.result || {}).dadosPessoais) || {}).programaBolsaFamilia) || (($json.data || {}).programaBolsaFamilia) || "") }},
+        dataAtualizacaoCadunico: {{ JSON.stringify((($json.data || {}).familiaDataAtualizacao) || "") }},
+        semTrabalhoFormal: {{ JSON.stringify((($json.data || {}).teveEmpregoCarteiraAssinada) || "") }},
+        composicaoFamiliar: {{ JSON.stringify((($json.data || {}).quantidadePessoaDomicilio) || "") }},
+        programasSociais: {{ JSON.stringify((($json.data || {}).programaBolsaFamilia) || "") }},
       };
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
@@ -2243,15 +2246,21 @@
       }
 
       const generoSelect = document.getElementById("genero");
+      const generoHidden = document.getElementById("generoValor");
       const grupoMulherChefe = document.getElementById("grupoMulherChefe");
-      generoSelect.addEventListener("change", () => {
-        if (generoSelect.value === "feminino") {
+      const atualizarGrupoMulherChefe = () => {
+        const generoAtual = (generoSelect?.value || generoHidden?.value || "").toLowerCase();
+        if (generoAtual === "feminino") {
           grupoMulherChefe.classList.remove("d-none");
         } else {
           grupoMulherChefe.classList.add("d-none");
-          document.getElementById("mulherChefe").checked = false;
+          const mulherChefeInput = document.getElementById("mulherChefe");
+          if (mulherChefeInput) {
+            mulherChefeInput.checked = false;
+          }
         }
-      });
+      };
+      atualizarGrupoMulherChefe();
 
       const atualizarStatusCep = (mensagem, classe) => {
         if (!cepStatus) return;
@@ -2490,6 +2499,24 @@
         toggleFileSection(isAdicao, "cnhValidadeWrapper");
         toggleFileSection(isAdicao, "cnhArquivoWrapper");
       });
+
+      const aplicarMaiusculas = () => {
+        const campos = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+        campos.forEach((campo) => {
+          const atualizarValor = () => {
+            const inicio = campo.selectionStart;
+            const fim = campo.selectionEnd;
+            campo.value = (campo.value || "").toUpperCase();
+            if (inicio != null && fim != null) {
+              campo.setSelectionRange(inicio, fim);
+            }
+          };
+          atualizarValor();
+          campo.addEventListener("input", atualizarValor);
+        });
+      };
+
+      aplicarMaiusculas();
 
       const cpfInput = document.getElementById("cpf");
       const emailInput = document.getElementById("email");
@@ -3283,6 +3310,7 @@
         setTextValue("nis", prefillValues.nis);
         setFormattedDateValue("dataNascimento", prefillValues.dataNascimento);
         setSelectValue("genero", prefillValues.genero, true);
+        setTextValue("generoValor", prefillValues.genero);
         setTextValue("nomeSocial", prefillValues.nomeSocial);
         setFormattedDateValue("dataAtualizacaoCadunico", prefillValues.dataAtualizacaoCadunico);
         if (prefillValues.cep && prefillValues.cep.trim() !== "") {
@@ -3342,7 +3370,6 @@
 
       if (validation) {
         validation
-          .addField("#genero", [{ rule: "required", errorMessage: "Informe a identificação de gênero" }])
           .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
           .addField("#telefone", [
             { rule: "required", errorMessage: "Informe um telefone válido" },
