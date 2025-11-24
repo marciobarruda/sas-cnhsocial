@@ -1140,16 +1140,13 @@
                 </div>
               </div>
               <hr class="section-divider" />
-              <div class="form-subsection">
-                <div class="subsection-header">
-                  <h3 class="h5 mb-0">Endereço residencial</h3>
-                  <button class="btn btn-outline-primary btn-sm" type="button" id="btnAtualizarEndereco">
-                    <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>Atualizar endereço
-                  </button>
-                </div>
-                <div class="alert alert-light border-dashed" role="note">
-                  Confirme os dados residenciais. Caso tenha mudado, clique em "Atualizar endereço" e informe o novo endereço. Um comprovante recente poderá ser solicitado.
-                </div>
+                <div class="form-subsection">
+                  <div class="subsection-header">
+                    <h3 class="h5 mb-0">Endereço residencial</h3>
+                  </div>
+                  <div class="alert alert-light border-dashed" role="note">
+                    Confirme os dados residenciais. Caso tenha mudado, marque "Atualizar endereço" e informe o novo endereço. Um comprovante recente poderá ser solicitado.
+                  </div>
                 <div class="row g-4">
               <div class="col-12 col-sm-4">
                 <label for="cep" class="form-label required">CEP</label>
@@ -1243,7 +1240,7 @@
                     name="enderecoAtualizado"
                     {{ ($json.data.enderecoAtualizado || "").toLowerCase() === "sim" ? "checked" : "" }}
                   />
-                  <label class="form-check-label" for="enderecoAtualizado">Meu endereço informado acima está diferente do CadÚnico</label>
+                  <label class="form-check-label" for="enderecoAtualizado">Atualizar endereço</label>
                 </div>
                 <small class="form-text">Se marcado, será obrigatório anexar comprovante atualizado (até 90 dias).</small>
               </div>
@@ -1299,6 +1296,7 @@
                   <option value="emprego_formal" {{ ($json.data.situacaoTrabalho || "") === "emprego_formal" ? "selected" : "" }}>Emprego formal</option>
                   <option value="trabalho_informal" {{ ($json.data.situacaoTrabalho || "") === "trabalho_informal" ? "selected" : "" }}>Trabalho informal</option>
                   <option value="desempregado" {{ ($json.data.situacaoTrabalho || "") === "desempregado" ? "selected" : "" }}>Desempregado(a)</option>
+                  <option value="sem_trabalho_formal" {{ ($json.data.situacaoTrabalho || "") === "sem_trabalho_formal" ? "selected" : "" }}>Não tem trabalho formal</option>
                   <option value="aplicativo" {{ ($json.data.situacaoTrabalho || "") === "aplicativo" ? "selected" : "" }}>Trabalhador(a) de aplicativo</option>
                 </select>
               </div>
@@ -1326,6 +1324,7 @@
                     {{ ($json.data.acolhimento || "").toLowerCase() === "sim" ? "checked" : "" }}
                   />
                   <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
+                  <div class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife. Ao marcar, autorizo a consulta sigilosa nessa base.</div>
                 </div>
               </div>
               <div class="col-12 col-md-6">
@@ -1375,6 +1374,45 @@
                 />
                 <small id="rendaPerCapitaHelp" class="form-text">Utilize este campo apenas se a renda per capita da família estiver diferente da registrada no CadÚnico.</small>
               </div>
+              <div class="col-12 col-lg-6">
+                <label for="composicaoFamiliar" class="form-label">Composição familiar (CadÚnico)</label>
+                <textarea
+                  class="form-control"
+                  id="composicaoFamiliar"
+                  name="composicaoFamiliar"
+                  rows="3"
+                  readonly
+                  aria-readonly="true"
+                  placeholder="Composição familiar carregada do CadÚnico"
+                >{{ $json.data.composicaoFamiliar || "" }}</textarea>
+                <small class="form-text">Pontuação do edital: <span id="pontuacaoEditalLabel">{{ $json.data.pontuacaoEdital || "" }}</span></small>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="pontuacaoEdital" class="form-label">Pontuação do edital (CadÚnico)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="pontuacaoEdital"
+                  name="pontuacaoEdital"
+                  value="{{ $json.data.pontuacaoEdital || "" }}"
+                  readonly
+                  aria-readonly="true"
+                  aria-describedby="pontuacaoEditalLabel"
+                />
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="programasSociais" class="form-label">Participação em programas sociais (BPC ou Bolsa Família)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="programasSociais"
+                  name="programasSociais"
+                  value="{{ $json.data.programasSociais || "" }}"
+                  readonly
+                  aria-readonly="true"
+                  placeholder="Informação sincronizada automaticamente"
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -1385,14 +1423,16 @@
               <h2 class="h4 mb-0">Diversidade e priorização</h2>
             </div>
             <div class="row g-4">
-              <div class="col-12 col-md-6">
+              <div class="col-12">
                 <label for="racaCor" class="form-label required">Autodeclaração de cor/raça</label>
                 <select
                   class="form-select"
                   id="racaCor"
-                  name="racaCor"
+                  name="racaCor_display"
                   aria-describedby="racaCorHelp"
                   data-required-field="true"
+                  disabled
+                  aria-readonly="true"
                   required
                 >
                   <option value="">Selecione</option>
@@ -1403,45 +1443,9 @@
                   <option value="indigena" {{ ($json.data.racaCor || "") === "indigena" ? "selected" : "" }}>Indígena</option>
                   <option value="nao_informar" {{ ($json.data.racaCor || "") === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
                 </select>
+                <input type="hidden" id="racaCorHidden" name="racaCor" value="{{ $json.data.racaCor || "" }}" />
                 <small id="racaCorHelp" class="form-text">Informação usada para ranqueamento e políticas afirmativas conforme edital.</small>
               </div>
-              <fieldset class="col-12 col-md-6">
-                <legend class="form-label mb-1">Identidade e grupos prioritários</legend>
-                <div class="form-text">Marque se você se enquadra nas cotas adicionais previstas.</div>
-                <div class="form-check mt-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="pessoaPretaParda"
-                    name="pessoaPretaParda"
-                    {{ ($json.data.pessoaPretaParda || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="pessoaPretaParda">Sou pessoa preta ou parda</label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="pessoaIndigena"
-                    name="pessoaIndigena"
-                    {{ ($json.data.pessoaIndigena || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="pessoaIndigena">Sou pessoa indígena</label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="pessoaRua"
-                    name="pessoaRua"
-                    {{ ($json.data.pessoaRua || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="pessoaRua">Vivo em unidade de acolhimento</label>
-                </div>
-              </fieldset>
             </div>
           </div>
         </section>
@@ -1504,6 +1508,7 @@
                   <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
                   <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
                 </select>
+                <small class="form-text">Pais ou mães atípicos têm direito a 10% das vagas (lei).</small>
               </div>
               <div class="col-12 col-md-6">
                 <label class="form-label required" for="vitimaViolencia"
@@ -1520,7 +1525,7 @@
                   <option value="sim" {{ ($json.data.vitimaViolencia || "") === "sim" ? "selected" : "" }}>Sim</option>
                   <option value="nao" {{ ($json.data.vitimaViolencia || "") === "nao" ? "selected" : "" }}>Não</option>
                 </select>
-                <small class="form-text">A identidade das candidatas será preservada conforme edital.</small>
+                <small class="form-text">A identidade das candidatas será preservada conforme edital. Ao marcar esse campo, autorizo confirmação na base de dados da Secretaria da Mulher e da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
               </div>
               <div class="col-12">
                 <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
@@ -1541,41 +1546,55 @@
                   <div class="file-name" id="laudoPcdName"></div>
                 </div>
               </div>
+              <div class="col-12 col-lg-6 d-none" id="docMaeLaudoWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docMaeLaudo" class="form-label required">Laudo, relatório ou prescrição (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docMaeLaudo" name="docMaeLaudo" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docMaeLaudoInfo" />
+                  <div id="docMaeLaudoInfo" class="form-text">Emitido por profissional ou instituição registrada.</div>
+                  <div class="file-name" id="docMaeLaudoName"></div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docMaeDeclaracaoWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docMaeDeclaracao" class="form-label required">Declaração técnica do CRAS/CREAS ou certificação da Assistência Social (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docMaeDeclaracao" name="docMaeDeclaracao" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docMaeDeclaracaoName"></div>
+                </div>
+              </div>
               <div class="col-12 col-lg-6 d-none" id="docResponsavelWrapper">
                 <div class="file-input-wrapper">
-                  <label for="docResponsavel" class="form-label required">Comprovante de responsabilidade legal (PDF/JPG/PNG até 5 MB)</label>
+                  <label for="docResponsavel" class="form-label required">Declaração técnica da saúde ou serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
                   <input
                     class="form-control"
                     type="file"
                     id="docResponsavel"
                     name="docResponsavel"
                     accept=".pdf,.jpg,.jpeg,.png"
-                    aria-describedby="docResponsavelInfo"
                   />
-                  <div id="docResponsavelInfo" class="form-text">Certidão, termo judicial ou documento equivalente que comprove tutela, curatela ou guarda.</div>
                   <div class="file-name" id="docResponsavelName"></div>
                 </div>
               </div>
-              <div class="col-12 col-lg-6 d-none" id="docViolenciaWrapper">
+              <div class="col-12 col-lg-6 d-none" id="docDependenteDeclaracaoWrapper">
                 <div class="file-input-wrapper">
-                  <label for="docViolencia" class="form-label">Documento comprobatório ou declaração (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docViolencia" name="docViolencia" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="docViolenciaName"></div>
-                  <small class="form-text">Caso não possua boletim ou medida protetiva, envie declaração simples assinada.</small>
+                  <label for="docDependenteDeclaracao" class="form-label required">Declaração de tratamento contínuo (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docDependenteDeclaracao" name="docDependenteDeclaracao" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docDependenteDeclaracaoName"></div>
                 </div>
               </div>
-              <div class="col-12 col-lg-6 d-none" id="docAcolhimentoWrapper">
+              <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
                 <div class="file-input-wrapper">
-                  <label for="docAcolhimento" class="form-label required">Declaração da unidade de acolhimento (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docAcolhimento" name="docAcolhimento" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="docAcolhimentoName"></div>
+                  <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docDependenteVinculoInfo" />
+                  <div id="docDependenteVinculoInfo" class="form-text">Documento ou declaração emitida pela saúde ou serviços socioassistenciais.</div>
+                  <div class="file-name" id="docDependenteVinculoName"></div>
                 </div>
               </div>
-              <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
+              <div class="col-12 col-lg-6 d-none" id="docAplicativoWrapper">
                 <div class="file-input-wrapper">
-                  <label for="docDependente" class="form-label required">Comprovante de tratamento terapêutico contínuo (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="docDependenteName"></div>
+                  <label for="docAplicativo" class="form-label">Comprovante de trabalho de aplicativo (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docAplicativo" name="docAplicativo" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docAplicativoInfo" />
+                  <div id="docAplicativoInfo" class="form-text">Você pode anexar comprovantes ou prints de tela do aplicativo.</div>
+                  <div class="file-name" id="docAplicativoName"></div>
                 </div>
               </div>
               </div>
@@ -2079,15 +2098,19 @@
         rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaPerCapita) != null ? ($json.data || {}).rendaPerCapita : "") }},
         rendaPerCapitaAtualizada: {{ JSON.stringify((($json.data || {}).rendaPerCapitaAtualizada) != null ? ($json.data || {}).rendaPerCapitaAtualizada : "") }},
         racaCor: {{ JSON.stringify((($json.data || {}).racaCor) || "") }},
-        pessoaPretaParda: {{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }},
-        pessoaIndigena: {{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }},
-        pessoaRua: {{ JSON.stringify((($json.data || {}).pessoaRua) || "") }},
         pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
         maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
         vitimaViolencia: {{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }},
         necessidadesEspeciais: {{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }},
         dataAtualizacaoCadunico: {{ JSON.stringify((($json.data || {}).familiaDataAtualizacao) || "") }},
+        composicaoFamiliar: {{ JSON.stringify((($json.data || {}).composicaoFamiliar) || "") }},
+        pontuacaoEdital: {{ JSON.stringify((($json.data || {}).pontuacaoEdital) || "") }},
+        programasSociais: {{ JSON.stringify((($json.data || {}).programasSociais) || "") }},
       };
+      const cadSemTrabalhoFormal = {{ JSON.stringify((($json.data || {}).semTrabalhoFormal) || (($json.data || {}).naoTemTrabalhoFormal) || "") }};
+      if (cadSemTrabalhoFormal && (!prefillValues.situacaoTrabalho || prefillValues.situacaoTrabalho === "")) {
+        prefillValues.situacaoTrabalho = "sem_trabalho_formal";
+      }
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
       const numeroInput = document.getElementById("numero");
@@ -2101,7 +2124,6 @@
       const dataAtualizacaoInput = document.getElementById("dataAtualizacaoCadunico");
       const tempoAtualizacaoInput = document.getElementById("tempoAtualizacaoCadunico");
       const cepStatus = document.getElementById("cepStatus");
-      const btnAtualizarEndereco = document.getElementById("btnAtualizarEndereco");
       let enderecoEdicaoAtiva = false;
 
       const escapeSelector = (value) => {
@@ -2275,19 +2297,26 @@
         }
       };
 
-      btnAtualizarEndereco.addEventListener("click", () => {
+      const ativarEdicaoEndereco = (ativo) => {
         editableFields.forEach((fieldId) => {
           const field = document.getElementById(fieldId);
-          field.readOnly = false;
-          field.removeAttribute("aria-readonly");
+          field.readOnly = !ativo;
+          if (ativo) {
+            field.removeAttribute("aria-readonly");
+          } else {
+            field.setAttribute("aria-readonly", "true");
+          }
         });
-        ufSelect.disabled = false;
-        enderecoEdicaoAtiva = true;
-        btnAtualizarEndereco.setAttribute("aria-pressed", "true");
-        atualizarStatusCep("Informe o CEP e aguarde o preenchimento automático.", "text-muted");
-        cepInput.focus();
+        ufSelect.disabled = !ativo;
+        enderecoEdicaoAtiva = ativo;
+        if (ativo) {
+          atualizarStatusCep("Informe o CEP e aguarde o preenchimento automático.", "text-muted");
+          cepInput?.focus();
+        } else {
+          atualizarStatusCep("", "");
+        }
         updateSubmitState();
-      });
+      };
 
       const handleCepAccept = () => {
         if (!enderecoEdicaoAtiva) return;
@@ -2350,10 +2379,12 @@
 
       [
         ["laudoPcd", "laudoPcdName"],
+        ["docMaeLaudo", "docMaeLaudoName"],
+        ["docMaeDeclaracao", "docMaeDeclaracaoName"],
         ["docResponsavel", "docResponsavelName"],
-        ["docViolencia", "docViolenciaName"],
-        ["docAcolhimento", "docAcolhimentoName"],
-        ["docDependente", "docDependenteName"],
+        ["docDependenteDeclaracao", "docDependenteDeclaracaoName"],
+        ["docDependenteVinculo", "docDependenteVinculoName"],
+        ["docAplicativo", "docAplicativoName"],
         ["docResidencia", "docResidenciaName"],
         ["docIdentidade", "docIdentidadeName"],
         ["cnhArquivo", "cnhArquivoName"],
@@ -2364,25 +2395,32 @@
         toggleFileSection(pcdSelect.value === "sim", "laudoPcdWrapper");
       });
 
+      const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
+      situacaoTrabalhoSelect.addEventListener("change", () => {
+        toggleFileSection(situacaoTrabalhoSelect.value === "aplicativo", "docAplicativoWrapper");
+      });
+
       const maeAtipica = document.getElementById("maeAtipica");
       maeAtipica.addEventListener("change", () => {
-        toggleFileSection(maeAtipica.value === "sim", "docResponsavelWrapper");
-      });
-
-      const vitimaViolencia = document.getElementById("vitimaViolencia");
-      vitimaViolencia.addEventListener("change", () => {
-        toggleFileSection(vitimaViolencia.value === "sim", "docViolenciaWrapper");
-      });
-
-      const acolhimento = document.getElementById("acolhimento");
-      acolhimento.addEventListener("change", () => {
-        toggleFileSection(acolhimento.checked, "docAcolhimentoWrapper");
+        const condition = maeAtipica.value === "sim";
+        toggleFileSection(condition, "docMaeLaudoWrapper");
+        toggleFileSection(condition, "docMaeDeclaracaoWrapper");
+        toggleFileSection(condition, "docResponsavelWrapper");
       });
 
       const dependenteTratamento = document.getElementById("dependenteTratamento");
       dependenteTratamento.addEventListener("change", () => {
-        toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
+        toggleFileSection(dependenteTratamento.checked, "docDependenteDeclaracaoWrapper");
+        toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
       });
+
+      toggleFileSection(pcdSelect.value === "sim", "laudoPcdWrapper");
+      toggleFileSection(maeAtipica.value === "sim", "docMaeLaudoWrapper");
+      toggleFileSection(maeAtipica.value === "sim", "docMaeDeclaracaoWrapper");
+      toggleFileSection(maeAtipica.value === "sim", "docResponsavelWrapper");
+      toggleFileSection(dependenteTratamento.checked, "docDependenteDeclaracaoWrapper");
+      toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
+      toggleFileSection(situacaoTrabalhoSelect.value === "aplicativo", "docAplicativoWrapper");
 
       const enderecoAtualizado = document.getElementById("enderecoAtualizado");
       enderecoAtualizado.addEventListener("change", () => {
@@ -2394,7 +2432,9 @@
         } else {
           label.classList.remove("required");
         }
+        ativarEdicaoEndereco(enderecoAtualizado.checked);
       });
+      ativarEdicaoEndereco(enderecoAtualizado.checked);
 
       const categoriaSelect = document.getElementById("categoria");
       categoriaSelect.addEventListener("change", () => {
@@ -2407,37 +2447,6 @@
       const cpfInput = document.getElementById("cpf");
       const emailInput = document.getElementById("email");
       const emailConfirmInput = document.getElementById("emailConfirm");
-
-      const clearEmailConfirmationField = () => {
-        if (!emailConfirmInput) return false;
-        const emailValue = (emailInput?.value || "").trim();
-        const confirmValue = (emailConfirmInput.value || "").trim();
-        if (!emailValue || !confirmValue) {
-          return false;
-        }
-        if (emailValue.toLowerCase() === confirmValue.toLowerCase()) {
-          return false;
-        }
-        emailConfirmInput.value = "";
-        emailConfirmInput.classList.add("is-invalid");
-        emailConfirmInput.setAttribute("aria-invalid", "true");
-        emailConfirmInput.dispatchEvent(new Event("input", { bubbles: true }));
-        return true;
-      };
-
-      const enforceEmailConfirmationConsistency = () => {
-        if (!emailInput || !emailConfirmInput) return;
-        const resetIfMismatch = () => {
-          clearEmailConfirmationField();
-        };
-        emailConfirmInput.addEventListener("blur", resetIfMismatch);
-        emailConfirmInput.addEventListener("change", resetIfMismatch);
-        emailInput.addEventListener("change", () => {
-          if ((emailConfirmInput.value || "").trim()) {
-            resetIfMismatch();
-          }
-        });
-      };
 
       const cpfValidator = (value) => {
         const digits = value.replace(/\D/g, "");
@@ -2767,6 +2776,7 @@
         "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
         "#vitimaViolencia": "Vínculo com serviços especializados de violência doméstica",
         "#racaCor": "Autodeclaração de cor/raça",
+        "#racaCorHidden": "Autodeclaração de cor/raça",
         "#categoria": "Categoria desejada",
         "#turno": "Turno preferencial",
         "#docIdentidade": "Documento de identificação oficial",
@@ -2775,10 +2785,12 @@
         "#imagem": "Consentimento de uso de imagem",
         "#docResidencia": "Comprovante de residência",
         "#laudoPcd": "Laudo médico PCD",
-        "#docResponsavel": "Comprovante de responsabilidade legal",
-        "#docViolencia": "Documento de violência doméstica",
-        "#docAcolhimento": "Declaração da unidade de acolhimento",
-        "#docDependente": "Comprovante de tratamento terapêutico contínuo",
+        "#docMaeLaudo": "Laudo/relatório do responsável legal",
+        "#docMaeDeclaracao": "Declaração técnica CRAS/CREAS",
+        "#docResponsavel": "Declaração de responsabilidade legal",
+        "#docDependenteDeclaracao": "Declaração de tratamento contínuo",
+        "#docDependenteVinculo": "Comprovação de vínculo",
+        "#docAplicativo": "Comprovante de trabalho de aplicativo",
         "#numeroCnh": "Número da CNH",
         "#validadeCnh": "Validade da CNH",
         "#cnhArquivo": "Arquivo da CNH",
@@ -3215,13 +3227,21 @@
         setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
         setTextValue("rendaPerCapitaAtualizada", prefillValues.rendaPerCapitaAtualizada);
         setSelectValue("racaCor", prefillValues.racaCor);
-        setCheckboxValue("pessoaPretaParda", prefillValues.pessoaPretaParda);
-        setCheckboxValue("pessoaIndigena", prefillValues.pessoaIndigena);
-        setCheckboxValue("pessoaRua", prefillValues.pessoaRua);
         setSelectValue("pcd", prefillValues.pcd, true);
         setSelectValue("maeAtipica", prefillValues.maeAtipica, true);
         setSelectValue("vitimaViolencia", prefillValues.vitimaViolencia, true);
         setTextValue("necessidadesEspeciais", prefillValues.necessidadesEspeciais);
+        setTextValue("composicaoFamiliar", prefillValues.composicaoFamiliar);
+        setTextValue("pontuacaoEdital", prefillValues.pontuacaoEdital);
+        const pontuacaoEditalLabel = document.getElementById("pontuacaoEditalLabel");
+        if (pontuacaoEditalLabel) {
+          pontuacaoEditalLabel.textContent = prefillValues.pontuacaoEdital || "";
+        }
+        setTextValue("programasSociais", prefillValues.programasSociais);
+        const racaCorHidden = document.getElementById("racaCorHidden");
+        if (racaCorHidden) {
+          racaCorHidden.value = prefillValues.racaCor || "";
+        }
         preencherCidadePorCepSeNecessario();
 
         if (validation) {
@@ -3306,7 +3326,7 @@
           .addField("#pcd", [{ rule: "required" }])
           .addField("#maeAtipica", [{ rule: "required" }])
           .addField("#vitimaViolencia", [{ rule: "required" }])
-          .addField("#racaCor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
+          .addField("#racaCorHidden", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
           .addField("#categoria", [{ rule: "required" }])
           .addField("#turno", [{ rule: "required" }])
           .addField("#docIdentidade", [
@@ -3384,26 +3404,40 @@
         if (pcdSelect.value === "sim" && !document.getElementById("laudoPcd").files.length) {
           registerError("#laudoPcd", "Anexe o laudo PCD", document.getElementById("laudoPcd"));
         }
-        if (maeAtipica.value === "sim" && !document.getElementById("docResponsavel").files.length) {
-          registerError(
-            "#docResponsavel",
-            "Anexe os comprovantes",
-            document.getElementById("docResponsavel")
-          );
+        if (maeAtipica.value === "sim") {
+          if (!document.getElementById("docMaeLaudo").files.length) {
+            registerError("#docMaeLaudo", "Anexe laudo, relatório ou prescrição", document.getElementById("docMaeLaudo"));
+          }
+          if (!document.getElementById("docMaeDeclaracao").files.length) {
+            registerError(
+              "#docMaeDeclaracao",
+              "Anexe a declaração técnica do CRAS/CREAS ou certificação da Assistência Social",
+              document.getElementById("docMaeDeclaracao")
+            );
+          }
+          if (!document.getElementById("docResponsavel").files.length) {
+            registerError(
+              "#docResponsavel",
+              "Anexe a declaração técnica que comprove responsabilidade legal",
+              document.getElementById("docResponsavel")
+            );
+          }
         }
-        if (acolhimento.checked && !document.getElementById("docAcolhimento").files.length) {
-          registerError(
-            "#docAcolhimento",
-            "Anexe declaração do serviço de acolhimento",
-            document.getElementById("docAcolhimento")
-          );
-        }
-        if (dependenteTratamento.checked && !document.getElementById("docDependente").files.length) {
-          registerError(
-            "#docDependente",
-            "Anexe comprovante do tratamento",
-            document.getElementById("docDependente")
-          );
+        if (dependenteTratamento.checked) {
+          if (!document.getElementById("docDependenteDeclaracao").files.length) {
+            registerError(
+              "#docDependenteDeclaracao",
+              "Anexe a declaração de tratamento contínuo",
+              document.getElementById("docDependenteDeclaracao")
+            );
+          }
+          if (!document.getElementById("docDependenteVinculo").files.length) {
+            registerError(
+              "#docDependenteVinculo",
+              "Anexe a comprovação de vínculo",
+              document.getElementById("docDependenteVinculo")
+            );
+          }
         }
         if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
           registerError(
@@ -3419,7 +3453,6 @@
           emailConfirmValue &&
           emailValue.toLowerCase() !== emailConfirmValue.toLowerCase()
         ) {
-          clearEmailConfirmationField();
           registerError(
             "#emailConfirm",
             "Os e-mails informados devem coincidir",
@@ -3526,10 +3559,12 @@
         [
           "docResidenciaWrapper",
           "laudoPcdWrapper",
+          "docMaeLaudoWrapper",
+          "docMaeDeclaracaoWrapper",
           "docResponsavelWrapper",
-          "docViolenciaWrapper",
-          "docAcolhimentoWrapper",
-          "docDependenteWrapper",
+          "docDependenteDeclaracaoWrapper",
+          "docDependenteVinculoWrapper",
+          "docAplicativoWrapper",
           "cnhNumeroWrapper",
           "cnhValidadeWrapper",
           "cnhArquivoWrapper",
@@ -3546,7 +3581,6 @@
         });
         ufSelect.disabled = true;
         enderecoEdicaoAtiva = false;
-        btnAtualizarEndereco.setAttribute("aria-pressed", "false");
         if (cepStatus) {
           cepStatus.textContent = "";
         }
@@ -3599,7 +3633,6 @@
       validarEExibirModal("#cnhSocialForm", "#submitButton");
 
       attachRequiredFieldFocusHandlers();
-      enforceEmailConfirmationConsistency();
 
       applyPrefillValues();
       updateAgeFieldFromBirthdate();
