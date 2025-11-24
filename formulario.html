@@ -1,0 +1,3610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SAS • CNH Social</title>
+    <link rel="icon" href="https://statics.recife.pe.gov.br/images/automacao/cnh-social/icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      :root {
+        --brand-primary: #0053a4;
+        --brand-secondary: #003a73;
+        --brand-highlight: #00a3ff;
+        --surface: #ffedd4;
+        --surface-strong: #ffffff;
+        --border-color: #d0d7e2;
+        --text-strong: #1b263b;
+        --text-muted: #5b6c8c;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      .visually-hidden {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--text-strong);
+        min-height: 100vh;
+      }
+
+      header.site-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        height: 385px;
+        min-height: 385px;
+        overflow: hidden;
+        width: 100%;
+      }
+
+      header.site-header picture {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      header.site-header .hero-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+
+      header .lead {
+        color: rgba(255, 255, 255, 0.82);
+        max-width: 100%;
+        font-size: 1rem;
+        line-height: 1.65;
+        text-align: justify;
+      }
+
+      .badge-open {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        background-color: rgba(255, 255, 255, 0.14);
+      }
+
+      .user-greeting {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        padding: 1rem 1.5rem;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, rgba(0, 83, 164, 0.09), rgba(0, 163, 255, 0.12));
+        color: var(--text-strong);
+        box-shadow: 0 10px 30px rgba(0, 45, 98, 0.08);
+      }
+
+      .user-greeting::before {
+        content: "👋";
+        font-size: 1.4rem;
+      }
+
+      .minhas-inscricoes-grid {
+        margin-top: 1rem;
+      }
+
+      .minhas-inscricao-card {
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        border: 1px solid rgba(0, 83, 164, 0.12);
+        border-radius: 4px;
+      }
+
+      .minhas-inscricao-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(0, 45, 98, 0.12);
+      }
+
+      .minhas-inscricao-card.is-loading {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .minhas-inscricoes-placeholder {
+        padding: 1.25rem;
+        border-radius: 4px;
+        background: rgba(0, 83, 164, 0.05);
+        border: 1px dashed rgba(0, 83, 164, 0.2);
+        color: var(--text-muted);
+      }
+
+      .resumo-inscricao-list dt {
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .resumo-inscricao-list dd {
+        font-weight: 600;
+        color: var(--text-strong);
+      }
+
+      .resumo-inscricao-pre {
+        white-space: pre-wrap;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.95rem;
+        background: rgba(0, 83, 164, 0.08);
+        color: var(--brand-secondary);
+        padding: 1rem;
+        border-radius: 0.75rem;
+      }
+
+      .publicacoes-panel,
+      .updates-panel {
+        border-radius: 4px;
+      }
+
+      .download-card strong {
+        font-size: 1rem;
+        color: var(--text-strong);
+      }
+
+      .download-card p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+
+      .download-card a {
+        font-weight: 600;
+      }
+
+      .btn-submit.is-disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
+        box-shadow: none;
+      }
+
+      .btn-submit.is-disabled:focus-visible {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background-color: rgba(17, 24, 39, 0.6);
+        z-index: 2000;
+      }
+
+      .modal-backdrop.is-open {
+        display: flex;
+      }
+
+      .modal-card {
+        width: min(32rem, 100%);
+        max-height: 90vh;
+        overflow-y: auto;
+        background: var(--surface-strong);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.28);
+        outline: none;
+        position: relative;
+      }
+
+      .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .title--alerta {
+        color: #c53030;
+      }
+
+      .title--sucesso {
+        color: #1b873f;
+      }
+
+      .modal-message {
+        margin-bottom: 1rem;
+        color: var(--text-strong);
+      }
+
+      .modal-list {
+        padding-left: 1.25rem;
+        margin: 0;
+        color: var(--text-strong);
+        list-style: disc;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+
+      .modal-close-button {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.5rem;
+        cursor: pointer;
+        line-height: 1;
+      }
+
+      .modal-close-button:focus-visible {
+        outline: 2px solid var(--brand-highlight);
+        outline-offset: 2px;
+      }
+
+      .error-text {
+        display: block;
+        margin-top: 0.35rem;
+        font-size: 0.85rem;
+        color: #c53030;
+      }
+
+      .is-invalid {
+        border-color: #c53030 !important;
+      }
+
+      .form-check-input.is-invalid {
+        border-color: #c53030;
+        box-shadow: none;
+      }
+
+      .form-check .error-text {
+        margin-left: 1.75rem;
+      }
+
+      #publicacoes-list li + li {
+        margin-top: 0.75rem;
+      }
+
+      .publicacoes-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .publicacoes-item-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+      }
+
+      .publicacoes-item-icon {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        flex-shrink: 0;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+      }
+
+      .publicacoes-item-icon--pdf {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23d32f2f' d='M6 2h7l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%23ef5350' d='M13 2v5h5'/%3E%3Ctext x='12' y='17' text-anchor='middle' font-family='Arial, sans-serif' font-size='7' font-weight='700' fill='%23fff'%3EPDF%3C/text%3E%3C/svg%3E");
+      }
+
+      .publicacoes-item-icon--image {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3' y='4' width='18' height='16' rx='2' fill='%23215695'/%3E%3Crect x='4.5' y='5.5' width='15' height='13' rx='1.2' fill='%233968c8'/%3E%3Ccircle cx='9' cy='11' r='2.2' fill='%23fff59d'/%3E%3Cpath fill='%23c5cae9' d='M6 18l4.2-4.6 2.7 3.2 2.6-3L18 18z'/%3E%3C/svg%3E");
+      }
+
+      .publicacoes-item-icon--generic {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233f51b5' d='M7 2h7l5 5v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%235c6bc0' d='M14 2v5h5'/%3E%3Crect x='8.5' y='12' width='7' height='1.5' rx='.75' fill='%23c5cae9'/%3E%3Crect x='8.5' y='15' width='5' height='1.5' rx='.75' fill='%23c5cae9'/%3E%3C/svg%3E");
+      }
+
+      .publicacoes-item time {
+        flex-shrink: 0;
+      }
+
+      @media (min-width: 576px) {
+        .publicacoes-item {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+      }
+
+      @media (max-width: 575.98px) {
+        .publicacoes-item-link {
+          align-items: flex-start;
+        }
+      }
+
+      .updates-panel {
+        border-left: 3px solid var(--brand-highlight);
+        padding-left: 1.2rem;
+        color: var(--text-muted);
+      }
+
+      .updates-panel time {
+        font-size: 0.85rem;
+        color: var(--brand-secondary);
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      footer {
+        color: var(--text-muted);
+        padding: 2.5rem 0 2rem;
+        font-size: 0.9rem;
+      }
+
+      main {
+        padding: 0.75rem 0 4rem;
+      }
+
+      .form-wrapper {
+        background: transparent;
+        border-radius: 1.5rem;
+        padding: clamp(1.5rem, 2vw + 1rem, 3rem);
+        box-shadow: none;
+      }
+
+      .form-wrapper form {
+        margin: 0;
+      }
+
+      .section-nav {
+        position: relative;
+        z-index: 1;
+        padding: 0;
+        margin-bottom: clamp(1.5rem, 1.25rem + 1vw, 2.25rem);
+      }
+
+      .section-nav__inner {
+        border-radius: 1.5rem;
+        padding: clamp(0.5rem, 0.25rem + 1vw, 1.25rem);
+        display: flex;
+        flex-direction: column;
+        gap: clamp(0.5rem, 0.25rem + 0.75vw, 1.5rem);
+      }
+
+      .section-nav__top {
+        display: flex;
+        align-items: center;
+        gap: clamp(0.75rem, 0.5rem + 1vw, 2rem);
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .section-nav__eyebrow {
+        font-size: 0.95rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: var(--brand-secondary);
+      }
+
+      .section-nav__registration {
+        margin-left: auto;
+        padding: 0.65rem 1rem;
+        border-radius: 0.85rem;
+        background: rgba(0, 83, 164, 0.06);
+        border: 1px solid rgba(0, 83, 164, 0.2);
+        min-width: clamp(12rem, 11rem + 4vw, 16rem);
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .section-nav__registration-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .section-nav__registration-value {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--brand-secondary);
+        letter-spacing: 0.02em;
+      }
+
+      .section-nav__list {
+        --step-size: 2.75rem;
+        --step-progress: 0;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: clamp(0.5rem, 0.5rem + 1vw, 1.75rem);
+        list-style: none;
+        padding: 0 clamp(0.5rem, 0.25rem + 1vw, 1.5rem) 0;
+        margin: 0;
+        position: relative;
+      }
+
+      .section-nav__list::before,
+      .section-nav__list::after {
+        content: "";
+        position: absolute;
+        top: calc(var(--step-size) / 2);
+        left: calc(var(--step-size) / 2);
+        height: 4px;
+        width: calc(100% - var(--step-size));
+        border-radius: 999px;
+        transform: translateY(-50%);
+      }
+
+      .section-nav__list::before {
+        background: #e2e6ef;
+        z-index: 0;
+      }
+
+      .section-nav__list::after {
+        background: linear-gradient(90deg, #2ecc71 0%, #2ecc71 55%, #0d6efd 100%);
+        transform-origin: left center;
+        transform: scaleX(var(--step-progress));
+        transition: transform 0.35s ease;
+        z-index: 1;
+      }
+
+      .section-nav__item {
+        position: relative;
+        flex: 1;
+        min-width: 6rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        z-index: 2;
+      }
+
+      .section-nav__link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--step-size);
+        height: var(--step-size);
+        border-radius: 50%;
+        border: 3px solid #cfd5e4;
+        background: #ffffff;
+        color: #7b8ba6;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+        transition: border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .section-nav__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        font-size: 1.2rem;
+      }
+
+      .section-nav__icon i {
+        line-height: 1;
+      }
+
+      .section-nav__link:hover,
+      .section-nav__link:focus-visible {
+        border-color: var(--brand-highlight);
+        color: var(--brand-highlight);
+        outline: none;
+      }
+
+      .section-nav__link.is-active {
+        border-color: #0d6efd;
+        color: #0d6efd;
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.25);
+      }
+
+      .section-nav__link.is-complete {
+        background: linear-gradient(135deg, #2ecc71, #1fab63);
+        border-color: transparent;
+        color: #ffffff;
+      }
+
+      .section-nav__link.is-complete .section-nav__icon {
+        opacity: 0;
+      }
+
+      .section-nav__link.is-complete::after {
+        content: "\2713";
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+      }
+
+      .section-nav__label {
+        font-size: 0.9rem;
+        text-align: center;
+        color: var(--brand-secondary);
+        font-weight: 600;
+        line-height: 1.3;
+        max-width: 8.5rem;
+      }
+
+      .section-nav__item.is-complete .section-nav__label {
+        color: #1fab63;
+      }
+
+      .section-nav__item.is-active .section-nav__label {
+        color: #0d6efd;
+      }
+
+      .step-actions {
+        margin-top: clamp(1.5rem, 1.1rem + 1vw, 2.5rem);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .step-actions__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.6rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 246, 230, 0.9));
+        color: var(--brand-secondary);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease;
+      }
+
+      .step-actions__button--next {
+        margin-left: auto;
+      }
+
+      .step-actions__button:hover,
+      .step-actions__button:focus-visible {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px rgba(15, 23, 42, 0.18);
+        outline: none;
+      }
+
+      .step-actions__button:focus-visible {
+        filter: brightness(1.03);
+      }
+
+      .step-actions__button--next {
+        background: linear-gradient(135deg, var(--brand-primary), var(--brand-highlight));
+        color: #ffffff;
+      }
+
+      .step-actions__button--next:hover,
+      .step-actions__button--next:focus-visible {
+        filter: saturate(1.05);
+      }
+
+      .step-actions__button--prev {
+        border: 1px solid rgba(0, 83, 164, 0.25);
+        color: var(--brand-secondary);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 246, 230, 0.88));
+      }
+
+      .step-actions__button--prev:hover,
+      .step-actions__button--prev:focus-visible {
+        border-color: rgba(0, 163, 255, 0.55);
+        color: var(--brand-primary);
+      }
+
+      .step-actions__button i {
+        font-size: 1.25rem;
+      }
+
+      @media (max-width: 575.98px) {
+        .step-actions {
+          padding: 0.75rem 0.875rem;
+        }
+
+        .step-actions__button {
+          width: 100%;
+          margin-left: 0;
+        }
+      }
+
+      .card-section {
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        background: var(--surface-strong);
+        box-shadow: 0 12px 30px rgba(24, 64, 120, 0.08);
+      }
+
+      .form-step {
+        display: none;
+      }
+
+      .form-step.is-active {
+        display: block;
+      }
+
+      .form-section {
+        scroll-margin-top: 7rem;
+      }
+
+      .form-section + .form-section {
+        margin-top: 1.5rem;
+      }
+
+      .section-divider {
+        margin: 2rem 0 1.5rem;
+        border: 0;
+        border-top: 1px dashed var(--border-color);
+      }
+
+      .form-subsection {
+        margin-top: 1.5rem;
+      }
+
+      .subsection-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        header.site-header {
+          padding: 0;
+        }
+
+        .badge-open {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .section-title {
+          justify-content: flex-start;
+        }
+
+        .section-nav {
+          padding: 0;
+        }
+
+        .section-nav__inner {
+          padding: 1rem 0;
+        }
+
+        .section-nav__top {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .section-nav__registration {
+          width: 100%;
+        }
+
+        .section-nav__list {
+          --step-size: 2.5rem;
+          flex-wrap: wrap;
+          gap: 1rem;
+          padding: 0;
+        }
+
+        .section-nav__list::before,
+        .section-nav__list::after {
+          display: none;
+        }
+
+        .section-nav__item {
+          flex: 1 0 45%;
+        }
+
+        .section-nav__label {
+          max-width: none;
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 767.98px) {
+        header.site-header {
+          height: 184px;
+          min-height: 184px;
+        }
+      }
+
+      .section-header {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .required::after {
+        content: "*";
+        color: #d32f2f;
+        margin-left: 0.25rem;
+      }
+
+      .form-text {
+        color: var(--text-muted);
+      }
+
+      .file-input-wrapper {
+        border: 1px dashed var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        background: rgba(0, 83, 164, 0.03);
+      }
+
+      .file-input-wrapper label {
+        font-weight: 600;
+      }
+
+      .file-name {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+      }
+
+      .toast-container {
+        z-index: 1080;
+      }
+
+      .legend-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.85rem;
+        color: var(--brand-secondary);
+        background: rgba(0, 83, 164, 0.12);
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+      }
+
+      .tooltip-inner {
+        text-align: left;
+      }
+
+      .btn-outline-primary:focus-visible,
+      .form-control:focus,
+      .form-select:focus,
+      .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(0, 83, 164, 0.25);
+        border-color: var(--brand-highlight);
+      }
+
+      .border-dashed {
+        border-style: dashed !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" aria-hidden="true">
+      <picture>
+        <source
+          media="(max-width: 767.98px)"
+          srcset="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero-mobile.png"
+        />
+        <img
+          src="https://statics.recife.pe.gov.br/images/automacao/cnh-social/hero5.png"
+          alt=""
+          class="hero-image"
+          aria-hidden="true"
+          role="presentation"
+        />
+      </picture>
+    </header>
+    <main>
+      <div class="container">
+        <div class="form-wrapper">
+          <nav class="section-nav" aria-label="Etapas da inscrição">
+            <div class="section-nav__inner">
+              <div class="section-nav__top">
+                <span class="section-nav__eyebrow">Etapas da inscrição</span>
+                <div class="section-nav__registration" role="status" aria-live="polite">
+                  <span class="section-nav__registration-label">Nº da inscrição</span>
+                  <span class="section-nav__registration-value">{{ $json.data.numeroInscricao || $json.data.protocolo || "—" }}</span>
+                </div>
+              </div>
+              <ol class="section-nav__list">
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link is-active"
+                    data-step="1"
+                    aria-controls="form-step-1"
+                    aria-label="Dados pessoais"
+                    aria-describedby="step-label-1"
+                    aria-pressed="true"
+                    aria-current="step"
+                  >
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-person-badge"></i>
+                    </span>
+                  </button>
+                  <span class="section-nav__label" id="step-label-1">Dados pessoais</span>
+                </li>
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link"
+                    data-step="2"
+                    aria-controls="form-step-2"
+                    aria-label="Contatos e residência"
+                    aria-describedby="step-label-2"
+                    aria-pressed="false"
+                  >
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-geo-alt"></i>
+                    </span>
+                  </button>
+                  <span class="section-nav__label" id="step-label-2">Contatos e endereço</span>
+                </li>
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link"
+                    data-step="3"
+                    aria-controls="form-step-3"
+                    aria-label="Perfil socioassistencial"
+                    aria-describedby="step-label-3"
+                    aria-pressed="false"
+                  >
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-people"></i>
+                    </span>
+                  </button>
+                  <span class="section-nav__label" id="step-label-3">Perfil socioassistencial</span>
+                </li>
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link"
+                    data-step="4"
+                    aria-controls="form-step-4"
+                    aria-label="Condições especiais e anexos"
+                    aria-describedby="step-label-4"
+                    aria-pressed="false"
+                  >
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-shield-check"></i>
+                    </span>
+                  </button>
+                  <span class="section-nav__label" id="step-label-4">Condições especiais</span>
+                </li>
+                <li class="section-nav__item">
+                  <button
+                    type="button"
+                    class="section-nav__link"
+                    data-step="5"
+                    aria-controls="form-step-5"
+                    aria-label="Documentos e envio"
+                    aria-describedby="step-label-5"
+                    aria-pressed="false"
+                  >
+                    <span class="section-nav__icon" aria-hidden="true">
+                      <i class="bi bi-cloud-arrow-up"></i>
+                    </span>
+                  </button>
+                  <span class="section-nav__label" id="step-label-5">Documentos e envio</span>
+                </li>
+              </ol>
+            </div>
+          </nav>
+          <form id="cnhSocialForm" class="needs-validation" novalidate>
+            <div class="form-step is-active" id="form-step-1" data-step="1" aria-hidden="false">
+              <section id="sec-identificacao" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+                  <div class="section-header">
+                    <h2 class="h4 mb-0">Identificação do candidato</h2>
+                </div>
+                <div class="row g-4 align-items-end">
+                  <div class="col-12 col-md-4 col-lg-3">
+                    <label for="cpf" class="form-label required">CPF</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cpf"
+                      name="cpf"
+                      inputmode="numeric"
+                      placeholder="000.000.000-00"
+                      value="{{ $json.data.cpf || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-md-4 col-lg-5">
+                    <label for="nomeCompleto" class="form-label required">Nome completo</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nomeCompleto"
+                      name="nomeCompleto"
+                      placeholder="Nome cadastrado no CadÚnico"
+                      value="{{ $json.data.nomeCompleto || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-md-4 col-lg-4">
+                    <label for="nomeSocial" class="form-label">Nome social</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nomeSocial"
+                      name="nomeSocial"
+                      maxlength="120"
+                      placeholder="Informe se desejar atendimento com nome social"
+                      value="{{ $json.data.nomeSocial || "" }}"
+                    />
+                  </div>
+                </div>
+                <div class="row g-4">
+                  <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                    <label for="dataNascimento" class="form-label required">Data de nascimento</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="dataNascimento"
+                      name="dataNascimento"
+                      value="{{ $json.data.dataNascimento || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                    <label for="idade" class="form-label">Idade</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="idade"
+                      name="idade"
+                      value=""
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                    <label for="nis" class="form-label required">NIS/PIS</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nis"
+                      name="nis"
+                      placeholder="Número do CadÚnico"
+                      value="{{ $json.data.nis || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                    <label for="dataAtualizacaoCadunico" class="form-label">Data da atualização</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="dataAtualizacaoCadunico"
+                      name="dataAtualizacaoCadunico"
+                      value="{{ $json.data.familiaDataAtualizacao || "" }}"
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-md-4 col-lg-4">
+                    <label for="tempoAtualizacaoCadunico" class="form-label">Tempo desde a atualização</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="tempoAtualizacaoCadunico"
+                      name="tempoAtualizacaoCadunico"
+                      value=""
+                      readonly
+                      aria-readonly="true"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="genero" class="form-label required">Identificação de gênero</label>
+                    <select
+                      class="form-select"
+                      id="genero"
+                      name="genero"
+                      data-required-field="true"
+                      required
+                    >
+                      <option value="">Selecione</option>
+                      <option value="feminino" {{ ($json.data.genero || "") === "feminino" ? "selected" : "" }}>Mulher</option>
+                      <option value="masculino" {{ ($json.data.genero || "") === "masculino" ? "selected" : "" }}>Homem</option>
+                      <option value="outro" {{ ($json.data.genero || "") === "outro" ? "selected" : "" }}>Outro / Não-binário</option>
+                      <option value="nao_informar" {{ ($json.data.genero || "") === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
+                    </select>
+                  </div>
+                </div>
+            </div>
+            </section>
+              <div class="step-actions" aria-label="Controles da etapa Identificação do candidato">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  data-step-target="2"
+                  aria-label="Avançar para Contatos e residência"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-step" id="form-step-2" data-step="2" hidden aria-hidden="true">
+              <section id="sec-contatos-residencia" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+                  <div class="section-header">
+                    <h2 class="h4 mb-0">Contatos e residência</h2>
+                  </div>
+                  <div class="row g-4">
+                <div class="col-12 col-md-3">
+                  <label for="telefone" class="form-label required">Telefone/WhatsApp</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="telefone"
+                    name="telefone"
+                    inputmode="tel"
+                    placeholder="(81) 90000-0000"
+                    value="{{ $json.data.telefone || "" }}"
+                    data-required-field="true"
+                    required
+                  />
+                  <div class="form-text">Informe um número ativo para contato e envio de protocolo.</div>
+                </div>
+                <div class="col-12 col-md">
+                  <label for="email" class="form-label required">E-mail</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="nome@exemplo.com"
+                    value="{{ $json.data.email || "" }}"
+                    data-required-field="true"
+                    required
+                  />
+                </div>
+                <div class="col-12 col-md">
+                  <label for="emailConfirm" class="form-label required">Confirme o e-mail</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="emailConfirm"
+                    name="emailConfirm"
+                    placeholder="Repita seu e-mail"
+                    value="{{ $json.data.email || "" }}"
+                    aria-describedby="emailConfirmHelp"
+                    data-required-field="true"
+                    required
+                  />
+                  <div id="emailConfirmHelp" class="form-text">O email deve ser idêntico ao campo anterior.</div>
+                </div>
+                <div class="col-12">
+                  <label for="preferenciaContato" class="form-label required">Canal de contato preferencial</label>
+                  <select
+                    class="form-select"
+                    id="preferenciaContato"
+                    name="preferenciaContato"
+                    data-required-field="true"
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="email">E-mail</option>
+                    <option value="ligacao">Ligação telefônica</option>
+                  </select>
+                </div>
+              </div>
+              <hr class="section-divider" />
+              <div class="form-subsection">
+                <div class="subsection-header">
+                  <h3 class="h5 mb-0">Endereço residencial</h3>
+                  <button class="btn btn-outline-primary btn-sm" type="button" id="btnAtualizarEndereco">
+                    <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>Atualizar endereço
+                  </button>
+                </div>
+                <div class="alert alert-light border-dashed" role="note">
+                  Confirme os dados residenciais. Caso tenha mudado, clique em "Atualizar endereço" e informe o novo endereço. Um comprovante recente poderá ser solicitado.
+                </div>
+                <div class="row g-4">
+              <div class="col-12 col-sm-4">
+                <label for="cep" class="form-label required">CEP</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cep"
+                  name="cep"
+                  inputmode="numeric"
+                  placeholder="00000-000"
+                  value="{{ $json.data.cep || "" }}"
+                  readonly
+                  aria-describedby="cepStatus"
+                />
+                <div id="cepStatus" class="form-text" aria-live="polite"></div>
+              </div>
+              <div class="col-12 col-sm-8">
+                <label for="logradouro" class="form-label required">Logradouro</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="logradouro"
+                  name="logradouro"
+                  placeholder="Rua, avenida, travessa"
+                  value="{{ $json.data.logradouro || "" }}"
+                  readonly
+                />
+              </div>
+              <div class="col-12 col-sm-4 col-lg-2">
+                <label for="numero" class="form-label required">Número</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="numero"
+                  name="numero"
+                  placeholder="S/N"
+                  value="{{ $json.data.numero || "" }}"
+                  readonly
+                  inputmode="text"
+                  pattern="^(?:[0-9]+|S/N)$"
+                  title="Informe apenas números ou S/N"
+                />
+              </div>
+              <div class="col-12 col-sm-8 col-lg-4">
+                <label for="complemento" class="form-label">Complemento</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="complemento"
+                  name="complemento"
+                  placeholder="Apartamento, bloco"
+                  value="{{ $json.data.complemento || "" }}"
+                  readonly
+                />
+              </div>
+              <div class="col-12 col-md-4">
+                <label for="bairro" class="form-label required">Bairro</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="bairro"
+                  name="bairro"
+                  value="{{ $json.data.bairro || "" }}"
+                  readonly
+                />
+              </div>
+              <div class="col-12 col-md-5">
+                <label for="cidade" class="form-label required">Cidade</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cidade"
+                  name="cidade"
+                  value="{{ $json.data.cidade || "" }}"
+                  readonly
+                />
+              </div>
+              <div class="col-12 col-md-3">
+                <label for="uf" class="form-label required">UF</label>
+                <select class="form-select" id="uf" name="uf" disabled>
+                  <option value="PE" {{ ($json.data.uf || "") === "PE" ? "selected" : "" }}>PE</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="enderecoAtualizado"
+                    name="enderecoAtualizado"
+                    {{ ($json.data.enderecoAtualizado || "").toLowerCase() === "sim" ? "checked" : "" }}
+                  />
+                  <label class="form-check-label" for="enderecoAtualizado">Meu endereço informado acima está diferente do CadÚnico</label>
+                </div>
+                <small class="form-text">Se marcado, será obrigatório anexar comprovante atualizado (até 90 dias).</small>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docResidenciaWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docResidencia" class="form-label" id="docResidenciaLabel">Comprovante de residência recente (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docResidencia" name="docResidencia" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docResidenciaHelp" />
+                  <div id="docResidenciaHelp" class="form-text">Envie conta de consumo ou declaração emitida há até 90 dias.</div>
+                  <div class="file-name" id="docResidenciaName"></div>
+                </div>
+                </div>
+            </div>
+          </section>
+              <div class="step-actions" aria-label="Controles da etapa Contatos e residência">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--prev"
+                  data-step-target="1"
+                  aria-label="Voltar para Identificação do candidato"
+                >
+                  <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  data-step-target="3"
+                  aria-label="Avançar para Contexto socioassistencial"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-step" id="form-step-3" data-step="3" hidden aria-hidden="true">
+              <section id="sec-socioassistencial" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Contexto socioassistencial</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label for="situacaoTrabalho" class="form-label required">Situação de trabalho atual</label>
+                <select
+                  class="form-select"
+                  id="situacaoTrabalho"
+                  name="situacaoTrabalho"
+                  data-required-field="true"
+                  required
+                >
+                  <option value="">Selecione</option>
+                  <option value="emprego_formal" {{ ($json.data.situacaoTrabalho || "") === "emprego_formal" ? "selected" : "" }}>Emprego formal</option>
+                  <option value="trabalho_informal" {{ ($json.data.situacaoTrabalho || "") === "trabalho_informal" ? "selected" : "" }}>Trabalho informal</option>
+                  <option value="desempregado" {{ ($json.data.situacaoTrabalho || "") === "desempregado" ? "selected" : "" }}>Desempregado(a)</option>
+                  <option value="aplicativo" {{ ($json.data.situacaoTrabalho || "") === "aplicativo" ? "selected" : "" }}>Trabalhador(a) de aplicativo</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
+                <div class="form-check pt-4">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="mulherChefe"
+                    name="mulherChefe"
+                    {{ ($json.data.mulherChefe || "").toLowerCase() === "sim" ? "checked" : "" }}
+                  />
+                  <label class="form-check-label" for="mulherChefe">Sou mulher e responsável pela renda familiar (chefe de família)</label>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="acolhimento"
+                    name="acolhimento"
+                    {{ ($json.data.acolhimento || "").toLowerCase() === "sim" ? "checked" : "" }}
+                  />
+                  <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="dependenteTratamento"
+                    name="dependenteTratamento"
+                    {{ ($json.data.dependenteTratamento || "").toLowerCase() === "sim" ? "checked" : "" }}
+                  />
+                  <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="rendaFamiliar"
+                  name="rendaFamiliar"
+                  min="0"
+                  step="0.01"
+                  placeholder="Valor carregado automaticamente"
+                  value="{{ $json.data.rendaPerCapita || "" }}"
+                  aria-describedby="rendaHelp"
+                  data-required-field="true"
+                  readonly
+                  aria-readonly="true"
+                  required
+                />
+                <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="rendaPerCapitaAtualizada" class="form-label">Atualize a renda per capita (R$)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="rendaPerCapitaAtualizada"
+                  name="rendaPerCapitaAtualizada"
+                  min="0"
+                  step="0.01"
+                  placeholder="Informe apenas se houver alteração"
+                  value="{{ $json.data.rendaPerCapitaAtualizada || "" }}"
+                  aria-describedby="rendaPerCapitaHelp"
+                />
+                <small id="rendaPerCapitaHelp" class="form-text">Utilize este campo apenas se a renda per capita da família estiver diferente da registrada no CadÚnico.</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="sec-prioridades" class="form-section">
+          <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Diversidade e priorização</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label for="racaCor" class="form-label required">Autodeclaração de cor/raça</label>
+                <select
+                  class="form-select"
+                  id="racaCor"
+                  name="racaCor"
+                  aria-describedby="racaCorHelp"
+                  data-required-field="true"
+                  required
+                >
+                  <option value="">Selecione</option>
+                  <option value="branca" {{ ($json.data.racaCor || "") === "branca" ? "selected" : "" }}>Branca</option>
+                  <option value="preta" {{ ($json.data.racaCor || "") === "preta" ? "selected" : "" }}>Preta</option>
+                  <option value="parda" {{ ($json.data.racaCor || "") === "parda" ? "selected" : "" }}>Parda</option>
+                  <option value="amarela" {{ ($json.data.racaCor || "") === "amarela" ? "selected" : "" }}>Amarela</option>
+                  <option value="indigena" {{ ($json.data.racaCor || "") === "indigena" ? "selected" : "" }}>Indígena</option>
+                  <option value="nao_informar" {{ ($json.data.racaCor || "") === "nao_informar" ? "selected" : "" }}>Prefiro não informar</option>
+                </select>
+                <small id="racaCorHelp" class="form-text">Informação usada para ranqueamento e políticas afirmativas conforme edital.</small>
+              </div>
+              <fieldset class="col-12 col-md-6">
+                <legend class="form-label mb-1">Identidade e grupos prioritários</legend>
+                <div class="form-text">Marque se você se enquadra nas cotas adicionais previstas.</div>
+                <div class="form-check mt-2">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="pessoaPretaParda"
+                    name="pessoaPretaParda"
+                    {{ ($json.data.pessoaPretaParda || "").toLowerCase() === "sim" ? "checked" : "" }}
+                  />
+                  <label class="form-check-label" for="pessoaPretaParda">Sou pessoa preta ou parda</label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="pessoaIndigena"
+                    name="pessoaIndigena"
+                    {{ ($json.data.pessoaIndigena || "").toLowerCase() === "sim" ? "checked" : "" }}
+                  />
+                  <label class="form-check-label" for="pessoaIndigena">Sou pessoa indígena</label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="sim"
+                    id="pessoaRua"
+                    name="pessoaRua"
+                    {{ ($json.data.pessoaRua || "").toLowerCase() === "sim" ? "checked" : "" }}
+                  />
+                  <label class="form-check-label" for="pessoaRua">Vivo em unidade de acolhimento</label>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+        </section>
+              <div class="step-actions" aria-label="Controles da etapa Contexto socioassistencial e diversidade">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--prev"
+                  data-step-target="2"
+                  aria-label="Voltar para Contatos e residência"
+                >
+                  <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  data-step-target="4"
+                  aria-label="Avançar para Condições especiais e anexos"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-step" id="form-step-4" data-step="4" hidden aria-hidden="true">
+              <section id="sec-condicoes" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+            <div class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <h2 class="h4 mb-0">Condições especiais e anexos</h2>
+              <span class="legend-badge"><i class="bi bi-paperclip"></i> Anexe os comprovantes solicitados</span>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
+                <select
+                  class="form-select"
+                  id="pcd"
+                  name="pcd"
+                  aria-describedby="pcdHelp"
+                  data-required-field="true"
+                  required
+                >
+                  <option value="">Selecione</option>
+                  <option value="sim" {{ ($json.data.pcd || "") === "sim" ? "selected" : "" }}>Sim</option>
+                  <option value="nao" {{ ($json.data.pcd || "") === "nao" ? "selected" : "" }}>Não</option>
+                </select>
+                <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label required" for="maeAtipica">Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)</label>
+                <select
+                  class="form-select"
+                  id="maeAtipica"
+                  name="maeAtipica"
+                  data-required-field="true"
+                  required
+                >
+                  <option value="">Selecione</option>
+                  <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
+                  <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label required" for="vitimaViolencia"
+                  >Vítima de violência doméstica atendida pelos órgãos e serviços especializados do Recife</label
+                >
+                <select
+                  class="form-select"
+                  id="vitimaViolencia"
+                  name="vitimaViolencia"
+                  data-required-field="true"
+                  required
+                >
+                  <option value="">Selecione</option>
+                  <option value="sim" {{ ($json.data.vitimaViolencia || "") === "sim" ? "selected" : "" }}>Sim</option>
+                  <option value="nao" {{ ($json.data.vitimaViolencia || "") === "nao" ? "selected" : "" }}>Não</option>
+                </select>
+                <small class="form-text">A identidade das candidatas será preservada conforme edital.</small>
+              </div>
+              <div class="col-12">
+                <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
+                <textarea
+                  class="form-control"
+                  id="necessidadesEspeciais"
+                  name="necessidadesEspeciais"
+                  rows="3"
+                  maxlength="500"
+                  placeholder="Descreva necessidades específicas de atendimento, adaptações ou informações relevantes"
+                >{{ $json.data.necessidadesEspeciais || "" }}</textarea>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
+                <div class="file-input-wrapper">
+                  <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
+                  <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
+                  <div class="file-name" id="laudoPcdName"></div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docResponsavelWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docResponsavel" class="form-label required">Comprovante de responsabilidade legal (PDF/JPG/PNG até 5 MB)</label>
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="docResponsavel"
+                    name="docResponsavel"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    aria-describedby="docResponsavelInfo"
+                  />
+                  <div id="docResponsavelInfo" class="form-text">Certidão, termo judicial ou documento equivalente que comprove tutela, curatela ou guarda.</div>
+                  <div class="file-name" id="docResponsavelName"></div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docViolenciaWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docViolencia" class="form-label">Documento comprobatório ou declaração (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docViolencia" name="docViolencia" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docViolenciaName"></div>
+                  <small class="form-text">Caso não possua boletim ou medida protetiva, envie declaração simples assinada.</small>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docAcolhimentoWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docAcolhimento" class="form-label required">Declaração da unidade de acolhimento (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docAcolhimento" name="docAcolhimento" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docAcolhimentoName"></div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docDependente" class="form-label required">Comprovante de tratamento terapêutico contínuo (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="docDependenteName"></div>
+                </div>
+              </div>
+              </div>
+            </section>
+              <div class="step-actions" aria-label="Controles da etapa Condições especiais e anexos">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--prev"
+                  data-step-target="3"
+                  aria-label="Voltar para Contexto socioassistencial e diversidade"
+                >
+                  <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  data-step-target="5"
+                  aria-label="Avançar para Informações da CNH, documentos e declarações"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-step" id="form-step-5" data-step="5" hidden aria-hidden="true">
+              <section id="sec-cnh" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+            <div class="section-header">
+              <h2 class="h4 mb-0">Informações da CNH</h2>
+            </div>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label for="categoria" class="form-label required">Categoria desejada</label>
+                <select
+                  class="form-select"
+                  id="categoria"
+                  name="categoria"
+                  data-required-field="true"
+                  required
+                >
+                  <option value="">Selecione</option>
+                  <option value="a_primeira">Categoria A (1ª habilitação)</option>
+                  <option value="b_primeira">Categoria B (1ª habilitação)</option>
+                  <option value="adicao_a">Adição de categoria A</option>
+                  <option value="adicao_b">Adição de categoria B</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="turno" class="form-label required">Turno preferencial</label>
+                <select
+                  class="form-select"
+                  id="turno"
+                  name="turno"
+                  data-required-field="true"
+                  required
+                >
+                  <option value="">Selecione</option>
+                  <option value="manha">Manhã</option>
+                  <option value="tarde">Tarde</option>
+                  <option value="noite">Noite</option>
+                  <option value="indiferente">Indiferente</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 d-none" id="cnhNumeroWrapper">
+                <label for="numeroCnh" class="form-label required">Número da CNH (para adição)</label>
+                <input type="text" class="form-control" id="numeroCnh" name="numeroCnh" inputmode="numeric" placeholder="Informe conforme CNH" />
+              </div>
+              <div class="col-12 col-md-6 d-none" id="cnhValidadeWrapper">
+                <label for="validadeCnh" class="form-label required">Validade da CNH</label>
+                <input type="date" class="form-control" id="validadeCnh" name="validadeCnh" aria-describedby="validadeHelp" />
+                <small id="validadeHelp" class="form-text">A CNH precisa ter validade superior a 30 dias na data de inscrição.</small>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="cnhArquivoWrapper">
+                <div class="file-input-wrapper">
+                  <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
+                  <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
+                  <div class="file-name" id="cnhArquivoName"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+              <section id="sec-documentos" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+                  <div class="section-header">
+                    <h2 class="h4 mb-0">Documentos obrigatórios</h2>
+                  </div>
+                  <div class="row g-4">
+                    <div class="col-12 col-lg-6">
+                      <div class="file-input-wrapper">
+                        <label for="docIdentidade" class="form-label required">Documento oficial com foto (RG ou passaporte) – PDF/JPG/PNG até 5 MB</label>
+                        <input
+                          class="form-control"
+                          type="file"
+                          id="docIdentidade"
+                          name="docIdentidade"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          data-required-field="true"
+                          required
+                        />
+                        <div class="file-name" id="docIdentidadeName"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section id="sec-declaracoes" class="form-section">
+                <div class="card card-section p-4 p-md-5">
+                  <div class="section-header">
+                    <h2 class="h4 mb-0">Declarações e consentimentos</h2>
+                  </div>
+                  <div class="d-grid gap-3">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="sim"
+                        id="lgpd"
+                        name="lgpd"
+                        required
+                        data-required-field="true"
+                      />
+                      <label class="form-check-label" for="lgpd">
+                        Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Social, conforme a Lei Geral de Proteção de Dados.
+                      </label>
+                      <a href="#" class="d-block small mt-1">Consultar política de privacidade</a>
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="sim"
+                        id="veracidade"
+                        name="veracidade"
+                        required
+                        data-required-field="true"
+                      />
+                      <label class="form-check-label" for="veracidade">
+                        Declaro verdadeiras todas as informações prestadas e estou ciente de que a falsidade implicará desclassificação e sanções legais.
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="sim"
+                        id="imagem"
+                        name="imagem"
+                        required
+                        data-required-field="true"
+                      />
+                      <label class="form-check-label" for="imagem">Autorizo o uso da minha imagem para divulgação institucional do programa.</label>
+                    </div>
+                    <div class="form-text">Após o envio, o protocolo será encaminhado para seu e-mail e WhatsApp cadastrados.</div>
+                  </div>
+                  <div class="mt-4 d-flex flex-column flex-md-row gap-3">
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-lg px-4 btn-submit"
+                      id="submitButton"
+                      aria-disabled="true"
+                      data-ready="false"
+                    >
+                      <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
+                    </button>
+                    <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
+                      Limpar campos editáveis
+                    </button>
+                  </div>
+                </div>
+              </section>
+              <div class="step-actions" aria-label="Controles finais da etapa Informações da CNH, documentos e declarações">
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--prev"
+                  data-step-target="4"
+                  aria-label="Voltar para Condições especiais e anexos"
+                >
+                  <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
+                  Voltar
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+    <script>
+      const sectionNavLinks = Array.from(document.querySelectorAll(".section-nav__link"));
+      const sectionNavList = document.querySelector(".section-nav__list");
+      const totalSteps = sectionNavLinks.length;
+      const formSteps = Array.from(document.querySelectorAll(".form-step"));
+      let currentStepId = null;
+
+      const getStepElementById = (stepId) => formSteps.find((step) => step.dataset.step === stepId);
+
+      const sectionIdToStep = new Map();
+      formSteps.forEach((step) => {
+        const stepId = step.dataset.step;
+        if (!stepId) return;
+        step.querySelectorAll(".form-section[id]").forEach((section) => {
+          sectionIdToStep.set(section.id, stepId);
+        });
+      });
+
+      const setActiveStep = (stepId, { scroll = true, focusField = false, focusNav = false } = {}) => {
+        if (!stepId) return;
+        let activeStep = null;
+        formSteps.forEach((step) => {
+          const isActive = step.dataset.step === stepId;
+          step.classList.toggle("is-active", isActive);
+          step.hidden = !isActive;
+          step.setAttribute("aria-hidden", isActive ? "false" : "true");
+          if (isActive) {
+            activeStep = step;
+          }
+        });
+
+        const activeNumber = Number.parseInt(stepId, 10);
+
+        sectionNavLinks.forEach((button) => {
+          const stepNumber = Number.parseInt(button.dataset.step, 10);
+          const isActive = button.dataset.step === stepId;
+          const isComplete = Number.isFinite(activeNumber) && Number.isFinite(stepNumber) && stepNumber < activeNumber;
+          button.classList.toggle("is-active", isActive);
+          button.classList.toggle("is-complete", isComplete);
+          button.setAttribute("aria-pressed", isActive ? "true" : "false");
+          const parentItem = button.closest(".section-nav__item");
+          if (parentItem) {
+            parentItem.classList.toggle("is-complete", isComplete);
+            parentItem.classList.toggle("is-active", isActive);
+          }
+          if (isActive) {
+            button.setAttribute("aria-current", "step");
+            if (focusNav && typeof button.focus === "function") {
+              button.focus();
+            }
+          } else {
+            button.removeAttribute("aria-current");
+          }
+        });
+
+        if (sectionNavList && Number.isFinite(activeNumber) && totalSteps > 1) {
+          const ratio = Math.min(Math.max((activeNumber - 1) / (totalSteps - 1), 0), 1);
+          sectionNavList.style.setProperty("--step-progress", ratio);
+        }
+
+        if (scroll && activeStep) {
+          const wrapper = document.querySelector(".form-wrapper");
+          if (wrapper && typeof wrapper.scrollIntoView === "function") {
+            wrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+
+        if (focusField && activeStep) {
+          const focusable = activeStep.querySelector(
+            "input:not([type='hidden']):not([disabled]), select:not([disabled]), textarea:not([disabled])"
+          );
+          if (focusable && typeof focusable.focus === "function") {
+            focusable.focus();
+          }
+        }
+        currentStepId = stepId;
+        return activeStep;
+      };
+
+      const updateHashForStep = (stepId) => {
+        if (!stepId) return;
+        const step = getStepElementById(stepId);
+        const primarySection = step?.querySelector(".form-section[id]");
+        if (primarySection && primarySection.id) {
+          if (typeof window.history?.replaceState === "function") {
+            window.history.replaceState(null, "", `#${primarySection.id}`);
+          } else {
+            window.location.hash = primarySection.id;
+          }
+        }
+      };
+
+      const getStepByHash = (hash) => {
+        if (!hash) return null;
+        const cleaned = hash.startsWith("#") ? hash.slice(1) : hash;
+        return sectionIdToStep.get(cleaned) || null;
+      };
+
+      const getFirstInvalidFieldElement = (invalidFields) => {
+        for (const field of invalidFields) {
+          if (field?.element && typeof field.element.focus === "function") {
+            return field.element;
+          }
+          if (Array.isArray(field?.groupElements)) {
+            const candidate = field.groupElements.find(
+              (item) => item && typeof item.focus === "function"
+            );
+            if (candidate) {
+              return candidate;
+            }
+          }
+        }
+        return null;
+      };
+
+      const attemptStepChange = ({
+        targetStepId,
+        triggerElement = null,
+        focusField = true,
+        focusNav = false,
+        scroll = true,
+        updateHash = true,
+      } = {}) => {
+        if (!targetStepId) return;
+        const currentId =
+          currentStepId || formSteps.find((step) => step.classList.contains("is-active"))?.dataset.step;
+        const currentNumber = Number.parseInt(currentId || "", 10);
+        const targetNumber = Number.parseInt(targetStepId, 10);
+
+        const proceedWithoutValidation =
+          !Number.isFinite(currentNumber) || !Number.isFinite(targetNumber) || targetNumber <= currentNumber;
+
+        const goToStep = () => {
+          setActiveStep(targetStepId, { focusField, focusNav, scroll });
+          if (updateHash) {
+            updateHashForStep(targetStepId);
+          }
+        };
+
+        if (proceedWithoutValidation) {
+          goToStep();
+          return;
+        }
+
+        const currentStepElement = getStepElementById(currentId);
+        if (!currentStepElement) {
+          goToStep();
+          return;
+        }
+
+        const extraErrors = validateAdditionalRules();
+        const invalidFields = getInvalidFields(extraErrors, { stepElement: currentStepElement });
+
+        if (invalidFields.length) {
+          const focusTarget = getFirstInvalidFieldElement(invalidFields);
+          showFeedbackModal({
+            type: "alert",
+            message: "Conclua os campos obrigatórios desta etapa antes de avançar.",
+            items: invalidFields.map((field) => field.label || "Campo obrigatório"),
+            focusElement: focusTarget,
+            triggerElement: triggerElement || null,
+          });
+          if (!updateHash) {
+            updateHashForStep(currentId);
+          }
+          return;
+        }
+
+        goToStep();
+      };
+
+      if (formSteps.length && sectionNavLinks.length) {
+        formSteps.forEach((step, index) => {
+          const isActive = step.classList.contains("is-active") || (!index && !document.querySelector(".form-step.is-active"));
+          step.hidden = !isActive;
+          step.setAttribute("aria-hidden", isActive ? "false" : "true");
+        });
+
+        const initialStep = getStepByHash(window.location.hash)
+          || sectionNavLinks.find((button) => button.classList.contains("is-active"))?.dataset.step
+          || formSteps[0]?.dataset.step;
+
+        if (initialStep) {
+          setActiveStep(initialStep, { scroll: false });
+        }
+
+        sectionNavLinks.forEach((button) => {
+          button.addEventListener("click", () => {
+            const stepId = button.dataset.step;
+            if (!stepId) return;
+            attemptStepChange({ targetStepId: stepId, triggerElement: button });
+          });
+        });
+
+        const stepActionButtons = Array.from(document.querySelectorAll(".step-actions__button[data-step-target]"));
+        stepActionButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const targetStep = button.dataset.stepTarget;
+            if (!targetStep) return;
+            attemptStepChange({ targetStepId: targetStep, triggerElement: button });
+          });
+        });
+
+        window.addEventListener("hashchange", () => {
+          const targetStep = getStepByHash(window.location.hash);
+          if (targetStep) {
+            attemptStepChange({ targetStepId: targetStep, focusNav: true, focusField: false, updateHash: false });
+          }
+        });
+      }
+
+      const parseDateFromString = (value) => {
+        if (!value && value !== 0) return null;
+        if (value instanceof Date && !Number.isNaN(value.getTime())) {
+          return value;
+        }
+        const stringValue = typeof value === "string" ? value.trim() : String(value || "").trim();
+        if (!stringValue) return null;
+        const isoMatch = stringValue.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (isoMatch) {
+          const [, year, month, day] = isoMatch;
+          const date = new Date(Number(year), Number(month) - 1, Number(day));
+          return Number.isNaN(date.getTime()) ? null : date;
+        }
+        const brMatch = stringValue.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (brMatch) {
+          const [, day, month, year] = brMatch;
+          const date = new Date(Number(year), Number(month) - 1, Number(day));
+          return Number.isNaN(date.getTime()) ? null : date;
+        }
+        const timestamp = Date.parse(stringValue);
+        if (!Number.isNaN(timestamp)) {
+          return new Date(timestamp);
+        }
+        return null;
+      };
+
+      const formatDateToBrazil = (value) => {
+        const date = parseDateFromString(value);
+        if (!date) {
+          return typeof value === "string" ? value : "";
+        }
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      };
+
+      const calculateAgeFromDate = (value) => {
+        const birthDate = parseDateFromString(value);
+        if (!birthDate) return null;
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age -= 1;
+        }
+        return age >= 0 ? age : null;
+      };
+
+      const formatElapsedTimeSinceDate = (value) => {
+        if (typeof dayjs !== "function") {
+          return "";
+        }
+        const referenceDate = parseDateFromString(value);
+        if (!referenceDate) {
+          return "";
+        }
+        const now = dayjs();
+        const reference = dayjs(referenceDate);
+        if (reference.isAfter(now)) {
+          return "";
+        }
+        const years = now.diff(reference, "year");
+        const afterYears = reference.add(years, "year");
+        const months = now.diff(afterYears, "month");
+        const afterMonths = afterYears.add(months, "month");
+        const days = now.diff(afterMonths, "day");
+
+        const formatUnit = (amount, singular, plural) => `${amount} ${amount === 1 ? singular : plural}`;
+        return `${formatUnit(years, "ano", "anos")}, ${formatUnit(months, "mês", "meses")} e ${formatUnit(days, "dia", "dias")}`;
+      };
+
+      const prefillValues = {
+        nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
+        cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
+        nis: {{ JSON.stringify((($json.data || {}).nis) || "") }},
+        dataNascimento: {{ JSON.stringify((($json.data || {}).dataNascimento) || "") }},
+        genero: {{ JSON.stringify((($json.data || {}).genero) || "") }},
+        nomeSocial: {{ JSON.stringify((($json.data || {}).nomeSocial) || "") }},
+        cep: {{ JSON.stringify((($json.data || {}).cep) || "") }},
+        logradouro: {{ JSON.stringify((($json.data || {}).logradouro) || "") }},
+        numero: {{ JSON.stringify((($json.data || {}).numero) || "") }},
+        complemento: {{ JSON.stringify((($json.data || {}).complemento) || "") }},
+        bairro: {{ JSON.stringify((($json.data || {}).bairro) || "") }},
+        cidade: {{ JSON.stringify((($json.data || {}).cidade) || "") }},
+        uf: {{ JSON.stringify((($json.data || {}).uf) || "") }},
+        enderecoAtualizado: {{ JSON.stringify((($json.data || {}).enderecoAtualizado) || "") }},
+        telefone: {{ JSON.stringify((($json.data || {}).telefone) || "") }},
+        email: {{ JSON.stringify((($json.data || {}).email) || "") }},
+        situacaoTrabalho: {{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }},
+        mulherChefe: {{ JSON.stringify((($json.data || {}).mulherChefe) || "") }},
+        acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
+        dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
+        rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaPerCapita) != null ? ($json.data || {}).rendaPerCapita : "") }},
+        rendaPerCapitaAtualizada: {{ JSON.stringify((($json.data || {}).rendaPerCapitaAtualizada) != null ? ($json.data || {}).rendaPerCapitaAtualizada : "") }},
+        racaCor: {{ JSON.stringify((($json.data || {}).racaCor) || "") }},
+        pessoaPretaParda: {{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }},
+        pessoaIndigena: {{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }},
+        pessoaRua: {{ JSON.stringify((($json.data || {}).pessoaRua) || "") }},
+        pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
+        maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
+        vitimaViolencia: {{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }},
+        necessidadesEspeciais: {{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }},
+        dataAtualizacaoCadunico: {{ JSON.stringify((($json.data || {}).familiaDataAtualizacao) || "") }},
+      };
+      const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
+      const cepInput = document.getElementById("cep");
+      const numeroInput = document.getElementById("numero");
+      const logradouroInput = document.getElementById("logradouro");
+      const complementoInput = document.getElementById("complemento");
+      const bairroInput = document.getElementById("bairro");
+      const cidadeInput = document.getElementById("cidade");
+      const ufSelect = document.getElementById("uf");
+      const birthdateInput = document.getElementById("dataNascimento");
+      const ageInput = document.getElementById("idade");
+      const dataAtualizacaoInput = document.getElementById("dataAtualizacaoCadunico");
+      const tempoAtualizacaoInput = document.getElementById("tempoAtualizacaoCadunico");
+      const cepStatus = document.getElementById("cepStatus");
+      const btnAtualizarEndereco = document.getElementById("btnAtualizarEndereco");
+      let enderecoEdicaoAtiva = false;
+
+      const escapeSelector = (value) => {
+        const string = value == null ? "" : String(value);
+        if (typeof window !== "undefined" && window.CSS && typeof window.CSS.escape === "function") {
+          return window.CSS.escape(string);
+        }
+        const length = string.length;
+        let index = -1;
+        let result = "";
+        let codeUnit;
+        const firstCodeUnit = string.charCodeAt(0);
+        while (++index < length) {
+          codeUnit = string.charCodeAt(index);
+          if (codeUnit === 0x0000) {
+            result += "\uFFFD";
+            continue;
+          }
+          if (
+            (codeUnit >= 0x0001 && codeUnit <= 0x001f) ||
+            codeUnit === 0x007f ||
+            (index === 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039) ||
+            (index === 1 && codeUnit >= 0x0030 && codeUnit <= 0x0039 && firstCodeUnit === 0x002d)
+          ) {
+            result += `\\${codeUnit.toString(16)} `;
+            continue;
+          }
+          if (index === 0 && codeUnit === 0x002d && length === 1) {
+            result += `\\${string.charAt(index)}`;
+            continue;
+          }
+          if (
+            codeUnit >= 0x0080 ||
+            codeUnit === 0x002d ||
+            codeUnit === 0x005f ||
+            (codeUnit >= 0x0030 && codeUnit <= 0x0039) ||
+            (codeUnit >= 0x0041 && codeUnit <= 0x005a) ||
+            (codeUnit >= 0x0061 && codeUnit <= 0x007a)
+          ) {
+            result += string.charAt(index);
+            continue;
+          }
+          result += `\\${string.charAt(index)}`;
+        }
+        return result;
+      };
+
+      const createMask = (element, options) => {
+        if (typeof IMask === "function" && element) {
+          try {
+            return IMask(element, options);
+          } catch (error) {
+            console.error("Falha ao aplicar máscara", error);
+          }
+        }
+        return null;
+      };
+
+      const maskCpf = createMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
+      const maskCep = createMask(cepInput, { mask: "00000-000" });
+      const maskTelefone = createMask(document.getElementById("telefone"), {
+        mask: "(00) 00000-0000",
+      });
+
+      const getCepDigits = () => {
+        if (maskCep && typeof maskCep.unmaskedValue === "string") {
+          return maskCep.unmaskedValue;
+        }
+        return (cepInput.value || "").replace(/\D/g, "");
+      };
+
+      if (numeroInput) {
+        numeroInput.addEventListener("input", () => {
+          if (numeroInput.readOnly) return;
+          let value = numeroInput.value.toUpperCase();
+          if (value.startsWith("S")) {
+            const length = Math.min(value.length, 3);
+            value = "S/N".slice(0, length === 0 ? 0 : Math.max(length, 1));
+          } else {
+            value = value.replace(/[^0-9]/g, "");
+          }
+          numeroInput.value = value;
+        });
+
+        numeroInput.addEventListener("blur", () => {
+          if (numeroInput.readOnly) return;
+          if (/^S($|\/)$/.test(numeroInput.value)) {
+            numeroInput.value = "S/N";
+          }
+        });
+      }
+
+      const generoSelect = document.getElementById("genero");
+      const grupoMulherChefe = document.getElementById("grupoMulherChefe");
+      generoSelect.addEventListener("change", () => {
+        if (generoSelect.value === "feminino") {
+          grupoMulherChefe.classList.remove("d-none");
+        } else {
+          grupoMulherChefe.classList.add("d-none");
+          document.getElementById("mulherChefe").checked = false;
+        }
+      });
+
+      const atualizarStatusCep = (mensagem, classe) => {
+        if (!cepStatus) return;
+        cepStatus.classList.remove("text-danger", "text-success", "text-muted");
+        if (classe) {
+          cepStatus.classList.add(classe);
+        }
+        cepStatus.textContent = mensagem;
+      };
+
+      const preencherEndereco = (dados) => {
+        if (dados.street || dados.logradouro) logradouroInput.value = dados.street || dados.logradouro;
+        if (dados.neighborhood || dados.bairro) bairroInput.value = dados.neighborhood || dados.bairro;
+        if (dados.city || dados.localidade) cidadeInput.value = dados.city || dados.localidade;
+        if (dados.complement || dados.complemento) complementoInput.value = dados.complement || dados.complemento;
+        if (dados.state && ufSelect) {
+          const possuiOpcao = Array.from(ufSelect.options).some((option) => option.value === dados.state);
+          if (!possuiOpcao) {
+            const novaOpcao = document.createElement("option");
+            novaOpcao.value = dados.state;
+            novaOpcao.textContent = dados.state;
+            ufSelect.appendChild(novaOpcao);
+          }
+          ufSelect.value = dados.state;
+        }
+      };
+
+      const consultarCepBrasilApi = async (cepLimpo) => {
+        if (!cepLimpo || cepLimpo.length !== 8) return;
+        atualizarStatusCep("Consultando CEP na BrasilAPI...", "text-muted");
+        try {
+          const resposta = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepLimpo}`);
+          if (!resposta.ok) {
+            throw new Error("CEP não encontrado");
+          }
+          const endereco = await resposta.json();
+          preencherEndereco(endereco);
+          atualizarStatusCep("Endereço localizado automaticamente.", "text-success");
+        } catch (erro) {
+          atualizarStatusCep("Não foi possível localizar o CEP. Preencha os campos manualmente.", "text-danger");
+          if (logradouroInput) {
+            logradouroInput.focus();
+          }
+        }
+      };
+
+      const preencherCidadePorCepSeNecessario = async () => {
+        if (!cidadeInput || (cidadeInput.value || "").trim() !== "") {
+          return;
+        }
+        const cepDigits = getCepDigits();
+        if (cepDigits.length !== 8) {
+          return;
+        }
+        try {
+          const resposta = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepDigits}`);
+          if (!resposta.ok) {
+            return;
+          }
+          const endereco = await resposta.json();
+          const nomeCidade = endereco.city || endereco.localidade || endereco.city_name;
+          if (nomeCidade && (cidadeInput.value || "").trim() === "") {
+            cidadeInput.value = nomeCidade;
+            cidadeInput.dispatchEvent(new Event("input", { bubbles: true }));
+            cidadeInput.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        } catch (error) {
+          console.warn("Não foi possível complementar a cidade a partir do CEP carregado", error);
+        }
+      };
+
+      btnAtualizarEndereco.addEventListener("click", () => {
+        editableFields.forEach((fieldId) => {
+          const field = document.getElementById(fieldId);
+          field.readOnly = false;
+          field.removeAttribute("aria-readonly");
+        });
+        ufSelect.disabled = false;
+        enderecoEdicaoAtiva = true;
+        btnAtualizarEndereco.setAttribute("aria-pressed", "true");
+        atualizarStatusCep("Informe o CEP e aguarde o preenchimento automático.", "text-muted");
+        cepInput.focus();
+        updateSubmitState();
+      });
+
+      const handleCepAccept = () => {
+        if (!enderecoEdicaoAtiva) return;
+        if (getCepDigits().length < 8) {
+          atualizarStatusCep("Digite o CEP completo para buscar automaticamente.", "text-muted");
+        }
+      };
+
+      const handleCepComplete = () => {
+        if (!enderecoEdicaoAtiva) return;
+        const digits = getCepDigits();
+        if (digits.length === 8) {
+          consultarCepBrasilApi(digits);
+        }
+      };
+
+      if (maskCep && typeof maskCep.on === "function") {
+        maskCep.on("accept", handleCepAccept);
+        maskCep.on("complete", handleCepComplete);
+      } else if (cepInput) {
+        cepInput.addEventListener("input", () => {
+          handleCepAccept();
+          handleCepComplete();
+        });
+      }
+
+      const toggleFileSection = (condition, wrapperId) => {
+        const wrapper = document.getElementById(wrapperId);
+        if (!wrapper) return;
+        if (condition) {
+          wrapper.classList.remove("d-none");
+        } else {
+          wrapper.classList.add("d-none");
+          const inputs = wrapper.querySelectorAll("input, select, textarea");
+          inputs.forEach((input) => {
+            if (input.type === "checkbox" || input.type === "radio") {
+              input.checked = false;
+            } else if (input.type === "file") {
+              input.value = "";
+              const nameHolder = wrapper.querySelector(".file-name");
+              if (nameHolder) nameHolder.textContent = "";
+            } else {
+              input.value = "";
+            }
+            input.classList.remove("is-invalid");
+          });
+        }
+        updateSubmitState();
+      };
+
+      const addFileNameListener = (inputId, displayId) => {
+        const input = document.getElementById(inputId);
+        const display = document.getElementById(displayId);
+        if (!input || !display) return;
+        input.addEventListener("change", () => {
+          const file = input.files && input.files[0];
+          display.textContent = file ? `Arquivo selecionado: ${file.name}` : "";
+        });
+      };
+
+      [
+        ["laudoPcd", "laudoPcdName"],
+        ["docResponsavel", "docResponsavelName"],
+        ["docViolencia", "docViolenciaName"],
+        ["docAcolhimento", "docAcolhimentoName"],
+        ["docDependente", "docDependenteName"],
+        ["docResidencia", "docResidenciaName"],
+        ["docIdentidade", "docIdentidadeName"],
+        ["cnhArquivo", "cnhArquivoName"],
+      ].forEach(([inputId, displayId]) => addFileNameListener(inputId, displayId));
+
+      const pcdSelect = document.getElementById("pcd");
+      pcdSelect.addEventListener("change", () => {
+        toggleFileSection(pcdSelect.value === "sim", "laudoPcdWrapper");
+      });
+
+      const maeAtipica = document.getElementById("maeAtipica");
+      maeAtipica.addEventListener("change", () => {
+        toggleFileSection(maeAtipica.value === "sim", "docResponsavelWrapper");
+      });
+
+      const vitimaViolencia = document.getElementById("vitimaViolencia");
+      vitimaViolencia.addEventListener("change", () => {
+        toggleFileSection(vitimaViolencia.value === "sim", "docViolenciaWrapper");
+      });
+
+      const acolhimento = document.getElementById("acolhimento");
+      acolhimento.addEventListener("change", () => {
+        toggleFileSection(acolhimento.checked, "docAcolhimentoWrapper");
+      });
+
+      const dependenteTratamento = document.getElementById("dependenteTratamento");
+      dependenteTratamento.addEventListener("change", () => {
+        toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
+      });
+
+      const enderecoAtualizado = document.getElementById("enderecoAtualizado");
+      enderecoAtualizado.addEventListener("change", () => {
+        toggleFileSection(enderecoAtualizado.checked, "docResidenciaWrapper");
+        const label = document.getElementById("docResidenciaLabel");
+        if (!label) return;
+        if (enderecoAtualizado.checked) {
+          label.classList.add("required");
+        } else {
+          label.classList.remove("required");
+        }
+      });
+
+      const categoriaSelect = document.getElementById("categoria");
+      categoriaSelect.addEventListener("change", () => {
+        const isAdicao = ["adicao_a", "adicao_b"].includes(categoriaSelect.value);
+        toggleFileSection(isAdicao, "cnhNumeroWrapper");
+        toggleFileSection(isAdicao, "cnhValidadeWrapper");
+        toggleFileSection(isAdicao, "cnhArquivoWrapper");
+      });
+
+      const cpfInput = document.getElementById("cpf");
+      const emailInput = document.getElementById("email");
+      const emailConfirmInput = document.getElementById("emailConfirm");
+
+      const clearEmailConfirmationField = () => {
+        if (!emailConfirmInput) return false;
+        const emailValue = (emailInput?.value || "").trim();
+        const confirmValue = (emailConfirmInput.value || "").trim();
+        if (!emailValue || !confirmValue) {
+          return false;
+        }
+        if (emailValue.toLowerCase() === confirmValue.toLowerCase()) {
+          return false;
+        }
+        emailConfirmInput.value = "";
+        emailConfirmInput.classList.add("is-invalid");
+        emailConfirmInput.setAttribute("aria-invalid", "true");
+        emailConfirmInput.dispatchEvent(new Event("input", { bubbles: true }));
+        return true;
+      };
+
+      const enforceEmailConfirmationConsistency = () => {
+        if (!emailInput || !emailConfirmInput) return;
+        const resetIfMismatch = () => {
+          clearEmailConfirmationField();
+        };
+        emailConfirmInput.addEventListener("blur", resetIfMismatch);
+        emailConfirmInput.addEventListener("change", resetIfMismatch);
+        emailInput.addEventListener("change", () => {
+          if ((emailConfirmInput.value || "").trim()) {
+            resetIfMismatch();
+          }
+        });
+      };
+
+      const cpfValidator = (value) => {
+        const digits = value.replace(/\D/g, "");
+        if (digits.length !== 11 || /^([0-9])\1+$/.test(digits)) return false;
+        let sum = 0;
+        for (let i = 0; i < 9; i++) sum += parseInt(digits.charAt(i), 10) * (10 - i);
+        let firstDigit = (sum * 10) % 11;
+        if (firstDigit === 10) firstDigit = 0;
+        if (firstDigit !== parseInt(digits.charAt(9), 10)) return false;
+        sum = 0;
+        for (let i = 0; i < 10; i++) sum += parseInt(digits.charAt(i), 10) * (11 - i);
+        let secondDigit = (sum * 10) % 11;
+        if (secondDigit === 10) secondDigit = 0;
+        return secondDigit === parseInt(digits.charAt(10), 10);
+      };
+
+      const form = document.getElementById("cnhSocialForm");
+      const submitButton = document.getElementById("submitButton");
+      let validation;
+      let submitAttempted = false;
+
+      const isElementVisible = (element) => {
+        if (!element) return false;
+        if (element.hidden) return false;
+        if (element.getAttribute && element.getAttribute("aria-hidden") === "true") return false;
+        if (element.type === "hidden") return false;
+        let current = element;
+        while (current && current !== document.body) {
+          if (current.hasAttribute && current.hasAttribute("hidden")) {
+            return false;
+          }
+          if (current.getAttribute && current.getAttribute("aria-hidden") === "true") {
+            return false;
+          }
+          if (current.classList && current.classList.contains("d-none")) {
+            return false;
+          }
+          if (typeof window !== "undefined" && window.getComputedStyle) {
+            const styles = window.getComputedStyle(current);
+            if (styles.display === "none" || styles.visibility === "hidden") {
+              return false;
+            }
+          }
+          current = current.parentElement;
+        }
+        if (typeof element.getClientRects === "function" && element.getClientRects().length === 0) {
+          return false;
+        }
+        return true;
+      };
+
+      const isInInactiveStep = (element) => {
+        if (!element) return false;
+        const parentStep = element.closest(".form-step");
+        if (!parentStep) return false;
+        return !parentStep.classList.contains("is-active");
+      };
+
+      const isFieldFilled = (element, { bypassVisibilityCheck = false } = {}) => {
+        if (!element) return true;
+        if (!bypassVisibilityCheck && !isElementVisible(element)) return true;
+        if (element.disabled) return true;
+        if (element.type === "checkbox" || element.type === "radio") {
+          if (element.checked) return true;
+          const group = element.name
+            ? form.querySelectorAll(`[name="${escapeSelector(element.name)}"]`)
+            : [];
+          if (group.length) {
+            return Array.from(group).some((input) => input.checked);
+          }
+          return false;
+        }
+        if (element.type === "file") {
+          return element.files && element.files.length > 0;
+        }
+        const value = element.value != null ? String(element.value).trim() : "";
+        return value.length > 0;
+      };
+
+      const setSubmitButtonState = (isReady) => {
+        submitButton.setAttribute("data-ready", isReady ? "true" : "false");
+        submitButton.setAttribute("aria-disabled", isReady ? "false" : "true");
+        submitButton.classList.toggle("is-disabled", !isReady);
+      };
+
+      setSubmitButtonState(false);
+      const createFeedbackModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
+          }
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.feedbackModal = "true";
+          backdrop.setAttribute("data-testid", "modal");
+          backdrop.setAttribute("hidden", "");
+
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "modalTitle");
+          card.setAttribute("aria-describedby", "modalMessage");
+          card.tabIndex = -1;
+
+          const closeIconButton = document.createElement("button");
+          closeIconButton.type = "button";
+          closeIconButton.className = "modal-close-button";
+          closeIconButton.setAttribute("aria-label", "Fechar modal");
+          closeIconButton.innerHTML = "&times;";
+
+          const title = document.createElement("p");
+          title.className = "modal-title";
+          title.id = "modalTitle";
+          title.setAttribute("data-testid", "modal-title");
+
+          const emojiSpan = document.createElement("span");
+          emojiSpan.setAttribute("aria-hidden", "true");
+
+          const titleText = document.createElement("span");
+
+          title.append(emojiSpan, titleText);
+
+          const message = document.createElement("p");
+          message.className = "modal-message";
+          message.id = "modalMessage";
+
+          const list = document.createElement("ul");
+          list.className = "modal-list";
+          list.setAttribute("data-testid", "lista-faltantes");
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const closeButton = document.createElement("button");
+          closeButton.type = "button";
+          closeButton.className = "btn btn-primary";
+          closeButton.textContent = "Fechar";
+
+          actions.append(closeButton);
+          card.append(closeIconButton, title, message, list, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = {
+            backdrop,
+            card,
+            closeIconButton,
+            closeButton,
+            emojiSpan,
+            titleText,
+            message,
+            list,
+          };
+          return modalElements;
+        };
+      })();
+
+      let activeModal = null;
+      let allowExternalFocusElement = null;
+
+      const getModalFocusableElements = (container) =>
+        Array.from(
+          container.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((element) => !element.hasAttribute("disabled") && !element.getAttribute("aria-hidden"));
+
+      const handleModalKeydown = (event) => {
+        if (!activeModal) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          activeModal.close();
+          return;
+        }
+        if (event.key !== "Tab") {
+          return;
+        }
+        const focusable = getModalFocusableElements(activeModal.card);
+        if (!focusable.length) {
+          event.preventDefault();
+          activeModal.card.focus({ preventScroll: true });
+          return;
+        }
+        const currentIndex = focusable.indexOf(document.activeElement);
+        let nextIndex = 0;
+        if (event.shiftKey) {
+          nextIndex = currentIndex <= 0 ? focusable.length - 1 : currentIndex - 1;
+        } else {
+          nextIndex = currentIndex === focusable.length - 1 ? 0 : currentIndex + 1;
+        }
+        event.preventDefault();
+        focusable[nextIndex].focus({ preventScroll: true });
+      };
+
+      const handleModalFocusIn = (event) => {
+        if (!activeModal) return;
+        const { card } = activeModal;
+        if (card.contains(event.target)) {
+          return;
+        }
+        if (allowExternalFocusElement && event.target === allowExternalFocusElement) {
+          return;
+        }
+        const focusable = getModalFocusableElements(card);
+        const target = focusable[0] || card;
+        target.focus({ preventScroll: true });
+      };
+
+      const closeModal = () => {
+        if (!activeModal) return;
+        const { backdrop, returnFocusElement, cleanup } = activeModal;
+        if (typeof cleanup === "function") {
+          cleanup();
+        }
+        backdrop.classList.remove("is-open");
+        backdrop.setAttribute("hidden", "");
+        document.removeEventListener("keydown", handleModalKeydown, true);
+        document.removeEventListener("focusin", handleModalFocusIn, true);
+        document.body.style.removeProperty("overflow");
+        allowExternalFocusElement = null;
+        activeModal = null;
+        if (returnFocusElement && typeof returnFocusElement.focus === "function") {
+          returnFocusElement.focus({ preventScroll: true });
+        }
+      };
+
+      const showFeedbackModal = ({ type, message, items = [], focusElement = null, triggerElement = submitButton }) => {
+        const {
+          backdrop,
+          card,
+          closeIconButton,
+          closeButton,
+          emojiSpan,
+          titleText,
+          message: messageElement,
+          list,
+        } = createFeedbackModal();
+
+        const isSuccess = type === "success";
+        messageElement.textContent = message;
+        list.innerHTML = "";
+        if (items.length && !isSuccess) {
+          list.hidden = false;
+          items.forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            list.appendChild(li);
+          });
+        } else {
+          list.hidden = true;
+        }
+
+        emojiSpan.textContent = isSuccess ? "✅" : "⚠️";
+        titleText.textContent = isSuccess ? "Sucesso" : "Alerta";
+        titleText.classList.remove("title--sucesso", "title--alerta");
+        titleText.classList.add(isSuccess ? "title--sucesso" : "title--alerta");
+
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        allowExternalFocusElement = type === "alert" ? focusElement || null : null;
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          returnFocusElement: triggerElement || previousActive,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        if (type === "alert" && focusElement) {
+          focusElement.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => {
+            if (focusElement && typeof focusElement.focus === "function") {
+              focusElement.focus({ preventScroll: true });
+            }
+          }, 400);
+        }
+
+        const closeHandler = () => closeModal();
+        const onBackdropClick = (event) => {
+          if (event.target === backdrop) {
+            closeModal();
+          }
+        };
+
+        const cleanup = () => {
+          closeIconButton.removeEventListener("click", closeHandler);
+          closeButton.removeEventListener("click", closeHandler);
+          backdrop.removeEventListener("click", onBackdropClick);
+        };
+
+        closeIconButton.addEventListener("click", closeHandler);
+        closeButton.addEventListener("click", closeHandler);
+        backdrop.addEventListener("click", onBackdropClick);
+
+        activeModal.cleanup = cleanup;
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+      const fieldLabels = {
+        "#cpf": "CPF",
+        "#genero": "Identificação de gênero",
+        "#situacaoTrabalho": "Situação de trabalho atual",
+        "#telefone": "Telefone/WhatsApp",
+        "#email": "E-mail",
+        "#emailConfirm": "Confirmação de e-mail",
+        "#preferenciaContato": "Canal de contato preferencial",
+        "#cep": "CEP",
+        "#logradouro": "Logradouro",
+        "#numero": "Número do endereço",
+        "#bairro": "Bairro",
+        "#cidade": "Cidade",
+        "#rendaFamiliar": "Renda per capita mensal",
+        "#rendaPerCapitaAtualizada": "Renda per capita atualizada",
+        "#pcd": "Pessoa com deficiência (PCD)",
+        "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
+        "#vitimaViolencia": "Vínculo com serviços especializados de violência doméstica",
+        "#racaCor": "Autodeclaração de cor/raça",
+        "#categoria": "Categoria desejada",
+        "#turno": "Turno preferencial",
+        "#docIdentidade": "Documento de identificação oficial",
+        "#lgpd": "Consentimento LGPD",
+        "#veracidade": "Declaração de veracidade",
+        "#imagem": "Consentimento de uso de imagem",
+        "#docResidencia": "Comprovante de residência",
+        "#laudoPcd": "Laudo médico PCD",
+        "#docResponsavel": "Comprovante de responsabilidade legal",
+        "#docViolencia": "Documento de violência doméstica",
+        "#docAcolhimento": "Declaração da unidade de acolhimento",
+        "#docDependente": "Comprovante de tratamento terapêutico contínuo",
+        "#numeroCnh": "Número da CNH",
+        "#validadeCnh": "Validade da CNH",
+        "#cnhArquivo": "Arquivo da CNH",
+      };
+
+      const humanizeName = (value) =>
+        value
+          .split(/[_-]+/)
+          .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+          .join(" ");
+
+      const getFieldLabel = (selector) => {
+        if (fieldLabels[selector]) {
+          return fieldLabels[selector];
+        }
+        let element;
+        try {
+          element = form.querySelector(selector);
+        } catch (error) {
+          element = null;
+        }
+        if (element) {
+          if (element.id) {
+            const associatedLabel = form.querySelector(`label[for="${element.id}"]`);
+            if (associatedLabel) {
+              return associatedLabel.textContent.trim();
+            }
+          }
+          const ariaLabel = element.getAttribute("aria-label");
+          if (ariaLabel) {
+            return ariaLabel.trim();
+          }
+          const placeholder = element.getAttribute("placeholder");
+          if (placeholder) {
+            return placeholder.trim();
+          }
+          if (element.name) {
+            return humanizeName(element.name);
+          }
+        }
+        return selector;
+      };
+
+      const getElementKey = (element) => {
+        if (!element) return null;
+        return element.id || element.name || null;
+      };
+
+      const getRequiredElements = () => {
+        const elements = new Set();
+        form.querySelectorAll("input[required], select[required], textarea[required]").forEach((item) => {
+          elements.add(item);
+        });
+        form.querySelectorAll("[data-required-field=\"true\"]").forEach((item) => {
+          elements.add(item);
+        });
+        return Array.from(elements);
+      };
+
+      const highlightRequiredFieldIfEmpty = (element) => {
+        if (!element) return;
+        const isRequired = element.hasAttribute("required") || element.dataset.requiredField === "true";
+        if (!isRequired) return;
+        const shouldHighlight = !isFieldFilled(element, { bypassVisibilityCheck: true });
+        if (shouldHighlight) {
+          element.classList.add("is-invalid");
+          element.setAttribute("aria-invalid", "true");
+        } else {
+          element.classList.remove("is-invalid");
+          element.removeAttribute("aria-invalid");
+        }
+      };
+
+      const attachRequiredFieldFocusHandlers = () => {
+        getRequiredElements().forEach((element) => {
+          if (!element || element.dataset.requiredFieldHandler === "true") {
+            return;
+          }
+          element.dataset.requiredFieldHandler = "true";
+          element.addEventListener("focus", () => {
+            highlightRequiredFieldIfEmpty(element);
+          });
+          const clearHighlightIfFilled = () => {
+            if (isFieldFilled(element, { bypassVisibilityCheck: true })) {
+              element.classList.remove("is-invalid");
+              element.removeAttribute("aria-invalid");
+            }
+          };
+          element.addEventListener("input", clearHighlightIfFilled);
+          element.addEventListener("change", clearHighlightIfFilled);
+          element.addEventListener("blur", clearHighlightIfFilled);
+        });
+      };
+
+      const getGroupElements = (name) =>
+        Array.from(form.querySelectorAll(`[name='${escapeSelector(name)}']`));
+
+      const clearFieldError = (element) => {
+        const key = getElementKey(element);
+        if (!key) return;
+        if (element && (element.type === "checkbox" || element.type === "radio")) {
+          const group = element.name ? getGroupElements(element.name) : [element];
+          group.forEach((input) => {
+            input.classList.remove("is-invalid", "js-validate-error-field");
+          });
+        } else if (element) {
+          element.classList.remove("is-invalid", "js-validate-error-field");
+        }
+        form.querySelectorAll(`.error-text[data-error-for='${escapeSelector(key)}']`).forEach((node) => node.remove());
+      };
+
+      const showFieldError = (element, message, groupElements = null) => {
+        if (!element) return;
+        const key = getElementKey(element);
+        if (!key) return;
+        const targets = Array.isArray(groupElements) && groupElements.length ? groupElements : [element];
+        targets.forEach((target) => target.classList.add("is-invalid"));
+        const errorMessage = message || "Preenchimento obrigatório";
+        let container = null;
+        if (Array.isArray(groupElements) && groupElements.length) {
+          container = element.closest("fieldset") || element.closest(".form-check")?.parentElement || element.closest(".col-12");
+        }
+        if (!container && (element.type === "checkbox" || element.type === "radio")) {
+          container = element.closest(".form-check") || element.parentElement;
+        }
+        if (!container) {
+          container = element.parentElement || element;
+        }
+        let error = container.querySelector(`.error-text[data-error-for='${escapeSelector(key)}']`);
+        if (!error) {
+          error = document.createElement("small");
+          error.className = "error-text";
+          error.dataset.errorFor = key;
+          if (element.type === "checkbox" || element.type === "radio" || (Array.isArray(groupElements) && groupElements.length)) {
+            container.appendChild(error);
+          } else {
+            element.insertAdjacentElement("afterend", error);
+          }
+        }
+        error.textContent = errorMessage;
+      };
+
+      const applyValidationUI = (invalidFields) => {
+        const trackedElements = new Set(getRequiredElements());
+        form.querySelectorAll(".is-invalid").forEach((element) => trackedElements.add(element));
+        form.querySelectorAll(".error-text[data-error-for]").forEach((node) => {
+          const key = node.getAttribute("data-error-for");
+          if (!key) return;
+          const elementById = form.querySelector(`#${escapeSelector(key)}`);
+          if (elementById) {
+            trackedElements.add(elementById);
+            return;
+          }
+          const elementsByName = form.querySelectorAll(`[name='${escapeSelector(key)}']`);
+          if (elementsByName.length) {
+            elementsByName.forEach((el) => trackedElements.add(el));
+          }
+        });
+        invalidFields.forEach((field) => {
+          if (field.element) {
+            trackedElements.add(field.element);
+          }
+          if (Array.isArray(field.groupElements)) {
+            field.groupElements.forEach((item) => trackedElements.add(item));
+          }
+        });
+        trackedElements.forEach((element) => clearFieldError(element));
+        invalidFields.forEach((field) => {
+          showFieldError(field.element, field.message, field.groupElements);
+        });
+      };
+
+      const getInvalidFields = (additionalErrors = [], options = {}) => {
+        const { stepElement = null } = options;
+        const isElementWithinStep = (element) => {
+          if (!stepElement) return true;
+          if (!element) return false;
+          return stepElement.contains(element);
+        };
+        const groupMatchesStep = (groupElements) => {
+          if (!stepElement) return true;
+          if (!Array.isArray(groupElements)) return false;
+          return groupElements.some((item) => item && stepElement.contains(item));
+        };
+        const invalidMap = new Map();
+        if (validation && validation.fields) {
+          Object.entries(validation.fields).forEach(([selector, field]) => {
+            if (!field.isValid) {
+              const element = field.elem || (typeof selector === "string" ? form.querySelector(selector) : null);
+              if (!isElementWithinStep(element)) {
+                return;
+              }
+              const messages = Array.isArray(field.messagesShown) ? field.messagesShown : [];
+              const message = messages.length ? messages[messages.length - 1] : "Preenchimento obrigatório";
+              invalidMap.set(selector, {
+                selector,
+                element,
+                label: getFieldLabel(selector),
+                message,
+              });
+            }
+          });
+        }
+
+        const processedGroups = new Set();
+        getRequiredElements().forEach((element) => {
+          if (!element) return;
+          if (!isElementWithinStep(element)) {
+            return;
+          }
+          if (element.disabled || element.getAttribute("aria-hidden") === "true") {
+            return;
+          }
+          if (element.type === "hidden") {
+            return;
+          }
+          const elementInInactiveStep = isInInactiveStep(element);
+          if (!elementInInactiveStep && !isElementVisible(element)) {
+            return;
+          }
+          const selector = element.id
+            ? `#${escapeSelector(element.id)}`
+            : element.name
+            ? `[name='${escapeSelector(element.name)}']`
+            : null;
+          if (!selector || invalidMap.has(selector)) {
+            return;
+          }
+          if (element.type === "radio" || element.type === "checkbox") {
+            const name = element.name;
+            if (name) {
+              if (processedGroups.has(name)) {
+                return;
+              }
+              const group = getGroupElements(name).filter((input) => {
+                if (!input) return false;
+                if (!isElementWithinStep(input)) {
+                  return false;
+                }
+                if (input.disabled || input.type === "hidden") {
+                  return false;
+                }
+                const inInactiveStep = isInInactiveStep(input);
+                if (!inInactiveStep && !isElementVisible(input)) {
+                  return false;
+                }
+                return true;
+              });
+              processedGroups.add(name);
+              if (group.length && !group.some((input) => input.checked)) {
+                invalidMap.set(selector, {
+                  selector,
+                  element: group[0],
+                  groupElements: group,
+                  label: getFieldLabel(selector),
+                  message: "Preenchimento obrigatório",
+                });
+              }
+              return;
+            }
+            if (!element.checked) {
+              invalidMap.set(selector, {
+                selector,
+                element,
+                label: getFieldLabel(selector),
+                message: "Preenchimento obrigatório",
+              });
+            }
+            return;
+          }
+          if (!isFieldFilled(element, { bypassVisibilityCheck: elementInInactiveStep })) {
+            invalidMap.set(selector, {
+              selector,
+              element,
+              label: getFieldLabel(selector),
+              message: "Preenchimento obrigatório",
+            });
+          }
+        });
+
+        additionalErrors.forEach((error) => {
+          if (!error || !error.selector) return;
+          const existing = invalidMap.get(error.selector);
+          const element = error.element || (typeof error.selector === "string" ? form.querySelector(error.selector) : null);
+          const groupElements = Array.isArray(error.groupElements) ? error.groupElements : null;
+          if (stepElement && !isElementWithinStep(element) && !groupMatchesStep(groupElements)) {
+            return;
+          }
+          if (existing) {
+            existing.message = error.message || existing.message;
+            if (element) {
+              existing.element = element;
+            }
+            if (groupElements) {
+              existing.groupElements = groupElements;
+            }
+            return;
+          }
+          invalidMap.set(error.selector, {
+            selector: error.selector,
+            element,
+            label: error.label || getFieldLabel(error.selector),
+            message: error.message || "Preenchimento obrigatório",
+            groupElements,
+          });
+        });
+
+        return Array.from(invalidMap.values());
+      };
+
+      if (typeof JustValidate === "function" && form) {
+        validation = new JustValidate(form, {
+          errorFieldCssClass: "js-validate-error-field",
+          errorLabelCssClass: "error-text d-none",
+          focusInvalidField: false,
+          lockForm: true,
+        });
+      } else {
+        console.warn("Biblioteca JustValidate não carregada. Prosseguindo com validação customizada.");
+      }
+
+      const updateSubmitState = () => {
+        const extraErrors = validateAdditionalRules();
+        const invalidFields = getInvalidFields(extraErrors);
+        setSubmitButtonState(invalidFields.length === 0);
+        if (submitAttempted) {
+          applyValidationUI(invalidFields);
+        }
+      };
+
+      const applyPrefillValues = () => {
+        if (!prefillValues || typeof prefillValues !== "object") {
+          return;
+        }
+        const hasContent = Object.values(prefillValues).some((value) => {
+          if (value == null) return false;
+          if (typeof value === "string") return value.trim() !== "";
+          return true;
+        });
+        if (!hasContent) {
+          return;
+        }
+
+        const setTextValue = (id, value) => {
+          if (value == null) return;
+          if (typeof value === "string" && value.trim() === "") return;
+          const element = document.getElementById(id);
+          if (!element) return;
+          element.value = value;
+        };
+
+        const setMaskedValue = (maskInstance, fallbackId, value) => {
+          if (value == null) return;
+          if (typeof value === "string" && value.trim() === "") return;
+          if (maskInstance && typeof maskInstance.updateValue === "function") {
+            maskInstance.value = value;
+            maskInstance.updateValue();
+          } else if (maskInstance) {
+            maskInstance.value = value;
+          } else if (fallbackId) {
+            const element = document.getElementById(fallbackId);
+            if (element) {
+              element.value = value;
+            }
+          }
+        };
+
+        const setSelectValue = (id, value, triggerChange = false) => {
+          if (value == null) return;
+          if (typeof value === "string" && value.trim() === "") return;
+          const element = document.getElementById(id);
+          if (!element) return;
+          element.value = value;
+          if (triggerChange) {
+            element.dispatchEvent(new Event("change"));
+          }
+        };
+
+        const setCheckboxValue = (id, value) => {
+          if (value == null) return;
+          const element = document.getElementById(id);
+          if (!element) return;
+          const normalized = typeof value === "string" ? value.toLowerCase() : value;
+          const shouldCheck = normalized === "sim" || normalized === "true" || normalized === true || normalized === 1 || normalized === "1";
+          element.checked = shouldCheck;
+          element.dispatchEvent(new Event("change"));
+        };
+
+        const setFormattedDateValue = (id, rawValue) => {
+          const element = document.getElementById(id);
+          if (!element) return;
+          if (rawValue == null || (typeof rawValue === "string" && rawValue.trim() === "")) {
+            element.value = "";
+            if (element.dataset) {
+              element.dataset.rawValue = "";
+            }
+            return;
+          }
+          const formatted = formatDateToBrazil(rawValue);
+          element.value = formatted || String(rawValue);
+          if (element.dataset) {
+            element.dataset.rawValue = typeof rawValue === "string" ? rawValue : String(rawValue);
+          }
+        };
+
+        setTextValue("nomeCompleto", prefillValues.nomeCompleto);
+        if (prefillValues.cpf && prefillValues.cpf.trim() !== "") {
+          setMaskedValue(maskCpf, "cpf", prefillValues.cpf);
+        }
+        setTextValue("nis", prefillValues.nis);
+        setTextValue("dataNascimento", prefillValues.dataNascimento);
+        setSelectValue("genero", prefillValues.genero, true);
+        setTextValue("nomeSocial", prefillValues.nomeSocial);
+        setFormattedDateValue("dataAtualizacaoCadunico", prefillValues.dataAtualizacaoCadunico);
+        if (prefillValues.cep && prefillValues.cep.trim() !== "") {
+          setMaskedValue(maskCep, "cep", prefillValues.cep);
+        }
+        setTextValue("logradouro", prefillValues.logradouro);
+        setTextValue("numero", prefillValues.numero);
+        setTextValue("complemento", prefillValues.complemento);
+        setTextValue("bairro", prefillValues.bairro);
+        setTextValue("cidade", prefillValues.cidade);
+        setSelectValue("uf", prefillValues.uf);
+        setCheckboxValue("enderecoAtualizado", prefillValues.enderecoAtualizado);
+        if (prefillValues.telefone && prefillValues.telefone.trim() !== "") {
+          setMaskedValue(maskTelefone, "telefone", prefillValues.telefone);
+        }
+        setTextValue("email", prefillValues.email);
+        setTextValue("emailConfirm", prefillValues.email);
+        setSelectValue("situacaoTrabalho", prefillValues.situacaoTrabalho);
+        setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
+        setCheckboxValue("acolhimento", prefillValues.acolhimento);
+        setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
+        setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
+        setTextValue("rendaPerCapitaAtualizada", prefillValues.rendaPerCapitaAtualizada);
+        setSelectValue("racaCor", prefillValues.racaCor);
+        setCheckboxValue("pessoaPretaParda", prefillValues.pessoaPretaParda);
+        setCheckboxValue("pessoaIndigena", prefillValues.pessoaIndigena);
+        setCheckboxValue("pessoaRua", prefillValues.pessoaRua);
+        setSelectValue("pcd", prefillValues.pcd, true);
+        setSelectValue("maeAtipica", prefillValues.maeAtipica, true);
+        setSelectValue("vitimaViolencia", prefillValues.vitimaViolencia, true);
+        setTextValue("necessidadesEspeciais", prefillValues.necessidadesEspeciais);
+        preencherCidadePorCepSeNecessario();
+
+        if (validation) {
+          if (typeof validation.refreshAll === "function") {
+            validation.refreshAll();
+          } else if (typeof validation.refresh === "function") {
+            validation.refresh();
+          }
+        }
+      };
+
+      if (validation) {
+        validation
+          .addField("#genero", [{ rule: "required", errorMessage: "Informe a identificação de gênero" }])
+          .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
+          .addField("#telefone", [
+            { rule: "required", errorMessage: "Informe um telefone válido" },
+            {
+              validator: (value) => value.replace(/\D/g, "").length >= 10,
+              errorMessage: "Informe DDD e número",
+            },
+          ])
+          .addField("#email", [{ rule: "required" }, { rule: "email", errorMessage: "E-mail inválido" }])
+          .addField("#emailConfirm", [
+            { rule: "required", errorMessage: "Repita o e-mail informado" },
+            {
+              validator: (value) => value.trim() === (document.getElementById("email").value || "").trim(),
+              errorMessage: "Os e-mails informados devem coincidir",
+            },
+          ])
+          .addField("#preferenciaContato", [{ rule: "required" }])
+          .addField("#cep", [
+            {
+              validator: () => {
+                if (!enderecoEdicaoAtiva) return true;
+                return getCepDigits().length === 8;
+              },
+              errorMessage: "Informe um CEP válido",
+            },
+          ])
+          .addField("#logradouro", [
+            {
+              validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+              errorMessage: "Informe o logradouro",
+            },
+          ])
+          .addField("#numero", [
+            {
+              validator: () => {
+                if (!numeroInput || numeroInput.readOnly) return true;
+                const valor = numeroInput.value.trim();
+                return /^(?:\d+|S\/N)$/.test(valor) && valor.length > 0;
+              },
+              errorMessage: "Informe o número ou S/N",
+            },
+          ])
+          .addField("#bairro", [
+            {
+              validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+              errorMessage: "Informe o bairro",
+            },
+          ])
+          .addField("#cidade", [
+            {
+              validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
+              errorMessage: "Informe o município",
+            },
+          ])
+          .addField("#rendaFamiliar", [
+            { rule: "required", errorMessage: "Informe a renda familiar" },
+            {
+              validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+              errorMessage: "Valor inválido",
+            },
+          ])
+          .addField("#rendaPerCapitaAtualizada", [
+            {
+              validator: (value) => value === "" || (!Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0),
+              errorMessage: "Informe um valor válido",
+            },
+          ])
+          .addField("#pcd", [{ rule: "required" }])
+          .addField("#maeAtipica", [{ rule: "required" }])
+          .addField("#vitimaViolencia", [{ rule: "required" }])
+          .addField("#racaCor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
+          .addField("#categoria", [{ rule: "required" }])
+          .addField("#turno", [{ rule: "required" }])
+          .addField("#docIdentidade", [
+            { rule: "required", errorMessage: "Anexe um documento oficial" },
+            {
+              rule: "files",
+              value: {
+                files: {
+                  extensions: ["pdf", "jpg", "jpeg", "png"],
+                  maxSize: 5 * 1024 * 1024,
+                },
+              },
+              errorMessage: "Formato ou tamanho inválido (máx. 5 MB)",
+            },
+          ])
+          .addField("#lgpd", [{ rule: "required", errorMessage: "Confirme o consentimento LGPD" }])
+          .addField("#veracidade", [{ rule: "required", errorMessage: "Confirme a declaração de veracidade" }]);
+      }
+
+      const handleFormInteraction = async (event) => {
+        const target = event.target;
+        if (!target) return;
+        if (!validation) {
+          updateSubmitState();
+          return;
+        }
+        const selector = target.id ? `#${target.id}` : null;
+        if (selector && validation.fields[selector] && typeof validation.revalidateField === "function") {
+          try {
+            await validation.revalidateField(selector);
+          } catch (error) {
+            /* Ignora erros de revalidação não críticos */
+          }
+        }
+        if (
+          selector === "#email" &&
+          validation.fields["#emailConfirm"] &&
+          typeof validation.revalidateField === "function"
+        ) {
+          try {
+            await validation.revalidateField("#emailConfirm");
+          } catch (error) {
+            /* Ignora erros de revalidação não críticos */
+          }
+        }
+        updateSubmitState();
+      };
+
+      form.addEventListener("input", handleFormInteraction, true);
+      form.addEventListener("change", handleFormInteraction, true);
+      form.addEventListener("reset", () => {
+        submitAttempted = false;
+        applyValidationUI([]);
+        setSubmitButtonState(false);
+        setTimeout(() => updateSubmitState(), 0);
+      });
+
+      function validateAdditionalRules() {
+        const extraErrors = [];
+        const registerError = (selector, message, element) => {
+          extraErrors.push({
+            selector,
+            element,
+            label: getFieldLabel(selector),
+            message,
+          });
+        };
+        const cpfDigits = (cpfInput.value || "").replace(/\D/g, "");
+        if (cpfDigits && cpfDigits.length === 11 && !cpfValidator(cpfInput.value || "")) {
+          registerError("#cpf", "CPF inválido", cpfInput);
+        }
+        if (cpfDigits && cpfDigits.length > 0 && cpfDigits.length !== 11) {
+          registerError("#cpf", "CPF incompleto", cpfInput);
+        }
+        if (pcdSelect.value === "sim" && !document.getElementById("laudoPcd").files.length) {
+          registerError("#laudoPcd", "Anexe o laudo PCD", document.getElementById("laudoPcd"));
+        }
+        if (maeAtipica.value === "sim" && !document.getElementById("docResponsavel").files.length) {
+          registerError(
+            "#docResponsavel",
+            "Anexe os comprovantes",
+            document.getElementById("docResponsavel")
+          );
+        }
+        if (acolhimento.checked && !document.getElementById("docAcolhimento").files.length) {
+          registerError(
+            "#docAcolhimento",
+            "Anexe declaração do serviço de acolhimento",
+            document.getElementById("docAcolhimento")
+          );
+        }
+        if (dependenteTratamento.checked && !document.getElementById("docDependente").files.length) {
+          registerError(
+            "#docDependente",
+            "Anexe comprovante do tratamento",
+            document.getElementById("docDependente")
+          );
+        }
+        if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
+          registerError(
+            "#docResidencia",
+            "Comprovante obrigatório quando atualizar endereço",
+            document.getElementById("docResidencia")
+          );
+        }
+        const emailValue = (emailInput?.value || "").trim();
+        const emailConfirmValue = (emailConfirmInput?.value || "").trim();
+        if (
+          emailValue &&
+          emailConfirmValue &&
+          emailValue.toLowerCase() !== emailConfirmValue.toLowerCase()
+        ) {
+          clearEmailConfirmationField();
+          registerError(
+            "#emailConfirm",
+            "Os e-mails informados devem coincidir",
+            emailConfirmInput
+          );
+        }
+        if (["adicao_a", "adicao_b"].includes(categoriaSelect.value)) {
+          const numeroCnhField = document.getElementById("numeroCnh");
+          if (!numeroCnhField.value.trim()) {
+            registerError("#numeroCnh", "Informe o número da CNH", numeroCnhField);
+          }
+          const validadeField = document.getElementById("validadeCnh");
+          const validade = validadeField.value;
+          if (!validade) {
+            registerError("#validadeCnh", "Informe a validade da CNH", validadeField);
+          } else {
+            const diff = dayjs(validade).diff(dayjs(), "day");
+            if (diff <= 30) {
+              registerError(
+                "#validadeCnh",
+                "A CNH deve ter validade superior a 30 dias",
+                validadeField
+              );
+            }
+          }
+          if (!document.getElementById("cnhArquivo").files.length) {
+            registerError("#cnhArquivo", "Anexe a CNH", document.getElementById("cnhArquivo"));
+          }
+        }
+        return extraErrors;
+      }
+
+      const processSubmissionAttempt = async () => {
+        let isValid = true;
+        if (validation) {
+          if (typeof validation.revalidate === "function") {
+            isValid = await validation.revalidate();
+          } else if (typeof validation.validate === "function") {
+            isValid = await validation.validate();
+          }
+        }
+        const extraErrors = validateAdditionalRules();
+        const invalidFields = getInvalidFields(extraErrors);
+        submitAttempted = true;
+        applyValidationUI(invalidFields);
+
+        if (!isValid || invalidFields.length) {
+          setSubmitButtonState(false);
+          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
+          showFeedbackModal({
+            type: "alert",
+            message: "Por favor, verifique os campos obrigatórios listados abaixo.",
+            items: invalidFields.map((field) => field.label),
+            focusElement: focusField ? focusField.element : null,
+            triggerElement: submitButton,
+          });
+          updateSubmitState();
+          return false;
+        }
+
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+          if (value instanceof File) {
+            data[key] = value.name || null;
+          } else if (Object.prototype.hasOwnProperty.call(data, key)) {
+            if (Array.isArray(data[key])) {
+              data[key].push(value);
+            } else {
+              data[key] = [data[key], value];
+            }
+          } else {
+            data[key] = value;
+          }
+        });
+        console.log("Inscrição CNH Social", data);
+
+        showFeedbackModal({
+          type: "success",
+          message: "Envio bem-sucedido da inscrição.",
+          triggerElement: submitButton,
+        });
+
+        form.reset();
+        if (validation) {
+          if (typeof validation.refreshAll === "function") {
+            validation.refreshAll();
+          } else if (typeof validation.refresh === "function") {
+            validation.refresh();
+          } else {
+            Object.values(validation.fields).forEach((field) => {
+              field.isValid = false;
+              field.elem?.classList.remove("is-invalid", "js-validate-error-field");
+            });
+          }
+        }
+        submitAttempted = false;
+        applyValidationUI([]);
+        setSubmitButtonState(false);
+        const docResidenciaLabel = document.getElementById("docResidenciaLabel");
+        if (docResidenciaLabel) {
+          docResidenciaLabel.classList.remove("required");
+        }
+        [
+          "docResidenciaWrapper",
+          "laudoPcdWrapper",
+          "docResponsavelWrapper",
+          "docViolenciaWrapper",
+          "docAcolhimentoWrapper",
+          "docDependenteWrapper",
+          "cnhNumeroWrapper",
+          "cnhValidadeWrapper",
+          "cnhArquivoWrapper",
+        ].forEach((id) => {
+          toggleFileSection(false, id);
+        });
+        grupoMulherChefe.classList.add("d-none");
+        editableFields.forEach((fieldId) => {
+          const field = document.getElementById(fieldId);
+          if (field) {
+            field.readOnly = true;
+            field.setAttribute("aria-readonly", "true");
+          }
+        });
+        ufSelect.disabled = true;
+        enderecoEdicaoAtiva = false;
+        btnAtualizarEndereco.setAttribute("aria-pressed", "false");
+        if (cepStatus) {
+          cepStatus.textContent = "";
+        }
+        document.querySelectorAll(".file-name").forEach((holder) => {
+          holder.textContent = "";
+        });
+        setTimeout(() => updateSubmitState(), 0);
+        return true;
+      };
+
+      const updateAgeFieldFromBirthdate = () => {
+        if (!ageInput || !birthdateInput) return;
+        const referenceValue = birthdateInput.value || prefillValues.dataNascimento;
+        const age = calculateAgeFromDate(referenceValue);
+        ageInput.value = age != null ? `${age}` : "";
+      };
+
+      if (birthdateInput) {
+        birthdateInput.addEventListener("change", updateAgeFieldFromBirthdate);
+      }
+
+      const updateTempoAtualizacaoField = () => {
+        if (!tempoAtualizacaoInput) return;
+        const referenceValue =
+          (dataAtualizacaoInput && (dataAtualizacaoInput.dataset?.rawValue || dataAtualizacaoInput.value))
+            || prefillValues.dataAtualizacaoCadunico;
+        tempoAtualizacaoInput.value = formatElapsedTimeSinceDate(referenceValue);
+      };
+
+      if (dataAtualizacaoInput) {
+        dataAtualizacaoInput.addEventListener("change", updateTempoAtualizacaoField);
+      }
+
+      const validarEExibirModal = (formSelector, botaoSelector) => {
+        const targetForm = document.querySelector(formSelector);
+        const targetButton = document.querySelector(botaoSelector);
+        if (!targetForm || !targetButton) {
+          return;
+        }
+        targetButton.addEventListener("click", async (event) => {
+          event.preventDefault();
+          await processSubmissionAttempt();
+        });
+        targetForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          await processSubmissionAttempt();
+        });
+      };
+
+      validarEExibirModal("#cnhSocialForm", "#submitButton");
+
+      attachRequiredFieldFocusHandlers();
+      enforceEmailConfirmationConsistency();
+
+      applyPrefillValues();
+      updateAgeFieldFromBirthdate();
+      updateTempoAtualizacaoField();
+      updateSubmitState();
+    </script>
+  </body>
+</html>
