@@ -2522,6 +2522,10 @@
       const aplicarMinusculasEmail = () => {
         const emails = [document.getElementById("email"), document.getElementById("emailConfirm")].filter(Boolean);
         emails.forEach((campo) => {
+          campo.readOnly = false;
+          campo.removeAttribute("readonly");
+          campo.removeAttribute("aria-readonly");
+          campo.disabled = false;
           const atualizarValor = () => {
             const inicio = campo.selectionStart;
             const fim = campo.selectionEnd;
