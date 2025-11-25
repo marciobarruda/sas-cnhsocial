@@ -194,9 +194,12 @@
       }
 
       input[type="text"],
-      input[type="email"],
       textarea {
         text-transform: uppercase;
+      }
+
+      input[type="email"] {
+        text-transform: lowercase;
       }
 
       .modal-backdrop {
@@ -2501,7 +2504,7 @@
       });
 
       const aplicarMaiusculas = () => {
-        const campos = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+        const campos = document.querySelectorAll('input[type="text"], textarea');
         campos.forEach((campo) => {
           const atualizarValor = () => {
             const inicio = campo.selectionStart;
@@ -2516,7 +2519,24 @@
         });
       };
 
+      const aplicarMinusculasEmail = () => {
+        const emails = [document.getElementById("email"), document.getElementById("emailConfirm")].filter(Boolean);
+        emails.forEach((campo) => {
+          const atualizarValor = () => {
+            const inicio = campo.selectionStart;
+            const fim = campo.selectionEnd;
+            campo.value = (campo.value || "").toLowerCase();
+            if (inicio != null && fim != null) {
+              campo.setSelectionRange(inicio, fim);
+            }
+          };
+          atualizarValor();
+          campo.addEventListener("input", atualizarValor);
+        });
+      };
+
       aplicarMaiusculas();
+      aplicarMinusculasEmail();
 
       const cpfInput = document.getElementById("cpf");
       const emailInput = document.getElementById("email");
