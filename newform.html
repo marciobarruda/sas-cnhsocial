@@ -1356,18 +1356,6 @@
                 <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
                 </div>
               </div>
-              <div class="col-12 col-md-6 d-none" id="autorizacaoAcolhimentoWrapper">
-                <div class="form-check pt-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="autorizacaoAcolhimento"
-                    name="autorizacaoAcolhimento"
-                  />
-                  <label class="form-check-label" for="autorizacaoAcolhimento">Autorizo consulta à base da SAS para confirmação do acolhimento</label>
-                </div>
-              </div>
               <div class="col-12 col-md-6">
                 <div class="form-check">
                   <input
@@ -1405,7 +1393,7 @@
                   class="form-control"
                   id="programasSociais"
                   name="programasSociais"
-                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? "Sim" : "Não" }}"
+                  value="{{ ($json.data || {}).programaBolsaFamilia || "" }}"
                   readonly
                   aria-readonly="true"
                   aria-describedby="programasSociaisHelp"
@@ -1415,16 +1403,16 @@
               <div class="col-12 col-md-6">
                 <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   id="rendaFamiliar"
                   name="rendaFamiliar"
-                  min="0"
-                  step="0.01"
+                  inputmode="decimal"
                   placeholder="Valor carregado automaticamente"
-                  value="{{ $json.data.rendaPerCapita || "" }}"
+                  value="{{ ($json.data || {}).rendaPerCapita || "" }}"
                   aria-describedby="rendaHelp"
                   data-required-field="true"
+                  data-preserve-case="true"
                   readonly
                   aria-readonly="true"
                   required
@@ -1558,13 +1546,6 @@
                 </select>
                 <small class="form-text">A identidade das candidatas será preservada conforme edital. Ao marcar esse campo, autorizo confirmação na base de dados da Secretaria da Mulher e da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
               </div>
-              <div class="col-12 d-none" id="autorizacaoViolenciaWrapper">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="autorizacaoViolencia" name="autorizacaoViolencia" />
-                  <label class="form-check-label" for="autorizacaoViolencia">Autorizo consulta sigilosa nos bancos da Secretaria da Mulher e do CREAS</label>
-                </div>
-                <small class="form-text">Mulheres em situação de violência não devem anexar documentos.</small>
-              </div>
               <div class="col-12">
                 <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
                 <textarea
@@ -1616,7 +1597,14 @@
               <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
                 <div class="file-input-wrapper">
                   <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="docDependente"
+                    name="docDependente"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    data-require-on-toggle="true"
+                  />
                   <div class="file-name" id="docDependenteName"></div>
                 </div>
               </div>
@@ -2160,6 +2148,14 @@
       const cepStatus = document.getElementById("cepStatus");
       let enderecoEdicaoAtiva = false;
 
+      const sanitizeNumeroEndereco = () => {
+        if (!numeroInput) return;
+        const raw = (numeroInput.value || "").trim();
+        if (!raw || raw.toUpperCase() === "S/N") return;
+        const semZeros = raw.replace(/^0+/, "");
+        numeroInput.value = semZeros;
+      };
+
       const escapeSelector = (value) => {
         const string = value == null ? "" : String(value);
         if (typeof window !== "undefined" && window.CSS && typeof window.CSS.escape === "function") {
@@ -2214,6 +2210,68 @@
           }
         }
         return null;
+      };
+
+      const parseCurrencyToNumber = (value) => {
+        if (value == null) return Number.NaN;
+        const cleaned = value
+          .toString()
+          .replace(/\s/g, "")
+          .replace(/[R$r$]/gi, "")
+          .replace(/\.(?=\d{3}(?:,|$))/g, "")
+          .replace(/,/g, ".")
+          .replace(/[^0-9+\-\.]/g, "");
+        return Number.parseFloat(cleaned);
+      };
+
+      const formatCurrencyBRL = (value) => {
+        const numericValue = parseCurrencyToNumber(value);
+        if (!Number.isFinite(numericValue)) return "";
+        try {
+          return new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(numericValue);
+        } catch (error) {
+          console.warn("Não foi possível formatar moeda", error);
+          return numericValue.toFixed(2);
+        }
+      };
+
+      const isValidCurrencyValue = (value, { allowEmpty = false } = {}) => {
+        if (value == null || value.toString().trim() === "") return allowEmpty;
+        const parsed = parseCurrencyToNumber(value);
+        return Number.isFinite(parsed) && parsed >= 0;
+      };
+
+      const setCurrencyValue = (fieldId, value) => {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        const formatted = formatCurrencyBRL(value);
+        field.value = formatted || "";
+        field.dataset.rawValue = value == null ? "" : value;
+      };
+
+      const formatProgramasSociais = (value) => {
+        const raw = (value || "").toString().trim();
+        if (!raw) return "Não";
+        const lower = raw.toLowerCase();
+        if (["nao", "não", "nenhum", "0", "false", "falso"].includes(lower)) {
+          return "Não";
+        }
+        const base = lower.startsWith("sim") ? "Sim" : "Sim";
+        let programa = "";
+        if (lower.includes("bolsa")) {
+          programa = "Bolsa Família";
+        } else if (lower.includes("bpc")) {
+          programa = "BPC";
+        }
+        if (programa) {
+          return `${base}, ${programa}`;
+        }
+        return lower === "sim" ? base : raw;
       };
 
       const maskCpf = createMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
@@ -2400,8 +2458,19 @@
       const toggleFileSection = (condition, wrapperId) => {
         const wrapper = document.getElementById(wrapperId);
         if (!wrapper) return;
+        const updateRequiredState = (input, isRequired) => {
+          if (input?.dataset?.requireOnToggle === "true") {
+            if (isRequired) {
+              input.setAttribute("required", "required");
+            } else {
+              input.removeAttribute("required");
+            }
+          }
+        };
         if (condition) {
           wrapper.classList.remove("d-none");
+          const inputs = wrapper.querySelectorAll("input, select, textarea");
+          inputs.forEach((input) => updateRequiredState(input, true));
         } else {
           wrapper.classList.add("d-none");
           const inputs = wrapper.querySelectorAll("input, select, textarea");
@@ -2416,6 +2485,7 @@
               input.value = "";
             }
             input.classList.remove("is-invalid");
+            updateRequiredState(input, false);
           });
         }
         updateSubmitState();
@@ -2457,21 +2527,13 @@
         toggleFileSection(ativo, "docResponsavelWrapper");
       });
 
-      const vitimaViolencia = document.getElementById("vitimaViolencia");
-      vitimaViolencia.addEventListener("change", () => {
-        toggleFileSection(vitimaViolencia.value === "sim", "autorizacaoViolenciaWrapper");
-      });
-
-      const acolhimento = document.getElementById("acolhimento");
-      acolhimento.addEventListener("change", () => {
-        toggleFileSection(acolhimento.checked, "autorizacaoAcolhimentoWrapper");
-      });
-
       const dependenteTratamento = document.getElementById("dependenteTratamento");
       dependenteTratamento.addEventListener("change", () => {
         toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
         toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
       });
+      toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
+      toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
 
       const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
       if (situacaoTrabalhoSelect) {
@@ -2497,6 +2559,11 @@
         }
       });
 
+      if (numeroInput) {
+        numeroInput.addEventListener("blur", sanitizeNumeroEndereco);
+        numeroInput.addEventListener("change", sanitizeNumeroEndereco);
+      }
+
       const categoriaSelect = document.getElementById("categoria");
       categoriaSelect.addEventListener("change", () => {
         const isAdicao = ["adicao_a", "adicao_b"].includes(categoriaSelect.value);
@@ -2506,7 +2573,7 @@
       });
 
       const aplicarMaiusculas = () => {
-        const campos = document.querySelectorAll('input[type="text"], textarea');
+        const campos = document.querySelectorAll('input[type="text"]:not([data-preserve-case="true"]), textarea');
         campos.forEach((campo) => {
           const atualizarValor = () => {
             const inicio = campo.selectionStart;
@@ -2953,8 +3020,6 @@
         "#docDependente": "Declaração de tratamento terapêutico contínuo",
         "#docDependenteVinculo": "Comprovação de vínculo do dependente",
         "#docTrabalhoAplicativo": "Comprovante de trabalho por aplicativo",
-        "#autorizacaoViolencia": "Autorização para consulta sigilosa",
-        "#autorizacaoAcolhimento": "Autorização para consulta do acolhimento",
         "#numeroCnh": "Número da CNH",
         "#validadeCnh": "Validade da CNH",
         "#cnhArquivo": "Arquivo da CNH",
@@ -3375,6 +3440,7 @@
         }
         setTextValue("logradouro", prefillValues.logradouro);
         setTextValue("numero", prefillValues.numero);
+        sanitizeNumeroEndereco();
         setTextValue("complemento", prefillValues.complemento);
         setTextValue("bairro", prefillValues.bairro);
         setTextValue("cidade", prefillValues.cidade);
@@ -3389,7 +3455,7 @@
         setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
-        setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
+        setCurrencyValue("rendaFamiliar", prefillValues.rendaFamiliar);
         setTextValue("rendaPerCapitaAtualizada", prefillValues.rendaPerCapitaAtualizada);
         setSelectValue("racaCor", prefillValues.racaCor);
         setTextValue("racaCorValor", prefillValues.racaCor);
@@ -3412,8 +3478,8 @@
           const pontos = Number.parseInt(prefillValues.composicaoFamiliar, 10);
           pontuacaoSpan.textContent = Number.isFinite(pontos) ? `${pontos} ponto${pontos === 1 ? "" : "s"}` : "—";
         }
-        const programasValue = (prefillValues.programasSociais || "").toString().toLowerCase();
-        setTextValue("programasSociais", programasValue ? (programasValue === "sim" ? "Sim" : "Não") : "");
+        const programasValue = (prefillValues.programasSociais || "").toString();
+        setTextValue("programasSociais", formatProgramasSociais(programasValue));
         preencherCidadePorCepSeNecessario();
 
         if (validation) {
@@ -3484,13 +3550,13 @@
           .addField("#rendaFamiliar", [
             { rule: "required", errorMessage: "Informe a renda familiar" },
             {
-              validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+              validator: (value) => isValidCurrencyValue(value),
               errorMessage: "Valor inválido",
             },
           ])
           .addField("#rendaPerCapitaAtualizada", [
             {
-              validator: (value) => value === "" || (!Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0),
+              validator: (value) => isValidCurrencyValue(value, { allowEmpty: true }),
               errorMessage: "Informe um valor válido",
             },
           ])
@@ -3586,12 +3652,6 @@
             }
           });
         }
-        if (acolhimento.checked) {
-          const autorizacao = document.getElementById("autorizacaoAcolhimento");
-          if (!autorizacao?.checked) {
-            registerError("#autorizacaoAcolhimento", "Autorize a consulta na base da SAS", autorizacao);
-          }
-        }
         if (dependenteTratamento.checked) {
           [
             ["#docDependente", "Anexe a declaração de tratamento", document.getElementById("docDependente")],
@@ -3613,12 +3673,6 @@
           const docAplicativo = document.getElementById("docTrabalhoAplicativo");
           if (!docAplicativo?.files.length) {
             registerError("#docTrabalhoAplicativo", "Anexe o comprovante da atividade", docAplicativo);
-          }
-        }
-        if (vitimaViolencia.value === "sim") {
-          const consentimentoViolencia = document.getElementById("autorizacaoViolencia");
-          if (!consentimentoViolencia?.checked) {
-            registerError("#autorizacaoViolencia", "Autorize a consulta sigilosa", consentimentoViolencia);
           }
         }
         const emailValue = (emailInput?.value || "").trim();
@@ -3744,8 +3798,6 @@
           "cnhNumeroWrapper",
           "cnhValidadeWrapper",
           "cnhArquivoWrapper",
-          "autorizacaoViolenciaWrapper",
-          "autorizacaoAcolhimentoWrapper",
         ].forEach((id) => {
           toggleFileSection(false, id);
         });
