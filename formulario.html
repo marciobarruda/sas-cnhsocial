@@ -2519,13 +2519,23 @@
         });
       };
 
-      const aplicarMinusculasEmail = () => {
+      const desbloquearEmails = () => {
         const emails = [document.getElementById("email"), document.getElementById("emailConfirm")].filter(Boolean);
         emails.forEach((campo) => {
           campo.readOnly = false;
           campo.removeAttribute("readonly");
           campo.removeAttribute("aria-readonly");
           campo.disabled = false;
+          campo.removeAttribute("disabled");
+          campo.classList.remove("disabled");
+          campo.style.pointerEvents = "auto";
+        });
+        return emails;
+      };
+
+      const aplicarMinusculasEmail = () => {
+        const emails = desbloquearEmails();
+        emails.forEach((campo) => {
           const atualizarValor = () => {
             const inicio = campo.selectionStart;
             const fim = campo.selectionEnd;
