@@ -2525,37 +2525,6 @@
       const emailInput = document.getElementById("email");
       const emailConfirmInput = document.getElementById("emailConfirm");
 
-      const clearEmailConfirmationField = () => {
-        if (!emailConfirmInput) return false;
-        const emailValue = (emailInput?.value || "").trim();
-        const confirmValue = (emailConfirmInput.value || "").trim();
-        if (!emailValue || !confirmValue) {
-          return false;
-        }
-        if (emailValue.toLowerCase() === confirmValue.toLowerCase()) {
-          return false;
-        }
-        emailConfirmInput.value = "";
-        emailConfirmInput.classList.add("is-invalid");
-        emailConfirmInput.setAttribute("aria-invalid", "true");
-        emailConfirmInput.dispatchEvent(new Event("input", { bubbles: true }));
-        return true;
-      };
-
-      const enforceEmailConfirmationConsistency = () => {
-        if (!emailInput || !emailConfirmInput) return;
-        const resetIfMismatch = () => {
-          clearEmailConfirmationField();
-        };
-        emailConfirmInput.addEventListener("blur", resetIfMismatch);
-        emailConfirmInput.addEventListener("change", resetIfMismatch);
-        emailInput.addEventListener("change", () => {
-          if ((emailConfirmInput.value || "").trim()) {
-            resetIfMismatch();
-          }
-        });
-      };
-
       const cpfValidator = (value) => {
         const digits = value.replace(/\D/g, "");
         if (digits.length !== 11 || /^([0-9])\1+$/.test(digits)) return false;
@@ -3379,13 +3348,6 @@
             },
           ])
           .addField("#email", [{ rule: "required" }, { rule: "email", errorMessage: "E-mail inválido" }])
-          .addField("#emailConfirm", [
-            { rule: "required", errorMessage: "Repita o e-mail informado" },
-            {
-              validator: (value) => value.trim() === (document.getElementById("email").value || "").trim(),
-              errorMessage: "Os e-mails informados devem coincidir",
-            },
-          ])
           .addField("#preferenciaContato", [{ rule: "required" }])
           .addField("#cep", [
             {
@@ -3477,11 +3439,10 @@
         }
         if (
           selector === "#email" &&
-          validation.fields["#emailConfirm"] &&
           typeof validation.revalidateField === "function"
         ) {
           try {
-            await validation.revalidateField("#emailConfirm");
+            await validation.revalidateField("#email");
           } catch (error) {
             /* Ignora erros de revalidação não críticos */
           }
@@ -3547,20 +3508,6 @@
           if (!docAplicativo?.files.length) {
             registerError("#docTrabalhoAplicativo", "Anexe o comprovante da atividade", docAplicativo);
           }
-        }
-        const emailValue = (emailInput?.value || "").trim();
-        const emailConfirmValue = (emailConfirmInput?.value || "").trim();
-        if (
-          emailValue &&
-          emailConfirmValue &&
-          emailValue.toLowerCase() !== emailConfirmValue.toLowerCase()
-        ) {
-          clearEmailConfirmationField();
-          registerError(
-            "#emailConfirm",
-            "Os e-mails informados devem coincidir",
-            emailConfirmInput
-          );
         }
         if (["adicao_a", "adicao_b"].includes(categoriaSelect.value)) {
           const numeroCnhField = document.getElementById("numeroCnh");
@@ -3724,7 +3671,6 @@
       validarEExibirModal("#cnhSocialForm", "#submitButton");
 
       attachRequiredFieldFocusHandlers();
-      enforceEmailConfirmationConsistency();
 
       applyPrefillValues();
       updateAgeFieldFromBirthdate();
