@@ -1602,7 +1602,7 @@
                     type="file"
                     id="docDependente"
                     name="docDependente"
-                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    accept=".pdf,.jpg,.jpeg,.png"
                     data-require-on-toggle="true"
                   />
                   <div class="file-name" id="docDependenteName"></div>
@@ -1611,7 +1611,7 @@
               <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
                 <div class="file-input-wrapper">
                   <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                  <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png" />
                   <div class="file-name" id="docDependenteVinculoName"></div>
                 </div>
               </div>
@@ -2136,6 +2136,8 @@
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
       const numeroInput = document.getElementById("numero");
+      const rendaFamiliarInput = document.getElementById("rendaFamiliar");
+      const rendaPerCapitaAtualizadaInput = document.getElementById("rendaPerCapitaAtualizada");
       const logradouroInput = document.getElementById("logradouro");
       const complementoInput = document.getElementById("complemento");
       const bairroInput = document.getElementById("bairro");
@@ -2147,6 +2149,8 @@
       const tempoAtualizacaoInput = document.getElementById("tempoAtualizacaoCadunico");
       const cepStatus = document.getElementById("cepStatus");
       let enderecoEdicaoAtiva = false;
+      const MAX_FILE_SIZE = 5 * 1024 * 1024;
+      const allowedFileExtensions = ["pdf", "jpg", "jpeg", "png"];
 
       const sanitizeNumeroEndereco = () => {
         if (!numeroInput) return;
@@ -2154,6 +2158,18 @@
         if (!raw || raw.toUpperCase() === "S/N") return;
         const semZeros = raw.replace(/^0+/, "");
         numeroInput.value = semZeros;
+      };
+
+      const getFileExtension = (filename = "") => {
+        const match = /\.([^.]+)$/.exec(filename);
+        return match ? match[1].toLowerCase() : "";
+      };
+
+      const isValidAttachment = (file) => {
+        if (!file) return false;
+        const extension = getFileExtension(file.name || "");
+        if (!allowedFileExtensions.includes(extension)) return false;
+        return file.size <= MAX_FILE_SIZE;
       };
 
       const escapeSelector = (value) => {
@@ -2254,24 +2270,48 @@
         field.dataset.rawValue = value == null ? "" : value;
       };
 
+      const formatCurrencyInputValue = (input) => {
+        if (!input) return;
+        const digits = (input.value || "").replace(/\D/g, "");
+        if (!digits) {
+          input.value = "";
+          input.dataset.rawValue = "";
+          return;
+        }
+        const numericValue = Number.parseInt(digits, 10) / 100;
+        const formatted = formatCurrencyBRL(numericValue);
+        input.value = formatted;
+        input.dataset.rawValue = Number.isFinite(numericValue) ? numericValue.toFixed(2) : "";
+      };
+
+      const attachCurrencyMask = (input) => {
+        if (!input) return;
+        const handler = () => formatCurrencyInputValue(input);
+        ["input", "blur", "change"].forEach((eventName) => input.addEventListener(eventName, handler));
+        formatCurrencyInputValue(input);
+      };
+
       const formatProgramasSociais = (value) => {
         const raw = (value || "").toString().trim();
-        if (!raw) return "Não";
+        if (!raw) return "NÃO";
         const lower = raw.toLowerCase();
         if (["nao", "não", "nenhum", "0", "false", "falso"].includes(lower)) {
-          return "Não";
+          return "NÃO";
         }
-        const base = lower.startsWith("sim") ? "Sim" : "Sim";
+        const base = "SIM";
+        const hintedProgram = raw.replace(/^sim[,\s]*/i, "").trim();
         let programa = "";
         if (lower.includes("bolsa")) {
           programa = "Bolsa Família";
         } else if (lower.includes("bpc")) {
           programa = "BPC";
+        } else if (hintedProgram) {
+          programa = hintedProgram.replace(/^,\s*/, "").replace(/\s+/g, " ").trim();
         }
         if (programa) {
           return `${base}, ${programa}`;
         }
-        return lower === "sim" ? base : raw;
+        return base;
       };
 
       const maskCpf = createMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
@@ -2307,6 +2347,9 @@
           }
         });
       }
+
+      attachCurrencyMask(rendaFamiliarInput);
+      attachCurrencyMask(rendaPerCapitaAtualizadaInput);
 
       const generoSelect = document.getElementById("genero");
       const generoHidden = document.getElementById("generoValor");
@@ -3659,6 +3702,11 @@
           ].forEach(([selector, message, element]) => {
             if (element && !element.files.length) {
               registerError(selector, message, element);
+            } else if (element && element.files.length) {
+              const file = element.files[0];
+              if (!isValidAttachment(file)) {
+                registerError(selector, "Formato ou tamanho inválido (máx. 5 MB)", element);
+              }
             }
           });
         }
@@ -3743,6 +3791,12 @@
           return false;
         }
 
+        formatCurrencyInputValue(rendaFamiliarInput);
+        formatCurrencyInputValue(rendaPerCapitaAtualizadaInput);
+        const programasSociaisInput = document.getElementById("programasSociais");
+        if (programasSociaisInput) {
+          programasSociaisInput.value = formatProgramasSociais(programasSociaisInput.value);
+        }
         const formData = new FormData(form);
         const data = {};
         formData.forEach((value, key) => {
