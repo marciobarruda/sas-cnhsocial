@@ -1354,18 +1354,6 @@
                 <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
                 </div>
               </div>
-              <div class="col-12 col-md-6 d-none" id="autorizacaoAcolhimentoWrapper">
-                <div class="form-check pt-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="autorizacaoAcolhimento"
-                    name="autorizacaoAcolhimento"
-                  />
-                  <label class="form-check-label" for="autorizacaoAcolhimento">Autorizo consulta à base da SAS para confirmação do acolhimento</label>
-                </div>
-              </div>
               <div class="col-12 col-md-6">
                 <div class="form-check">
                   <input
@@ -1556,13 +1544,6 @@
                 </select>
                 <small class="form-text">A identidade das candidatas será preservada conforme edital. Ao marcar esse campo, autorizo confirmação na base de dados da Secretaria da Mulher e da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
               </div>
-              <div class="col-12 d-none" id="autorizacaoViolenciaWrapper">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="autorizacaoViolencia" name="autorizacaoViolencia" />
-                  <label class="form-check-label" for="autorizacaoViolencia">Autorizo consulta sigilosa nos bancos da Secretaria da Mulher e do CREAS</label>
-                </div>
-                <small class="form-text">Mulheres em situação de violência não devem anexar documentos.</small>
-              </div>
               <div class="col-12">
                 <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
                 <textarea
@@ -1616,13 +1597,6 @@
                   <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
                   <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                   <div class="file-name" id="docDependenteName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="file-name" id="docDependenteVinculoName"></div>
                 </div>
               </div>
               <div class="col-12 col-lg-6 d-none" id="docTrabalhoAplicativoWrapper">
@@ -2435,7 +2409,6 @@
         ["docMaeAtipicaCras", "docMaeAtipicaCrasName"],
         ["docResponsavel", "docResponsavelName"],
         ["docDependente", "docDependenteName"],
-        ["docDependenteVinculo", "docDependenteVinculoName"],
         ["docTrabalhoAplicativo", "docTrabalhoAplicativoName"],
         ["docResidencia", "docResidenciaName"],
         ["docIdentidade", "docIdentidadeName"],
@@ -2447,6 +2420,14 @@
         toggleFileSection(pcdSelect.value === "sim", "laudoPcdWrapper");
       });
 
+      const dependenteTratamento = document.getElementById("dependenteTratamento");
+      const atualizarDocumentosDependente = () => {
+        const ativo = dependenteTratamento.checked && pcdSelect.value === "sim";
+        toggleFileSection(ativo, "docDependenteWrapper");
+      };
+      dependenteTratamento.addEventListener("change", atualizarDocumentosDependente);
+      pcdSelect.addEventListener("change", atualizarDocumentosDependente);
+
       const maeAtipica = document.getElementById("maeAtipica");
       maeAtipica.addEventListener("change", () => {
         const ativo = maeAtipica.value === "sim";
@@ -2456,20 +2437,6 @@
       });
 
       const vitimaViolencia = document.getElementById("vitimaViolencia");
-      vitimaViolencia.addEventListener("change", () => {
-        toggleFileSection(vitimaViolencia.value === "sim", "autorizacaoViolenciaWrapper");
-      });
-
-      const acolhimento = document.getElementById("acolhimento");
-      acolhimento.addEventListener("change", () => {
-        toggleFileSection(acolhimento.checked, "autorizacaoAcolhimentoWrapper");
-      });
-
-      const dependenteTratamento = document.getElementById("dependenteTratamento");
-      dependenteTratamento.addEventListener("change", () => {
-        toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
-        toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
-      });
 
       const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
       if (situacaoTrabalhoSelect) {
@@ -2477,6 +2444,8 @@
           toggleFileSection(situacaoTrabalhoSelect.value === "aplicativo", "docTrabalhoAplicativoWrapper");
         });
       }
+
+      atualizarDocumentosDependente();
 
       const enderecoAtualizado = document.getElementById("enderecoAtualizado");
       enderecoAtualizado.addEventListener("change", () => {
@@ -2928,10 +2897,7 @@
         "#docMaeAtipicaCras": "Declaração técnica do CRAS/CREAS",
         "#docResponsavel": "Declaração técnica de responsabilidade legal",
         "#docDependente": "Declaração de tratamento terapêutico contínuo",
-        "#docDependenteVinculo": "Comprovação de vínculo do dependente",
         "#docTrabalhoAplicativo": "Comprovante de trabalho por aplicativo",
-        "#autorizacaoViolencia": "Autorização para consulta sigilosa",
-        "#autorizacaoAcolhimento": "Autorização para consulta do acolhimento",
         "#numeroCnh": "Número da CNH",
         "#validadeCnh": "Validade da CNH",
         "#cnhArquivo": "Arquivo da CNH",
@@ -3563,21 +3529,11 @@
             }
           });
         }
-        if (acolhimento.checked) {
-          const autorizacao = document.getElementById("autorizacaoAcolhimento");
-          if (!autorizacao?.checked) {
-            registerError("#autorizacaoAcolhimento", "Autorize a consulta na base da SAS", autorizacao);
+        if (dependenteTratamento.checked && pcdSelect.value === "sim") {
+          const declaracaoDependente = document.getElementById("docDependente");
+          if (!declaracaoDependente?.files.length) {
+            registerError("#docDependente", "Anexe a declaração de tratamento", declaracaoDependente);
           }
-        }
-        if (dependenteTratamento.checked) {
-          [
-            ["#docDependente", "Anexe a declaração de tratamento", document.getElementById("docDependente")],
-            ["#docDependenteVinculo", "Anexe a comprovação de vínculo", document.getElementById("docDependenteVinculo")],
-          ].forEach(([selector, message, element]) => {
-            if (element && !element.files.length) {
-              registerError(selector, message, element);
-            }
-          });
         }
         if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
           registerError(
@@ -3590,12 +3546,6 @@
           const docAplicativo = document.getElementById("docTrabalhoAplicativo");
           if (!docAplicativo?.files.length) {
             registerError("#docTrabalhoAplicativo", "Anexe o comprovante da atividade", docAplicativo);
-          }
-        }
-        if (vitimaViolencia.value === "sim") {
-          const consentimentoViolencia = document.getElementById("autorizacaoViolencia");
-          if (!consentimentoViolencia?.checked) {
-            registerError("#autorizacaoViolencia", "Autorize a consulta sigilosa", consentimentoViolencia);
           }
         }
         const emailValue = (emailInput?.value || "").trim();
@@ -3716,13 +3666,10 @@
           "docMaeAtipicaCrasWrapper",
           "docResponsavelWrapper",
           "docDependenteWrapper",
-          "docDependenteVinculoWrapper",
           "docTrabalhoAplicativoWrapper",
           "cnhNumeroWrapper",
           "cnhValidadeWrapper",
           "cnhArquivoWrapper",
-          "autorizacaoViolenciaWrapper",
-          "autorizacaoAcolhimentoWrapper",
         ].forEach((id) => {
           toggleFileSection(false, id);
         });
