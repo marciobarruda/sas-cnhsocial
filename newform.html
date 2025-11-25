@@ -1109,6 +1109,7 @@
                     class="form-control"
                     id="email"
                     name="email"
+                    autocomplete="new-email"
                     placeholder="nome@exemplo.com"
                     value="{{ $json.data.email || "" }}"
                     data-required-field="true"
@@ -1122,6 +1123,7 @@
                     class="form-control"
                     id="emailConfirm"
                     name="emailConfirm"
+                    autocomplete="new-email-confirm"
                     placeholder="Repita seu e-mail"
                     value="{{ $json.data.email || "" }}"
                     aria-describedby="emailConfirmHelp"
@@ -2556,21 +2558,36 @@
       const emailInput = document.getElementById("email");
       const emailConfirmInput = document.getElementById("emailConfirm");
 
+      const applyEmailConfirmationFeedback = (isMatch) => {
+        if (!emailInput || !emailConfirmInput) return;
+        [emailInput, emailConfirmInput].forEach((field) => {
+          field.classList.remove("is-valid", "is-invalid");
+          field.removeAttribute("aria-invalid");
+        });
+        clearFieldError(emailConfirmInput);
+        if (isMatch === true) {
+          emailInput.classList.add("is-valid");
+          emailConfirmInput.classList.add("is-valid");
+          return;
+        }
+        if (isMatch === false) {
+          showFieldError(emailConfirmInput, "Os e-mails informados não são iguais.");
+          emailConfirmInput.classList.add("is-invalid");
+          emailConfirmInput.setAttribute("aria-invalid", "true");
+        }
+      };
+
       const clearEmailConfirmationField = () => {
         if (!emailConfirmInput) return false;
         const emailValue = (emailInput?.value || "").trim();
         const confirmValue = (emailConfirmInput.value || "").trim();
         if (!emailValue || !confirmValue) {
+          applyEmailConfirmationFeedback(null);
           return false;
         }
-        if (emailValue.toLowerCase() === confirmValue.toLowerCase()) {
-          return false;
-        }
-        emailConfirmInput.value = "";
-        emailConfirmInput.classList.add("is-invalid");
-        emailConfirmInput.setAttribute("aria-invalid", "true");
-        emailConfirmInput.dispatchEvent(new Event("input", { bubbles: true }));
-        return true;
+        const isMatch = emailValue.toLowerCase() === confirmValue.toLowerCase();
+        applyEmailConfirmationFeedback(isMatch);
+        return !isMatch;
       };
 
       const enforceEmailConfirmationConsistency = () => {
@@ -2578,9 +2595,15 @@
         const resetIfMismatch = () => {
           clearEmailConfirmationField();
         };
+        emailConfirmInput.addEventListener("input", resetIfMismatch);
         emailConfirmInput.addEventListener("blur", resetIfMismatch);
         emailConfirmInput.addEventListener("change", resetIfMismatch);
         emailInput.addEventListener("change", () => {
+          if ((emailConfirmInput.value || "").trim()) {
+            resetIfMismatch();
+          }
+        });
+        emailInput.addEventListener("input", () => {
           if ((emailConfirmInput.value || "").trim()) {
             resetIfMismatch();
           }
@@ -3417,7 +3440,7 @@
             { rule: "required", errorMessage: "Repita o e-mail informado" },
             {
               validator: (value) => value.trim() === (document.getElementById("email").value || "").trim(),
-              errorMessage: "Os e-mails informados devem coincidir",
+              errorMessage: "Os e-mails informados não são iguais.",
             },
           ])
           .addField("#preferenciaContato", [{ rule: "required" }])
@@ -3608,7 +3631,7 @@
           clearEmailConfirmationField();
           registerError(
             "#emailConfirm",
-            "Os e-mails informados devem coincidir",
+            "Os e-mails informados não são iguais.",
             emailConfirmInput
           );
         }
