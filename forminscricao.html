@@ -1422,12 +1422,11 @@
                   <div class="col-12 col-md-6">
                     <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
                     <input
-                      type="number"
+                      type="text"
                       class="form-control"
                       id="rendaFamiliar"
                       name="rendaFamiliar"
-                      min="0"
-                      step="0.01"
+                      inputmode="decimal"
                       placeholder="Valor carregado automaticamente"
                       value="{{ $json.data.rendaPerCapita || "" }}"
                       aria-describedby="rendaHelp"
@@ -1447,7 +1446,7 @@
                   class="form-control"
                   id="programasSociais"
                   name="programasSociais"
-                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? `Sim${((($json.data || {}).programaSocialNome) || (($json.data || {}).programaBolsaFamiliaNome)) ? `, ${($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome}` : ""}` : "Não" }}"
+                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? `SIM${((($json.data || {}).programaSocialNome) || (($json.data || {}).programaBolsaFamiliaNome)) ? `, ${($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome}` : ""}` : "NÃO" }}"
                   readonly
                   aria-readonly="true"
                   aria-describedby="programasSociaisHelp"
@@ -2101,6 +2100,27 @@
         return `${formatUnit(years, "ano", "anos")}, ${formatUnit(months, "mês", "meses")} e ${formatUnit(days, "dia", "dias")}`;
       };
 
+      const parseCurrencyToNumber = (value) => {
+        if (value == null) return Number.NaN;
+        const normalized = value
+          .toString()
+          .replace(/[^0-9.,-]/g, "")
+          .replace(/\.(?=\d{3}(\D|$))/g, "")
+          .replace(/,/g, ".");
+        return normalized ? Number.parseFloat(normalized) : Number.NaN;
+      };
+
+      const formatCurrencyBr = (value) => {
+        const numberValue = typeof value === "number" ? value : parseCurrencyToNumber(value);
+        if (Number.isNaN(numberValue)) return "";
+        try {
+          return numberValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+        } catch (error) {
+          console.error("Falha ao formatar moeda", error);
+          return numberValue.toString();
+        }
+      };
+
       const prefillValues = {
         nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
         cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
@@ -2612,6 +2632,16 @@
       const submitButton = document.getElementById("submitButton");
       let validation;
       let submitAttempted = false;
+
+      const applyCurrencySubmissionValues = (formData) => {
+        if (!formData || typeof formData.set !== "function") return;
+        const rendaInput = document.getElementById("rendaFamiliar");
+        const rendaValue = rendaInput ? rendaInput.value || rendaInput.dataset.rawValue || "" : "";
+        const numeric = parseCurrencyToNumber(rendaValue);
+        if (!Number.isNaN(numeric)) {
+          formData.set("rendaFamiliar", numeric.toString());
+        }
+      };
 
       const isElementVisible = (element) => {
         if (!element) return false;
@@ -3286,6 +3316,14 @@
           element.value = value;
         };
 
+        const setCurrencyValue = (id, value) => {
+          const element = document.getElementById(id);
+          if (!element) return;
+          const formatted = formatCurrencyBr(value);
+          element.value = formatted;
+          element.dataset.rawValue = value == null ? "" : value;
+        };
+
         const setMaskedValue = (maskInstance, fallbackId, value) => {
           if (value == null) return;
           if (typeof value === "string" && value.trim() === "") return;
@@ -3369,7 +3407,7 @@
         setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
-        setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
+        setCurrencyValue("rendaFamiliar", prefillValues.rendaFamiliar);
         setSelectValue("racaCor", prefillValues.racaCor);
         setTextValue("racaCorValor", prefillValues.racaCor);
         setSelectValue("pcd", prefillValues.pcd, true);
@@ -3396,8 +3434,8 @@
         const programaNome = (prefillValues.programasSociaisNome || "").toString().trim();
         const programasFormatado = programasValue
           ? programasValue === "sim"
-            ? `Sim${programaNome ? `, ${programaNome}` : ""}`
-            : "Não"
+            ? `SIM${programaNome ? `, ${programaNome}` : ""}`
+            : "NÃO"
           : "";
         setTextValue("programasSociais", programasFormatado);
         preencherCidadePorCepSeNecessario();
@@ -3470,7 +3508,10 @@
           .addField("#rendaFamiliar", [
             { rule: "required", errorMessage: "Informe a renda familiar" },
             {
-              validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+              validator: (value) => {
+                const numeric = parseCurrencyToNumber(value);
+                return value !== "" && !Number.isNaN(numeric) && numeric >= 0;
+              },
               errorMessage: "Valor inválido",
             },
           ])
@@ -3658,6 +3699,7 @@
         }
 
         const formData = new FormData(form);
+        applyCurrencySubmissionValues(formData);
         const data = {};
         formData.forEach((value, key) => {
           if (value instanceof File) {
