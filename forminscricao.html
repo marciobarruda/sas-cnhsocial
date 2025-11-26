@@ -1352,51 +1352,73 @@
                     name="acolhimento"
                   {{ ($json.data.acolhimento || "").toLowerCase() === "sim" ? "checked" : "" }}
                 />
-                <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
-                <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
+                  <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
+                  <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
                 </div>
               </div>
-              <div class="col-12 col-md-6 d-none" id="autorizacaoAcolhimentoWrapper">
-                <div class="form-check pt-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="autorizacaoAcolhimento"
-                    name="autorizacaoAcolhimento"
-                  />
-                  <label class="form-check-label" for="autorizacaoAcolhimento">Autorizo consulta à base da SAS para confirmação do acolhimento</label>
+              <div class="col-12">
+                <div class="row g-4 align-items-end">
+                  <div class="col-12 col-lg-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="sim"
+                        id="dependenteTratamento"
+                        name="dependenteTratamento"
+                        {{ ($json.data.dependenteTratamento || "").toLowerCase() === "sim" ? "checked" : "" }}
+                      />
+                      <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
+                    </div>
+                  </div>
+                  <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
+                    <div class="file-input-wrapper">
+                      <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
+                      <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                      <div class="file-name" id="docDependenteName"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="col-12 col-md-6">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="dependenteTratamento"
-                    name="dependenteTratamento"
-                    {{ ($json.data.dependenteTratamento || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
+              <div class="col-12">
+                <div class="row g-4">
+                  <div class="col-12 col-md-6">
+                    <label for="composicaoFamiliar" class="form-label">Composição familiar (nº de pessoas no domicílio)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="composicaoFamiliar"
+                      name="composicaoFamiliar"
+                      value="{{ ($json.data || {}).quantidadePessoaDomicilio || "" }}"
+                      readonly
+                      aria-readonly="true"
+                      inputmode="numeric"
+                      min="0"
+                      step="1"
+                      aria-describedby="composicaoFamiliarHelp"
+                    />
+                    <small id="composicaoFamiliarHelp" class="form-text">Pontuação do edital: <span id="pontuacaoComposicaoValor">—</span></small>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="rendaFamiliar"
+                      name="rendaFamiliar"
+                      min="0"
+                      step="0.01"
+                      placeholder="Valor carregado automaticamente"
+                      value="{{ $json.data.rendaPerCapita || "" }}"
+                      aria-describedby="rendaHelp"
+                      data-required-field="true"
+                      readonly
+                      aria-readonly="true"
+                      required
+                    />
+                    <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
+                  </div>
                 </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="composicaoFamiliar" class="form-label">Composição familiar (nº de pessoas no domicílio)</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="composicaoFamiliar"
-                  name="composicaoFamiliar"
-                  value="{{ ($json.data || {}).quantidadePessoaDomicilio || "" }}"
-                  readonly
-                  aria-readonly="true"
-                  inputmode="numeric"
-                  min="0"
-                  step="1"
-                  aria-describedby="composicaoFamiliarHelp"
-                />
-                <small id="composicaoFamiliarHelp" class="form-text">Pontuação do edital: <span id="pontuacaoComposicaoValor">—</span></small>
               </div>
               <div class="col-12 col-md-6">
                 <label for="programasSociais" class="form-label">Participação em programas sociais (BPC ou Bolsa Família)</label>
@@ -1411,40 +1433,6 @@
                   aria-describedby="programasSociaisHelp"
                 />
                 <small id="programasSociaisHelp" class="form-text">Consulta automática via CadÚnico (BPC/Bolsa Família).</small>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="rendaFamiliar"
-                  name="rendaFamiliar"
-                  min="0"
-                  step="0.01"
-                  placeholder="Valor carregado automaticamente"
-                  value="{{ $json.data.rendaPerCapita || "" }}"
-                  aria-describedby="rendaHelp"
-                  data-required-field="true"
-                  readonly
-                  aria-readonly="true"
-                  required
-                />
-                <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="rendaPerCapitaAtualizada" class="form-label">Atualize a renda per capita (R$)</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="rendaPerCapitaAtualizada"
-                  name="rendaPerCapitaAtualizada"
-                  min="0"
-                  step="0.01"
-                  placeholder="Informe apenas se houver alteração"
-                  value="{{ $json.data.rendaPerCapitaAtualizada || "" }}"
-                  aria-describedby="rendaPerCapitaHelp"
-                />
-                <small id="rendaPerCapitaHelp" class="form-text">Utilize este campo apenas se a renda per capita da família estiver diferente da registrada no CadÚnico.</small>
               </div>
             </div>
           </div>
@@ -1558,13 +1546,6 @@
                 </select>
                 <small class="form-text">A identidade das candidatas será preservada conforme edital. Ao marcar esse campo, autorizo confirmação na base de dados da Secretaria da Mulher e da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
               </div>
-              <div class="col-12 d-none" id="autorizacaoViolenciaWrapper">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="autorizacaoViolencia" name="autorizacaoViolencia" />
-                  <label class="form-check-label" for="autorizacaoViolencia">Autorizo consulta sigilosa nos bancos da Secretaria da Mulher e do CREAS</label>
-                </div>
-                <small class="form-text">Mulheres em situação de violência não devem anexar documentos.</small>
-              </div>
               <div class="col-12">
                 <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
                 <textarea
@@ -1611,13 +1592,6 @@
                   />
                   <div id="docResponsavelInfo" class="form-text">Documento emitido por unidade de saúde ou serviço socioassistencial da PCR.</div>
                   <div class="file-name" id="docResponsavelName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="file-name" id="docDependenteName"></div>
                 </div>
               </div>
               <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
@@ -2134,7 +2108,6 @@
         acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
         dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
         rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaPerCapita) || "") }},
-        rendaPerCapitaAtualizada: {{ JSON.stringify((($json.data || {}).rendaPerCapitaAtualizada) != null ? ($json.data || {}).rendaPerCapitaAtualizada : "") }},
         racaCor: {{ JSON.stringify((($json.data || {}).racaCor || "").toLowerCase()) }},
         pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
         maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
@@ -2458,20 +2431,16 @@
       });
 
       const vitimaViolencia = document.getElementById("vitimaViolencia");
-      vitimaViolencia.addEventListener("change", () => {
-        toggleFileSection(vitimaViolencia.value === "sim", "autorizacaoViolenciaWrapper");
-      });
 
       const acolhimento = document.getElementById("acolhimento");
-      acolhimento.addEventListener("change", () => {
-        toggleFileSection(acolhimento.checked, "autorizacaoAcolhimentoWrapper");
-      });
 
       const dependenteTratamento = document.getElementById("dependenteTratamento");
       dependenteTratamento.addEventListener("change", () => {
         toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
         toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
       });
+      toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
+      toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
 
       const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
       if (situacaoTrabalhoSelect) {
@@ -2933,7 +2902,6 @@
         "#bairro": "Bairro",
         "#cidade": "Cidade",
         "#rendaFamiliar": "Renda per capita mensal",
-        "#rendaPerCapitaAtualizada": "Renda per capita atualizada",
         "#pcd": "Pessoa com deficiência (PCD)",
         "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
         "#vitimaViolencia": "Vínculo com serviços especializados de violência doméstica",
@@ -2953,8 +2921,6 @@
         "#docDependente": "Declaração de tratamento terapêutico contínuo",
         "#docDependenteVinculo": "Comprovação de vínculo do dependente",
         "#docTrabalhoAplicativo": "Comprovante de trabalho por aplicativo",
-        "#autorizacaoViolencia": "Autorização para consulta sigilosa",
-        "#autorizacaoAcolhimento": "Autorização para consulta do acolhimento",
         "#numeroCnh": "Número da CNH",
         "#validadeCnh": "Validade da CNH",
         "#cnhArquivo": "Arquivo da CNH",
@@ -3390,7 +3356,6 @@
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
         setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
-        setTextValue("rendaPerCapitaAtualizada", prefillValues.rendaPerCapitaAtualizada);
         setSelectValue("racaCor", prefillValues.racaCor);
         setTextValue("racaCorValor", prefillValues.racaCor);
         setSelectValue("pcd", prefillValues.pcd, true);
@@ -3488,12 +3453,6 @@
               errorMessage: "Valor inválido",
             },
           ])
-          .addField("#rendaPerCapitaAtualizada", [
-            {
-              validator: (value) => value === "" || (!Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0),
-              errorMessage: "Informe um valor válido",
-            },
-          ])
           .addField("#pcd", [{ rule: "required" }])
           .addField("#maeAtipica", [{ rule: "required" }])
           .addField("#vitimaViolencia", [{ rule: "required" }])
@@ -3586,12 +3545,6 @@
             }
           });
         }
-        if (acolhimento.checked) {
-          const autorizacao = document.getElementById("autorizacaoAcolhimento");
-          if (!autorizacao?.checked) {
-            registerError("#autorizacaoAcolhimento", "Autorize a consulta na base da SAS", autorizacao);
-          }
-        }
         if (dependenteTratamento.checked) {
           [
             ["#docDependente", "Anexe a declaração de tratamento", document.getElementById("docDependente")],
@@ -3613,12 +3566,6 @@
           const docAplicativo = document.getElementById("docTrabalhoAplicativo");
           if (!docAplicativo?.files.length) {
             registerError("#docTrabalhoAplicativo", "Anexe o comprovante da atividade", docAplicativo);
-          }
-        }
-        if (vitimaViolencia.value === "sim") {
-          const consentimentoViolencia = document.getElementById("autorizacaoViolencia");
-          if (!consentimentoViolencia?.checked) {
-            registerError("#autorizacaoViolencia", "Autorize a consulta sigilosa", consentimentoViolencia);
           }
         }
         const emailValue = (emailInput?.value || "").trim();
@@ -3744,8 +3691,6 @@
           "cnhNumeroWrapper",
           "cnhValidadeWrapper",
           "cnhArquivoWrapper",
-          "autorizacaoViolenciaWrapper",
-          "autorizacaoAcolhimentoWrapper",
         ].forEach((id) => {
           toggleFileSection(false, id);
         });
