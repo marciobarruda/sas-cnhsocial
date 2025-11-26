@@ -783,6 +783,9 @@
         border-radius: 0.75rem;
         padding: 1rem;
         background: rgba(0, 83, 164, 0.03);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
       }
 
       .file-input-wrapper label {
@@ -793,6 +796,10 @@
         font-size: 0.85rem;
         color: var(--text-muted);
         margin-top: 0.25rem;
+      }
+
+      .readonly-control {
+        pointer-events: none;
       }
 
       .toast-container {
@@ -1332,7 +1339,9 @@
               <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
                 <div class="form-check pt-4">
                   <input
-                    class="form-check-input"
+                    class="form-check-input readonly-control"
+                    aria-readonly="true"
+                    tabindex="-1"
                     type="checkbox"
                     value="sim"
                     id="mulherChefe"
@@ -1357,8 +1366,8 @@
                 </div>
               </div>
               <div class="col-12">
-                <div class="row g-4 align-items-end">
-                  <div class="col-12 col-md-6 col-lg-4">
+                <div class="row g-3">
+                  <div class="col-12">
                     <div class="form-check">
                       <input
                         class="form-check-input"
@@ -1371,18 +1380,22 @@
                       <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
                     </div>
                   </div>
-                  <div class="col-12 col-md-6 col-lg-4 d-none" id="docDependenteWrapper">
-                    <div class="file-input-wrapper">
-                      <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
-                      <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                      <div class="file-name" id="docDependenteName"></div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-lg-4 d-none" id="docDependenteVinculoWrapper">
-                    <div class="file-input-wrapper">
-                      <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
-                      <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                      <div class="file-name" id="docDependenteVinculoName"></div>
+                  <div class="col-12">
+                    <div class="row g-3 align-items-stretch">
+                      <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
+                        <div class="file-input-wrapper h-100">
+                          <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
+                          <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                          <div class="file-name" id="docDependenteName"></div>
+                        </div>
+                      </div>
+                      <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
+                        <div class="file-input-wrapper h-100">
+                          <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
+                          <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                          <div class="file-name" id="docDependenteVinculoName"></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1434,7 +1447,7 @@
                   class="form-control"
                   id="programasSociais"
                   name="programasSociais"
-                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? "Sim" : "Não" }}"
+                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? `Sim${((($json.data || {}).programaSocialNome) || (($json.data || {}).programaBolsaFamiliaNome)) ? `, ${($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome}` : ""}` : "Não" }}"
                   readonly
                   aria-readonly="true"
                   aria-describedby="programasSociaisHelp"
@@ -1508,11 +1521,13 @@
               <div class="col-12 col-md-6">
                 <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
                 <select
-                  class="form-select"
+                  class="form-select readonly-control"
                   id="pcd"
                   name="pcd"
                   aria-describedby="pcdHelp"
                   data-required-field="true"
+                  aria-readonly="true"
+                  tabindex="-1"
                   required
                 >
                   <option value="">Selecione</option>
@@ -2117,6 +2132,7 @@
         semTrabalhoFormal: {{ JSON.stringify((($json.data || {}).teveEmpregoCarteiraAssinada) || "") }},
         composicaoFamiliar: {{ JSON.stringify((($json.data || {}).quantidadePessoaDomicilio) || "") }},
         programasSociais: {{ JSON.stringify((($json.data || {}).programaBolsaFamilia) || "") }},
+        programasSociaisNome: {{ JSON.stringify((($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome) || "") }},
       };
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
@@ -3375,8 +3391,15 @@
           const pontos = Number.parseInt(prefillValues.composicaoFamiliar, 10);
           pontuacaoSpan.textContent = Number.isFinite(pontos) ? `${pontos} ponto${pontos === 1 ? "" : "s"}` : "—";
         }
-        const programasValue = (prefillValues.programasSociais || "").toString().toLowerCase();
-        setTextValue("programasSociais", programasValue ? (programasValue === "sim" ? "Sim" : "Não") : "");
+        const programasValueRaw = (prefillValues.programasSociais || "").toString();
+        const programasValue = programasValueRaw.toLowerCase();
+        const programaNome = (prefillValues.programasSociaisNome || "").toString().trim();
+        const programasFormatado = programasValue
+          ? programasValue === "sim"
+            ? `Sim${programaNome ? `, ${programaNome}` : ""}`
+            : "Não"
+          : "";
+        setTextValue("programasSociais", programasFormatado);
         preencherCidadePorCepSeNecessario();
 
         if (validation) {
