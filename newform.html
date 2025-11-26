@@ -1109,6 +1109,7 @@
                     class="form-control"
                     id="email"
                     name="email"
+                    autocomplete="new-email"
                     placeholder="nome@exemplo.com"
                     value="{{ $json.data.email || "" }}"
                     data-required-field="true"
@@ -1122,6 +1123,7 @@
                     class="form-control"
                     id="emailConfirm"
                     name="emailConfirm"
+                    autocomplete="new-email-confirm"
                     placeholder="Repita seu e-mail"
                     value="{{ $json.data.email || "" }}"
                     aria-describedby="emailConfirmHelp"
@@ -1354,18 +1356,6 @@
                 <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
                 </div>
               </div>
-              <div class="col-12 col-md-6 d-none" id="autorizacaoAcolhimentoWrapper">
-                <div class="form-check pt-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="autorizacaoAcolhimento"
-                    name="autorizacaoAcolhimento"
-                  />
-                  <label class="form-check-label" for="autorizacaoAcolhimento">Autorizo consulta à base da SAS para confirmação do acolhimento</label>
-                </div>
-              </div>
               <div class="col-12 col-md-6">
                 <div class="form-check">
                   <input
@@ -1403,7 +1393,7 @@
                   class="form-control"
                   id="programasSociais"
                   name="programasSociais"
-                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? "Sim" : "Não" }}"
+                  value="{{ ($json.data || {}).programaBolsaFamilia || "" }}"
                   readonly
                   aria-readonly="true"
                   aria-describedby="programasSociaisHelp"
@@ -1413,16 +1403,16 @@
               <div class="col-12 col-md-6">
                 <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   id="rendaFamiliar"
                   name="rendaFamiliar"
-                  min="0"
-                  step="0.01"
+                  inputmode="decimal"
                   placeholder="Valor carregado automaticamente"
-                  value="{{ $json.data.rendaPerCapita || "" }}"
+                  value="{{ ($json.data || {}).rendaPerCapita || "" }}"
                   aria-describedby="rendaHelp"
                   data-required-field="true"
+                  data-preserve-case="true"
                   readonly
                   aria-readonly="true"
                   required
@@ -1556,13 +1546,6 @@
                 </select>
                 <small class="form-text">A identidade das candidatas será preservada conforme edital. Ao marcar esse campo, autorizo confirmação na base de dados da Secretaria da Mulher e da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
               </div>
-              <div class="col-12 d-none" id="autorizacaoViolenciaWrapper">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="autorizacaoViolencia" name="autorizacaoViolencia" />
-                  <label class="form-check-label" for="autorizacaoViolencia">Autorizo consulta sigilosa nos bancos da Secretaria da Mulher e do CREAS</label>
-                </div>
-                <small class="form-text">Mulheres em situação de violência não devem anexar documentos.</small>
-              </div>
               <div class="col-12">
                 <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
                 <textarea
@@ -1614,14 +1597,21 @@
               <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
                 <div class="file-input-wrapper">
                   <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="docDependente"
+                    name="docDependente"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    data-require-on-toggle="true"
+                  />
                   <div class="file-name" id="docDependenteName"></div>
                 </div>
               </div>
               <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
                 <div class="file-input-wrapper">
                   <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                  <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png" />
                   <div class="file-name" id="docDependenteVinculoName"></div>
                 </div>
               </div>
@@ -2146,6 +2136,8 @@
       const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
       const cepInput = document.getElementById("cep");
       const numeroInput = document.getElementById("numero");
+      const rendaFamiliarInput = document.getElementById("rendaFamiliar");
+      const rendaPerCapitaAtualizadaInput = document.getElementById("rendaPerCapitaAtualizada");
       const logradouroInput = document.getElementById("logradouro");
       const complementoInput = document.getElementById("complemento");
       const bairroInput = document.getElementById("bairro");
@@ -2157,6 +2149,28 @@
       const tempoAtualizacaoInput = document.getElementById("tempoAtualizacaoCadunico");
       const cepStatus = document.getElementById("cepStatus");
       let enderecoEdicaoAtiva = false;
+      const MAX_FILE_SIZE = 5 * 1024 * 1024;
+      const allowedFileExtensions = ["pdf", "jpg", "jpeg", "png"];
+
+      const sanitizeNumeroEndereco = () => {
+        if (!numeroInput) return;
+        const raw = (numeroInput.value || "").trim();
+        if (!raw || raw.toUpperCase() === "S/N") return;
+        const semZeros = raw.replace(/^0+/, "");
+        numeroInput.value = semZeros;
+      };
+
+      const getFileExtension = (filename = "") => {
+        const match = /\.([^.]+)$/.exec(filename);
+        return match ? match[1].toLowerCase() : "";
+      };
+
+      const isValidAttachment = (file) => {
+        if (!file) return false;
+        const extension = getFileExtension(file.name || "");
+        if (!allowedFileExtensions.includes(extension)) return false;
+        return file.size <= MAX_FILE_SIZE;
+      };
 
       const escapeSelector = (value) => {
         const string = value == null ? "" : String(value);
@@ -2214,6 +2228,92 @@
         return null;
       };
 
+      const parseCurrencyToNumber = (value) => {
+        if (value == null) return Number.NaN;
+        const cleaned = value
+          .toString()
+          .replace(/\s/g, "")
+          .replace(/[R$r$]/gi, "")
+          .replace(/\.(?=\d{3}(?:,|$))/g, "")
+          .replace(/,/g, ".")
+          .replace(/[^0-9+\-\.]/g, "");
+        return Number.parseFloat(cleaned);
+      };
+
+      const formatCurrencyBRL = (value) => {
+        const numericValue = parseCurrencyToNumber(value);
+        if (!Number.isFinite(numericValue)) return "";
+        try {
+          return new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(numericValue);
+        } catch (error) {
+          console.warn("Não foi possível formatar moeda", error);
+          return numericValue.toFixed(2);
+        }
+      };
+
+      const isValidCurrencyValue = (value, { allowEmpty = false } = {}) => {
+        if (value == null || value.toString().trim() === "") return allowEmpty;
+        const parsed = parseCurrencyToNumber(value);
+        return Number.isFinite(parsed) && parsed >= 0;
+      };
+
+      const setCurrencyValue = (fieldId, value) => {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        const formatted = formatCurrencyBRL(value);
+        field.value = formatted || "";
+        field.dataset.rawValue = value == null ? "" : value;
+      };
+
+      const formatCurrencyInputValue = (input) => {
+        if (!input) return;
+        const digits = (input.value || "").replace(/\D/g, "");
+        if (!digits) {
+          input.value = "";
+          input.dataset.rawValue = "";
+          return;
+        }
+        const numericValue = Number.parseInt(digits, 10) / 100;
+        const formatted = formatCurrencyBRL(numericValue);
+        input.value = formatted;
+        input.dataset.rawValue = Number.isFinite(numericValue) ? numericValue.toFixed(2) : "";
+      };
+
+      const attachCurrencyMask = (input) => {
+        if (!input) return;
+        const handler = () => formatCurrencyInputValue(input);
+        ["input", "blur", "change"].forEach((eventName) => input.addEventListener(eventName, handler));
+        formatCurrencyInputValue(input);
+      };
+
+      const formatProgramasSociais = (value) => {
+        const raw = (value || "").toString().trim();
+        if (!raw) return "NÃO";
+        const lower = raw.toLowerCase();
+        if (["nao", "não", "nenhum", "0", "false", "falso"].includes(lower)) {
+          return "NÃO";
+        }
+        const base = "SIM";
+        const hintedProgram = raw.replace(/^sim[,\s]*/i, "").trim();
+        let programa = "";
+        if (lower.includes("bolsa")) {
+          programa = "Bolsa Família";
+        } else if (lower.includes("bpc")) {
+          programa = "BPC";
+        } else if (hintedProgram) {
+          programa = hintedProgram.replace(/^,\s*/, "").replace(/\s+/g, " ").trim();
+        }
+        if (programa) {
+          return `${base}, ${programa}`;
+        }
+        return base;
+      };
+
       const maskCpf = createMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
       const maskCep = createMask(cepInput, { mask: "00000-000" });
       const maskTelefone = createMask(document.getElementById("telefone"), {
@@ -2247,6 +2347,9 @@
           }
         });
       }
+
+      attachCurrencyMask(rendaFamiliarInput);
+      attachCurrencyMask(rendaPerCapitaAtualizadaInput);
 
       const generoSelect = document.getElementById("genero");
       const generoHidden = document.getElementById("generoValor");
@@ -2398,8 +2501,19 @@
       const toggleFileSection = (condition, wrapperId) => {
         const wrapper = document.getElementById(wrapperId);
         if (!wrapper) return;
+        const updateRequiredState = (input, isRequired) => {
+          if (input?.dataset?.requireOnToggle === "true") {
+            if (isRequired) {
+              input.setAttribute("required", "required");
+            } else {
+              input.removeAttribute("required");
+            }
+          }
+        };
         if (condition) {
           wrapper.classList.remove("d-none");
+          const inputs = wrapper.querySelectorAll("input, select, textarea");
+          inputs.forEach((input) => updateRequiredState(input, true));
         } else {
           wrapper.classList.add("d-none");
           const inputs = wrapper.querySelectorAll("input, select, textarea");
@@ -2414,6 +2528,7 @@
               input.value = "";
             }
             input.classList.remove("is-invalid");
+            updateRequiredState(input, false);
           });
         }
         updateSubmitState();
@@ -2455,21 +2570,13 @@
         toggleFileSection(ativo, "docResponsavelWrapper");
       });
 
-      const vitimaViolencia = document.getElementById("vitimaViolencia");
-      vitimaViolencia.addEventListener("change", () => {
-        toggleFileSection(vitimaViolencia.value === "sim", "autorizacaoViolenciaWrapper");
-      });
-
-      const acolhimento = document.getElementById("acolhimento");
-      acolhimento.addEventListener("change", () => {
-        toggleFileSection(acolhimento.checked, "autorizacaoAcolhimentoWrapper");
-      });
-
       const dependenteTratamento = document.getElementById("dependenteTratamento");
       dependenteTratamento.addEventListener("change", () => {
         toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
         toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
       });
+      toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
+      toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
 
       const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
       if (situacaoTrabalhoSelect) {
@@ -2495,6 +2602,11 @@
         }
       });
 
+      if (numeroInput) {
+        numeroInput.addEventListener("blur", sanitizeNumeroEndereco);
+        numeroInput.addEventListener("change", sanitizeNumeroEndereco);
+      }
+
       const categoriaSelect = document.getElementById("categoria");
       categoriaSelect.addEventListener("change", () => {
         const isAdicao = ["adicao_a", "adicao_b"].includes(categoriaSelect.value);
@@ -2504,7 +2616,7 @@
       });
 
       const aplicarMaiusculas = () => {
-        const campos = document.querySelectorAll('input[type="text"], textarea');
+        const campos = document.querySelectorAll('input[type="text"]:not([data-preserve-case="true"]), textarea');
         campos.forEach((campo) => {
           const atualizarValor = () => {
             const inicio = campo.selectionStart;
@@ -2556,21 +2668,36 @@
       const emailInput = document.getElementById("email");
       const emailConfirmInput = document.getElementById("emailConfirm");
 
+      const applyEmailConfirmationFeedback = (isMatch) => {
+        if (!emailInput || !emailConfirmInput) return;
+        [emailInput, emailConfirmInput].forEach((field) => {
+          field.classList.remove("is-valid", "is-invalid");
+          field.removeAttribute("aria-invalid");
+        });
+        clearFieldError(emailConfirmInput);
+        if (isMatch === true) {
+          emailInput.classList.add("is-valid");
+          emailConfirmInput.classList.add("is-valid");
+          return;
+        }
+        if (isMatch === false) {
+          showFieldError(emailConfirmInput, "Os e-mails informados não são iguais.");
+          emailConfirmInput.classList.add("is-invalid");
+          emailConfirmInput.setAttribute("aria-invalid", "true");
+        }
+      };
+
       const clearEmailConfirmationField = () => {
         if (!emailConfirmInput) return false;
         const emailValue = (emailInput?.value || "").trim();
         const confirmValue = (emailConfirmInput.value || "").trim();
         if (!emailValue || !confirmValue) {
+          applyEmailConfirmationFeedback(null);
           return false;
         }
-        if (emailValue.toLowerCase() === confirmValue.toLowerCase()) {
-          return false;
-        }
-        emailConfirmInput.value = "";
-        emailConfirmInput.classList.add("is-invalid");
-        emailConfirmInput.setAttribute("aria-invalid", "true");
-        emailConfirmInput.dispatchEvent(new Event("input", { bubbles: true }));
-        return true;
+        const isMatch = emailValue.toLowerCase() === confirmValue.toLowerCase();
+        applyEmailConfirmationFeedback(isMatch);
+        return !isMatch;
       };
 
       const enforceEmailConfirmationConsistency = () => {
@@ -2578,9 +2705,15 @@
         const resetIfMismatch = () => {
           clearEmailConfirmationField();
         };
+        emailConfirmInput.addEventListener("input", resetIfMismatch);
         emailConfirmInput.addEventListener("blur", resetIfMismatch);
         emailConfirmInput.addEventListener("change", resetIfMismatch);
         emailInput.addEventListener("change", () => {
+          if ((emailConfirmInput.value || "").trim()) {
+            resetIfMismatch();
+          }
+        });
+        emailInput.addEventListener("input", () => {
           if ((emailConfirmInput.value || "").trim()) {
             resetIfMismatch();
           }
@@ -2930,8 +3063,6 @@
         "#docDependente": "Declaração de tratamento terapêutico contínuo",
         "#docDependenteVinculo": "Comprovação de vínculo do dependente",
         "#docTrabalhoAplicativo": "Comprovante de trabalho por aplicativo",
-        "#autorizacaoViolencia": "Autorização para consulta sigilosa",
-        "#autorizacaoAcolhimento": "Autorização para consulta do acolhimento",
         "#numeroCnh": "Número da CNH",
         "#validadeCnh": "Validade da CNH",
         "#cnhArquivo": "Arquivo da CNH",
@@ -3352,6 +3483,7 @@
         }
         setTextValue("logradouro", prefillValues.logradouro);
         setTextValue("numero", prefillValues.numero);
+        sanitizeNumeroEndereco();
         setTextValue("complemento", prefillValues.complemento);
         setTextValue("bairro", prefillValues.bairro);
         setTextValue("cidade", prefillValues.cidade);
@@ -3366,7 +3498,7 @@
         setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
-        setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
+        setCurrencyValue("rendaFamiliar", prefillValues.rendaFamiliar);
         setTextValue("rendaPerCapitaAtualizada", prefillValues.rendaPerCapitaAtualizada);
         setSelectValue("racaCor", prefillValues.racaCor);
         setTextValue("racaCorValor", prefillValues.racaCor);
@@ -3389,8 +3521,8 @@
           const pontos = Number.parseInt(prefillValues.composicaoFamiliar, 10);
           pontuacaoSpan.textContent = Number.isFinite(pontos) ? `${pontos} ponto${pontos === 1 ? "" : "s"}` : "—";
         }
-        const programasValue = (prefillValues.programasSociais || "").toString().toLowerCase();
-        setTextValue("programasSociais", programasValue ? (programasValue === "sim" ? "Sim" : "Não") : "");
+        const programasValue = (prefillValues.programasSociais || "").toString();
+        setTextValue("programasSociais", formatProgramasSociais(programasValue));
         preencherCidadePorCepSeNecessario();
 
         if (validation) {
@@ -3417,7 +3549,7 @@
             { rule: "required", errorMessage: "Repita o e-mail informado" },
             {
               validator: (value) => value.trim() === (document.getElementById("email").value || "").trim(),
-              errorMessage: "Os e-mails informados devem coincidir",
+              errorMessage: "Os e-mails informados não são iguais.",
             },
           ])
           .addField("#preferenciaContato", [{ rule: "required" }])
@@ -3461,13 +3593,13 @@
           .addField("#rendaFamiliar", [
             { rule: "required", errorMessage: "Informe a renda familiar" },
             {
-              validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+              validator: (value) => isValidCurrencyValue(value),
               errorMessage: "Valor inválido",
             },
           ])
           .addField("#rendaPerCapitaAtualizada", [
             {
-              validator: (value) => value === "" || (!Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0),
+              validator: (value) => isValidCurrencyValue(value, { allowEmpty: true }),
               errorMessage: "Informe um valor válido",
             },
           ])
@@ -3563,12 +3695,6 @@
             }
           });
         }
-        if (acolhimento.checked) {
-          const autorizacao = document.getElementById("autorizacaoAcolhimento");
-          if (!autorizacao?.checked) {
-            registerError("#autorizacaoAcolhimento", "Autorize a consulta na base da SAS", autorizacao);
-          }
-        }
         if (dependenteTratamento.checked) {
           [
             ["#docDependente", "Anexe a declaração de tratamento", document.getElementById("docDependente")],
@@ -3576,6 +3702,11 @@
           ].forEach(([selector, message, element]) => {
             if (element && !element.files.length) {
               registerError(selector, message, element);
+            } else if (element && element.files.length) {
+              const file = element.files[0];
+              if (!isValidAttachment(file)) {
+                registerError(selector, "Formato ou tamanho inválido (máx. 5 MB)", element);
+              }
             }
           });
         }
@@ -3592,12 +3723,6 @@
             registerError("#docTrabalhoAplicativo", "Anexe o comprovante da atividade", docAplicativo);
           }
         }
-        if (vitimaViolencia.value === "sim") {
-          const consentimentoViolencia = document.getElementById("autorizacaoViolencia");
-          if (!consentimentoViolencia?.checked) {
-            registerError("#autorizacaoViolencia", "Autorize a consulta sigilosa", consentimentoViolencia);
-          }
-        }
         const emailValue = (emailInput?.value || "").trim();
         const emailConfirmValue = (emailConfirmInput?.value || "").trim();
         if (
@@ -3608,7 +3733,7 @@
           clearEmailConfirmationField();
           registerError(
             "#emailConfirm",
-            "Os e-mails informados devem coincidir",
+            "Os e-mails informados não são iguais.",
             emailConfirmInput
           );
         }
@@ -3666,6 +3791,12 @@
           return false;
         }
 
+        formatCurrencyInputValue(rendaFamiliarInput);
+        formatCurrencyInputValue(rendaPerCapitaAtualizadaInput);
+        const programasSociaisInput = document.getElementById("programasSociais");
+        if (programasSociaisInput) {
+          programasSociaisInput.value = formatProgramasSociais(programasSociaisInput.value);
+        }
         const formData = new FormData(form);
         const data = {};
         formData.forEach((value, key) => {
@@ -3721,8 +3852,6 @@
           "cnhNumeroWrapper",
           "cnhValidadeWrapper",
           "cnhArquivoWrapper",
-          "autorizacaoViolenciaWrapper",
-          "autorizacaoAcolhimentoWrapper",
         ].forEach((id) => {
           toggleFileSection(false, id);
         });
