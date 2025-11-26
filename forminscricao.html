@@ -1352,11 +1352,11 @@
                     name="acolhimento"
                   {{ ($json.data.acolhimento || "").toLowerCase() === "sim" ? "checked" : "" }}
                 />
-                <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
-                <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
+                  <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
+                  <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
                 </div>
               </div>
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-md-6 col-lg-6">
                 <div class="form-check">
                   <input
                     class="form-check-input"
@@ -1367,6 +1367,13 @@
                     {{ ($json.data.dependenteTratamento || "").toLowerCase() === "sim" ? "checked" : "" }}
                   />
                   <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
+                <div class="file-input-wrapper">
+                  <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
+                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                  <div class="file-name" id="docDependenteName"></div>
                 </div>
               </div>
               <div class="col-12 col-md-6">
@@ -1385,20 +1392,6 @@
                   aria-describedby="composicaoFamiliarHelp"
                 />
                 <small id="composicaoFamiliarHelp" class="form-text">Pontuação do edital: <span id="pontuacaoComposicaoValor">—</span></small>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="programasSociais" class="form-label">Participação em programas sociais (BPC ou Bolsa Família)</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="programasSociais"
-                  name="programasSociais"
-                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? "Sim" : "Não" }}"
-                  readonly
-                  aria-readonly="true"
-                  aria-describedby="programasSociaisHelp"
-                />
-                <small id="programasSociaisHelp" class="form-text">Consulta automática via CadÚnico (BPC/Bolsa Família).</small>
               </div>
               <div class="col-12 col-md-6">
                 <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
@@ -1420,19 +1413,18 @@
                 <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
               </div>
               <div class="col-12 col-md-6">
-                <label for="rendaPerCapitaAtualizada" class="form-label">Atualize a renda per capita (R$)</label>
+                <label for="programasSociais" class="form-label">Participação em programas sociais (BPC ou Bolsa Família)</label>
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
-                  id="rendaPerCapitaAtualizada"
-                  name="rendaPerCapitaAtualizada"
-                  min="0"
-                  step="0.01"
-                  placeholder="Informe apenas se houver alteração"
-                  value="{{ $json.data.rendaPerCapitaAtualizada || "" }}"
-                  aria-describedby="rendaPerCapitaHelp"
+                  id="programasSociais"
+                  name="programasSociais"
+                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? "Sim" : "Não" }}"
+                  readonly
+                  aria-readonly="true"
+                  aria-describedby="programasSociaisHelp"
                 />
-                <small id="rendaPerCapitaHelp" class="form-text">Utilize este campo apenas se a renda per capita da família estiver diferente da registrada no CadÚnico.</small>
+                <small id="programasSociaisHelp" class="form-text">Consulta automática via CadÚnico (BPC/Bolsa Família).</small>
               </div>
             </div>
           </div>
@@ -1592,13 +1584,6 @@
                   />
                   <div id="docResponsavelInfo" class="form-text">Documento emitido por unidade de saúde ou serviço socioassistencial da PCR.</div>
                   <div class="file-name" id="docResponsavelName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="file-name" id="docDependenteName"></div>
                 </div>
               </div>
               <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
@@ -2115,7 +2100,6 @@
         acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
         dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
         rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaPerCapita) || "") }},
-        rendaPerCapitaAtualizada: {{ JSON.stringify((($json.data || {}).rendaPerCapitaAtualizada) != null ? ($json.data || {}).rendaPerCapitaAtualizada : "") }},
         racaCor: {{ JSON.stringify((($json.data || {}).racaCor || "").toLowerCase()) }},
         pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
         maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
@@ -2447,6 +2431,8 @@
         toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
         toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
       });
+      toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
+      toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
 
       const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
       if (situacaoTrabalhoSelect) {
@@ -2908,7 +2894,6 @@
         "#bairro": "Bairro",
         "#cidade": "Cidade",
         "#rendaFamiliar": "Renda per capita mensal",
-        "#rendaPerCapitaAtualizada": "Renda per capita atualizada",
         "#pcd": "Pessoa com deficiência (PCD)",
         "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
         "#vitimaViolencia": "Vínculo com serviços especializados de violência doméstica",
@@ -3363,7 +3348,6 @@
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
         setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
-        setTextValue("rendaPerCapitaAtualizada", prefillValues.rendaPerCapitaAtualizada);
         setSelectValue("racaCor", prefillValues.racaCor);
         setTextValue("racaCorValor", prefillValues.racaCor);
         setSelectValue("pcd", prefillValues.pcd, true);
@@ -3459,12 +3443,6 @@
             {
               validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
               errorMessage: "Valor inválido",
-            },
-          ])
-          .addField("#rendaPerCapitaAtualizada", [
-            {
-              validator: (value) => value === "" || (!Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0),
-              errorMessage: "Informe um valor válido",
             },
           ])
           .addField("#pcd", [{ rule: "required" }])
