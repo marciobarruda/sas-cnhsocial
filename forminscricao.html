@@ -1356,61 +1356,69 @@
                   <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
                 </div>
               </div>
-              <div class="col-12 col-md-6 col-lg-6">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="dependenteTratamento"
-                    name="dependenteTratamento"
-                    {{ ($json.data.dependenteTratamento || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
+              <div class="col-12">
+                <div class="row g-4 align-items-end">
+                  <div class="col-12 col-lg-6">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="sim"
+                        id="dependenteTratamento"
+                        name="dependenteTratamento"
+                        {{ ($json.data.dependenteTratamento || "").toLowerCase() === "sim" ? "checked" : "" }}
+                      />
+                      <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
+                    </div>
+                  </div>
+                  <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
+                    <div class="file-input-wrapper">
+                      <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
+                      <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                      <div class="file-name" id="docDependenteName"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="file-name" id="docDependenteName"></div>
+              <div class="col-12">
+                <div class="row g-4">
+                  <div class="col-12 col-md-6">
+                    <label for="composicaoFamiliar" class="form-label">Composição familiar (nº de pessoas no domicílio)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="composicaoFamiliar"
+                      name="composicaoFamiliar"
+                      value="{{ ($json.data || {}).quantidadePessoaDomicilio || "" }}"
+                      readonly
+                      aria-readonly="true"
+                      inputmode="numeric"
+                      min="0"
+                      step="1"
+                      aria-describedby="composicaoFamiliarHelp"
+                    />
+                    <small id="composicaoFamiliarHelp" class="form-text">Pontuação do edital: <span id="pontuacaoComposicaoValor">—</span></small>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="rendaFamiliar"
+                      name="rendaFamiliar"
+                      min="0"
+                      step="0.01"
+                      placeholder="Valor carregado automaticamente"
+                      value="{{ $json.data.rendaPerCapita || "" }}"
+                      aria-describedby="rendaHelp"
+                      data-required-field="true"
+                      readonly
+                      aria-readonly="true"
+                      required
+                    />
+                    <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
+                  </div>
                 </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="composicaoFamiliar" class="form-label">Composição familiar (nº de pessoas no domicílio)</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="composicaoFamiliar"
-                  name="composicaoFamiliar"
-                  value="{{ ($json.data || {}).quantidadePessoaDomicilio || "" }}"
-                  readonly
-                  aria-readonly="true"
-                  inputmode="numeric"
-                  min="0"
-                  step="1"
-                  aria-describedby="composicaoFamiliarHelp"
-                />
-                <small id="composicaoFamiliarHelp" class="form-text">Pontuação do edital: <span id="pontuacaoComposicaoValor">—</span></small>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="rendaFamiliar"
-                  name="rendaFamiliar"
-                  min="0"
-                  step="0.01"
-                  placeholder="Valor carregado automaticamente"
-                  value="{{ $json.data.rendaPerCapita || "" }}"
-                  aria-describedby="rendaHelp"
-                  data-required-field="true"
-                  readonly
-                  aria-readonly="true"
-                  required
-                />
-                <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
               </div>
               <div class="col-12 col-md-6">
                 <label for="programasSociais" class="form-label">Participação em programas sociais (BPC ou Bolsa Família)</label>
