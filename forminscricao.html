@@ -1446,7 +1446,7 @@
                   class="form-control"
                   id="programasSociais"
                   name="programasSociais"
-                  value="{{ ((($json.data || {}).programaBolsaFamilia || "").toString().toLowerCase()) === "sim" ? `SIM${((($json.data || {}).programaSocialNome) || (($json.data || {}).programaBolsaFamiliaNome)) ? `, ${($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome}` : ""}` : "NÃO" }}"
+                  value="{{ (() => { const raw = (($json.data || {}).programaBolsaFamilia ?? ""); const nomePrograma = (($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome || "").toString().trim(); if (raw == null || (typeof raw === "string" && raw.trim() === "")) { return ""; } const rawNorm = raw === true || raw === 1 || raw === "1" || (raw || "").toString().trim().toLowerCase(); const isSim = rawNorm === true || rawNorm === 1 || rawNorm === "1" || rawNorm === "sim" || rawNorm === "true"; return isSim ? `SIM${nomePrograma ? `, ${nomePrograma}` : ""}` : "NÃO"; })() }}"
                   readonly
                   aria-readonly="true"
                   aria-describedby="programasSociaisHelp"
@@ -2119,6 +2119,20 @@
           console.error("Falha ao formatar moeda", error);
           return numberValue.toString();
         }
+      };
+
+      const isAffirmativeValue = (value) => {
+        if (value === true || value === 1) return true;
+        const normalized = (value ?? "").toString().trim().toLowerCase();
+        return normalized === "sim" || normalized === "true" || normalized === "1";
+      };
+
+      const formatProgramasSociaisValue = (rawValue, programName = "") => {
+        const nome = (programName ?? "").toString().trim();
+        if (rawValue == null || (typeof rawValue === "string" && rawValue.trim() === "")) {
+          return "";
+        }
+        return isAffirmativeValue(rawValue) ? `SIM${nome ? `, ${nome}` : ""}` : "NÃO";
       };
 
       const prefillValues = {
@@ -3429,15 +3443,11 @@
           const pontos = Number.parseInt(prefillValues.composicaoFamiliar, 10);
           pontuacaoSpan.textContent = Number.isFinite(pontos) ? `${pontos} ponto${pontos === 1 ? "" : "s"}` : "—";
         }
-        const programasValueRaw = (prefillValues.programasSociais || "").toString();
-        const programasValue = programasValueRaw.toLowerCase();
-        const programaNome = (prefillValues.programasSociaisNome || "").toString().trim();
-        const programasFormatado = programasValue
-          ? programasValue === "sim"
-            ? `SIM${programaNome ? `, ${programaNome}` : ""}`
-            : "NÃO"
-          : "";
-        setTextValue("programasSociais", programasFormatado);
+        const programasValueFormatado = formatProgramasSociaisValue(
+          prefillValues.programasSociais,
+          prefillValues.programasSociaisNome
+        );
+        setTextValue("programasSociais", programasValueFormatado);
         preencherCidadePorCepSeNecessario();
 
         if (validation) {
