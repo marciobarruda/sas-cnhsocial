@@ -1412,6 +1412,26 @@
                 />
                 <small id="programasSociaisHelp" class="form-text">Consulta automática via CadÚnico (BPC/Bolsa Família).</small>
               </div>
+              <div class="col-12">
+                <div class="row g-4 align-items-end">
+                  <div class="col-12 col-md-6">
+                    <label for="trabalhadorAplicativo" class="form-label">Trabalhador de aplicativo?</label>
+                    <select class="form-select" id="trabalhadorAplicativo" name="trabalhadorAplicativo">
+                      <option value="">Selecione</option>
+                      <option value="sim">Sim</option>
+                      <option value="nao">Não</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6 d-none" id="docTrabalhoAplicativoWrapper">
+                    <div class="file-input-wrapper">
+                      <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
+                      <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                      <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
+                      <div class="file-name" id="docTrabalhoAplicativoName"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="col-12 col-md-6">
                 <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
                 <input
@@ -1625,14 +1645,6 @@
                   <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
                   <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                   <div class="file-name" id="docDependenteVinculoName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docTrabalhoAplicativoWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
-                  <div class="file-name" id="docTrabalhoAplicativoName"></div>
                 </div>
               </div>
               </div>
@@ -2130,6 +2142,7 @@
         telefone: {{ JSON.stringify((($json.data || {}).telefone) || "") }},
         email: {{ JSON.stringify((($json.data || {}).email) || "") }},
         situacaoTrabalho: {{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }},
+        trabalhadorAplicativo: {{ JSON.stringify((($json.data || {}).trabalhadorAplicativo) || ((($json.data || {}).situacaoTrabalho || "") === "aplicativo" ? "sim" : "")) }},
         mulherChefe: {{ JSON.stringify((($json.data || {}).mulherChefe) || "") }},
         acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
         dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
@@ -2473,10 +2486,10 @@
         toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
       });
 
-      const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
-      if (situacaoTrabalhoSelect) {
-        situacaoTrabalhoSelect.addEventListener("change", () => {
-          toggleFileSection(situacaoTrabalhoSelect.value === "aplicativo", "docTrabalhoAplicativoWrapper");
+      const trabalhadorAplicativoSelect = document.getElementById("trabalhadorAplicativo");
+      if (trabalhadorAplicativoSelect) {
+        trabalhadorAplicativoSelect.addEventListener("change", () => {
+          toggleFileSection(trabalhadorAplicativoSelect.value === "sim", "docTrabalhoAplicativoWrapper");
         });
       }
 
@@ -2923,6 +2936,7 @@
         "#cpf": "CPF",
         "#genero": "Identificação de gênero",
         "#situacaoTrabalho": "Situação de trabalho atual",
+        "#trabalhadorAplicativo": "Trabalhador de aplicativo",
         "#telefone": "Telefone/WhatsApp",
         "#email": "E-mail",
         "#emailConfirm": "Confirmação de e-mail",
@@ -3386,6 +3400,7 @@
         setTextValue("email", prefillValues.email);
         setTextValue("emailConfirm", prefillValues.email);
         setSelectValue("situacaoTrabalho", prefillValues.situacaoTrabalho, true);
+        setSelectValue("trabalhadorAplicativo", prefillValues.trabalhadorAplicativo, true);
         setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
@@ -3428,6 +3443,7 @@
       if (validation) {
         validation
           .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
+          .addField("#trabalhadorAplicativo", [{ rule: "required", errorMessage: "Informe se é trabalhador de aplicativo" }])
           .addField("#telefone", [
             { rule: "required", errorMessage: "Informe um telefone válido" },
             {
@@ -3609,7 +3625,7 @@
             document.getElementById("docResidencia")
           );
         }
-        if (situacaoTrabalhoSelect?.value === "aplicativo") {
+        if (trabalhadorAplicativoSelect?.value === "sim") {
           const docAplicativo = document.getElementById("docTrabalhoAplicativo");
           if (!docAplicativo?.files.length) {
             registerError("#docTrabalhoAplicativo", "Anexe o comprovante da atividade", docAplicativo);
