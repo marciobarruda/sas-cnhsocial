@@ -1437,6 +1437,26 @@
                 />
                 <small id="programasSociaisHelp" class="form-text">Consulta automática via CadÚnico (BPC/Bolsa Família).</small>
               </div>
+              <div class="col-12">
+                <div class="row g-3 align-items-end">
+                  <div class="col-12 col-lg-6">
+                    <label for="trabalhadorAplicativo" class="form-label">Trabalhador de aplicativo?</label>
+                    <select class="form-select" id="trabalhadorAplicativo" name="trabalhadorAplicativo">
+                      <option value="">Selecione</option>
+                      <option value="sim">Sim</option>
+                      <option value="nao">Não</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-lg-6 d-none" id="docTrabalhoAplicativoWrapper">
+                    <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
+                      <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
+                      <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                      <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
+                      <div class="file-name" id="docTrabalhoAplicativoName"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -1683,26 +1703,6 @@
                   <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
                   <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
                   <div class="file-name" id="cnhArquivoName"></div>
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="row g-3 align-items-end">
-                  <div class="col-12 col-lg-6">
-                    <label for="trabalhadorAplicativo" class="form-label">Trabalhador de aplicativo?</label>
-                    <select class="form-select" id="trabalhadorAplicativo" name="trabalhadorAplicativo">
-                      <option value="">Selecione</option>
-                      <option value="sim">Sim</option>
-                      <option value="nao">Não</option>
-                    </select>
-                  </div>
-                  <div class="col-12 col-lg-6 d-none" id="docTrabalhoAplicativoWrapper">
-                    <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
-                      <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
-                      <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                      <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
-                      <div class="file-name" id="docTrabalhoAplicativoName"></div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
