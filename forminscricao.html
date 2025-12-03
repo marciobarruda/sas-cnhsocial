@@ -1299,23 +1299,7 @@
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
             </div>
             <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label for="situacaoTrabalho" class="form-label required">Situação de trabalho atual</label>
-                <select
-                  class="form-select"
-                  id="situacaoTrabalho"
-                  name="situacaoTrabalho"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="emprego_formal" {{ ($json.data.situacaoTrabalho || "") === "emprego_formal" ? "selected" : "" }}>Emprego formal</option>
-                  <option value="trabalho_informal" {{ ($json.data.situacaoTrabalho || "") === "trabalho_informal" ? "selected" : "" }}>Trabalho informal</option>
-                  <option value="desempregado" {{ ($json.data.situacaoTrabalho || "") === "desempregado" ? "selected" : "" }}>Desempregado(a)</option>
-                  <option value="aplicativo" {{ ($json.data.situacaoTrabalho || "") === "aplicativo" ? "selected" : "" }}>Trabalhador(a) de aplicativo</option>
-                </select>
-              </div>
-              <div class="col-12 d-none" id="docTrabalhoAplicativoWrapper">
+              <div class="col-12">
                 <div class="file-input-wrapper">
                   <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
                   <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
@@ -1558,6 +1542,39 @@
                 </select>
                 <small class="form-text">Pais ou mães atípicos têm direito a 10% das vagas, conforme legislação vigente.</small>
               </div>
+              <div class="col-12">
+                <div class="row g-3 align-items-stretch">
+                  <div class="col-12 col-lg-4 d-none" id="docMaeAtipicaLaudoWrapper">
+                    <div class="file-input-wrapper h-100">
+                      <label for="docMaeAtipicaLaudo" class="form-label required">Laudo/relatório/prescrição emitido por profissional ou instituição registrada (PDF/JPG/PNG até 5 MB)</label>
+                      <input class="form-control" type="file" id="docMaeAtipicaLaudo" name="docMaeAtipicaLaudo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                      <div class="file-name" id="docMaeAtipicaLaudoName"></div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-lg-4 d-none" id="docMaeAtipicaCrasWrapper">
+                    <div class="file-input-wrapper h-100">
+                      <label for="docMaeAtipicaCras" class="form-label required">Declaração técnica do CRAS/CREAS ou certificação da Assistência Social (PDF/JPG/PNG até 5 MB)</label>
+                      <input class="form-control" type="file" id="docMaeAtipicaCras" name="docMaeAtipicaCras" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                      <div class="file-name" id="docMaeAtipicaCrasName"></div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-lg-4 d-none" id="docResponsavelWrapper">
+                    <div class="file-input-wrapper h-100">
+                      <label for="docResponsavel" class="form-label required">Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal (PDF/JPG/PNG até 5 MB)</label>
+                      <input
+                        class="form-control"
+                        type="file"
+                        id="docResponsavel"
+                        name="docResponsavel"
+                        accept=".pdf,.jpg,.jpeg,.png,.webp"
+                        aria-describedby="docResponsavelInfo"
+                      />
+                      <div id="docResponsavelInfo" class="form-text">Documento emitido por unidade de saúde ou serviço socioassistencial da PCR.</div>
+                      <div class="file-name" id="docResponsavelName"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="col-12 col-md-6">
                 <label class="form-label required" for="vitimaViolencia"
                   >Vítima de violência doméstica atendida pelos órgãos e serviços especializados do Recife</label
@@ -1592,35 +1609,6 @@
                   <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
                   <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
                   <div class="file-name" id="laudoPcdName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docMaeAtipicaLaudoWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docMaeAtipicaLaudo" class="form-label required">Laudo/relatório/prescrição emitido por profissional ou instituição registrada (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docMaeAtipicaLaudo" name="docMaeAtipicaLaudo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="file-name" id="docMaeAtipicaLaudoName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docMaeAtipicaCrasWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docMaeAtipicaCras" class="form-label required">Declaração técnica do CRAS/CREAS ou certificação da Assistência Social (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docMaeAtipicaCras" name="docMaeAtipicaCras" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="file-name" id="docMaeAtipicaCrasName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docResponsavelWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docResponsavel" class="form-label required">Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal (PDF/JPG/PNG até 5 MB)</label>
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="docResponsavel"
-                    name="docResponsavel"
-                    accept=".pdf,.jpg,.jpeg,.png,.webp"
-                    aria-describedby="docResponsavelInfo"
-                  />
-                  <div id="docResponsavelInfo" class="form-text">Documento emitido por unidade de saúde ou serviço socioassistencial da PCR.</div>
-                  <div class="file-name" id="docResponsavelName"></div>
                 </div>
               </div>
               </div>
@@ -1714,7 +1702,7 @@
                   <div class="row g-4">
                     <div class="col-12 col-lg-6">
                       <div class="file-input-wrapper">
-                        <label for="docIdentidade" class="form-label required">Documento oficial com foto (RG ou passaporte) – PDF/JPG/PNG até 5 MB</label>
+                        <label for="docIdentidade" class="form-label required">Documento oficial com foto – PDF/JPG/PNG até 5 MB</label>
                         <input
                           class="form-control"
                           type="file"
@@ -2152,7 +2140,6 @@
         enderecoAtualizado: {{ JSON.stringify((($json.data || {}).enderecoAtualizado) || "") }},
         telefone: {{ JSON.stringify((($json.data || {}).telefone) || "") }},
         email: {{ JSON.stringify((($json.data || {}).email) || "") }},
-        situacaoTrabalho: {{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }},
         mulherChefe: {{ JSON.stringify((($json.data || {}).mulherChefe) || "") }},
         acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
         dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
@@ -2489,13 +2476,6 @@
         toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
         toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
       });
-
-      const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
-      if (situacaoTrabalhoSelect) {
-        situacaoTrabalhoSelect.addEventListener("change", () => {
-          toggleFileSection(situacaoTrabalhoSelect.value === "aplicativo", "docTrabalhoAplicativoWrapper");
-        });
-      }
 
       const enderecoAtualizado = document.getElementById("enderecoAtualizado");
       enderecoAtualizado.addEventListener("change", () => {
@@ -2949,7 +2929,6 @@
       const fieldLabels = {
         "#cpf": "CPF",
         "#genero": "Identificação de gênero",
-        "#situacaoTrabalho": "Situação de trabalho atual",
         "#telefone": "Telefone/WhatsApp",
         "#email": "E-mail",
         "#emailConfirm": "Confirmação de e-mail",
@@ -3417,7 +3396,6 @@
         }
         setTextValue("email", prefillValues.email);
         setTextValue("emailConfirm", prefillValues.email);
-        setSelectValue("situacaoTrabalho", prefillValues.situacaoTrabalho, true);
         setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
         setCheckboxValue("acolhimento", prefillValues.acolhimento);
         setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
@@ -3461,7 +3439,6 @@
 
       if (validation) {
         validation
-          .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
           .addField("#telefone", [
             { rule: "required", errorMessage: "Informe um telefone válido" },
             {
@@ -3634,12 +3611,6 @@
             document.getElementById("docResidencia")
           );
         }
-        if (situacaoTrabalhoSelect?.value === "aplicativo") {
-          const docAplicativo = document.getElementById("docTrabalhoAplicativo");
-          if (!docAplicativo?.files.length) {
-            registerError("#docTrabalhoAplicativo", "Anexe o comprovante da atividade", docAplicativo);
-          }
-        }
         const emailValue = (emailInput?.value || "").trim();
         const emailConfirmValue = (emailConfirmInput?.value || "").trim();
         if (
@@ -3760,7 +3731,6 @@
           "docResponsavelWrapper",
           "docDependenteWrapper",
           "docDependenteVinculoWrapper",
-          "docTrabalhoAplicativoWrapper",
           "cnhNumeroWrapper",
           "cnhValidadeWrapper",
           "cnhArquivoWrapper",
