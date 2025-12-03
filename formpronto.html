@@ -1294,11 +1294,19 @@
 
             <div class="form-step" id="form-step-3" data-step="3" hidden aria-hidden="true">
               <section id="sec-socioassistencial" class="form-section">
-                <div class="card card-section p-4 p-md-5">
+            <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
             </div>
             <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <label for="trabalhadorAplicativo" class="form-label">Trabalhador de aplicativo?</label>
+                <select class="form-select" id="trabalhadorAplicativo" name="trabalhadorAplicativo">
+                  <option value="">Selecione</option>
+                  <option value="sim" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "sim" ? "selected" : "" }}>Sim</option>
+                  <option value="nao" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "nao" ? "selected" : "" }}>Não</option>
+                </select>
+              </div>
               <div class="col-12">
                 <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
                   <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
