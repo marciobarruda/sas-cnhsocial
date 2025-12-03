@@ -1261,7 +1261,7 @@
                 <small class="form-text">Se marcado, será obrigatório anexar comprovante atualizado (até 90 dias).</small>
               </div>
               <div class="col-12 col-lg-6 d-none" id="docResidenciaWrapper">
-                <div class="file-input-wrapper">
+                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
                   <label for="docResidencia" class="form-label" id="docResidenciaLabel">Comprovante de residência recente (PDF/JPG/PNG até 5 MB)</label>
                   <input class="form-control" type="file" id="docResidencia" name="docResidencia" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docResidenciaHelp" />
                   <div id="docResidenciaHelp" class="form-text">Envie conta de consumo ou declaração emitida há até 90 dias.</div>
@@ -1300,7 +1300,7 @@
             </div>
             <div class="row g-4">
               <div class="col-12">
-                <div class="file-input-wrapper">
+                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
                   <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
                   <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                   <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
@@ -1375,14 +1375,14 @@
                   <div class="col-12">
                     <div class="row g-3 align-items-stretch">
                       <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
-                        <div class="file-input-wrapper h-100">
+                        <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
                           <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
                           <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                           <div class="file-name" id="docDependenteName"></div>
                         </div>
                       </div>
                       <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
-                        <div class="file-input-wrapper h-100">
+                        <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
                           <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
                           <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                           <div class="file-name" id="docDependenteVinculoName"></div>
@@ -1540,26 +1540,26 @@
                   <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
                   <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
                 </select>
-                <small class="form-text">Pais ou mães atípicos têm direito a 10% das vagas, conforme legislação vigente.</small>
+                <small class="form-text">Reserva de 10% (dez por cento) das vagas por convocação do Programa CNH Social Recife para mães e pais atípicos.</small>
               </div>
               <div class="col-12">
                 <div class="row g-3 align-items-stretch">
                   <div class="col-12 col-lg-4 d-none" id="docMaeAtipicaLaudoWrapper">
-                    <div class="file-input-wrapper h-100">
+                    <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
                       <label for="docMaeAtipicaLaudo" class="form-label required">Laudo/relatório/prescrição emitido por profissional ou instituição registrada (PDF/JPG/PNG até 5 MB)</label>
                       <input class="form-control" type="file" id="docMaeAtipicaLaudo" name="docMaeAtipicaLaudo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                       <div class="file-name" id="docMaeAtipicaLaudoName"></div>
                     </div>
                   </div>
                   <div class="col-12 col-lg-4 d-none" id="docMaeAtipicaCrasWrapper">
-                    <div class="file-input-wrapper h-100">
+                    <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
                       <label for="docMaeAtipicaCras" class="form-label required">Declaração técnica do CRAS/CREAS ou certificação da Assistência Social (PDF/JPG/PNG até 5 MB)</label>
                       <input class="form-control" type="file" id="docMaeAtipicaCras" name="docMaeAtipicaCras" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                       <div class="file-name" id="docMaeAtipicaCrasName"></div>
                     </div>
                   </div>
                   <div class="col-12 col-lg-4 d-none" id="docResponsavelWrapper">
-                    <div class="file-input-wrapper h-100">
+                    <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
                       <label for="docResponsavel" class="form-label required">Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal (PDF/JPG/PNG até 5 MB)</label>
                       <input
                         class="form-control"
@@ -1604,7 +1604,7 @@
                 >{{ $json.data.necessidadesEspeciais || "" }}</textarea>
               </div>
               <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
-                <div class="file-input-wrapper">
+                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
                   <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
                   <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
                   <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
@@ -1684,7 +1684,7 @@
                 <small id="validadeHelp" class="form-text">A CNH precisa ter validade superior a 30 dias na data de inscrição.</small>
               </div>
               <div class="col-12 col-lg-6 d-none" id="cnhArquivoWrapper">
-                <div class="file-input-wrapper">
+                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
                   <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
                   <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
                   <div class="file-name" id="cnhArquivoName"></div>
@@ -1701,7 +1701,7 @@
                   </div>
                   <div class="row g-4">
                     <div class="col-12 col-lg-6">
-                      <div class="file-input-wrapper">
+                      <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
                         <label for="docIdentidade" class="form-label required">Documento oficial com foto – PDF/JPG/PNG até 5 MB</label>
                         <input
                           class="form-control"
