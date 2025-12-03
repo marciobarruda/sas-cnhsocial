@@ -1668,39 +1668,23 @@
                   <option value="adicao_a">Adição de categoria A</option>
                   <option value="adicao_b">Adição de categoria B</option>
                 </select>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="turno" class="form-label required">Turno preferencial</label>
-                <select
-                  class="form-select"
-                  id="turno"
-                  name="turno"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="manha">Manhã</option>
-                  <option value="tarde">Tarde</option>
-                  <option value="noite">Noite</option>
-                  <option value="indiferente">Indiferente</option>
-                </select>
-              </div>
-              <div class="col-12 col-md-6 d-none" id="cnhNumeroWrapper">
-                <label for="numeroCnh" class="form-label required">Número da CNH (para adição)</label>
-                <input type="text" class="form-control" id="numeroCnh" name="numeroCnh" inputmode="numeric" placeholder="Informe conforme CNH" />
-              </div>
-              <div class="col-12 col-md-6 d-none" id="cnhValidadeWrapper">
-                <label for="validadeCnh" class="form-label required">Validade da CNH</label>
-                <input type="date" class="form-control" id="validadeCnh" name="validadeCnh" aria-describedby="validadeHelp" />
-                <small id="validadeHelp" class="form-text">A CNH precisa ter validade superior a 30 dias na data de inscrição.</small>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="cnhArquivoWrapper">
-                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
-                  <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
-                  <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="cnhArquivoName"></div>
                 </div>
-              </div>
+                <div class="col-12 col-md-6 d-none" id="cnhNumeroWrapper">
+                  <label for="numeroCnh" class="form-label required">Número da CNH (para adição)</label>
+                  <input type="text" class="form-control" id="numeroCnh" name="numeroCnh" inputmode="numeric" placeholder="Informe conforme CNH" />
+                </div>
+                <div class="col-12 col-md-6 d-none" id="cnhValidadeWrapper">
+                  <label for="validadeCnh" class="form-label required">Validade da CNH</label>
+                  <input type="date" class="form-control" id="validadeCnh" name="validadeCnh" aria-describedby="validadeHelp" />
+                  <small id="validadeHelp" class="form-text">A CNH precisa ter validade superior a 30 dias na data de inscrição.</small>
+                </div>
+                <div class="col-12 col-lg-6 d-none" id="cnhArquivoWrapper">
+                  <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
+                    <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
+                    <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
+                    <div class="file-name" id="cnhArquivoName"></div>
+                  </div>
+                </div>
             </div>
           </div>
         </section>
@@ -2956,7 +2940,6 @@
         "#racaCor": "Autodeclaração de cor/raça",
         "#racaCorValor": "Autodeclaração de cor/raça",
         "#categoria": "Categoria desejada",
-        "#turno": "Turno preferencial",
         "#docIdentidade": "Documento de identificação oficial",
         "#lgpd": "Consentimento LGPD",
         "#veracidade": "Declaração de veracidade",
@@ -3518,7 +3501,6 @@
           .addField("#vitimaViolencia", [{ rule: "required" }])
           .addField("#racaCorValor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
           .addField("#categoria", [{ rule: "required" }])
-          .addField("#turno", [{ rule: "required" }])
           .addField("#docIdentidade", [
             { rule: "required", errorMessage: "Anexe um documento oficial" },
             {
