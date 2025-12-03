@@ -1299,9 +1299,17 @@
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
             </div>
             <div class="row g-4">
-              <div class="col-12">
+              <div class="col-12 col-md-6">
+                <label for="trabalhadorAplicativo" class="form-label">Trabalhador de aplicativo?</label>
+                <select class="form-select" id="trabalhadorAplicativo" name="trabalhadorAplicativo">
+                  <option value="">Selecione</option>
+                  <option value="sim">Sim</option>
+                  <option value="nao">Não</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 d-none" id="docTrabalhoAplicativoWrapper">
                 <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
-                  <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
+                  <label for="docTrabalhoAplicativo" class="form-label" id="docTrabalhoAplicativoLabel">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
                   <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                   <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
                   <div class="file-name" id="docTrabalhoAplicativoName"></div>
@@ -2451,11 +2459,29 @@
         ["docResponsavel", "docResponsavelName"],
         ["docDependente", "docDependenteName"],
         ["docDependenteVinculo", "docDependenteVinculoName"],
-        ["docTrabalhoAplicativo", "docTrabalhoAplicativoName"],
-        ["docResidencia", "docResidenciaName"],
-        ["docIdentidade", "docIdentidadeName"],
-        ["cnhArquivo", "cnhArquivoName"],
-      ].forEach(([inputId, displayId]) => addFileNameListener(inputId, displayId));
+      ["docTrabalhoAplicativo", "docTrabalhoAplicativoName"],
+      ["docResidencia", "docResidenciaName"],
+      ["docIdentidade", "docIdentidadeName"],
+      ["cnhArquivo", "cnhArquivoName"],
+    ].forEach(([inputId, displayId]) => addFileNameListener(inputId, displayId));
+
+      const trabalhadorAplicativoSelect = document.getElementById("trabalhadorAplicativo");
+      const docTrabalhoAplicativoInput = document.getElementById("docTrabalhoAplicativo");
+      const docTrabalhoAplicativoLabel = document.getElementById("docTrabalhoAplicativoLabel");
+
+      const toggleTrabalhadorAplicativo = () => {
+        const isActive = trabalhadorAplicativoSelect.value === "sim";
+        toggleFileSection(isActive, "docTrabalhoAplicativoWrapper");
+        if (docTrabalhoAplicativoInput) {
+          docTrabalhoAplicativoInput.required = isActive;
+        }
+        if (docTrabalhoAplicativoLabel) {
+          docTrabalhoAplicativoLabel.classList.toggle("required", isActive);
+        }
+      };
+
+      trabalhadorAplicativoSelect.addEventListener("change", toggleTrabalhadorAplicativo);
+      toggleTrabalhadorAplicativo();
 
       const pcdSelect = document.getElementById("pcd");
       pcdSelect.addEventListener("change", () => {
@@ -2961,6 +2987,7 @@
         "#docDependente": "Declaração de tratamento terapêutico contínuo",
         "#docDependenteVinculo": "Comprovação de vínculo do dependente",
         "#docTrabalhoAplicativo": "Comprovante de trabalho por aplicativo",
+        "#trabalhadorAplicativo": "Trabalhador de aplicativo?",
         "#numeroCnh": "Número da CNH",
         "#validadeCnh": "Validade da CNH",
         "#cnhArquivo": "Arquivo da CNH",
@@ -3606,6 +3633,13 @@
               registerError(selector, message, element);
             }
           });
+        }
+        if (trabalhadorAplicativoSelect.value === "sim" && !docTrabalhoAplicativoInput.files.length) {
+          registerError(
+            "#docTrabalhoAplicativo",
+            "Comprovante obrigatório quando for trabalhador de aplicativo",
+            docTrabalhoAplicativoInput
+          );
         }
         if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
           registerError(
