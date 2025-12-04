@@ -1294,69 +1294,77 @@
 
             <div class="form-step" id="form-step-3" data-step="3" hidden aria-hidden="true">
               <section id="sec-socioassistencial" class="form-section">
-                <div class="card card-section p-4 p-md-5">
+            <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
             </div>
-            <div class="row g-4">
-              <div class="col-12">
-                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
-                  <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
-                  <div class="file-name" id="docTrabalhoAplicativoName"></div>
+              <div class="row g-4">
+                <div class="col-12 col-md-6">
+                  <label for="trabalhadorAplicativo" class="form-label">Trabalhador de aplicativo?</label>
+                  <select class="form-select" id="trabalhadorAplicativo" name="trabalhadorAplicativo">
+                    <option value="">Selecione</option>
+                    <option value="sim" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "sim" ? "selected" : "" }}>Sim</option>
+                    <option value="nao" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "nao" ? "selected" : "" }}>Não</option>
+                  </select>
                 </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="form-check pt-4">
+                <div class="col-12 col-md-6">
+                  <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
+                    <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
+                    <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                    <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
+                    <div class="file-name" id="docTrabalhoAplicativoName"></div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      value="sim"
+                      id="acolhimento"
+                      name="acolhimento"
+                      {{ ($json.data.acolhimento || "").toLowerCase() === "sim" ? "checked" : "" }}
+                    />
+                    <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
+                    <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="form-check pt-4">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      value="sim"
+                      id="semTrabalhoFormal"
+                      name="semTrabalhoFormal"
+                      {{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "checked" : "" }}
+                      disabled
+                      aria-disabled="true"
+                    />
+                    <label class="form-check-label text-danger fw-bold" for="semTrabalhoFormal">Não tem trabalho formal</label>
+                    <small class="form-text">Informação carregada automaticamente a partir do CadÚnico.</small>
+                  </div>
                   <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="semTrabalhoFormal"
-                    name="semTrabalhoFormal"
-                    {{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "checked" : "" }}
-                    disabled
-                    aria-disabled="true"
+                    type="hidden"
+                    name="semTrabalhoFormalValor"
+                    value="{{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "sim" : "nao" }}"
                   />
-                  <label class="form-check-label text-danger fw-bold" for="semTrabalhoFormal">Não tem trabalho formal</label>
-                  <small class="form-text">Informação carregada automaticamente a partir do CadÚnico.</small>
                 </div>
-                <input
-                  type="hidden"
-                  name="semTrabalhoFormalValor"
-                  value="{{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "sim" : "nao" }}"
-                />
-              </div>
-              <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
-                <div class="form-check pt-4">
-                  <input
-                    class="form-check-input readonly-control"
-                    aria-readonly="true"
-                    tabindex="-1"
-                    type="checkbox"
-                    value="sim"
-                    id="mulherChefe"
-                    name="mulherChefe"
-                    {{ ($json.data.mulherChefe || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="mulherChefe">Sou mulher e responsável pela renda familiar (chefe de família)</label>
+                <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
+                  <div class="form-check pt-4">
+                    <input
+                      class="form-check-input readonly-control"
+                      aria-readonly="true"
+                      tabindex="-1"
+                      type="checkbox"
+                      value="sim"
+                      id="mulherChefe"
+                      name="mulherChefe"
+                      {{ ($json.data.mulherChefe || "").toLowerCase() === "sim" ? "checked" : "" }}
+                    />
+                    <label class="form-check-label" for="mulherChefe">Sou mulher e responsável pela renda familiar (chefe de família)</label>
+                  </div>
                 </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="acolhimento"
-                    name="acolhimento"
-                  {{ ($json.data.acolhimento || "").toLowerCase() === "sim" ? "checked" : "" }}
-                />
-                <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
-                <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
-                </div>
-              </div>
               <div class="col-12">
                 <div class="row g-3">
                   <div class="col-12">
@@ -1660,39 +1668,23 @@
                   <option value="adicao_a">Adição de categoria A</option>
                   <option value="adicao_b">Adição de categoria B</option>
                 </select>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="turno" class="form-label required">Turno preferencial</label>
-                <select
-                  class="form-select"
-                  id="turno"
-                  name="turno"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="manha">Manhã</option>
-                  <option value="tarde">Tarde</option>
-                  <option value="noite">Noite</option>
-                  <option value="indiferente">Indiferente</option>
-                </select>
-              </div>
-              <div class="col-12 col-md-6 d-none" id="cnhNumeroWrapper">
-                <label for="numeroCnh" class="form-label required">Número da CNH (para adição)</label>
-                <input type="text" class="form-control" id="numeroCnh" name="numeroCnh" inputmode="numeric" placeholder="Informe conforme CNH" />
-              </div>
-              <div class="col-12 col-md-6 d-none" id="cnhValidadeWrapper">
-                <label for="validadeCnh" class="form-label required">Validade da CNH</label>
-                <input type="date" class="form-control" id="validadeCnh" name="validadeCnh" aria-describedby="validadeHelp" />
-                <small id="validadeHelp" class="form-text">A CNH precisa ter validade superior a 30 dias na data de inscrição.</small>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="cnhArquivoWrapper">
-                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
-                  <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
-                  <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="cnhArquivoName"></div>
                 </div>
-              </div>
+                <div class="col-12 col-md-6 d-none" id="cnhNumeroWrapper">
+                  <label for="numeroCnh" class="form-label required">Número da CNH (para adição)</label>
+                  <input type="text" class="form-control" id="numeroCnh" name="numeroCnh" inputmode="numeric" placeholder="Informe conforme CNH" />
+                </div>
+                <div class="col-12 col-md-6 d-none" id="cnhValidadeWrapper">
+                  <label for="validadeCnh" class="form-label required">Validade da CNH</label>
+                  <input type="date" class="form-control" id="validadeCnh" name="validadeCnh" aria-describedby="validadeHelp" />
+                  <small id="validadeHelp" class="form-text">A CNH precisa ter validade superior a 30 dias na data de inscrição.</small>
+                </div>
+                <div class="col-12 col-lg-6 d-none" id="cnhArquivoWrapper">
+                  <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
+                    <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
+                    <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
+                    <div class="file-name" id="cnhArquivoName"></div>
+                  </div>
+                </div>
             </div>
           </div>
         </section>
@@ -2948,7 +2940,6 @@
         "#racaCor": "Autodeclaração de cor/raça",
         "#racaCorValor": "Autodeclaração de cor/raça",
         "#categoria": "Categoria desejada",
-        "#turno": "Turno preferencial",
         "#docIdentidade": "Documento de identificação oficial",
         "#lgpd": "Consentimento LGPD",
         "#veracidade": "Declaração de veracidade",
@@ -3510,7 +3501,6 @@
           .addField("#vitimaViolencia", [{ rule: "required" }])
           .addField("#racaCorValor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
           .addField("#categoria", [{ rule: "required" }])
-          .addField("#turno", [{ rule: "required" }])
           .addField("#docIdentidade", [
             { rule: "required", errorMessage: "Anexe um documento oficial" },
             {
