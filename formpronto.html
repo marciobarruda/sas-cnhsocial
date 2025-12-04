@@ -3871,7 +3871,6 @@
           { label: "Identificação de gênero", value: getSelectText(document.getElementById("genero")) || document.getElementById("generoValor")?.value },
           { label: "Telefone/WhatsApp", value: document.getElementById("telefone")?.value },
           { label: "E-mail", value: document.getElementById("email")?.value },
-          { label: "Confirme o e-mail", value: document.getElementById("emailConfirm")?.value },
           { label: "Canal de contato preferencial", value: getSelectText(document.getElementById("preferenciaContato")) },
           { label: "CEP", value: document.getElementById("cep")?.value },
           { label: "Logradouro", value: document.getElementById("logradouro")?.value },
@@ -3880,41 +3879,42 @@
           { label: "Bairro", value: document.getElementById("bairro")?.value },
           { label: "Cidade", value: document.getElementById("cidade")?.value },
           { label: "UF", value: getSelectText(document.getElementById("uf")) },
-          { label: "Endereço completo", value: buildAddressSummary() },
-          { label: "Atualizar endereço", value: formatCheckbox("enderecoAtualizado") },
-          { label: "Comprovante de residência recente", value: getFileName("docResidencia") || "Não anexado" },
           { label: "Trabalho por aplicativo", value: getSelectText(document.getElementById("trabalhadorAplicativo")) },
-          { label: "Comprovante de trabalho por aplicativo", value: getFileName("docTrabalhoAplicativo") || "Não anexado" },
           { label: "Resido em serviço de acolhimento institucional", value: formatCheckbox("acolhimento") },
           { label: "Não tem trabalho formal", value: formatCheckbox("semTrabalhoFormal") },
           { label: "Sou mulher e responsável pela renda familiar", value: formatCheckbox("mulherChefe") },
           { label: "Possuo dependente em tratamento terapêutico contínuo", value: formatCheckbox("dependenteTratamento") },
-          { label: "Declaração de tratamento terapêutico contínuo", value: getFileName("docDependente") || "Não anexado" },
-          { label: "Comprovação de vínculo do dependente", value: getFileName("docDependenteVinculo") || "Não anexado" },
           { label: "Composição familiar (nº de pessoas no domicílio)", value: document.getElementById("composicaoFamiliar")?.value },
           { label: "Renda per capita mensal (R$)", value: document.getElementById("rendaFamiliar")?.value },
           { label: "Participação em programas sociais (BPC ou Bolsa Família)", value: document.getElementById("programasSociais")?.value },
           { label: "Autodeclaração de cor/raça", value: getSelectText(document.getElementById("racaCor")) || document.getElementById("racaCorValor")?.value },
           { label: "Pessoa com deficiência (PCD)", value: getSelectText(document.getElementById("pcd")) },
           { label: "Mãe atípica com dependente PCD ou autista", value: getSelectText(document.getElementById("maeAtipica")) },
-          { label: "Laudo ou relatório para mãe atípica", value: getFileName("docMaeAtipicaLaudo") || "Não anexado" },
-          { label: "Declaração técnica do CRAS/CREAS ou certificação", value: getFileName("docMaeAtipicaCras") || "Não anexado" },
-          { label: "Declaração técnica de responsabilidade legal", value: getFileName("docResponsavel") || "Não anexado" },
           { label: "Vítima de violência doméstica", value: getSelectText(document.getElementById("vitimaViolencia")) },
           { label: "Informações complementares", value: document.getElementById("necessidadesEspeciais")?.value },
-          { label: "Laudo médico PCD", value: getFileName("laudoPcd") || "Não anexado" },
           { label: "Categoria desejada", value: getSelectText(document.getElementById("categoria")) },
           { label: "Número da CNH (para adição)", value: document.getElementById("numeroCnh")?.value },
           { label: "Validade da CNH", value: document.getElementById("validadeCnh")?.value },
-          { label: "CNH (frente e verso)", value: getFileName("cnhArquivo") || "Não anexado" },
-          { label: "Documento oficial com foto", value: getFileName("docIdentidade") || "Não anexado" },
           { label: "LGPD autorizada", value: formatCheckbox("lgpd") },
           { label: "Declaração de veracidade", value: formatCheckbox("veracidade") },
           { label: "Autorizo uso da imagem", value: formatCheckbox("imagem") },
         ];
 
+        const fileItems = [
+          { label: "Comprovante de residência recente", value: getFileName("docResidencia") },
+          { label: "Comprovante de trabalho por aplicativo", value: getFileName("docTrabalhoAplicativo") },
+          { label: "Declaração de tratamento terapêutico contínuo", value: getFileName("docDependente") },
+          { label: "Comprovação de vínculo do dependente", value: getFileName("docDependenteVinculo") },
+          { label: "Laudo ou relatório para mãe atípica", value: getFileName("docMaeAtipicaLaudo") },
+          { label: "Declaração técnica do CRAS/CREAS ou certificação", value: getFileName("docMaeAtipicaCras") },
+          { label: "Declaração técnica de responsabilidade legal", value: getFileName("docResponsavel") },
+          { label: "Laudo médico PCD", value: getFileName("laudoPcd") },
+          { label: "CNH (frente e verso)", value: getFileName("cnhArquivo") },
+          { label: "Documento oficial com foto", value: getFileName("docIdentidade") },
+        ].filter(({ value }) => Boolean(value));
+
         reviewModalList.innerHTML = "";
-        items.forEach(({ label, value }) => {
+        [...items, ...fileItems].forEach(({ label, value }) => {
           const dt = document.createElement("dt");
           dt.textContent = label;
           const dd = document.createElement("dd");
