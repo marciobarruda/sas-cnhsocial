@@ -1318,6 +1318,9 @@
             <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
+              <p class="mb-0 fw-semibold fst-italic">
+                Alguns dados são automaticamente preenchidos a partir da base do CadÚnico, conforme previsto no edital.
+              </p>
             </div>
               <div class="row g-4">
                 <div class="col-12 col-md-6">
@@ -1363,7 +1366,6 @@
                       aria-disabled="true"
                     />
                     <label class="form-check-label text-danger fw-bold" for="semTrabalhoFormal">Não tem trabalho formal</label>
-                    <small class="form-text">Informação carregada automaticamente a partir do CadÚnico.</small>
                   </div>
                   <input
                     type="hidden"
@@ -1436,9 +1438,8 @@
                       inputmode="numeric"
                       min="0"
                       step="1"
-                      aria-describedby="composicaoFamiliarHelp"
                     />
-                    <small id="composicaoFamiliarHelp" class="form-text">Pontuação do edital: <span id="pontuacaoComposicaoValor">—</span></small>
+                    <span id="pontuacaoComposicaoValor" class="visually-hidden">—</span>
                   </div>
                   <div class="col-12 col-md-6">
                     <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
@@ -1450,13 +1451,11 @@
                       inputmode="decimal"
                       placeholder="Valor carregado automaticamente"
                       value="{{ $json.data.rendaPerCapita || "" }}"
-                      aria-describedby="rendaHelp"
                       data-required-field="true"
                       readonly
                       aria-readonly="true"
                       required
                     />
-                    <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
                   </div>
                 </div>
               </div>
@@ -1470,9 +1469,7 @@
                   value="{{ (() => { const raw = (($json.data || {}).programaBolsaFamilia ?? ""); const nomePrograma = (($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome || "").toString().trim(); if (raw == null || (typeof raw === "string" && raw.trim() === "")) { return ""; } const rawNorm = raw === true || raw === 1 || raw === "1" || (raw || "").toString().trim().toLowerCase(); const isSim = rawNorm === true || rawNorm === 1 || rawNorm === "1" || rawNorm === "sim" || rawNorm === "true"; return isSim ? `SIM${nomePrograma ? `, ${nomePrograma}` : ""}` : "NÃO"; })() }}"
                   readonly
                   aria-readonly="true"
-                  aria-describedby="programasSociaisHelp"
                 />
-                <small id="programasSociaisHelp" class="form-text">Consulta automática via CadÚnico (BPC/Bolsa Família).</small>
               </div>
             </div>
           </div>
