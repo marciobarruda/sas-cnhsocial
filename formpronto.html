@@ -2858,6 +2858,9 @@
         if (!activeModal) return;
         if (event.key === "Escape") {
           event.preventDefault();
+          if (activeModal.allowEscape === false) {
+            return;
+          }
           activeModal.close();
           return;
         }
@@ -2911,6 +2914,91 @@
         if (returnFocusElement && typeof returnFocusElement.focus === "function") {
           returnFocusElement.focus({ preventScroll: true });
         }
+      };
+
+      const createConsentModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
+          }
+
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.consentModal = "true";
+          backdrop.setAttribute("data-testid", "consent-modal");
+          backdrop.setAttribute("hidden", "");
+
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "consentModalTitle");
+          card.setAttribute("aria-describedby", "consentModalMessage");
+          card.tabIndex = -1;
+
+          const title = document.createElement("p");
+          title.className = "modal-title title--alerta";
+          title.id = "consentModalTitle";
+          title.textContent = "Uso de dados do CadÚnico";
+
+          const message = document.createElement("p");
+          message.className = "modal-message";
+          message.id = "consentModalMessage";
+          message.textContent =
+            "Os dados do CadÚnico Recife serão utilizados para preencher automaticamente partes do formulário.";
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const okButton = document.createElement("button");
+          okButton.type = "button";
+          okButton.className = "btn btn-primary";
+          okButton.textContent = "OK";
+
+          actions.append(okButton);
+          card.append(title, message, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = { backdrop, card, okButton };
+          return modalElements;
+        };
+      })();
+
+      const openConsentModal = () => {
+        const { backdrop, card, okButton } = createConsentModal();
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+        const closeHandler = () => closeModal();
+
+        const cleanup = () => {
+          okButton.removeEventListener("click", closeHandler);
+        };
+
+        okButton.addEventListener("click", closeHandler);
+
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          cleanup,
+          returnFocusElement: previousActive,
+          allowEscape: false,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
       };
 
       const showFeedbackModal = ({ type, message, items = [], focusElement = null, triggerElement = submitButton }) => {
@@ -4004,6 +4092,8 @@
           openReviewModal(reviewButton);
         });
       }
+
+      openConsentModal();
 
       const validarEExibirModal = (formSelector, botaoSelector) => {
         const targetForm = document.querySelector(formSelector);
