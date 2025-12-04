@@ -3843,7 +3843,19 @@
         }
 
         const formData = new FormData(form);
+        const removeEmptyFileFields = (data) => {
+          if (!data || typeof data.forEach !== "function") return;
+          const keysToDelete = [];
+          data.forEach((value, key) => {
+            if (value instanceof File && value.size === 0) {
+              keysToDelete.push(key);
+            }
+          });
+          keysToDelete.forEach((key) => data.delete(key));
+        };
+
         applyCurrencySubmissionValues(formData);
+        removeEmptyFileFields(formData);
         setSubmittingState(true);
 
         try {
