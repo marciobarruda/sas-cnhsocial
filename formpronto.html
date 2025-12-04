@@ -2149,6 +2149,16 @@
         return normalized === "sim" || normalized === "true" || normalized === "1";
       };
 
+      const normalizeAddressNumber = (value) => {
+        const raw = (value ?? "").toString().trim();
+        if (!raw) return "";
+        if (/^s\/?n$/i.test(raw)) {
+          return "S/N";
+        }
+        const withoutLeadingZeros = raw.replace(/^0+(?=\d)/, "");
+        return withoutLeadingZeros || "0";
+      };
+
       const formatProgramasSociaisValue = (rawValue, programName = "") => {
         const nome = (programName ?? "").toString().trim();
         if (rawValue == null || (typeof rawValue === "string" && rawValue.trim() === "")) {
@@ -2439,6 +2449,19 @@
           handleCepAccept();
           handleCepComplete();
         });
+      }
+
+      const enforceAddressNumberFormatting = () => {
+        if (!numeroInput) return;
+        const normalized = normalizeAddressNumber(numeroInput.value);
+        if (numeroInput.value !== normalized) {
+          numeroInput.value = normalized;
+        }
+      };
+
+      if (numeroInput) {
+        numeroInput.addEventListener("blur", enforceAddressNumberFormatting);
+        numeroInput.addEventListener("change", enforceAddressNumberFormatting);
       }
 
       const toggleFileSection = (condition, wrapperId) => {
@@ -3427,7 +3450,8 @@
           setMaskedValue(maskCep, "cep", prefillValues.cep);
         }
         setTextValue("logradouro", prefillValues.logradouro);
-        setTextValue("numero", prefillValues.numero);
+        const numeroNormalizado = normalizeAddressNumber(prefillValues.numero);
+        setTextValue("numero", numeroNormalizado);
         setTextValue("complemento", prefillValues.complemento);
         setTextValue("bairro", prefillValues.bairro);
         setTextValue("cidade", prefillValues.cidade);
@@ -3847,7 +3871,7 @@
       const buildAddressSummary = () => {
         const partes = [
           document.getElementById("logradouro")?.value,
-          document.getElementById("numero")?.value,
+          normalizeAddressNumber(document.getElementById("numero")?.value),
           document.getElementById("bairro")?.value,
           document.getElementById("cidade")?.value,
           document.getElementById("uf")?.value,
@@ -3874,7 +3898,7 @@
           { label: "Canal de contato preferencial", value: getSelectText(document.getElementById("preferenciaContato")) },
           { label: "CEP", value: document.getElementById("cep")?.value },
           { label: "Logradouro", value: document.getElementById("logradouro")?.value },
-          { label: "Número", value: document.getElementById("numero")?.value },
+          { label: "Número", value: normalizeAddressNumber(document.getElementById("numero")?.value) },
           { label: "Complemento", value: document.getElementById("complemento")?.value },
           { label: "Bairro", value: document.getElementById("bairro")?.value },
           { label: "Cidade", value: document.getElementById("cidade")?.value },
