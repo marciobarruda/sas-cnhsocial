@@ -2957,7 +2957,7 @@
           backdrop,
           card,
           close: closeModal,
-          returnFocusElement: triggerElement || previousActive,
+          returnFocusElement: !isSuccess && focusElement ? focusElement : triggerElement || previousActive,
         };
 
         const focusable = getModalFocusableElements(card);
