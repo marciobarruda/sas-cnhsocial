@@ -2693,8 +2693,15 @@
 
       const form = document.getElementById("cnhSocialForm");
       const submitButton = document.getElementById("submitButton");
+      const submissionEndpoint =
+        "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/6cb0dfd2-7c35-recebimentocnhsocial";
       let validation;
       let submitAttempted = false;
+
+      const setSubmittingState = (isSubmitting) => {
+        submitButton.toggleAttribute("disabled", isSubmitting);
+        submitButton.setAttribute("aria-busy", isSubmitting ? "true" : "false");
+      };
 
       const applyCurrencySubmissionValues = (formData) => {
         if (!formData || typeof formData.set !== "function") return;
@@ -3837,69 +3844,76 @@
 
         const formData = new FormData(form);
         applyCurrencySubmissionValues(formData);
-        const data = {};
-        formData.forEach((value, key) => {
-          if (value instanceof File) {
-            data[key] = value.name || null;
-          } else if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (Array.isArray(data[key])) {
-              data[key].push(value);
+        setSubmittingState(true);
+
+        try {
+          const response = await fetch(submissionEndpoint, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Falha ao enviar inscrição: ${response.status}`);
+          }
+
+          showFeedbackModal({
+            type: "success",
+            message: "Envio bem-sucedido da inscrição.",
+            triggerElement: submitButton,
+          });
+
+          form.reset();
+          if (validation) {
+            if (typeof validation.refreshAll === "function") {
+              validation.refreshAll();
+            } else if (typeof validation.refresh === "function") {
+              validation.refresh();
             } else {
-              data[key] = [data[key], value];
+              Object.values(validation.fields).forEach((field) => {
+                field.isValid = false;
+                field.elem?.classList.remove("is-invalid", "js-validate-error-field");
+              });
             }
-          } else {
-            data[key] = value;
           }
-        });
-        console.log("Inscrição CNH Social", data);
-
-        showFeedbackModal({
-          type: "success",
-          message: "Envio bem-sucedido da inscrição.",
-          triggerElement: submitButton,
-        });
-
-        form.reset();
-        if (validation) {
-          if (typeof validation.refreshAll === "function") {
-            validation.refreshAll();
-          } else if (typeof validation.refresh === "function") {
-            validation.refresh();
-          } else {
-            Object.values(validation.fields).forEach((field) => {
-              field.isValid = false;
-              field.elem?.classList.remove("is-invalid", "js-validate-error-field");
-            });
+          submitAttempted = false;
+          applyValidationUI([]);
+          setSubmitButtonState(false);
+          const docResidenciaLabel = document.getElementById("docResidenciaLabel");
+          if (docResidenciaLabel) {
+            docResidenciaLabel.classList.remove("required");
           }
+          [
+            "docResidenciaWrapper",
+            "laudoPcdWrapper",
+            "docMaeAtipicaLaudoWrapper",
+            "docMaeAtipicaCrasWrapper",
+            "docResponsavelWrapper",
+            "docDependenteWrapper",
+            "docDependenteVinculoWrapper",
+            "cnhNumeroWrapper",
+            "cnhValidadeWrapper",
+            "cnhArquivoWrapper",
+          ].forEach((id) => {
+            toggleFileSection(false, id);
+          });
+          grupoMulherChefe.classList.add("d-none");
+          desativarEdicaoEndereco();
+          document.querySelectorAll(".file-name").forEach((holder) => {
+            holder.textContent = "";
+          });
+          setTimeout(() => updateSubmitState(), 0);
+          return true;
+        } catch (error) {
+          console.error(error);
+          showFeedbackModal({
+            type: "alert",
+            message: "Não foi possível enviar a inscrição. Tente novamente.",
+            triggerElement: submitButton,
+          });
+          return false;
+        } finally {
+          setSubmittingState(false);
         }
-        submitAttempted = false;
-        applyValidationUI([]);
-        setSubmitButtonState(false);
-        const docResidenciaLabel = document.getElementById("docResidenciaLabel");
-        if (docResidenciaLabel) {
-          docResidenciaLabel.classList.remove("required");
-        }
-        [
-          "docResidenciaWrapper",
-          "laudoPcdWrapper",
-          "docMaeAtipicaLaudoWrapper",
-          "docMaeAtipicaCrasWrapper",
-          "docResponsavelWrapper",
-          "docDependenteWrapper",
-          "docDependenteVinculoWrapper",
-          "cnhNumeroWrapper",
-          "cnhValidadeWrapper",
-          "cnhArquivoWrapper",
-        ].forEach((id) => {
-          toggleFileSection(false, id);
-        });
-        grupoMulherChefe.classList.add("d-none");
-        desativarEdicaoEndereco();
-        document.querySelectorAll(".file-name").forEach((holder) => {
-          holder.textContent = "";
-        });
-        setTimeout(() => updateSubmitState(), 0);
-        return true;
       };
 
       const updateAgeFieldFromBirthdate = () => {
