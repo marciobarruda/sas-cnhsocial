@@ -218,7 +218,7 @@
       }
 
       .modal-card {
-        width: min(32rem, 100%);
+        width: min(64rem, 100%);
         max-height: 90vh;
         overflow-y: auto;
         background: var(--surface-strong);
@@ -261,8 +261,8 @@
       .modal-review-list {
         margin: 0 0 1.5rem;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 0.75rem 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem 1.25rem;
       }
 
       .modal-review-list dt {
@@ -3824,32 +3824,62 @@
         return option ? option.textContent.trim() : select.value || "";
       };
 
-      const buildAddressSummary = () => {
-        const partes = [
-          document.getElementById("logradouro")?.value,
-          document.getElementById("numero")?.value,
-          document.getElementById("bairro")?.value,
-          document.getElementById("cidade")?.value,
-          document.getElementById("uf")?.value,
-        ]
-          .map((parte) => (parte || "").trim())
-          .filter(Boolean);
-        return partes.length ? partes.join(", ") : "";
+      const normalizeLabelText = (text = "") => text.replace(/\s+/g, " ").trim();
+
+      const getFieldLabel = (field) => {
+        if (!field) return "";
+        if (field.id) {
+          const explicitLabel = document.querySelector(`label[for="${field.id}"]`);
+          if (explicitLabel) return normalizeLabelText(explicitLabel.textContent || "");
+        }
+
+        const checkWrapperLabel = field.closest(".form-check")?.querySelector("label");
+        if (checkWrapperLabel) return normalizeLabelText(checkWrapperLabel.textContent || "");
+
+        if (field.hasAttribute("aria-label")) {
+          return normalizeLabelText(field.getAttribute("aria-label"));
+        }
+
+        return normalizeLabelText(field.name || field.id || field.placeholder || "Campo");
+      };
+
+      const getFieldValueForReview = (field) => {
+        if (!field) return "";
+        if (field.type === "checkbox") {
+          return field.checked ? "Sim" : "Não";
+        }
+        if (field.type === "file") {
+          if (field.files && field.files.length) {
+            return Array.from(field.files)
+              .map((file) => file.name)
+              .join(", ");
+          }
+          return "Nenhum arquivo selecionado";
+        }
+        if (field.tagName === "SELECT") {
+          return getSelectText(field);
+        }
+        const value = field.value || "";
+        return normalizeLabelText(value);
+      };
+
+      const getReviewFields = () => {
+        if (!form) return [];
+        const controls = Array.from(form.querySelectorAll("input, select, textarea"));
+        return controls
+          .filter((field) => {
+            const type = (field.type || "").toLowerCase();
+            return !["hidden", "button", "submit", "reset"].includes(type);
+          })
+          .map((field) => ({
+            label: getFieldLabel(field),
+            value: getFieldValueForReview(field),
+          }));
       };
 
       const populateReviewModal = () => {
         if (!reviewModalList) return;
-        const items = [
-          { label: "Nome completo", value: document.getElementById("nomeCompleto")?.value },
-          { label: "CPF", value: document.getElementById("cpf")?.value },
-          { label: "Telefone/WhatsApp", value: document.getElementById("telefone")?.value },
-          { label: "E-mail", value: document.getElementById("email")?.value },
-          { label: "Canal preferencial", value: getSelectText(document.getElementById("preferenciaContato")) },
-          { label: "Endereço", value: buildAddressSummary() },
-          { label: "Categoria desejada", value: getSelectText(document.getElementById("categoria")) },
-          { label: "Renda per capita mensal", value: document.getElementById("rendaFamiliar")?.value },
-          { label: "Cor/raça", value: document.getElementById("racaCorValor")?.value },
-        ];
+        const items = getReviewFields();
 
         reviewModalList.innerHTML = "";
         items.forEach(({ label, value }) => {
