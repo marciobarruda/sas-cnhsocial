@@ -1298,73 +1298,73 @@
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
             </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label for="trabalhadorAplicativo" class="form-label">Trabalhador de aplicativo?</label>
-                <select class="form-select" id="trabalhadorAplicativo" name="trabalhadorAplicativo">
-                  <option value="">Selecione</option>
-                  <option value="sim" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "sim" ? "selected" : "" }}>Sim</option>
-                  <option value="nao" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "nao" ? "selected" : "" }}>Não</option>
-                </select>
-              </div>
-              <div class="col-12">
-                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
-                  <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                  <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
-                  <div class="file-name" id="docTrabalhoAplicativoName"></div>
+              <div class="row g-4">
+                <div class="col-12 col-md-6">
+                  <label for="trabalhadorAplicativo" class="form-label">Trabalhador de aplicativo?</label>
+                  <select class="form-select" id="trabalhadorAplicativo" name="trabalhadorAplicativo">
+                    <option value="">Selecione</option>
+                    <option value="sim" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "sim" ? "selected" : "" }}>Sim</option>
+                    <option value="nao" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "nao" ? "selected" : "" }}>Não</option>
+                  </select>
                 </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="form-check pt-4">
+                <div class="col-12 col-md-6">
+                  <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
+                    <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
+                    <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                    <div class="form-text">Pode ser print de tela do aplicativo com identificação da atividade.</div>
+                    <div class="file-name" id="docTrabalhoAplicativoName"></div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      value="sim"
+                      id="acolhimento"
+                      name="acolhimento"
+                      {{ ($json.data.acolhimento || "").toLowerCase() === "sim" ? "checked" : "" }}
+                    />
+                    <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
+                    <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="form-check pt-4">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      value="sim"
+                      id="semTrabalhoFormal"
+                      name="semTrabalhoFormal"
+                      {{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "checked" : "" }}
+                      disabled
+                      aria-disabled="true"
+                    />
+                    <label class="form-check-label text-danger fw-bold" for="semTrabalhoFormal">Não tem trabalho formal</label>
+                    <small class="form-text">Informação carregada automaticamente a partir do CadÚnico.</small>
+                  </div>
                   <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="semTrabalhoFormal"
-                    name="semTrabalhoFormal"
-                    {{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "checked" : "" }}
-                    disabled
-                    aria-disabled="true"
+                    type="hidden"
+                    name="semTrabalhoFormalValor"
+                    value="{{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "sim" : "nao" }}"
                   />
-                  <label class="form-check-label text-danger fw-bold" for="semTrabalhoFormal">Não tem trabalho formal</label>
-                  <small class="form-text">Informação carregada automaticamente a partir do CadÚnico.</small>
                 </div>
-                <input
-                  type="hidden"
-                  name="semTrabalhoFormalValor"
-                  value="{{ (($json.data || {}).teveEmpregoCarteiraAssinada || "").toLowerCase() === "nao" ? "sim" : "nao" }}"
-                />
-              </div>
-              <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
-                <div class="form-check pt-4">
-                  <input
-                    class="form-check-input readonly-control"
-                    aria-readonly="true"
-                    tabindex="-1"
-                    type="checkbox"
-                    value="sim"
-                    id="mulherChefe"
-                    name="mulherChefe"
-                    {{ ($json.data.mulherChefe || "").toLowerCase() === "sim" ? "checked" : "" }}
-                  />
-                  <label class="form-check-label" for="mulherChefe">Sou mulher e responsável pela renda familiar (chefe de família)</label>
+                <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
+                  <div class="form-check pt-4">
+                    <input
+                      class="form-check-input readonly-control"
+                      aria-readonly="true"
+                      tabindex="-1"
+                      type="checkbox"
+                      value="sim"
+                      id="mulherChefe"
+                      name="mulherChefe"
+                      {{ ($json.data.mulherChefe || "").toLowerCase() === "sim" ? "checked" : "" }}
+                    />
+                    <label class="form-check-label" for="mulherChefe">Sou mulher e responsável pela renda familiar (chefe de família)</label>
+                  </div>
                 </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="acolhimento"
-                    name="acolhimento"
-                  {{ ($json.data.acolhimento || "").toLowerCase() === "sim" ? "checked" : "" }}
-                />
-                <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
-                <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
-                </div>
-              </div>
               <div class="col-12">
                 <div class="row g-3">
                   <div class="col-12">
