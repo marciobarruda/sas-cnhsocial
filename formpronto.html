@@ -218,8 +218,8 @@
       }
 
       .modal-card {
-        width: min(32rem, 100%);
-        max-height: 90vh;
+        width: min(64rem, 100%);
+        max-height: 92vh;
         overflow-y: auto;
         background: var(--surface-strong);
         border-radius: 1rem;
@@ -256,6 +256,28 @@
         margin: 0;
         color: var(--text-strong);
         list-style: disc;
+      }
+
+      .modal-review-list {
+        margin: 0 0 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem 1.25rem;
+      }
+
+      .modal-review-list dt {
+        margin: 0;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .modal-review-list dd {
+        margin: 0;
+        font-weight: 600;
+        color: var(--text-strong);
+        word-break: break-word;
       }
 
       .modal-actions {
@@ -1307,7 +1329,7 @@
                     <option value="nao" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "nao" ? "selected" : "" }}>Não</option>
                   </select>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 d-none" id="docTrabalhoAplicativoWrapper">
                   <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
                     <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
                     <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
@@ -1764,14 +1786,8 @@
                     <div class="form-text">Após o envio, o protocolo será encaminhado para seu e-mail e WhatsApp cadastrados.</div>
                   </div>
                   <div class="mt-4 d-flex flex-column flex-md-row gap-3">
-                    <button
-                      type="button"
-                      class="btn btn-primary btn-lg px-4 btn-submit"
-                      id="submitButton"
-                      aria-disabled="true"
-                      data-ready="false"
-                    >
-                      <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
+                    <button type="button" class="btn btn-primary btn-lg px-4" id="reviewButton">
+                      <i class="bi bi-arrow-right-circle me-2" aria-hidden="true"></i>Avançar
                     </button>
                     <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
                       Limpar campos editáveis
@@ -1795,6 +1811,30 @@
         </div>
       </div>
     </main>
+
+    <div class="modal-backdrop" id="reviewModal" data-review-modal hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle" aria-describedby="reviewModalDesc">
+        <button type="button" class="modal-close-button" id="reviewModalCloseIcon" aria-label="Fechar modal">&times;</button>
+        <p class="modal-title" id="reviewModalTitle">
+          <span aria-hidden="true">📝</span>
+          <span>Revisar dados da inscrição</span>
+        </p>
+        <p class="modal-message" id="reviewModalDesc">Confira os dados principais antes de enviar.</p>
+        <dl class="modal-review-list" id="reviewModalList"></dl>
+        <div class="modal-actions justify-content-between">
+          <button type="button" class="btn btn-outline-secondary" id="reviewModalClose">Voltar</button>
+          <button
+            type="button"
+            class="btn btn-primary btn-lg px-4 btn-submit"
+            id="submitButton"
+            aria-disabled="true"
+            data-ready="false"
+          >
+            <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
+          </button>
+        </div>
+      </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
@@ -2461,6 +2501,15 @@
         toggleFileSection(ativo, "docMaeAtipicaCrasWrapper");
         toggleFileSection(ativo, "docResponsavelWrapper");
       });
+
+      const trabalhadorAplicativo = document.getElementById("trabalhadorAplicativo");
+      const updateTrabalhadorAplicativoVisibility = () => {
+        const ativo = (trabalhadorAplicativo?.value || "").toLowerCase() === "sim";
+        toggleFileSection(ativo, "docTrabalhoAplicativoWrapper");
+      };
+      if (trabalhadorAplicativo) {
+        trabalhadorAplicativo.addEventListener("change", updateTrabalhadorAplicativoVisibility);
+      }
 
       const vitimaViolencia = document.getElementById("vitimaViolencia");
 
@@ -3762,6 +3811,164 @@
         dataAtualizacaoInput.addEventListener("change", updateTempoAtualizacaoField);
       }
 
+      const reviewModal = document.getElementById("reviewModal");
+      const reviewModalCard = reviewModal ? reviewModal.querySelector(".modal-card") : null;
+      const reviewModalList = document.getElementById("reviewModalList");
+      const reviewModalClose = document.getElementById("reviewModalClose");
+      const reviewModalCloseIcon = document.getElementById("reviewModalCloseIcon");
+      const reviewButton = document.getElementById("reviewButton");
+
+      const getSelectText = (select) => {
+        if (!select) return "";
+        if (select.multiple) {
+          const selected = Array.from(select.selectedOptions || []).map((option) => option.textContent.trim());
+          const clean = selected.filter(Boolean);
+          return clean.join(", ") || select.value || "";
+        }
+        const option = select.selectedOptions && select.selectedOptions[0];
+        return option ? option.textContent.trim() : select.value || "";
+      };
+
+      const getFieldLabel = (element) => {
+        if (!element) return "";
+        if (element.id) {
+          const explicitLabel = form?.querySelector(`label[for="${element.id}"]`);
+          if (explicitLabel) {
+            return explicitLabel.textContent.trim();
+          }
+        }
+        const wrappingLabel = element.closest("label");
+        if (wrappingLabel) {
+          return wrappingLabel.textContent.trim();
+        }
+        const containerLabel = element
+          .closest(".mb-3, .col-12, .col-md-6, .form-group, fieldset")
+          ?.querySelector(".form-label, legend");
+        return containerLabel?.textContent.trim() || element.name || element.id || "Campo do formulário";
+      };
+
+      const getRadioGroupLabel = (element) => {
+        if (!element) return "";
+        const containerLabel = element
+          .closest(".mb-3, .col-12, .col-md-6, .form-group, fieldset")
+          ?.querySelector(".form-label, legend");
+        if (containerLabel) {
+          return containerLabel.textContent.trim();
+        }
+        return getFieldLabel(element);
+      };
+
+      const getCheckboxValue = (element) => (element?.checked ? element.value || "Sim" : "Não");
+
+      const populateReviewModal = () => {
+        if (!reviewModalList || !form) return;
+
+        const controls = Array.from(form.querySelectorAll("input, select, textarea"));
+        const radioGroupsHandled = new Set();
+        const items = [];
+
+        controls.forEach((control) => {
+          const type = (control.type || control.tagName || "").toLowerCase();
+          if (type === "hidden") return;
+
+          if (type === "radio") {
+            const groupKey = control.name || control.id;
+            if (!groupKey || radioGroupsHandled.has(groupKey)) {
+              return;
+            }
+            radioGroupsHandled.add(groupKey);
+            const groupRadios = controls.filter(
+              (item) => (item.type || item.tagName || "").toLowerCase() === "radio" && (item.name || item.id) === groupKey
+            );
+            const checkedRadio = groupRadios.find((radio) => radio.checked);
+            const valueLabel = checkedRadio
+              ? getFieldLabel(checkedRadio) || checkedRadio.value || "Sim"
+              : "Não informado";
+            items.push({ label: getRadioGroupLabel(control), value: valueLabel });
+            return;
+          }
+
+          if (type === "checkbox") {
+            items.push({ label: getFieldLabel(control), value: getCheckboxValue(control) });
+            return;
+          }
+
+          if (type === "file") {
+            const relatedName = control.id ? document.getElementById(`${control.id}Name`) : null;
+            const fileName = control.files?.[0]?.name || (relatedName?.textContent || "").trim() || "Nenhum arquivo selecionado";
+            items.push({ label: getFieldLabel(control), value: fileName });
+            return;
+          }
+
+          const value = type === "select-one" || type === "select-multiple" ? getSelectText(control) : control.value;
+          items.push({ label: getFieldLabel(control), value: value && value.toString().trim() ? value : "—" });
+        });
+
+        reviewModalList.innerHTML = "";
+        items.forEach(({ label, value }) => {
+          const dt = document.createElement("dt");
+          dt.textContent = label;
+          const dd = document.createElement("dd");
+          dd.textContent = value && value.toString().trim() ? value : "—";
+          reviewModalList.append(dt, dd);
+        });
+      };
+
+      const openReviewModal = (triggerElement = null) => {
+        if (!reviewModal || !reviewModalCard) return;
+        populateReviewModal();
+
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const closeHandler = () => closeModal();
+        const onBackdropClick = (event) => {
+          if (event.target === reviewModal) {
+            closeModal();
+          }
+        };
+
+        reviewModalClose?.addEventListener("click", closeHandler);
+        reviewModalCloseIcon?.addEventListener("click", closeHandler);
+        reviewModal.addEventListener("click", onBackdropClick);
+
+        allowExternalFocusElement = null;
+        reviewModal.removeAttribute("hidden");
+        reviewModal.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop: reviewModal,
+          card: reviewModalCard,
+          close: closeModal,
+          returnFocusElement: triggerElement || previousActive,
+          cleanup: () => {
+            reviewModalClose?.removeEventListener("click", closeHandler);
+            reviewModalCloseIcon?.removeEventListener("click", closeHandler);
+            reviewModal.removeEventListener("click", onBackdropClick);
+          },
+        };
+
+        const focusable = getModalFocusableElements(reviewModalCard);
+        const initialFocusTarget = focusable[0] || reviewModalCard;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+      const closeReviewModalIfOpen = () => {
+        if (reviewModal && reviewModal.classList.contains("is-open") && activeModal?.backdrop === reviewModal) {
+          closeModal();
+        }
+      };
+
+      if (reviewButton) {
+        reviewButton.addEventListener("click", () => {
+          openReviewModal(reviewButton);
+        });
+      }
+
       const validarEExibirModal = (formSelector, botaoSelector) => {
         const targetForm = document.querySelector(formSelector);
         const targetButton = document.querySelector(botaoSelector);
@@ -3770,10 +3977,12 @@
         }
         targetButton.addEventListener("click", async (event) => {
           event.preventDefault();
+          closeReviewModalIfOpen();
           await processSubmissionAttempt();
         });
         targetForm.addEventListener("submit", async (event) => {
           event.preventDefault();
+          closeReviewModalIfOpen();
           await processSubmissionAttempt();
         });
       };
@@ -3784,6 +3993,7 @@
       enforceEmailConfirmationConsistency();
 
       applyPrefillValues();
+      updateTrabalhadorAplicativoVisibility();
       updateAgeFieldFromBirthdate();
       updateTempoAtualizacaoField();
       updateSubmitState();
