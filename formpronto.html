@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SAS • CNH Social</title>
-    <link rel="icon" href="https://statics.recife.pe.gov.br/images/automacao/cnh-social/icon.png" />
+    <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -218,7 +218,7 @@
       }
 
       .modal-card {
-        width: min(32rem, 100%);
+        width: min(44rem, 100%);
         max-height: 90vh;
         overflow-y: auto;
         background: var(--surface-strong);
@@ -261,8 +261,8 @@
       .modal-review-list {
         margin: 0 0 1.5rem;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 0.75rem 1rem;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
       }
 
       .modal-review-list dt {
@@ -1173,7 +1173,6 @@
                     <option value="">Selecione</option>
                     <option value="whatsapp">WhatsApp</option>
                     <option value="email">E-mail</option>
-                    <option value="ligacao">Ligação telefônica</option>
                   </select>
                 </div>
               </div>
@@ -1785,10 +1784,7 @@
                     </div>
                     <div class="form-text">Após o envio, o protocolo será encaminhado para seu e-mail e WhatsApp cadastrados.</div>
                   </div>
-                  <div class="mt-4 d-flex flex-column flex-md-row gap-3">
-                    <button type="button" class="btn btn-primary btn-lg px-4" id="reviewButton">
-                      <i class="bi bi-arrow-right-circle me-2" aria-hidden="true"></i>Avançar
-                    </button>
+                  <div class="mt-4">
                     <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
                       Limpar campos editáveis
                     </button>
@@ -1804,6 +1800,15 @@
                 >
                   <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
                   Voltar
+                </button>
+                <button
+                  type="button"
+                  class="step-actions__button step-actions__button--next"
+                  id="reviewButton"
+                  aria-label="Avançar para revisão e enviar inscrição"
+                >
+                  Avançar
+                  <i class="bi bi-arrow-right-short" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -2150,6 +2155,16 @@
         return normalized === "sim" || normalized === "true" || normalized === "1";
       };
 
+      const normalizeAddressNumber = (value) => {
+        const raw = (value ?? "").toString().trim();
+        if (!raw) return "";
+        if (/^s\/?n$/i.test(raw)) {
+          return "S/N";
+        }
+        const withoutLeadingZeros = raw.replace(/^0+(?=\d)/, "");
+        return withoutLeadingZeros || "0";
+      };
+
       const formatProgramasSociaisValue = (rawValue, programName = "") => {
         const nome = (programName ?? "").toString().trim();
         if (rawValue == null || (typeof rawValue === "string" && rawValue.trim() === "")) {
@@ -2440,6 +2455,19 @@
           handleCepAccept();
           handleCepComplete();
         });
+      }
+
+      const enforceAddressNumberFormatting = () => {
+        if (!numeroInput) return;
+        const normalized = normalizeAddressNumber(numeroInput.value);
+        if (numeroInput.value !== normalized) {
+          numeroInput.value = normalized;
+        }
+      };
+
+      if (numeroInput) {
+        numeroInput.addEventListener("blur", enforceAddressNumberFormatting);
+        numeroInput.addEventListener("change", enforceAddressNumberFormatting);
       }
 
       const toggleFileSection = (condition, wrapperId) => {
@@ -3428,7 +3456,8 @@
           setMaskedValue(maskCep, "cep", prefillValues.cep);
         }
         setTextValue("logradouro", prefillValues.logradouro);
-        setTextValue("numero", prefillValues.numero);
+        const numeroNormalizado = normalizeAddressNumber(prefillValues.numero);
+        setTextValue("numero", numeroNormalizado);
         setTextValue("complemento", prefillValues.complemento);
         setTextValue("bairro", prefillValues.bairro);
         setTextValue("cidade", prefillValues.cidade);
@@ -3824,10 +3853,31 @@
         return option ? option.textContent.trim() : select.value || "";
       };
 
+      const formatValue = (value) => {
+        const text = value == null ? "" : value.toString();
+        return text.trim() ? text.trim() : "—";
+      };
+
+      const formatCheckbox = (inputId) => {
+        const element = document.getElementById(inputId);
+        return element && element.checked ? "Sim" : "Não";
+      };
+
+      const getFileName = (inputId) => {
+        const input = document.getElementById(inputId);
+        if (input && input.files && input.files.length) {
+          return input.files[0].name;
+        }
+
+        const holder = document.getElementById(`${inputId}Name`);
+        const holderText = holder?.textContent?.trim();
+        return holderText || "";
+      };
+
       const buildAddressSummary = () => {
         const partes = [
           document.getElementById("logradouro")?.value,
-          document.getElementById("numero")?.value,
+          normalizeAddressNumber(document.getElementById("numero")?.value),
           document.getElementById("bairro")?.value,
           document.getElementById("cidade")?.value,
           document.getElementById("uf")?.value,
@@ -3842,21 +3892,63 @@
         const items = [
           { label: "Nome completo", value: document.getElementById("nomeCompleto")?.value },
           { label: "CPF", value: document.getElementById("cpf")?.value },
+          { label: "Nome social", value: document.getElementById("nomeSocial")?.value },
+          { label: "Data de nascimento", value: document.getElementById("dataNascimento")?.value },
+          { label: "Idade", value: document.getElementById("idade")?.value },
+          { label: "NIS/PIS", value: document.getElementById("nis")?.value },
+          { label: "Data da atualização", value: document.getElementById("dataAtualizacaoCadunico")?.value },
+          { label: "Tempo desde a atualização", value: document.getElementById("tempoAtualizacaoCadunico")?.value },
+          { label: "Identificação de gênero", value: getSelectText(document.getElementById("genero")) || document.getElementById("generoValor")?.value },
           { label: "Telefone/WhatsApp", value: document.getElementById("telefone")?.value },
           { label: "E-mail", value: document.getElementById("email")?.value },
-          { label: "Canal preferencial", value: getSelectText(document.getElementById("preferenciaContato")) },
-          { label: "Endereço", value: buildAddressSummary() },
+          { label: "Canal de contato preferencial", value: getSelectText(document.getElementById("preferenciaContato")) },
+          { label: "CEP", value: document.getElementById("cep")?.value },
+          { label: "Logradouro", value: document.getElementById("logradouro")?.value },
+          { label: "Número", value: normalizeAddressNumber(document.getElementById("numero")?.value) },
+          { label: "Complemento", value: document.getElementById("complemento")?.value },
+          { label: "Bairro", value: document.getElementById("bairro")?.value },
+          { label: "Cidade", value: document.getElementById("cidade")?.value },
+          { label: "UF", value: getSelectText(document.getElementById("uf")) },
+          { label: "Trabalho por aplicativo", value: getSelectText(document.getElementById("trabalhadorAplicativo")) },
+          { label: "Resido em serviço de acolhimento institucional", value: formatCheckbox("acolhimento") },
+          { label: "Não tem trabalho formal", value: formatCheckbox("semTrabalhoFormal") },
+          { label: "Sou mulher e responsável pela renda familiar", value: formatCheckbox("mulherChefe") },
+          { label: "Possuo dependente em tratamento terapêutico contínuo", value: formatCheckbox("dependenteTratamento") },
+          { label: "Composição familiar (nº de pessoas no domicílio)", value: document.getElementById("composicaoFamiliar")?.value },
+          { label: "Renda per capita mensal (R$)", value: document.getElementById("rendaFamiliar")?.value },
+          { label: "Participação em programas sociais (BPC ou Bolsa Família)", value: document.getElementById("programasSociais")?.value },
+          { label: "Autodeclaração de cor/raça", value: getSelectText(document.getElementById("racaCor")) || document.getElementById("racaCorValor")?.value },
+          { label: "Pessoa com deficiência (PCD)", value: getSelectText(document.getElementById("pcd")) },
+          { label: "Mãe atípica com dependente PCD ou autista", value: getSelectText(document.getElementById("maeAtipica")) },
+          { label: "Vítima de violência doméstica", value: getSelectText(document.getElementById("vitimaViolencia")) },
+          { label: "Informações complementares", value: document.getElementById("necessidadesEspeciais")?.value },
           { label: "Categoria desejada", value: getSelectText(document.getElementById("categoria")) },
-          { label: "Renda per capita mensal", value: document.getElementById("rendaFamiliar")?.value },
-          { label: "Cor/raça", value: document.getElementById("racaCorValor")?.value },
+          { label: "Número da CNH (para adição)", value: document.getElementById("numeroCnh")?.value },
+          { label: "Validade da CNH", value: document.getElementById("validadeCnh")?.value },
+          { label: "LGPD autorizada", value: formatCheckbox("lgpd") },
+          { label: "Declaração de veracidade", value: formatCheckbox("veracidade") },
+          { label: "Autorizo uso da imagem", value: formatCheckbox("imagem") },
         ];
 
+        const fileItems = [
+          { label: "Comprovante de residência recente", value: getFileName("docResidencia") },
+          { label: "Comprovante de trabalho por aplicativo", value: getFileName("docTrabalhoAplicativo") },
+          { label: "Declaração de tratamento terapêutico contínuo", value: getFileName("docDependente") },
+          { label: "Comprovação de vínculo do dependente", value: getFileName("docDependenteVinculo") },
+          { label: "Laudo ou relatório para mãe atípica", value: getFileName("docMaeAtipicaLaudo") },
+          { label: "Declaração técnica do CRAS/CREAS ou certificação", value: getFileName("docMaeAtipicaCras") },
+          { label: "Declaração técnica de responsabilidade legal", value: getFileName("docResponsavel") },
+          { label: "Laudo médico PCD", value: getFileName("laudoPcd") },
+          { label: "CNH (frente e verso)", value: getFileName("cnhArquivo") },
+          { label: "Documento oficial com foto", value: getFileName("docIdentidade") },
+        ].filter(({ value }) => Boolean(value));
+
         reviewModalList.innerHTML = "";
-        items.forEach(({ label, value }) => {
+        [...items, ...fileItems].forEach(({ label, value }) => {
           const dt = document.createElement("dt");
           dt.textContent = label;
           const dd = document.createElement("dd");
-          dd.textContent = value && value.toString().trim() ? value : "—";
+          dd.textContent = formatValue(value);
           reviewModalList.append(dt, dd);
         });
       };
