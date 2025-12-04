@@ -3735,12 +3735,12 @@
 
         if (!isValid || invalidFields.length) {
           setSubmitButtonState(false);
-          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
+          const focusField = getFirstInvalidFieldElement(invalidFields);
           showFeedbackModal({
             type: "alert",
             message: "Por favor, verifique os campos obrigatórios listados abaixo.",
             items: invalidFields.map((field) => field.label),
-            focusElement: focusField ? focusField.element : null,
+            focusElement: focusField,
             triggerElement: submitButton,
           });
           updateSubmitState();
