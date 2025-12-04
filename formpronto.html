@@ -251,6 +251,45 @@
         color: var(--text-strong);
       }
 
+      .modal-review {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .modal-review__section {
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: rgba(0, 83, 164, 0.04);
+      }
+
+      .modal-review__title {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--brand-secondary);
+      }
+
+      .modal-review__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .modal-review__item-label {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      .modal-review__item-value {
+        display: block;
+        font-weight: 600;
+        color: var(--text-strong);
+      }
+
       .modal-list {
         padding-left: 1.25rem;
         margin: 0;
@@ -1766,12 +1805,10 @@
                   <div class="mt-4 d-flex flex-column flex-md-row gap-3">
                     <button
                       type="button"
-                      class="btn btn-primary btn-lg px-4 btn-submit"
-                      id="submitButton"
-                      aria-disabled="true"
-                      data-ready="false"
+                      class="btn btn-primary btn-lg px-4"
+                      id="reviewOpenButton"
                     >
-                      <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
+                      <i class="bi bi-check2-square me-2" aria-hidden="true"></i>Avançar
                     </button>
                     <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
                       Limpar campos editáveis
@@ -2624,7 +2661,8 @@
       };
 
       const form = document.getElementById("cnhSocialForm");
-      const submitButton = document.getElementById("submitButton");
+      const reviewOpenButton = document.getElementById("reviewOpenButton");
+      let submitButton;
       let validation;
       let submitAttempted = false;
 
@@ -2695,6 +2733,81 @@
         const value = element.value != null ? String(element.value).trim() : "";
         return value.length > 0;
       };
+
+      const createReviewModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
+          }
+
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.reviewModal = "true";
+          backdrop.setAttribute("hidden", "");
+
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "reviewModalTitle");
+          card.setAttribute("aria-describedby", "reviewModalMessage");
+          card.tabIndex = -1;
+
+          const closeIconButton = document.createElement("button");
+          closeIconButton.type = "button";
+          closeIconButton.className = "modal-close-button";
+          closeIconButton.setAttribute("aria-label", "Fechar modal");
+          closeIconButton.innerHTML = "&times;";
+
+          const title = document.createElement("p");
+          title.className = "modal-title";
+          title.id = "reviewModalTitle";
+          title.innerHTML = '<span aria-hidden="true">🔎</span><span>Revise seus dados</span>';
+
+          const message = document.createElement("p");
+          message.className = "modal-message";
+          message.id = "reviewModalMessage";
+          message.textContent = "Confira se todas as informações estão corretas antes de enviar.";
+
+          const reviewContainer = document.createElement("div");
+          reviewContainer.className = "modal-review";
+          reviewContainer.id = "reviewModalContent";
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const closeButton = document.createElement("button");
+          closeButton.type = "button";
+          closeButton.className = "btn btn-outline-secondary";
+          closeButton.textContent = "Voltar e editar";
+
+          const submitButton = document.createElement("button");
+          submitButton.type = "button";
+          submitButton.className = "btn btn-primary btn-submit";
+          submitButton.id = "submitButton";
+          submitButton.setAttribute("aria-disabled", "true");
+          submitButton.setAttribute("data-ready", "false");
+          submitButton.innerHTML = '<i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição';
+
+          actions.append(closeButton, submitButton);
+          card.append(closeIconButton, title, message, reviewContainer, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = {
+            backdrop,
+            card,
+            closeIconButton,
+            closeButton,
+            submitButton,
+            reviewContainer,
+          };
+          return modalElements;
+        };
+      })();
+
+      ({ submitButton } = createReviewModal());
 
       const setSubmitButtonState = (isReady) => {
         submitButton.setAttribute("data-ready", isReady ? "true" : "false");
@@ -2775,6 +2888,7 @@
           return modalElements;
         };
       })();
+
 
       let activeModal = null;
       let allowExternalFocusElement = null;
@@ -3650,7 +3764,7 @@
         return extraErrors;
       }
 
-      const processSubmissionAttempt = async () => {
+      const validateFormForSubmission = async (triggerElement = submitButton) => {
         let isValid = true;
         if (validation) {
           if (typeof validation.revalidate === "function") {
@@ -3672,10 +3786,206 @@
             message: "Por favor, verifique os campos obrigatórios listados abaixo.",
             items: invalidFields.map((field) => field.label),
             focusElement: focusField ? focusField.element : null,
-            triggerElement: submitButton,
+            triggerElement,
           });
           updateSubmitState();
+          return { isValid: false, invalidFields };
+        }
+
+        return { isValid: true, invalidFields: [] };
+      };
+
+      const getReviewFieldValue = (selector) => {
+        let element;
+        try {
+          element = form.querySelector(selector);
+        } catch (error) {
+          element = null;
+        }
+        if (!element) return null;
+        const label = getFieldLabel(selector);
+        const isVisible = isElementVisible(element);
+        let value = "";
+
+        if (element.type === "checkbox") {
+          value = element.checked ? "Sim" : "Não";
+        } else if (element.type === "file") {
+          value = element.files && element.files.length ? element.files[0].name : "";
+          if (!value) {
+            value = isVisible ? "Não anexado" : "Não aplicável";
+          }
+        } else if (element.tagName === "SELECT") {
+          const selected = element.options[element.selectedIndex];
+          value = selected ? selected.textContent.trim() : element.value || "";
+        } else {
+          value = (element.value || "").trim();
+        }
+
+        if (!value) {
+          value = isVisible ? "Não informado" : "Não aplicável";
+        }
+
+        return { label, value };
+      };
+
+      const renderReviewContent = () => {
+        const { reviewContainer } = createReviewModal();
+        if (!reviewContainer) return;
+        reviewContainer.innerHTML = "";
+
+        const sections = [
+          {
+            title: "Identificação",
+            fields: [
+              "#cpf",
+              "#nomeCompleto",
+              "#nomeSocial",
+              "#dataNascimento",
+              "#idade",
+              "#nis",
+              "#dataAtualizacaoCadunico",
+              "#tempoAtualizacaoCadunico",
+              "#genero",
+            ],
+          },
+          {
+            title: "Contatos e endereço",
+            fields: [
+              "#telefone",
+              "#email",
+              "#preferenciaContato",
+              "#cep",
+              "#logradouro",
+              "#numero",
+              "#complemento",
+              "#bairro",
+              "#cidade",
+              "#uf",
+              "#enderecoAtualizado",
+              "#docResidencia",
+            ],
+          },
+          {
+            title: "Contexto socioassistencial",
+            fields: [
+              "#rendaFamiliar",
+              "#pcd",
+              "#maeAtipica",
+              "#vitimaViolencia",
+              "#racaCorValor",
+              "#trabalhadorAplicativo",
+              "#docTrabalhoAplicativo",
+              "#acolhimento",
+              "#semTrabalhoFormal",
+            ],
+          },
+          {
+            title: "Condições especiais e CNH",
+            fields: ["#categoria", "#numeroCnh", "#validadeCnh", "#cnhArquivo"],
+          },
+          {
+            title: "Declarações",
+            fields: ["#lgpd", "#veracidade", "#imagem"],
+          },
+        ];
+
+        sections.forEach((section) => {
+          const items = section.fields
+            .map((selector) => getReviewFieldValue(selector))
+            .filter(Boolean);
+          if (!items.length) return;
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "modal-review__section";
+
+          const heading = document.createElement("h3");
+          heading.className = "modal-review__title";
+          heading.textContent = section.title;
+
+          const list = document.createElement("ul");
+          list.className = "modal-review__list";
+
+          items.forEach((item) => {
+            const listItem = document.createElement("li");
+            const label = document.createElement("span");
+            label.className = "modal-review__item-label";
+            label.textContent = item.label;
+            const value = document.createElement("span");
+            value.className = "modal-review__item-value";
+            value.textContent = item.value;
+            listItem.append(label, value);
+            list.append(listItem);
+          });
+
+          wrapper.append(heading, list);
+          reviewContainer.append(wrapper);
+        });
+      };
+
+      const openReviewModal = async (triggerElement = reviewOpenButton) => {
+        const { backdrop, card, closeIconButton, closeButton, submitButton: modalSubmitButton } = createReviewModal();
+
+        const validationResult = await validateFormForSubmission(triggerElement);
+        if (!validationResult.isValid) {
+          return;
+        }
+
+        renderReviewContent();
+
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        const closeHandler = () => closeModal();
+        const onBackdropClick = (event) => {
+          if (event.target === backdrop) {
+            closeModal();
+          }
+        };
+
+        modalSubmitButton.onclick = async (event) => {
+          event.preventDefault();
+          await processSubmissionAttempt(modalSubmitButton);
+        };
+
+        const cleanup = () => {
+          closeIconButton.removeEventListener("click", closeHandler);
+          closeButton.removeEventListener("click", closeHandler);
+          backdrop.removeEventListener("click", onBackdropClick);
+          modalSubmitButton.onclick = null;
+        };
+
+        closeIconButton.addEventListener("click", closeHandler);
+        closeButton.addEventListener("click", closeHandler);
+        backdrop.addEventListener("click", onBackdropClick);
+
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          returnFocusElement: triggerElement || previousActive,
+          cleanup,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+      const processSubmissionAttempt = async (triggerElement = submitButton) => {
+        const validationResult = await validateFormForSubmission(triggerElement);
+        if (!validationResult.isValid) {
           return false;
+        }
+
+        if (activeModal && activeModal.backdrop?.dataset?.reviewModal === "true") {
+          closeModal();
         }
 
         const formData = new FormData(form);
@@ -3699,7 +4009,7 @@
         showFeedbackModal({
           type: "success",
           message: "Envio bem-sucedido da inscrição.",
-          triggerElement: submitButton,
+          triggerElement,
         });
 
         form.reset();
@@ -3768,23 +4078,30 @@
         dataAtualizacaoInput.addEventListener("change", updateTempoAtualizacaoField);
       }
 
-      const validarEExibirModal = (formSelector, botaoSelector) => {
-        const targetForm = document.querySelector(formSelector);
-        const targetButton = document.querySelector(botaoSelector);
-        if (!targetForm || !targetButton) {
-          return;
+      const validarEExibirModal = () => {
+        if (reviewOpenButton) {
+          reviewOpenButton.addEventListener("click", async (event) => {
+            event.preventDefault();
+            await openReviewModal(reviewOpenButton);
+          });
         }
-        targetButton.addEventListener("click", async (event) => {
-          event.preventDefault();
-          await processSubmissionAttempt();
-        });
-        targetForm.addEventListener("submit", async (event) => {
-          event.preventDefault();
-          await processSubmissionAttempt();
-        });
+
+        if (submitButton) {
+          submitButton.addEventListener("click", async (event) => {
+            event.preventDefault();
+            await processSubmissionAttempt(submitButton);
+          });
+        }
+
+        if (form) {
+          form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            await openReviewModal(event.submitter || reviewOpenButton || submitButton);
+          });
+        }
       };
 
-      validarEExibirModal("#cnhSocialForm", "#submitButton");
+      validarEExibirModal();
 
       attachRequiredFieldFocusHandlers();
       enforceEmailConfirmationConsistency();
