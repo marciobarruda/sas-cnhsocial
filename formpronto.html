@@ -218,8 +218,8 @@
       }
 
       .modal-card {
-        width: min(32rem, 100%);
-        max-height: 90vh;
+        width: min(64rem, 100%);
+        max-height: 92vh;
         overflow-y: auto;
         background: var(--surface-strong);
         border-radius: 1rem;
@@ -261,8 +261,8 @@
       .modal-review-list {
         margin: 0 0 1.5rem;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 0.75rem 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem 1.25rem;
       }
 
       .modal-review-list dt {
@@ -3820,36 +3820,89 @@
 
       const getSelectText = (select) => {
         if (!select) return "";
+        if (select.multiple) {
+          const selected = Array.from(select.selectedOptions || []).map((option) => option.textContent.trim());
+          const clean = selected.filter(Boolean);
+          return clean.join(", ") || select.value || "";
+        }
         const option = select.selectedOptions && select.selectedOptions[0];
         return option ? option.textContent.trim() : select.value || "";
       };
 
-      const buildAddressSummary = () => {
-        const partes = [
-          document.getElementById("logradouro")?.value,
-          document.getElementById("numero")?.value,
-          document.getElementById("bairro")?.value,
-          document.getElementById("cidade")?.value,
-          document.getElementById("uf")?.value,
-        ]
-          .map((parte) => (parte || "").trim())
-          .filter(Boolean);
-        return partes.length ? partes.join(", ") : "";
+      const getFieldLabel = (element) => {
+        if (!element) return "";
+        if (element.id) {
+          const explicitLabel = form?.querySelector(`label[for="${element.id}"]`);
+          if (explicitLabel) {
+            return explicitLabel.textContent.trim();
+          }
+        }
+        const wrappingLabel = element.closest("label");
+        if (wrappingLabel) {
+          return wrappingLabel.textContent.trim();
+        }
+        const containerLabel = element
+          .closest(".mb-3, .col-12, .col-md-6, .form-group, fieldset")
+          ?.querySelector(".form-label, legend");
+        return containerLabel?.textContent.trim() || element.name || element.id || "Campo do formulário";
       };
 
+      const getRadioGroupLabel = (element) => {
+        if (!element) return "";
+        const containerLabel = element
+          .closest(".mb-3, .col-12, .col-md-6, .form-group, fieldset")
+          ?.querySelector(".form-label, legend");
+        if (containerLabel) {
+          return containerLabel.textContent.trim();
+        }
+        return getFieldLabel(element);
+      };
+
+      const getCheckboxValue = (element) => (element?.checked ? element.value || "Sim" : "Não");
+
       const populateReviewModal = () => {
-        if (!reviewModalList) return;
-        const items = [
-          { label: "Nome completo", value: document.getElementById("nomeCompleto")?.value },
-          { label: "CPF", value: document.getElementById("cpf")?.value },
-          { label: "Telefone/WhatsApp", value: document.getElementById("telefone")?.value },
-          { label: "E-mail", value: document.getElementById("email")?.value },
-          { label: "Canal preferencial", value: getSelectText(document.getElementById("preferenciaContato")) },
-          { label: "Endereço", value: buildAddressSummary() },
-          { label: "Categoria desejada", value: getSelectText(document.getElementById("categoria")) },
-          { label: "Renda per capita mensal", value: document.getElementById("rendaFamiliar")?.value },
-          { label: "Cor/raça", value: document.getElementById("racaCorValor")?.value },
-        ];
+        if (!reviewModalList || !form) return;
+
+        const controls = Array.from(form.querySelectorAll("input, select, textarea"));
+        const radioGroupsHandled = new Set();
+        const items = [];
+
+        controls.forEach((control) => {
+          const type = (control.type || control.tagName || "").toLowerCase();
+          if (type === "hidden") return;
+
+          if (type === "radio") {
+            const groupKey = control.name || control.id;
+            if (!groupKey || radioGroupsHandled.has(groupKey)) {
+              return;
+            }
+            radioGroupsHandled.add(groupKey);
+            const groupRadios = controls.filter(
+              (item) => (item.type || item.tagName || "").toLowerCase() === "radio" && (item.name || item.id) === groupKey
+            );
+            const checkedRadio = groupRadios.find((radio) => radio.checked);
+            const valueLabel = checkedRadio
+              ? getFieldLabel(checkedRadio) || checkedRadio.value || "Sim"
+              : "Não informado";
+            items.push({ label: getRadioGroupLabel(control), value: valueLabel });
+            return;
+          }
+
+          if (type === "checkbox") {
+            items.push({ label: getFieldLabel(control), value: getCheckboxValue(control) });
+            return;
+          }
+
+          if (type === "file") {
+            const relatedName = control.id ? document.getElementById(`${control.id}Name`) : null;
+            const fileName = control.files?.[0]?.name || (relatedName?.textContent || "").trim() || "Nenhum arquivo selecionado";
+            items.push({ label: getFieldLabel(control), value: fileName });
+            return;
+          }
+
+          const value = type === "select-one" || type === "select-multiple" ? getSelectText(control) : control.value;
+          items.push({ label: getFieldLabel(control), value: value && value.toString().trim() ? value : "—" });
+        });
 
         reviewModalList.innerHTML = "";
         items.forEach(({ label, value }) => {
