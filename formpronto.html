@@ -1307,7 +1307,7 @@
                     <option value="nao" {{ (($json.data || {}).trabalhadorAplicativo || "").toLowerCase() === "nao" ? "selected" : "" }}>Não</option>
                   </select>
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 d-none" id="docTrabalhoAplicativoWrapper">
                   <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
                     <label for="docTrabalhoAplicativo" class="form-label">Comprovante de trabalho por aplicativo (PDF/JPG/PNG até 5 MB)</label>
                     <input class="form-control" type="file" id="docTrabalhoAplicativo" name="docTrabalhoAplicativo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
@@ -2461,6 +2461,12 @@
         toggleFileSection(ativo, "docMaeAtipicaCrasWrapper");
         toggleFileSection(ativo, "docResponsavelWrapper");
       });
+
+      const trabalhadorAplicativo = document.getElementById("trabalhadorAplicativo");
+      const atualizarDocTrabalhoAplicativo = () =>
+        toggleFileSection(trabalhadorAplicativo.value === "sim", "docTrabalhoAplicativoWrapper");
+      trabalhadorAplicativo.addEventListener("change", atualizarDocTrabalhoAplicativo);
+      atualizarDocTrabalhoAplicativo();
 
       const vitimaViolencia = document.getElementById("vitimaViolencia");
 
