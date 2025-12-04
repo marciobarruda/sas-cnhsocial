@@ -261,8 +261,8 @@
       .modal-review-list {
         margin: 0 0 1.5rem;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 0.75rem 1rem;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
       }
 
       .modal-review-list dt {
@@ -3824,6 +3824,27 @@
         return option ? option.textContent.trim() : select.value || "";
       };
 
+      const formatValue = (value) => {
+        const text = value == null ? "" : value.toString();
+        return text.trim() ? text.trim() : "—";
+      };
+
+      const formatCheckbox = (inputId) => {
+        const element = document.getElementById(inputId);
+        return element && element.checked ? "Sim" : "Não";
+      };
+
+      const getFileName = (inputId) => {
+        const input = document.getElementById(inputId);
+        if (input && input.files && input.files.length) {
+          return input.files[0].name;
+        }
+
+        const holder = document.getElementById(`${inputId}Name`);
+        const holderText = holder?.textContent?.trim();
+        return holderText || "";
+      };
+
       const buildAddressSummary = () => {
         const partes = [
           document.getElementById("logradouro")?.value,
@@ -3842,13 +3863,55 @@
         const items = [
           { label: "Nome completo", value: document.getElementById("nomeCompleto")?.value },
           { label: "CPF", value: document.getElementById("cpf")?.value },
+          { label: "Nome social", value: document.getElementById("nomeSocial")?.value },
+          { label: "Data de nascimento", value: document.getElementById("dataNascimento")?.value },
+          { label: "Idade", value: document.getElementById("idade")?.value },
+          { label: "NIS/PIS", value: document.getElementById("nis")?.value },
+          { label: "Data da atualização", value: document.getElementById("dataAtualizacaoCadunico")?.value },
+          { label: "Tempo desde a atualização", value: document.getElementById("tempoAtualizacaoCadunico")?.value },
+          { label: "Identificação de gênero", value: getSelectText(document.getElementById("genero")) || document.getElementById("generoValor")?.value },
           { label: "Telefone/WhatsApp", value: document.getElementById("telefone")?.value },
           { label: "E-mail", value: document.getElementById("email")?.value },
-          { label: "Canal preferencial", value: getSelectText(document.getElementById("preferenciaContato")) },
-          { label: "Endereço", value: buildAddressSummary() },
+          { label: "Confirme o e-mail", value: document.getElementById("emailConfirm")?.value },
+          { label: "Canal de contato preferencial", value: getSelectText(document.getElementById("preferenciaContato")) },
+          { label: "CEP", value: document.getElementById("cep")?.value },
+          { label: "Logradouro", value: document.getElementById("logradouro")?.value },
+          { label: "Número", value: document.getElementById("numero")?.value },
+          { label: "Complemento", value: document.getElementById("complemento")?.value },
+          { label: "Bairro", value: document.getElementById("bairro")?.value },
+          { label: "Cidade", value: document.getElementById("cidade")?.value },
+          { label: "UF", value: getSelectText(document.getElementById("uf")) },
+          { label: "Endereço completo", value: buildAddressSummary() },
+          { label: "Atualizar endereço", value: formatCheckbox("enderecoAtualizado") },
+          { label: "Comprovante de residência recente", value: getFileName("docResidencia") || "Não anexado" },
+          { label: "Trabalho por aplicativo", value: getSelectText(document.getElementById("trabalhadorAplicativo")) },
+          { label: "Comprovante de trabalho por aplicativo", value: getFileName("docTrabalhoAplicativo") || "Não anexado" },
+          { label: "Resido em serviço de acolhimento institucional", value: formatCheckbox("acolhimento") },
+          { label: "Não tem trabalho formal", value: formatCheckbox("semTrabalhoFormal") },
+          { label: "Sou mulher e responsável pela renda familiar", value: formatCheckbox("mulherChefe") },
+          { label: "Possuo dependente em tratamento terapêutico contínuo", value: formatCheckbox("dependenteTratamento") },
+          { label: "Declaração de tratamento terapêutico contínuo", value: getFileName("docDependente") || "Não anexado" },
+          { label: "Comprovação de vínculo do dependente", value: getFileName("docDependenteVinculo") || "Não anexado" },
+          { label: "Composição familiar (nº de pessoas no domicílio)", value: document.getElementById("composicaoFamiliar")?.value },
+          { label: "Renda per capita mensal (R$)", value: document.getElementById("rendaFamiliar")?.value },
+          { label: "Participação em programas sociais (BPC ou Bolsa Família)", value: document.getElementById("programasSociais")?.value },
+          { label: "Autodeclaração de cor/raça", value: getSelectText(document.getElementById("racaCor")) || document.getElementById("racaCorValor")?.value },
+          { label: "Pessoa com deficiência (PCD)", value: getSelectText(document.getElementById("pcd")) },
+          { label: "Mãe atípica com dependente PCD ou autista", value: getSelectText(document.getElementById("maeAtipica")) },
+          { label: "Laudo ou relatório para mãe atípica", value: getFileName("docMaeAtipicaLaudo") || "Não anexado" },
+          { label: "Declaração técnica do CRAS/CREAS ou certificação", value: getFileName("docMaeAtipicaCras") || "Não anexado" },
+          { label: "Declaração técnica de responsabilidade legal", value: getFileName("docResponsavel") || "Não anexado" },
+          { label: "Vítima de violência doméstica", value: getSelectText(document.getElementById("vitimaViolencia")) },
+          { label: "Informações complementares", value: document.getElementById("necessidadesEspeciais")?.value },
+          { label: "Laudo médico PCD", value: getFileName("laudoPcd") || "Não anexado" },
           { label: "Categoria desejada", value: getSelectText(document.getElementById("categoria")) },
-          { label: "Renda per capita mensal", value: document.getElementById("rendaFamiliar")?.value },
-          { label: "Cor/raça", value: document.getElementById("racaCorValor")?.value },
+          { label: "Número da CNH (para adição)", value: document.getElementById("numeroCnh")?.value },
+          { label: "Validade da CNH", value: document.getElementById("validadeCnh")?.value },
+          { label: "CNH (frente e verso)", value: getFileName("cnhArquivo") || "Não anexado" },
+          { label: "Documento oficial com foto", value: getFileName("docIdentidade") || "Não anexado" },
+          { label: "LGPD autorizada", value: formatCheckbox("lgpd") },
+          { label: "Declaração de veracidade", value: formatCheckbox("veracidade") },
+          { label: "Autorizo uso da imagem", value: formatCheckbox("imagem") },
         ];
 
         reviewModalList.innerHTML = "";
@@ -3856,7 +3919,7 @@
           const dt = document.createElement("dt");
           dt.textContent = label;
           const dd = document.createElement("dd");
-          dd.textContent = value && value.toString().trim() ? value : "—";
+          dd.textContent = formatValue(value);
           reviewModalList.append(dt, dd);
         });
       };
