@@ -3090,9 +3090,13 @@
         countdown.textContent = `⏳ Contagem regressiva: ${formatAvailabilityCountdown(state.target)}`;
       };
 
-      const openAvailabilityModal = (onClose = null) => {
-        const { backdrop, card, okButton } = createAvailabilityModal();
+      const openAvailabilityModal = (onClose = null) => { 
         const state = applyAvailabilityState();
+        if (state.status === "open") {
+          return;
+        }
+
+        const { backdrop, card, okButton } = createAvailabilityModal();
         setAvailabilityModalContent(state);
         const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
@@ -4361,9 +4365,14 @@
       }
 
       startAvailabilityWatcher();
-      openAvailabilityModal(() => {
+      const initialAvailabilityState = getAvailabilityState();
+      if (initialAvailabilityState.status !== "open") {
+        openAvailabilityModal(() => {
+          triggerConsentIfNeeded();
+        });
+      } else {
         triggerConsentIfNeeded();
-      });
+      }
 
       const validarEExibirModal = (formSelector, botaoSelector) => {
         const targetForm = document.querySelector(formSelector);
