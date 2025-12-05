@@ -217,6 +217,22 @@
         z-index: 2000;
       }
 
+      .availability-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.55);
+        backdrop-filter: blur(2px);
+        z-index: 1500;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      .availability-overlay.is-active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
       .modal-backdrop.is-open {
         display: flex;
       }
@@ -253,6 +269,20 @@
       .modal-message {
         margin-bottom: 1rem;
         color: var(--text-strong);
+      }
+
+      .availability-meta {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+      }
+
+      .availability-countdown {
+        font-weight: 700;
+        color: var(--brand-secondary);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
       }
 
       .modal-list {
@@ -2857,6 +2887,7 @@
 
       let activeModal = null;
       let allowExternalFocusElement = null;
+      let consentModalShown = false;
 
       const getModalFocusableElements = (container) =>
         Array.from(
@@ -2927,6 +2958,181 @@
         }
       };
 
+      const availabilityOverlay = document.createElement("div");
+      availabilityOverlay.id = "availabilityOverlay";
+      availabilityOverlay.className = "availability-overlay";
+      availabilityOverlay.setAttribute("aria-hidden", "true");
+      document.body.append(availabilityOverlay);
+
+      const availabilityStart = dayjs("2025-12-06T10:00:00");
+      const availabilityEnd = dayjs("2025-12-24T23:59:59");
+      let availabilityWatcher = null;
+
+      const getAvailabilityState = () => {
+        const now = dayjs();
+        if (!availabilityStart.isValid() || !availabilityEnd.isValid() || !now.isValid()) {
+          return { status: "unknown", target: null };
+        }
+        if (now.isBefore(availabilityStart)) {
+          return { status: "before", target: availabilityStart };
+        }
+        if (now.isAfter(availabilityEnd)) {
+          return { status: "after", target: null };
+        }
+        return { status: "open", target: availabilityEnd };
+      };
+
+      const isWithinAvailabilityWindow = () => {
+        const state = getAvailabilityState();
+        return state.status === "open";
+      };
+
+      const toggleAvailabilityOverlay = (shouldLock) => {
+        if (!availabilityOverlay) return;
+        availabilityOverlay.classList.toggle("is-active", shouldLock);
+      };
+
+      const formatAvailabilityCountdown = (target) => {
+        if (!target || typeof target.isValid !== "function" || !target.isValid()) {
+          return "00d 00h 00m 00s";
+        }
+        const now = dayjs();
+        let totalSeconds = Math.max(0, target.diff(now, "second"));
+        const days = Math.floor(totalSeconds / 86400);
+        totalSeconds -= days * 86400;
+        const hours = Math.floor(totalSeconds / 3600);
+        totalSeconds -= hours * 3600;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds - minutes * 60;
+        const pad = (value) => String(value).padStart(2, "0");
+        return `${pad(days)}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+      };
+
+      const applyAvailabilityState = () => {
+        const state = getAvailabilityState();
+        const locked = state.status !== "open";
+        toggleAvailabilityOverlay(locked);
+        if (locked) {
+          setSubmitButtonState(false);
+        }
+        return state;
+      };
+
+      const createAvailabilityModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
+          }
+
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.availabilityModal = "true";
+          backdrop.setAttribute("data-testid", "availability-modal");
+          backdrop.setAttribute("hidden", "");
+
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "availabilityTitle");
+          card.setAttribute("aria-describedby", "availabilityMessage availabilityCountdown");
+          card.tabIndex = -1;
+
+          const title = document.createElement("p");
+          title.className = "modal-title";
+          title.id = "availabilityTitle";
+
+          const windowMessage = document.createElement("p");
+          windowMessage.className = "availability-meta";
+          windowMessage.id = "availabilityMessage";
+
+          const countdown = document.createElement("p");
+          countdown.className = "availability-countdown";
+          countdown.id = "availabilityCountdown";
+          countdown.setAttribute("aria-live", "polite");
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const okButton = document.createElement("button");
+          okButton.type = "button";
+          okButton.className = "btn btn-primary";
+          okButton.textContent = "Ok, entendi";
+
+          actions.append(okButton);
+          card.append(title, windowMessage, countdown, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = { backdrop, card, title, windowMessage, countdown, okButton };
+          return modalElements;
+        };
+      })();
+
+      const setAvailabilityModalContent = (state) => {
+        const { title, windowMessage, countdown } = createAvailabilityModal();
+        const rangeText = "Período disponível: 06/12/2025 às 10:00 até 24/12/2025 às 23:59:59";
+        let message = rangeText;
+        let icon = "⏰";
+        if (state.status === "before") {
+          icon = "🚦";
+          message = `🚦 As inscrições abrirão em 06/12/2025 às 10:00. ${rangeText}`;
+        } else if (state.status === "after") {
+          icon = "⛔";
+          message = `⛔ Período encerrado em 24/12/2025 às 23:59:59.`;
+        } else if (state.status === "open") {
+          icon = "✅";
+          message = `✅ Inscrições abertas até 24/12/2025 às 23:59:59.`;
+        }
+        title.textContent = `${icon} Janela de disponibilidade`;
+        windowMessage.textContent = message;
+        countdown.textContent = `⏳ Contagem regressiva: ${formatAvailabilityCountdown(state.target)}`;
+      };
+
+      const openAvailabilityModal = (onClose = null) => {
+        const { backdrop, card, okButton } = createAvailabilityModal();
+        const state = applyAvailabilityState();
+        setAvailabilityModalContent(state);
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+        const handleClose = () => {
+          closeModal();
+          if (typeof onClose === "function") {
+            onClose();
+          }
+        };
+
+        const cleanup = () => {
+          okButton.removeEventListener("click", handleClose);
+        };
+
+        okButton.addEventListener("click", handleClose);
+
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          cleanup,
+          returnFocusElement: previousActive,
+          allowEscape: false,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+
       const createConsentModal = (() => {
         let modalElements = null;
         return () => {
@@ -2978,6 +3184,7 @@
       })();
 
       const openConsentModal = () => {
+        consentModalShown = true;
         const { backdrop, card, okButton } = createConsentModal();
         const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
@@ -3010,6 +3217,30 @@
 
         document.addEventListener("keydown", handleModalKeydown, true);
         document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+      const triggerConsentIfNeeded = () => {
+        if (consentModalShown) return;
+        if (!isWithinAvailabilityWindow()) return;
+        openConsentModal();
+      };
+
+      const syncAvailabilityState = () => {
+        const state = applyAvailabilityState();
+        if (activeModal?.backdrop?.dataset.availabilityModal === "true") {
+          setAvailabilityModalContent(state);
+        }
+        if (state.status === "open") {
+          triggerConsentIfNeeded();
+        }
+      };
+
+      const startAvailabilityWatcher = () => {
+        syncAvailabilityState();
+        if (availabilityWatcher) {
+          clearInterval(availabilityWatcher);
+        }
+        availabilityWatcher = setInterval(syncAvailabilityState, 1000);
       };
 
       const showFeedbackModal = ({ type, message, items = [], focusElement = null, triggerElement = submitButton }) => {
@@ -3449,7 +3680,8 @@
       const updateSubmitState = () => {
         const extraErrors = validateAdditionalRules();
         const invalidFields = getInvalidFields(extraErrors);
-        setSubmitButtonState(invalidFields.length === 0);
+        const isWindowOpen = isWithinAvailabilityWindow();
+        setSubmitButtonState(invalidFields.length === 0 && isWindowOpen);
         if (submitAttempted) {
           applyValidationUI(invalidFields);
         }
@@ -3819,6 +4051,11 @@
       }
 
       const processSubmissionAttempt = async () => {
+        const availabilityState = applyAvailabilityState();
+        if (availabilityState.status !== "open") {
+          openAvailabilityModal();
+          return false;
+        }
         let isValid = true;
         if (validation) {
           if (typeof validation.revalidate === "function") {
@@ -4123,7 +4360,10 @@
         });
       }
 
-      openConsentModal();
+      startAvailabilityWatcher();
+      openAvailabilityModal(() => {
+        triggerConsentIfNeeded();
+      });
 
       const validarEExibirModal = (formSelector, botaoSelector) => {
         const targetForm = document.querySelector(formSelector);
