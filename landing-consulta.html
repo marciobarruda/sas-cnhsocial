@@ -121,17 +121,24 @@
           <div class="modal-body">
             <form id="consultaForm" novalidate>
               <label class="form-label fw-semibold" for="inscricaoInput">Número da inscrição</label>
-              <div class="input-group mb-3">
+              <div class="input-group mb-2">
                 <span class="input-group-text" id="inscricaoPrefix"><i class="bi bi-search"></i></span>
                 <input
                   type="text"
                   class="form-control"
                   id="inscricaoInput"
                   name="inscricao"
-                  placeholder="Digite o número"
-                  aria-describedby="inscricaoPrefix"
+                  value="CNH-S"
+                  minlength="15"
+                  maxlength="15"
+                  pattern="CNH-S\\d{10}"
+                  placeholder="CNH-S2024000001"
+                  aria-describedby="inscricaoPrefix inscricaoHelp"
                   required
                 />
+              </div>
+              <div class="mb-3" id="inscricaoHelp">
+                <small class="text-muted">A inscrição sempre começa com "CNH-S" seguida do ano (4 dígitos) e do sequencial com 6 dígitos. Exemplo: CNH-S2024123456.</small>
               </div>
               <div class="d-flex align-items-center justify-content-between gap-2">
                 <small class="text-muted" id="statusMessage">Preencha e clique em consultar.</small>
@@ -165,6 +172,7 @@
       const spinner = submitButton.querySelector(".spinner-border");
       const resultadoWrapper = document.getElementById("resultadoWrapper");
       const resultado = document.getElementById("resultado");
+      const PREFIX = "CNH-S";
 
       document.addEventListener("DOMContentLoaded", () => {
         consultaModal.show();
@@ -173,14 +181,18 @@
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        const inscricao = input.value.trim();
-        if (!inscricao) {
-          statusMessage.textContent = "Informe o número da inscrição.";
+        const inscricao = input.value.trim().toUpperCase();
+        const apenasDigitos = inscricao.replace(/CNH-S/i, "").replace(/\D/g, "");
+        const inscricaoNormalizada = `${PREFIX}${apenasDigitos}`;
+
+        if (inscricaoNormalizada.length < 15) {
+          statusMessage.textContent = "Complete todos os 10 dígitos após CNH-S.";
           statusMessage.classList.add("text-danger");
           input.focus();
           return;
         }
 
+        input.value = inscricaoNormalizada;
         statusMessage.classList.remove("text-danger");
         statusMessage.textContent = "Enviando...";
         submitButton.disabled = true;
@@ -194,7 +206,7 @@
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ inscricao }),
+              body: JSON.stringify({ inscricao: inscricaoNormalizada }),
             }
           );
 
