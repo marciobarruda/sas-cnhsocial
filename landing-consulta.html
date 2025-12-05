@@ -198,9 +198,8 @@
             }
           );
 
-          const payload = await response.json().catch(() => ({ erro: "Resposta não é um JSON válido." }));
-          const formatted = JSON.stringify(payload, null, 2);
-          resultado.textContent = formatted;
+          const payload = await response.text();
+          resultado.textContent = payload || "(Resposta vazia)";
           resultadoWrapper.hidden = false;
           statusMessage.textContent = response.ok
             ? "Consulta realizada. Veja o retorno abaixo."
