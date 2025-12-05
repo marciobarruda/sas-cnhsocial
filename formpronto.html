@@ -57,19 +57,23 @@
         min-height: 385px;
         overflow: hidden;
         width: 100%;
+        background: linear-gradient(135deg, rgba(0, 83, 164, 0.9), rgba(0, 163, 255, 0.6));
       }
 
       header.site-header picture {
-        display: block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
         height: 100%;
       }
 
       header.site-header .hero-image {
         display: block;
-        width: 100%;
+        width: auto;
         height: 100%;
-        object-fit: cover;
+        max-width: 100%;
+        object-fit: contain;
         object-position: center;
       }
 
