@@ -46,1014 +46,175 @@
         font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: var(--text-strong);
         min-height: 100vh;
+        background: linear-gradient(135deg, rgba(0, 83, 164, 0.08), rgba(0, 163, 255, 0.1));
       }
 
-      header.site-header {
+      .page-shell {
+        min-height: 100vh;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-        height: 385px;
-        min-height: 385px;
-        overflow: hidden;
-        width: 100%;
-        background: none;
-      }
-
-      header.site-header picture {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-      }
-
-      header.site-header .hero-image {
-        display: block;
-        width: auto;
-        height: 100%;
-        max-width: 100%;
-        object-fit: contain;
-        object-position: center;
-      }
-
-      header .lead {
-        color: rgba(255, 255, 255, 0.82);
-        max-width: 100%;
-        font-size: 1rem;
-        line-height: 1.65;
-        text-align: justify;
-      }
-
-      .badge-open {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.95rem;
-        font-weight: 600;
-        padding: 0.45rem 0.9rem;
-        border-radius: 999px;
-        background-color: rgba(255, 255, 255, 0.14);
-      }
-
-      .user-greeting {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 1.05rem;
-        font-weight: 600;
-        margin-bottom: 2rem;
-        padding: 1rem 1.5rem;
-        border-radius: 1rem;
-        background: linear-gradient(135deg, rgba(0, 83, 164, 0.09), rgba(0, 163, 255, 0.12));
-        color: var(--text-strong);
-        box-shadow: 0 10px 30px rgba(0, 45, 98, 0.08);
-      }
-
-      .user-greeting::before {
-        content: "👋";
-        font-size: 1.4rem;
-      }
-
-      .minhas-inscricoes-grid {
-        margin-top: 1rem;
-      }
-
-      .minhas-inscricao-card {
-        cursor: pointer;
-        transition: transform 0.18s ease, box-shadow 0.18s ease;
-        border: 1px solid rgba(0, 83, 164, 0.12);
-        border-radius: 4px;
-      }
-
-      .minhas-inscricao-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(0, 45, 98, 0.12);
-      }
-
-      .minhas-inscricao-card.is-loading {
-        pointer-events: none;
-        opacity: 0.7;
-      }
-
-      .minhas-inscricoes-placeholder {
-        padding: 1.25rem;
-        border-radius: 4px;
-        background: rgba(0, 83, 164, 0.05);
-        border: 1px dashed rgba(0, 83, 164, 0.2);
-        color: var(--text-muted);
-      }
-
-      .resumo-inscricao-list dt {
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-      }
-
-      .resumo-inscricao-list dd {
-        font-weight: 600;
-        color: var(--text-strong);
-      }
-
-      .resumo-inscricao-pre {
-        white-space: pre-wrap;
-        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-        font-size: 0.95rem;
-        background: rgba(0, 83, 164, 0.08);
-        color: var(--brand-secondary);
-        padding: 1rem;
-        border-radius: 0.75rem;
-      }
-
-      .publicacoes-panel,
-      .updates-panel {
-        border-radius: 4px;
-      }
-
-      .download-card strong {
-        font-size: 1rem;
-        color: var(--text-strong);
-      }
-
-      .download-card p {
-        margin: 0;
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        line-height: 1.4;
-      }
-
-      .download-card a {
-        font-weight: 600;
-      }
-
-      .btn-submit.is-disabled {
-        cursor: not-allowed;
-        opacity: 0.65;
-        box-shadow: none;
-      }
-
-      .btn-submit.is-disabled:focus-visible {
-        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
-      }
-
-      input[type="text"],
-      textarea {
-        text-transform: uppercase;
-      }
-
-      input[type="email"] {
-        text-transform: lowercase;
-      }
-
-      .modal-backdrop {
-        position: fixed;
-        inset: 0;
-        display: none;
         align-items: center;
         justify-content: center;
-        padding: 1.5rem;
-        background-color: rgba(17, 24, 39, 0.6);
-        z-index: 2000;
+        padding: 2rem 1rem;
       }
 
-      .availability-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(17, 24, 39, 0.55);
-        backdrop-filter: blur(2px);
-        z-index: 1500;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-      }
-
-      .availability-overlay.is-active {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .modal-backdrop.is-open {
-        display: flex;
-      }
-
-      .modal-card {
-        width: min(44rem, 100%);
-        max-height: 90vh;
-        overflow-y: auto;
+      .brand-card {
         background: var(--surface-strong);
-        border-radius: 1rem;
-        padding: 2rem;
-        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.28);
-        outline: none;
-        position: relative;
+        border: 1px solid rgba(0, 83, 164, 0.12);
+        box-shadow: 0 12px 40px rgba(0, 45, 98, 0.12);
+        border-radius: 16px;
+        padding: 1.75rem;
+        max-width: 520px;
+        width: 100%;
+        text-align: center;
       }
 
-      .modal-title {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 1.25rem;
+      .brand-card h1 {
         font-weight: 700;
-        margin-bottom: 1rem;
+        color: var(--brand-primary);
+        margin-bottom: 0.5rem;
       }
 
-      .title--alerta {
-        color: #c53030;
-      }
-
-      .title--sucesso {
-        color: #1b873f;
-      }
-
-      .modal-message {
-        margin-bottom: 1rem;
-        color: var(--text-strong);
-      }
-
-      .availability-meta {
-        font-size: 0.95rem;
+      .brand-card p {
         color: var(--text-muted);
-        margin-bottom: 0.75rem;
-      }
-
-      .availability-countdown {
-        font-weight: 700;
-        color: var(--brand-secondary);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-      }
-
-      .modal-list {
-        padding-left: 1.25rem;
-        margin: 0;
-        color: var(--text-strong);
-        list-style: disc;
-      }
-
-      .modal-review-list {
-        margin: 0 0 1.5rem;
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-      }
-
-      .modal-review-list dt {
-        margin: 0;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-      }
-
-      .modal-review-list dd {
-        margin: 0;
-        font-weight: 600;
-        color: var(--text-strong);
-        word-break: break-word;
-      }
-
-      .modal-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
-      }
-
-      .modal-close-button {
-        position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        font-size: 1.5rem;
-        cursor: pointer;
-        line-height: 1;
-      }
-
-      .modal-close-button:focus-visible {
-        outline: 2px solid var(--brand-highlight);
-        outline-offset: 2px;
-      }
-
-      .error-text {
-        display: block;
-        margin-top: 0.35rem;
-        font-size: 0.85rem;
-        color: #c53030;
-      }
-
-      .is-invalid {
-        border-color: #c53030 !important;
-      }
-
-      .form-check-input.is-invalid {
-        border-color: #c53030;
-        box-shadow: none;
-      }
-
-      .form-check .error-text {
-        margin-left: 1.75rem;
-      }
-
-      #publicacoes-list li + li {
-        margin-top: 0.75rem;
-      }
-
-      .publicacoes-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .publicacoes-item-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-      }
-
-      .publicacoes-item-icon {
-        display: inline-block;
-        width: 1.5rem;
-        height: 1.5rem;
-        flex-shrink: 0;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: contain;
-      }
-
-      .publicacoes-item-icon--pdf {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23d32f2f' d='M6 2h7l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%23ef5350' d='M13 2v5h5'/%3E%3Ctext x='12' y='17' text-anchor='middle' font-family='Arial, sans-serif' font-size='7' font-weight='700' fill='%23fff'%3EPDF%3C/text%3E%3C/svg%3E");
-      }
-
-      .publicacoes-item-icon--image {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3' y='4' width='18' height='16' rx='2' fill='%23215695'/%3E%3Crect x='4.5' y='5.5' width='15' height='13' rx='1.2' fill='%233968c8'/%3E%3Ccircle cx='9' cy='11' r='2.2' fill='%23fff59d'/%3E%3Cpath fill='%23c5cae9' d='M6 18l4.2-4.6 2.7 3.2 2.6-3L18 18z'/%3E%3C/svg%3E");
-      }
-
-      .publicacoes-item-icon--generic {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233f51b5' d='M7 2h7l5 5v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%235c6bc0' d='M14 2v5h5'/%3E%3Crect x='8.5' y='12' width='7' height='1.5' rx='.75' fill='%23c5cae9'/%3E%3Crect x='8.5' y='15' width='5' height='1.5' rx='.75' fill='%23c5cae9'/%3E%3C/svg%3E");
-      }
-
-      .publicacoes-item time {
-        flex-shrink: 0;
-      }
-
-      @media (min-width: 576px) {
-        .publicacoes-item {
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-        }
-      }
-
-      @media (max-width: 575.98px) {
-        .publicacoes-item-link {
-          align-items: flex-start;
-        }
-      }
-
-      .updates-panel {
-        border-left: 3px solid var(--brand-highlight);
-        padding-left: 1.2rem;
-        color: var(--text-muted);
-      }
-
-      .updates-panel time {
-        font-size: 0.85rem;
-        color: var(--brand-secondary);
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-      }
-
-      footer {
-        color: var(--text-muted);
-        padding: 2.5rem 0 2rem;
-        font-size: 0.9rem;
-      }
-
-      main {
-        padding: 0.75rem 0 4rem;
-      }
-
-      .form-wrapper {
-        background: transparent;
-        border-radius: 1.5rem;
-        padding: clamp(1.5rem, 2vw + 1rem, 3rem);
-        box-shadow: none;
-      }
-
-      .form-wrapper form {
-        margin: 0;
-      }
-
-      .section-nav {
-        position: relative;
-        z-index: 1;
-        padding: 0;
-        margin-bottom: clamp(1.5rem, 1.25rem + 1vw, 2.25rem);
-      }
-
-      .section-nav__inner {
-        border-radius: 1.5rem;
-        padding: clamp(0.5rem, 0.25rem + 1vw, 1.25rem);
-        display: flex;
-        flex-direction: column;
-        gap: clamp(0.5rem, 0.25rem + 0.75vw, 1.5rem);
-      }
-
-      .section-nav__top {
-        display: flex;
-        align-items: center;
-        gap: clamp(0.75rem, 0.5rem + 1vw, 2rem);
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
-
-      .section-nav__eyebrow {
-        font-size: 0.95rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        font-weight: 600;
-        color: var(--brand-secondary);
-      }
-
-      .section-nav__registration {
-        margin-left: auto;
-        padding: 0.65rem 1rem;
-        border-radius: 0.85rem;
-        background: rgba(0, 83, 164, 0.06);
-        border: 1px solid rgba(0, 83, 164, 0.2);
-        min-width: clamp(12rem, 11rem + 4vw, 16rem);
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-
-      .section-nav__registration-label {
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-        font-weight: 600;
-      }
-
-      .section-nav__registration-value {
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--brand-secondary);
-        letter-spacing: 0.02em;
-      }
-
-      .section-nav__list {
-        --step-size: 2.75rem;
-        --step-progress: 0;
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: clamp(0.5rem, 0.5rem + 1vw, 1.75rem);
-        list-style: none;
-        padding: 0 clamp(0.5rem, 0.25rem + 1vw, 1.5rem) 0;
-        margin: 0;
-        position: relative;
-      }
-
-      .section-nav__list::before,
-      .section-nav__list::after {
-        content: "";
-        position: absolute;
-        height: 1px;
-        background: linear-gradient(90deg, rgba(0, 83, 164, 0.2), rgba(0, 163, 255, 0.2));
-        width: calc(100% - var(--step-size));
-        left: calc(var(--step-size) / 2);
-        top: calc(var(--step-size) / 2);
-        z-index: 0;
-      }
-
-      .section-nav__list::after {
-        width: calc(var(--step-progress) * 100%);
-        background: linear-gradient(90deg, var(--brand-primary), var(--brand-highlight));
-      }
-
-      .section-nav__item {
-        position: relative;
-        z-index: 1;
-        display: grid;
-        grid-template-columns: var(--step-size) 1fr;
-        gap: 0.5rem;
-        align-items: center;
-        min-width: 0;
-      }
-
-      .section-nav__step {
-        width: var(--step-size);
-        height: var(--step-size);
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        background: linear-gradient(135deg, rgba(0, 83, 164, 0.12), rgba(0, 163, 255, 0.18));
-        color: var(--brand-secondary);
-        font-weight: 800;
-        font-size: 1.1rem;
-        border: 1px solid rgba(0, 83, 164, 0.25);
-        box-shadow: 0 6px 16px rgba(0, 83, 164, 0.12);
-      }
-
-      .section-nav__label {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        min-width: 0;
-      }
-
-      .section-nav__title {
-        margin: 0;
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--text-strong);
-        letter-spacing: 0.01em;
-      }
-
-      .section-nav__description {
-        margin: 0;
-        color: var(--text-muted);
-        font-size: 0.95rem;
-      }
-
-      @media (max-width: 768px) {
-        header.site-header {
-          padding: 0;
-        }
-
-        .badge-open {
-          width: 100%;
-          justify-content: center;
-        }
-
-        .section-title {
-          justify-content: flex-start;
-        }
-
-        .section-nav {
-          padding: 0;
-        }
-
-        .section-nav__inner {
-          padding: 1rem 0;
-        }
-
-        .section-nav__top {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.5rem;
-        }
-
-        .section-nav__registration {
-          width: 100%;
-        }
-
-        .section-nav__list {
-          --step-size: 2.5rem;
-          flex-wrap: wrap;
-          gap: 1rem;
-          padding: 0;
-        }
-
-        .section-nav__list::before,
-        .section-nav__list::after {
-          display: none;
-        }
-
-        .section-nav__item {
-          flex: 1 0 45%;
-        }
-
-        .section-nav__label {
-          max-width: none;
-          font-size: 0.9rem;
-        }
-      }
-
-      @media (max-width: 767.98px) {
-        header.site-header {
-          height: 184px;
-          min-height: 184px;
-        }
-      }
-
-      .section-header {
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 0.75rem;
         margin-bottom: 1.25rem;
       }
 
-      .required::after {
-        content: "*";
-        color: #d32f2f;
-        margin-left: 0.25rem;
-      }
-
-      .form-text {
-        color: var(--text-muted);
-      }
-
-      .file-input-wrapper {
-        border: 1px dashed var(--border-color);
-        border-radius: 0.75rem;
-        padding: 1rem;
-        background: rgba(0, 83, 164, 0.03);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .file-input-wrapper label {
-        font-weight: 600;
-      }
-
-      .file-name {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        margin-top: 0.25rem;
-      }
-
-      .readonly-control {
-        pointer-events: none;
-      }
-
-      .toast-container {
-        z-index: 1080;
-      }
-
-      .legend-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        font-size: 0.85rem;
-        color: var(--brand-secondary);
-        background: rgba(0, 83, 164, 0.12);
-        padding: 0.35rem 0.75rem;
-        border-radius: 999px;
-      }
-
-      .tooltip-inner {
-        text-align: left;
-      }
-
-      .btn-outline-primary:focus-visible,
-      .form-control:focus,
-      .form-select:focus,
-      .form-check-input:focus {
-        box-shadow: 0 0 0 0.25rem rgba(0, 83, 164, 0.25);
-        border-color: var(--brand-highlight);
-      }
-
-      .border-dashed {
-        border-style: dashed !important;
-      }
-
-      .hero {
-        background: linear-gradient(135deg, rgba(0, 83, 164, 0.95), rgba(0, 163, 255, 0.85)),
-          url("https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1600&q=80") center/cover;
-        color: #fff;
-        padding: 4.5rem 0;
-      }
-
-      .hero-title {
-        font-weight: 800;
-        font-size: clamp(2.1rem, 2vw + 1.8rem, 3rem);
-        letter-spacing: -0.01em;
-      }
-
-      .hero-highlight {
-        color: #b3e5ff;
-      }
-
-      .hero-card {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 1.25rem;
-        padding: clamp(1.5rem, 2vw + 1rem, 2rem);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-      }
-
-      .search-bar {
-        background: var(--surface-strong);
-        border-radius: 1rem;
-        padding: 1.25rem;
-        box-shadow: 0 20px 40px rgba(24, 64, 120, 0.12);
-        margin-top: -2.5rem;
-        position: relative;
-        z-index: 2;
-      }
-
-      .search-input {
+      .result-box {
         background: #f8f9fb;
-        border: 1px solid var(--border-color);
-        border-radius: 0.85rem;
-        padding: 0.9rem 1rem;
-        font-weight: 600;
-        color: var(--brand-secondary);
-      }
-
-      .search-results {
-        background: var(--surface-strong);
-        border: 1px solid var(--border-color);
-        border-radius: 1rem;
-        padding: 1.25rem;
-        margin-top: 1rem;
-        box-shadow: 0 12px 24px rgba(24, 64, 120, 0.08);
-      }
-
-      .search-results pre {
-        margin: 0;
-        background: #0b172a;
-        color: #e9efff;
-        border-radius: 0.85rem;
-        padding: 1rem;
-        font-size: 0.95rem;
-        max-height: 320px;
+        border: 1px dashed var(--border-color);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        color: var(--text-strong);
+        max-height: 240px;
         overflow: auto;
-      }
-
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1rem;
-        margin-top: 2rem;
-      }
-
-      .feature-card {
-        background: #f7f9fc;
-        border: 1px solid var(--border-color);
-        border-radius: 1rem;
-        padding: 1rem;
-        height: 100%;
-        display: grid;
-        gap: 0.5rem;
-      }
-
-      .feature-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 0.75rem;
-        display: grid;
-        place-items: center;
-        background: rgba(0, 83, 164, 0.12);
-        color: var(--brand-primary);
-        font-size: 1.35rem;
-      }
-
-      .modal-body label {
-        font-weight: 700;
-      }
-
-      .alert-placeholder {
-        display: none;
-      }
-
-      .alert-placeholder.is-visible {
-        display: block;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 0.95rem;
       }
     </style>
   </head>
   <body>
-    <header class="hero">
-      <div class="container py-2">
-        <div class="row align-items-center g-4">
-          <div class="col-lg-6">
-            <p class="badge bg-light text-dark fw-semibold text-uppercase mb-3">Consulta rápida</p>
-            <h1 class="hero-title mb-3">
-              Consulte sua inscrição na <span class="hero-highlight">CNH Social</span> de forma segura e intuitiva.
-            </h1>
-            <p class="lead mb-4">
-              Utilize o canal oficial para verificar o status da sua inscrição. A consulta é feita via modal seguro e o retorno aparece logo abaixo da barra de pesquisa.
-            </p>
-            <div class="d-flex flex-wrap gap-3">
-              <button class="btn btn-light btn-lg text-primary fw-bold" data-bs-toggle="modal" data-bs-target="#consultaModal">
-                <i class="bi bi-search me-2"></i>Consultar inscrição
-              </button>
-              <a class="btn btn-outline-light btn-lg fw-bold" href="#como-funciona">Como funciona</a>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="hero-card">
-              <div class="d-flex align-items-center gap-3 mb-3">
-                <div class="feature-icon bg-light text-primary"><i class="bi bi-shield-check"></i></div>
-                <div>
-                  <h2 class="h5 mb-1 text-white">Canal oficial</h2>
-                  <p class="mb-0 text-white-50">Integração direta com o serviço de consulta via POST.</p>
-                </div>
-              </div>
-              <div class="d-flex align-items-center gap-3">
-                <div class="feature-icon bg-light text-primary"><i class="bi bi-lightning-charge"></i></div>
-                <div>
-                  <h2 class="h5 mb-1 text-white">Resposta imediata</h2>
-                  <p class="mb-0 text-white-50">Resultado exibido logo após a consulta, sem redirecionamentos.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="page-shell">
+      <div class="brand-card">
+        <img
+          src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+          alt="Prefeitura do Recife - CNH Social"
+          class="mb-3"
+          style="height: 68px"
+        />
+        <h1>Consulta de Inscrição</h1>
+        <p class="mb-3">
+          Informe o número da inscrição para consultar os dados diretamente pelo webhook oficial.
+          O formulário abrirá automaticamente.
+        </p>
+        <button class="btn btn-primary px-4" type="button" data-bs-toggle="modal" data-bs-target="#consultaModal">
+          Abrir consulta
+        </button>
       </div>
-    </header>
-
-    <main>
-      <section class="container">
-        <div class="search-bar">
-          <div class="d-flex align-items-center gap-3 mb-3">
-            <i class="bi bi-search text-primary fs-4"></i>
-            <div class="flex-grow-1">
-              <label class="form-label mb-1 fw-semibold text-muted" for="inscricaoSelecionada">Última inscrição consultada</label>
-              <input id="inscricaoSelecionada" class="form-control search-input" type="text" value="Nenhuma consulta realizada" readonly />
-            </div>
-            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#consultaModal">
-              <i class="bi bi-upc-scan me-2"></i>Nova consulta
-            </button>
-          </div>
-          <div id="alertPlaceholder" class="alert alert-danger alert-placeholder mb-0" role="alert"></div>
-          <div id="resultadoWrapper" class="search-results">
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <div class="feature-icon"><i class="bi bi-clipboard-data"></i></div>
-              <div>
-                <h3 class="h5 mb-0">Payload recebido</h3>
-                <p class="mb-0 text-muted">O retorno da consulta aparecerá aqui.</p>
-              </div>
-            </div>
-            <pre id="resultadoPayload">Aguardando consulta...</pre>
-          </div>
-        </div>
-      </section>
-
-      <section id="como-funciona" class="container py-5">
-        <div class="row align-items-center g-4">
-          <div class="col-lg-6">
-            <div class="section-header">
-              <p class="text-uppercase fw-bold text-primary mb-2">Passo a passo</p>
-              <h2 class="h3 mb-1">Como consultar sua inscrição</h2>
-              <p class="text-muted mb-0">Abra o modal, informe o número e acompanhe o resultado logo abaixo da barra de pesquisa.</p>
-            </div>
-            <div class="features-grid">
-              <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-window-stack"></i></div>
-                <div>
-                  <h3 class="h6 mb-1">1. Abrir o modal</h3>
-                  <p class="mb-0 text-muted">Clique em "Nova consulta" para visualizar o formulário dedicado.</p>
-                </div>
-              </div>
-              <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-keyboard"></i></div>
-                <div>
-                  <h3 class="h6 mb-1">2. Digitar a inscrição</h3>
-                  <p class="mb-0 text-muted">Informe exatamente o número que deseja consultar e envie.</p>
-                </div>
-              </div>
-              <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-cloud-check"></i></div>
-                <div>
-                  <h3 class="h6 mb-1">3. Receber o retorno</h3>
-                  <p class="mb-0 text-muted">O payload do serviço é apresentado automaticamente na área de resultado.</p>
-                </div>
-              </div>
-              <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-safe"></i></div>
-                <div>
-                  <h3 class="h6 mb-1">4. Segurança e confiança</h3>
-                  <p class="mb-0 text-muted">Integração direta com o webhook oficial, sem intermediários.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="card card-section shadow-sm border-0">
-              <div class="card-body p-4">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                  <div class="feature-icon"><i class="bi bi-info-circle"></i></div>
-                  <div>
-                    <h3 class="h5 mb-1">Por que usar este canal?</h3>
-                    <p class="mb-0 text-muted">Layout otimizado com Bootstrap 5 e estilos do formulário oficial.</p>
-                  </div>
-                </div>
-                <ul class="list-unstyled mb-0">
-                  <li class="d-flex gap-2 mb-2"><i class="bi bi-check-circle text-success"></i><span>Interface responsiva e pronta para dispositivos móveis.</span></li>
-                  <li class="d-flex gap-2 mb-2"><i class="bi bi-check-circle text-success"></i><span>Modal único para concentrar a digitação da inscrição.</span></li>
-                  <li class="d-flex gap-2 mb-0"><i class="bi bi-check-circle text-success"></i><span>Resultado exibido imediatamente abaixo da barra de pesquisa.</span></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+    </div>
 
     <div class="modal fade" id="consultaModal" tabindex="-1" aria-labelledby="consultaModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="consultaModalLabel"><i class="bi bi-search me-2 text-primary"></i>Consultar inscrição</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="consultaModalLabel">Consultar inscrição</h5>
           </div>
           <div class="modal-body">
             <form id="consultaForm" novalidate>
-              <div class="mb-3">
-                <label for="inscricaoInput" class="form-label">Número da inscrição</label>
-                <input type="text" class="form-control" id="inscricaoInput" name="inscricao" required placeholder="Digite a inscrição" />
-                <div class="invalid-feedback">Informe o número da inscrição.</div>
+              <label class="form-label fw-semibold" for="inscricaoInput">Número da inscrição</label>
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="inscricaoPrefix"><i class="bi bi-search"></i></span>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inscricaoInput"
+                  name="inscricao"
+                  placeholder="Digite o número"
+                  aria-describedby="inscricaoPrefix"
+                  required
+                />
               </div>
-              <div class="d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary" id="submitBtn">
+              <div class="d-flex align-items-center justify-content-between gap-2">
+                <small class="text-muted" id="statusMessage">Preencha e clique em consultar.</small>
+                <button class="btn btn-primary" type="submit" id="submitButton">
                   <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-                  Enviar consulta
+                  Consultar
                 </button>
               </div>
             </form>
+
+            <div class="mt-3" id="resultadoWrapper" hidden>
+              <div class="d-flex align-items-center mb-2 gap-2">
+                <i class="bi bi-journal-text text-primary"></i>
+                <span class="fw-semibold">Retorno do webhook</span>
+              </div>
+              <pre class="result-box mb-0" id="resultado"></pre>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <footer class="bg-light mt-5">
-      <div class="container py-4">
-        <div class="row g-3 align-items-center">
-          <div class="col-md-8">
-            <p class="mb-0 text-muted">SAS • CNH Social — consulta oficial de inscrições via webhook.</p>
-          </div>
-          <div class="col-md-4 text-md-end">
-            <a class="text-decoration-none text-primary fw-semibold" href="#consultaModal" data-bs-toggle="modal">Realizar nova consulta</a>
-          </div>
-        </div>
-      </div>
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      const form = document.getElementById('consultaForm');
-      const inscricaoInput = document.getElementById('inscricaoInput');
-      const resultadoPayload = document.getElementById('resultadoPayload');
-      const inscricaoSelecionada = document.getElementById('inscricaoSelecionada');
-      const alertPlaceholder = document.getElementById('alertPlaceholder');
-      const submitBtn = document.getElementById('submitBtn');
-      const spinner = submitBtn.querySelector('.spinner-border');
-      const consultaModalEl = document.getElementById('consultaModal');
-      const consultaModal = new bootstrap.Modal(consultaModalEl);
+      const consultaModalElement = document.getElementById("consultaModal");
+      const consultaModal = new bootstrap.Modal(consultaModalElement);
+      const form = document.getElementById("consultaForm");
+      const input = document.getElementById("inscricaoInput");
+      const statusMessage = document.getElementById("statusMessage");
+      const submitButton = document.getElementById("submitButton");
+      const spinner = submitButton.querySelector(".spinner-border");
+      const resultadoWrapper = document.getElementById("resultadoWrapper");
+      const resultado = document.getElementById("resultado");
 
-      const resetAlert = () => {
-        alertPlaceholder.classList.remove('is-visible');
-        alertPlaceholder.textContent = '';
-      };
+      document.addEventListener("DOMContentLoaded", () => {
+        consultaModal.show();
+        consultaModalElement.addEventListener("shown.bs.modal", () => input.focus());
+      });
 
-      const showAlert = (message) => {
-        alertPlaceholder.textContent = message;
-        alertPlaceholder.classList.add('is-visible');
-      };
-
-      const toggleLoading = (isLoading) => {
-        submitBtn.disabled = isLoading;
-        spinner.classList.toggle('d-none', !isLoading);
-      };
-
-      form.addEventListener('submit', async (event) => {
+      form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        resetAlert();
-        if (!form.checkValidity()) {
-          form.classList.add('was-validated');
+        const inscricao = input.value.trim();
+        if (!inscricao) {
+          statusMessage.textContent = "Informe o número da inscrição.";
+          statusMessage.classList.add("text-danger");
+          input.focus();
           return;
         }
 
-        const inscricao = inscricaoInput.value.trim();
-        toggleLoading(true);
+        statusMessage.classList.remove("text-danger");
+        statusMessage.textContent = "Enviando...";
+        submitButton.disabled = true;
+        spinner.classList.remove("d-none");
 
         try {
-          const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ inscricao })
-          });
+          const response = await fetch(
+            "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ inscricao }),
+            }
+          );
 
-          if (!response.ok) {
-            throw new Error('Não foi possível completar a consulta.');
-          }
-
-          const payload = await response.json();
-          inscricaoSelecionada.value = inscricao || '—';
-          resultadoPayload.textContent = JSON.stringify(payload, null, 2);
-          consultaModal.hide();
-          form.reset();
-          form.classList.remove('was-validated');
+          const payload = await response.json().catch(() => ({ erro: "Resposta não é um JSON válido." }));
+          const formatted = JSON.stringify(payload, null, 2);
+          resultado.textContent = formatted;
+          resultadoWrapper.hidden = false;
+          statusMessage.textContent = response.ok
+            ? "Consulta realizada. Veja o retorno abaixo."
+            : "Consulta concluída com retorno de erro.";
+          statusMessage.classList.toggle("text-danger", !response.ok);
         } catch (error) {
-          showAlert(error.message || 'Erro inesperado ao consultar.');
+          statusMessage.textContent = "Não foi possível consultar. Verifique a conexão.";
+          statusMessage.classList.add("text-danger");
+          resultado.textContent = String(error);
+          resultadoWrapper.hidden = false;
         } finally {
-          toggleLoading(false);
+          submitButton.disabled = false;
+          spinner.classList.add("d-none");
         }
-      });
-
-      consultaModalEl.addEventListener('shown.bs.modal', () => {
-        resetAlert();
-        inscricaoInput.focus();
       });
     </script>
   </body>
