@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNH Recife | Painel Dinâmico</title>
+  <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --bg: #0b1724;
+      --card: rgba(19, 45, 67, 0.85);
+      --accent: #00a3ff;
+      --accent-2: #f5a524;
+      --accent-3: #3ed598;
+    }
+    * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body {
+      background: radial-gradient(circle at 20% 18%, rgba(0, 163, 255, 0.12), transparent 26%),
+                  radial-gradient(circle at 78% 4%, rgba(0, 163, 255, 0.08), transparent 30%),
+                  radial-gradient(circle at 50% 80%, rgba(0, 163, 255, 0.1), transparent 35%),
+                  var(--bg);
+      color: #dce6f2;
+      min-height: 100vh;
+    }
+    .glass {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(10px);
+    }
+    .hero {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, rgba(0, 163, 255, 0.22), rgba(62, 213, 152, 0.18), rgba(245, 165, 36, 0.2));
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .brand-mark {
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(0, 163, 255, 0.28);
+      border-radius: 18px;
+      padding: 10px 16px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    }
+    .brand-mark img { max-height: 76px; object-fit: contain; }
+    .hero-badge {
+      background: rgba(0, 163, 255, 0.18);
+      border: 1px solid rgba(0, 163, 255, 0.36);
+      color: #dce6f2;
+    }
+    .metric-card {
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card .icon-wrap {
+      width: 46px; height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(0,163,255,0.28), rgba(62,213,152,0.24));
+      color: #0b1724;
+    }
+    .gradient-border {
+      position: relative;
+    }
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(120deg, rgba(0,163,255,0.3), rgba(62,213,152,0.26));
+      z-index: -1;
+    }
+    .table-surface {
+      background: #000;
+    }
+    .table-surface thead {
+      background: #000;
+      color: #fff !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .table-surface tbody tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .table-surface th,
+    .table-surface td {
+      color: #fff;
+    }
+    .chip {
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      color: #dce6f2;
+      border: 1px solid rgba(0,163,255,0.26);
+      background: rgba(0,163,255,0.14);
+    }
+    .pill-green { border-color: rgba(62,213,152,0.55); color: #0b1724; background: rgba(62,213,152,0.22); }
+    .pill-amber { border-color: rgba(245,165,36,0.7); color: #0b1724; background: rgba(245,165,36,0.25); }
+    .pill-red { border-color: rgba(230,90,90,0.62); color: #0b1724; background: rgba(230,90,90,0.24); }
+    .progress { height: 8px; }
+    .search-input {
+      background: rgba(15,35,52,0.75);
+      border: 1px solid rgba(0,163,255,0.2);
+      color: #dce6f2;
+    }
+    .search-input:focus { box-shadow: 0 0 0 0.2rem rgba(0,163,255,0.38); }
+    .small-label { color: #9cb2cf; font-size: 0.9rem; }
+    .footer {
+      color: #9cb2cf;
+      border-top: 1px solid rgba(0,163,255,0.14);
+    }
+    .text-secondary { color: #9cb2cf !important; }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <header class="hero glass rounded-4 p-4 p-md-5 mb-4 gradient-border">
+      <div class="d-flex justify-content-between flex-column flex-md-row gap-3 align-items-start align-items-md-center">
+        <div>
+          <span class="hero-badge badge rounded-pill px-3 py-2 mb-3 fw-semibold">
+            <i class="bi bi-speedometer2 me-1"></i> Painel Dinâmico
+          </span>
+          <h1 class="fw-bold display-5 mb-2">CNH Recife</h1>
+          <p class="fs-5 text-secondary mb-3">Monitoramento em tempo real das inscrições, perfis socioeconômicos e etapas de atendimento.</p>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="chip"><i class="bi bi-broadcast-pin me-1"></i> Dados via webhook</span>
+            <span class="chip pill-green"><i class="bi bi-check-circle me-1"></i> Atualizações automáticas</span>
+            <span class="chip pill-amber"><i class="bi bi-clock-history me-1"></i> Refresh manual</span>
+          </div>
+        </div>
+        <div class="d-flex flex-column align-items-end gap-2">
+          <div class="brand-mark">
+            <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" alt="Logotipo CNH Recife">
+          </div>
+          <button id="refreshBtn" class="btn btn-outline-info mb-2">
+            <i class="bi bi-arrow-repeat me-1"></i> Atualizar dados
+          </button>
+          <div class="small-label">Última atualização:<br><span id="lastSync">--</span></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="glass metric-card p-3 rounded-4 h-100 gradient-border">
+          <div class="d-flex align-items-start gap-3">
+            <div class="icon-wrap"><i class="bi bi-people fs-5"></i></div>
+            <div>
+              <p class="small-label mb-1">Total de inscrições</p>
+              <h3 class="fw-bold mb-1" id="totalInscricoes">--</h3>
+              <div class="text-success small" id="novasInscricoes">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="glass metric-card p-3 rounded-4 h-100 gradient-border">
+          <div class="d-flex align-items-start gap-3">
+            <div class="icon-wrap"><i class="bi bi-cash-stack fs-5"></i></div>
+            <div>
+              <p class="small-label mb-1">Renda per capita média</p>
+              <h3 class="fw-bold mb-1" id="rendaMedia">--</h3>
+              <div class="text-info small" id="pcdPercent">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="glass metric-card p-3 rounded-4 h-100 gradient-border">
+          <div class="d-flex align-items-start gap-3">
+            <div class="icon-wrap"><i class="bi bi-activity fs-5"></i></div>
+            <div>
+              <p class="small-label mb-1">Atualizados (15 dias)</p>
+              <h3 class="fw-bold mb-1" id="atualizados">--</h3>
+              <div class="text-warning small" id="mediaIdade">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="glass metric-card p-3 rounded-4 h-100 gradient-border">
+          <div class="d-flex align-items-start gap-3">
+              <div class="icon-wrap"><i class="bi bi-cloud-arrow-down fs-5"></i></div>
+              <div>
+                <p class="small-label mb-1">Exportações</p>
+                <h3 class="fw-bold mb-1" id="exportCount">0</h3>
+                <button id="exportBtn" class="btn btn-sm btn-outline-primary mt-1"><i class="bi bi-download me-1"></i>CSV</button>
+              </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="row g-4 mb-4">
+      <div class="col-lg-8">
+        <div class="glass p-3 p-md-4 rounded-4 gradient-border h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Distribuição de perfis</h5>
+            <div class="chip">Fonte: Portal CNH Recife</div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6"><canvas id="chartGenero"></canvas></div>
+            <div class="col-md-6"><canvas id="chartCategoria"></canvas></div>
+            <div class="col-md-6"><canvas id="chartRenda"></canvas></div>
+            <div class="col-md-6"><canvas id="chartContato"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="glass p-3 p-md-4 rounded-4 gradient-border h-100">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Indicadores rápidos</h5>
+            <span class="badge text-bg-info bg-opacity-25 border border-info text-info">Live</span>
+          </div>
+          <ul class="list-unstyled mb-3" id="indicadoresLista"></ul>
+          <div>
+            <p class="small-label mb-1">Adesão a canais preferenciais</p>
+            <div class="progress bg-light">
+              <div id="progressWhatsapp" class="progress-bar bg-info" role="progressbar" style="width: 0%;"></div>
+            </div>
+            <p class="small-label mt-3 mb-1">Mulheres chefes de família</p>
+            <div class="progress bg-light">
+              <div id="progressMulherChefe" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass p-3 p-md-4 rounded-4 gradient-border mb-4">
+      <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+        <div>
+          <h5 class="mb-0">Visão agregada das inscrições</h5>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <div class="spinner-border spinner-border-sm text-info d-none" role="status" id="loadingSpinner"></div>
+        </div>
+      </div>
+      <div class="table-responsive rounded-3 overflow-hidden">
+        <table class="table table-hover align-middle mb-0 table-surface">
+          <thead>
+            <tr class="text-secondary">
+              <th>Grupo</th>
+              <th>Indicador</th>
+              <th class="text-end">Quantidade</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="footer text-center py-3">
+      <div class="small">Painel CNH Recife · Dados recebidos via webhook oficial · Exportações em CSV</div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+    const endpoint = 'https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/4d5f64e7-0198-4dce-a44d-57e2acad6048-dashboardCNHRecife';
+    const sampleData = [
+      {"cpf":"09100800465","nome_completo":"MARIA JESSYKA LEONEL DA SILVA","nome_social":null,"data_nascimento":"1991-01-09","idade":33,"nis_pis":"12345678901","data_atualizacao":"2025-02-10","tempo_desde_atualizacao":"10 dias","genero":"Feminino","telefone_whatsapp":"(81) 98888-0001","email":"maria.jessyka@example.com","canal_contato_preferencial":"WhatsApp","cep":"51020000","logradouro":"Rua das Flores","numero":"120","complemento":"Apto 302","bairro":"Boa Viagem","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Não","situacao_trabalho":"Trabalho informal","mulher_chefe_familia":"Sim","acolhimento_institucional":"Não","dependente_tratamento":"Não","renda_per_capita":650.00,"raca_cor":"Parda","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Não","mae_pai_atipico":"Não","vitima_violencia_domestica":"Não","necessidades_especificas":null,"categoria_desejada":"B","validade_cnh":"2028-05-15","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Autorizo","renda_familiar":2600.00,"analise_socio_ocupacional":"Baixa renda, chefe de família","composicao_familiar":4,"participacao_programas_sociais":"Bolsa Família","recinscricao":"Não","possui_recurso_inscricao":"Não","trabalhador_app":"Não"},
+      {"cpf":"22233344455","nome_completo":"JOÃO CARLOS DE ALMEIDA","nome_social":null,"data_nascimento":"1987-07-21","idade":37,"nis_pis":"98765432100","data_atualizacao":"2025-02-12","tempo_desde_atualizacao":"8 dias","genero":"Masculino","telefone_whatsapp":"(81) 98989-0002","email":"joao.almeida@example.com","canal_contato_preferencial":"E-mail","cep":"52011000","logradouro":"Avenida Norte","numero":"1500","complemento":null,"bairro":"Casa Amarela","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Sim","situacao_trabalho":"Trabalhador com carteira assinada","mulher_chefe_familia":"Não","acolhimento_institucional":"Não","dependente_tratamento":"Sim","renda_per_capita":1200.50,"raca_cor":"Branca","pessoa_preta_parda":"Não","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Sim","mae_pai_atipico":"Sim","vitima_violencia_domestica":"Não","necessidades_especificas":"Dependente em tratamento","categoria_desejada":"D","validade_cnh":"2027-09-30","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Não autorizo","renda_familiar":4802.00,"analise_socio_ocupacional":"Renda estável, dependente PCD","composicao_familiar":4,"participacao_programas_sociais":"BPC","recinscricao":"Não","possui_recurso_inscricao":"Não","trabalhador_app":"Não"},
+      {"cpf":"33344455566","nome_completo":"ANA PAULA DOS SANTOS","nome_social":"ANA SANTOS","data_nascimento":"2000-03-05","idade":24,"nis_pis":"11223344556","data_atualizacao":"2025-01-28","tempo_desde_atualizacao":"23 dias","genero":"Mulher trans","telefone_whatsapp":"(81) 98777-1234","email":"ana.santos@example.com","canal_contato_preferencial":"WhatsApp","cep":"50030000","logradouro":"Rua da Aurora","numero":"45","complemento":"Casa","bairro":"Boa Vista","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Não","situacao_trabalho":"Trabalhador de app","mulher_chefe_familia":"Não","acolhimento_institucional":"Não","dependente_tratamento":"Não","renda_per_capita":950.75,"raca_cor":"Preta","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Sim","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Não","mae_pai_atipico":"Não","vitima_violencia_domestica":"Sim","necessidades_especificas":"Acompanhamento psicológico","categoria_desejada":"AB","validade_cnh":"2026-11-10","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Autorizo","renda_familiar":1901.50,"analise_socio_ocupacional":"Trabalho por aplicativo, vulnerabilidade social","composicao_familiar":2,"participacao_programas_sociais":"Bolsa Família","recinscricao":"Sim","possui_recurso_inscricao":"Não","trabalhador_app":"Sim"},
+      {"cpf":"44455566677","nome_completo":"JOSÉ ROBERTO PEREIRA","nome_social":null,"data_nascimento":"1975-11-30","idade":49,"nis_pis":null,"data_atualizacao":"2024-12-15","tempo_desde_atualizacao":"67 dias","genero":"Masculino","telefone_whatsapp":"(81) 98555-9876","email":"jose.roberto@example.com","canal_contato_preferencial":"Telefone","cep":"52061000","logradouro":"Rua Principal","numero":"900","complemento":"Fundos","bairro":"Parnamirim","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Sim","situacao_trabalho":"Desempregado","mulher_chefe_familia":"Não","acolhimento_institucional":"Não","dependente_tratamento":"Não","renda_per_capita":300.00,"raca_cor":"Parda","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Sim","pessoa_quilombola":"Não","pessoa_situacao_rua":"Sim","pessoa_pcd":"Não","mae_pai_atipico":"Não","vitima_violencia_domestica":"Não","necessidades_especificas":"Situação de rua","categoria_desejada":"B","validade_cnh":"2023-08-01","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Não autorizo","renda_familiar":600.00,"analise_socio_ocupacional":"Desempregado, situação de rua","composicao_familiar":2,"participacao_programas_sociais":"Nenhum","recinscricao":"Não","possui_recurso_inscricao":"Sim","trabalhador_app":"Não"},
+      {"cpf":"55566677788","nome_completo":"LUCIANA FERREIRA DA COSTA","nome_social":null,"data_nascimento":"1995-02-18","idade":30,"nis_pis":"55667788990","data_atualizacao":"2025-02-15","tempo_desde_atualizacao":"5 dias","genero":"Feminino","telefone_whatsapp":"(81) 98444-2222","email":"luciana.costa@example.com","canal_contato_preferencial":"WhatsApp","cep":"50720200","logradouro":"Rua da Paz","numero":"35","complemento":"Bloco B, apto 101","bairro":"Cordeiro","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Não","situacao_trabalho":"Autônomo","mulher_chefe_familia":"Sim","acolhimento_institucional":"Não","dependente_tratamento":"Sim","renda_per_capita":730.25,"raca_cor":"Parda","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Sim","mae_pai_atipico":"Sim","vitima_violencia_domestica":"Sim","necessidades_especificas":"Filho TEA","categoria_desejada":"B","validade_cnh":"2029-01-20","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Autorizo","renda_familiar":2921.00,"analise_socio_ocupacional":"Autônoma, mãe atípica, PCD no domicílio","composicao_familiar":4,"participacao_programas_sociais":"Bolsa Família; BPC","recinscricao":"Não","possui_recurso_inscricao":"Não","trabalhador_app":"Não"}
+    ];
+
+    let charts = {};
+    let exportCounter = 0;
+
+    const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
+
+    const normalizeValue = (value, type = 'generic') => {
+      if (!value) return 'NÃO INFORMADO';
+      const upper = String(value).trim().toUpperCase();
+      const maps = {
+        categoria: {
+          'A_PRIMEIRA': 'PRIMEIRA HABILITAÇÃO - A',
+          'A PRIMEIRA': 'PRIMEIRA HABILITAÇÃO - A',
+          'A': 'A',
+          'AB': 'AB',
+          'B': 'B',
+          'C': 'C',
+          'D': 'D',
+          'E': 'E'
+        }
+      };
+      const mapped = maps[type]?.[upper];
+      if (mapped) return mapped;
+      return upper.replace(/_/g, ' ');
+    };
+
+    const groupCount = (arr, key, type = 'generic') => arr.reduce((acc, item) => {
+      const v = normalizeValue(item[key], type);
+      acc[v] = (acc[v] || 0) + 1;
+      return acc;
+    }, {});
+
+    const rendaFaixas = (renda) => {
+      if (renda === null || renda === undefined) return 'Não informado';
+      if (renda <= 500) return 'Até R$500';
+      if (renda <= 900) return 'R$501 - R$900';
+      if (renda <= 1500) return 'R$901 - R$1500';
+      return 'Acima de R$1500';
+    };
+
+    const renderChart = (id, type, labels, data, colors) => {
+      if (charts[id]) charts[id].destroy();
+      const ctx = document.getElementById(id);
+      charts[id] = new Chart(ctx, {
+        type,
+        data: {
+          labels,
+          datasets: [{
+            label: 'Quantidade',
+            data,
+            backgroundColor: colors,
+            borderColor: colors.map(c => c.replace(/0\.\d+/, '1')),
+            borderWidth: 1,
+          }]
+        },
+        options: {
+          plugins: { legend: { labels: { color: '#dce6f2' } } },
+          scales: type === 'pie' ? {} : { x: { ticks: { color: '#9cb2cf' } }, y: { ticks: { color: '#9cb2cf' }, beginAtZero: true } }
+        }
+      });
+    };
+
+    const updateIndicators = (data) => {
+      const total = data.length;
+      const rendaMedia = data.reduce((sum, item) => sum + (item.renda_per_capita || 0), 0) / Math.max(total, 1);
+      const pcd = data.filter(i => (i.pessoa_pcd || '').toLowerCase() === 'sim').length;
+      const atualizados15 = data.filter(i => {
+        const diff = (Date.now() - new Date(i.data_atualizacao)) / (1000 * 60 * 60 * 24);
+        return diff <= 15;
+      }).length;
+      const mediaIdade = data.reduce((sum, item) => sum + (item.idade || 0), 0) / Math.max(total, 1);
+      const whatsapp = data.filter(i => (i.canal_contato_preferencial || '').toLowerCase().includes('whatsapp')).length;
+      const mulherChefe = data.filter(i => (i.mulher_chefe_familia || '').toLowerCase() === 'sim').length;
+
+      document.getElementById('totalInscricoes').innerText = total;
+      document.getElementById('novasInscricoes').innerText = `${atualizados15} atualizações em 15 dias`;
+      document.getElementById('rendaMedia').innerText = formatCurrency(rendaMedia);
+      document.getElementById('pcdPercent').innerText = `${pcd} pessoas PCD`;
+      document.getElementById('atualizados').innerText = atualizados15;
+      document.getElementById('mediaIdade').innerText = `Idade média: ${mediaIdade.toFixed(1)} anos`;
+
+      const whatsappPct = total ? Math.round((whatsapp / total) * 100) : 0;
+      const mulherChefePct = total ? Math.round((mulherChefe / total) * 100) : 0;
+
+      document.getElementById('progressWhatsapp').style.width = `${whatsappPct}%`;
+      document.getElementById('progressMulherChefe').style.width = `${mulherChefePct}%`;
+      const indicadores = [
+        { label: 'Preferem WhatsApp', value: `${whatsappPct}%` },
+        { label: 'Mulheres chefes de família', value: `${mulherChefePct}%` },
+        { label: 'PCD declarados', value: `${pcd}` },
+        { label: 'Renda familiar média', value: formatCurrency(data.reduce((s, i) => s + (i.renda_familiar || 0), 0) / Math.max(total,1)) }
+      ];
+      const list = document.getElementById('indicadoresLista');
+      list.innerHTML = '';
+      indicadores.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'd-flex justify-content-between border-bottom border-secondary-subtle py-2';
+        li.innerHTML = `<span class="text-secondary">${item.label}</span><span class="fw-semibold">${item.value}</span>`;
+        list.appendChild(li);
+      });
+    };
+
+    const renderCharts = (data) => {
+      const generoCounts = groupCount(data, 'genero');
+      const categoriaCounts = groupCount(data, 'categoria_desejada', 'categoria');
+      const rendaCounts = data.reduce((acc, item) => {
+        const faixa = normalizeValue(rendaFaixas(item.renda_per_capita));
+        acc[faixa] = (acc[faixa] || 0) + 1;
+        return acc;
+      }, {});
+      const contatoCounts = groupCount(data, 'canal_contato_preferencial');
+
+      const palette = [
+        'rgba(0,163,255,0.82)',
+        'rgba(62,213,152,0.82)',
+        'rgba(245,165,36,0.82)',
+        'rgba(1,60,113,0.82)',
+        'rgba(255,107,107,0.8)'
+      ];
+
+      renderChart('chartGenero', 'pie', Object.keys(generoCounts), Object.values(generoCounts), palette);
+      renderChart('chartCategoria', 'doughnut', Object.keys(categoriaCounts), Object.values(categoriaCounts), palette);
+      renderChart('chartRenda', 'bar', Object.keys(rendaCounts), Object.values(rendaCounts), palette);
+      renderChart('chartContato', 'bar', Object.keys(contatoCounts), Object.values(contatoCounts), palette);
+    };
+
+    const buildAggregatedRows = (data) => {
+      const rows = [];
+      const addGroup = (grupo, counts) => {
+        Object.entries(counts).forEach(([indicador, qtd]) => rows.push({ grupo, indicador, qtd }));
+      };
+
+      addGroup('CATEGORIA DESEJADA', groupCount(data, 'categoria_desejada', 'categoria'));
+      addGroup('GÊNERO', groupCount(data, 'genero'));
+      addGroup('CANAL PREFERENCIAL', groupCount(data, 'canal_contato_preferencial'));
+      addGroup('FAIXA DE RENDA PER CAPITA', groupCount(data.map(item => ({ faixa: rendaFaixas(item.renda_per_capita) })), 'faixa'));
+
+      addGroup('TRABALHO / RENDA', groupCount(data, 'situacao_trabalho'));
+      addGroup('PROGRAMA SOCIAL', groupCount(data, 'participacao_programas_sociais'));
+
+      return rows;
+    };
+
+    const renderTable = (data) => {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      const rows = buildAggregatedRows(data);
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="text-secondary">${row.grupo}</td>
+          <td class="fw-semibold">${row.indicador}</td>
+          <td class="text-end">${row.qtd}</td>`;
+        tbody.appendChild(tr);
+      });
+    };
+
+    const exportCSV = (data) => {
+      const rows = buildAggregatedRows(data);
+      const headers = ['GRUPO', 'INDICADOR', 'QUANTIDADE'];
+      const csvRows = rows.map(r => [r.grupo, r.indicador, r.qtd].map(v => JSON.stringify(v ?? '')).join(','));
+      const csv = [headers.join(','), ...csvRows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cnh-recife-dashboard.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      exportCounter += 1;
+      document.getElementById('exportCount').innerText = exportCounter;
+    };
+
+    const setLoading = (loading) => {
+      document.getElementById('loadingSpinner').classList.toggle('d-none', !loading);
+      document.getElementById('refreshBtn').disabled = loading;
+    };
+
+    let currentData = [];
+
+    const hydrate = (data) => {
+      currentData = data;
+      updateIndicators(data);
+      renderCharts(data);
+      renderTable(data);
+      document.getElementById('lastSync').innerText = new Date().toLocaleString('pt-BR');
+    };
+
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(endpoint, { method: 'POST' });
+        if (!response.ok) throw new Error('Erro ao buscar webhook');
+        const payload = await response.json();
+        hydrate(payload);
+      } catch (err) {
+        console.warn('Usando dados de fallback:', err.message);
+        hydrate(sampleData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    document.getElementById('refreshBtn').addEventListener('click', loadData);
+    document.getElementById('exportBtn').addEventListener('click', () => exportCSV(currentData));
+
+    loadData();
+    setInterval(loadData, 180000);
+  </script>
+</body>
+</html>
