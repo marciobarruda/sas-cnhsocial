@@ -49,34 +49,91 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, rgba(0, 83, 164, 0.08), rgba(0, 163, 255, 0.1));
+        padding: 2rem;
+        background: radial-gradient(circle at 20% 20%, rgba(0, 163, 255, 0.1), transparent 35%),
+          radial-gradient(circle at 80% 0%, rgba(0, 83, 164, 0.12), transparent 30%),
+          linear-gradient(135deg, #eef3f9, #f8fbff);
       }
 
       .modal-lg {
-        --bs-modal-width: 900px;
+        --bs-modal-width: min(980px, 96vw);
       }
 
       .modal-content {
         min-height: 70vh;
+        border: none;
+        border-radius: 18px;
+        background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+        box-shadow: 0 18px 60px rgba(0, 45, 98, 0.15);
       }
 
       @media (min-width: 768px) {
         .modal-content {
-          min-height: 75vh;
+          min-height: 76vh;
         }
       }
 
-      @media (min-width: 992px) {
+      @media (min-width: 1200px) {
         .modal-content {
-          min-height: 80vh;
+          min-height: 82vh;
         }
+      }
+
+      .modal-header {
+        border: none;
+        padding: 1.25rem 1.5rem 0.75rem;
+      }
+
+      .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-weight: 700;
+        color: var(--brand-secondary);
+      }
+
+      .badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: rgba(0, 83, 164, 0.1);
+        color: var(--brand-primary);
+        border-radius: 999px;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.9rem;
+        font-weight: 600;
       }
 
       .modal-body {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        padding: 0.5rem 1.5rem 1.5rem;
+      }
+
+      .card-surface {
+        background: #ffffff;
+        border: 1px solid rgba(0, 83, 164, 0.08);
+        border-radius: 14px;
+        padding: 1rem 1.1rem;
+        box-shadow: 0 12px 30px rgba(0, 45, 98, 0.06);
+      }
+
+      .input-group-text img {
+        height: 28px;
+      }
+
+      .helper-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      .actions-row {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
       }
 
       .result-section {
@@ -84,19 +141,19 @@
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        min-height: 240px;
+        min-height: 260px;
       }
 
       .result-box {
         background: #f8f9fb;
         border: 1px dashed var(--border-color);
-        border-radius: 12px;
-        padding: 0.75rem 1rem;
+        border-radius: 14px;
+        padding: 0.9rem 1.05rem;
         color: var(--text-strong);
         flex: 1;
         overflow: auto;
         font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-        font-size: 0.95rem;
+        font-size: 0.96rem;
         white-space: pre-wrap;
       }
     </style>
@@ -107,51 +164,61 @@
     <div class="modal fade" id="consultaModal" tabindex="-1" aria-labelledby="consultaModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-          <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title" id="consultaModalLabel">Consultar inscrição</h5>
-            <button type="button" class="btn btn-light btn-sm" id="backButton">
-              <i class="bi bi-arrow-left"></i>
-              Voltar
-            </button>
+          <div class="modal-header">
+            <h5 class="modal-title" id="consultaModalLabel">
+              <span class="badge-pill">
+                <i class="bi bi-lightning-charge-fill"></i>
+                Consulta rápida
+              </span>
+              Consultar inscrição
+            </h5>
           </div>
           <div class="modal-body">
-            <form id="consultaForm" novalidate>
-              <label class="form-label fw-semibold" for="inscricaoInput">Número da inscrição</label>
-              <div class="input-group mb-2 shadow-sm">
-                <span class="input-group-text bg-white" id="inscricaoPrefix">
-                  <img
-                    src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
-                    alt="Prefeitura do Recife - CNH Social"
-                    style="height: 26px"
+            <div class="card-surface">
+              <form id="consultaForm" novalidate>
+                <label class="form-label fw-semibold" for="inscricaoInput">Número da inscrição</label>
+                <div class="input-group mb-2 shadow-sm">
+                  <span class="input-group-text bg-white" id="inscricaoPrefix">
+                    <img
+                      src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+                      alt="Prefeitura do Recife - CNH Social"
+                    />
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="inscricaoInput"
+                    name="inscricao"
+                    value="CNH-S"
+                    minlength="15"
+                    maxlength="15"
+                    pattern="CNH-S\\d{10}"
+                    placeholder="CNH-S2025000001"
+                    aria-describedby="inscricaoPrefix inscricaoHelp"
+                    required
                   />
-                </span>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="inscricaoInput"
-                  name="inscricao"
-                  value="CNH-S"
-                  minlength="15"
-                  maxlength="15"
-                  pattern="CNH-S\\d{10}"
-                  placeholder="CNH-S2025000001"
-                  aria-describedby="inscricaoPrefix inscricaoHelp"
-                  required
-                />
-              </div>
-              <div class="mb-3" id="inscricaoHelp">
-                <small class="text-muted">A inscrição sempre começa com "CNH-S" seguida do ano (4 dígitos) e do sequencial com 6 dígitos. Exemplo: CNHSOCIAL2025123456.</small>
-              </div>
-              <div class="d-flex align-items-center justify-content-between gap-2">
-                <small class="text-muted" id="statusMessage">Preencha e clique em consultar.</small>
-                <button class="btn btn-primary" type="submit" id="submitButton">
-                  <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-                  Consultar
-                </button>
-              </div>
-            </form>
+                </div>
+                <div class="mb-3 helper-text" id="inscricaoHelp">
+                  A inscrição sempre começa com "CNH-S" seguida do ano (4 dígitos) e do sequencial com 6 dígitos. Exemplo:
+                  CNHSOCIAL2025123456.
+                </div>
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                  <small class="text-muted" id="statusMessage">Preencha e clique em consultar.</small>
+                  <div class="actions-row">
+                    <button class="btn btn-outline-secondary" type="button" id="backButton">
+                      <i class="bi bi-arrow-left"></i>
+                      Voltar
+                    </button>
+                    <button class="btn btn-primary px-4" type="submit" id="submitButton">
+                      <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                      Consultar
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
 
-            <div class="mt-3 result-section" id="resultadoWrapper" hidden>
+            <div class="card-surface result-section" id="resultadoWrapper" hidden>
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-journal-text text-primary"></i>
                 <span class="fw-semibold">Resultado da consulta</span>
