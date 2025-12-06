@@ -2940,6 +2940,20 @@
       let activeModal = null;
       let allowExternalFocusElement = null;
       let consentModalShown = false;
+      let successCountdownInterval = null;
+      let successRedirectTimeout = null;
+      const successRedirectUrl = "https://cnhrecife.recife.pe.gov.br/";
+
+      const clearSuccessRedirectTimers = () => {
+        if (successCountdownInterval) {
+          clearInterval(successCountdownInterval);
+          successCountdownInterval = null;
+        }
+        if (successRedirectTimeout) {
+          clearTimeout(successRedirectTimeout);
+          successRedirectTimeout = null;
+        }
+      };
 
       const getModalFocusableElements = (container) =>
         Array.from(
@@ -3312,7 +3326,38 @@
         } = createFeedbackModal();
 
         const isSuccess = type === "success";
+        clearSuccessRedirectTimers();
         messageElement.textContent = message;
+
+        if (isSuccess) {
+          const lineBreak = document.createElement("br");
+          const countdownLabel = document.createElement("span");
+          countdownLabel.textContent = "Redirecionando para o portal CNH Recife em ";
+          const countdownValue = document.createElement("strong");
+          const countdownSuffix = document.createElement("span");
+          countdownSuffix.textContent = "...";
+
+          let remainingSeconds = 5;
+          const updateCountdown = (value) => {
+            countdownValue.textContent = `${value}s`;
+          };
+          updateCountdown(remainingSeconds);
+
+          messageElement.append(lineBreak, countdownLabel, countdownValue, countdownSuffix);
+
+          successCountdownInterval = setInterval(() => {
+            remainingSeconds -= 1;
+            if (remainingSeconds >= 0) {
+              updateCountdown(remainingSeconds);
+            } else {
+              clearSuccessRedirectTimers();
+            }
+          }, 1000);
+
+          successRedirectTimeout = setTimeout(() => {
+            window.location.href = successRedirectUrl;
+          }, 5000);
+        }
         list.innerHTML = "";
         if (items.length && !isSuccess) {
           list.hidden = false;
