@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CNH Recife | Painel Dinâmico</title>
+  <link rel="icon" type="image/png" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,93 +13,189 @@
   
   <style>
     :root {
-      --bg-dark: #0f172a;
-      --card-dark: rgba(23, 33, 52, 0.82);
-      --accent: #6bd6ff;
-      --accent-2: #9da4ff;
-      --accent-3: #7de7c4;
+      /* Paleta cromática oficial (página 5 do manual) */
+      --pcr-azul-escuro: #173db7;  /* RGB 23 61 183 */
+      --pcr-azul-claro:  #008af4;  /* RGB 0 138 244 */
+      --pcr-verde-escuro:#006e2b;  /* RGB 0 110 43 */
+      --pcr-verde-claro: #42da2e;  /* RGB 66 218 46 */
+      --pcr-laranja:     #e94e1b;  /* RGB 233 78 27 */
+      --pcr-amber:       #fc9346;  /* RGB 252 147 70 */
+
+      --text-primary: #1b2236;
+      --text-muted:   #6b7280;
+      --surface:      #ffffff;
+      --surface-soft: #f3f4ff;
+      --border-soft:  #d7ddf5;
     }
+
     * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
     body {
-      background: radial-gradient(circle at 15% 20%, rgba(107, 214, 255, 0.08), transparent 26%),
-                  radial-gradient(circle at 85% 10%, rgba(157, 164, 255, 0.08), transparent 28%),
-                  radial-gradient(circle at 50% 80%, rgba(125, 231, 196, 0.08), transparent 24%),
-                  var(--bg-dark);
-      color: #e9eef7;
+      background-color: #f5f6fb; /* fundo claro, em linha com as aplicações do manual sobre fundo claro */
+      color: var(--text-primary);
       min-height: 100vh;
     }
+
     .glass {
-      background: var(--card-dark);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
-      backdrop-filter: blur(18px);
+      background-color: var(--surface);
+      border-radius: 1.5rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 10px 28px rgba(23, 61, 183, 0.08);
     }
+
     .hero {
       position: relative;
       overflow: hidden;
+      background: linear-gradient(135deg, #ffffff 0%, #f3f6ff 40%, #e7efff 100%);
+      border: 1px solid rgba(23, 61, 183, 0.18);
     }
+
     .hero::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(120deg, rgba(107, 214, 255, 0.12), rgba(157, 164, 255, 0.12));
-      opacity: 0.55;
+      background: radial-gradient(circle at top right, rgba(0,138,244,0.16), transparent 55%),
+                  radial-gradient(circle at bottom left, rgba(252,147,70,0.18), transparent 55%);
+      opacity: 1;
       pointer-events: none;
     }
+
+    .hero > * { position: relative; z-index: 1; }
+
     .hero-badge {
-      background: rgba(107, 214, 255, 0.14);
-      border: 1px solid rgba(107, 214, 255, 0.32);
-      color: #c1ecff;
+      background: rgba(0,138,244,0.08);
+      border: 1px solid rgba(0,138,244,0.6);
+      color: var(--pcr-azul-escuro);
     }
+
+    .brand-logo { max-height: 72px; }
+
+    .small-label { color: var(--text-muted); font-size: 0.9rem; }
+
     .metric-card {
-      border-radius: 18px;
+      border-radius: 1.25rem;
       position: relative;
       overflow: hidden;
+      background-color: var(--surface);
     }
+
     .metric-card .icon-wrap {
       width: 46px; height: 46px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border-radius: 14px;
-      background: linear-gradient(145deg, rgba(107,214,255,0.18), rgba(157,164,255,0.2));
+      border-radius: 0.9rem;
+      background: linear-gradient(135deg, rgba(23,61,183,0.12), rgba(0,138,244,0.22));
+      color: var(--pcr-azul-escuro);
     }
+
     .gradient-border {
       position: relative;
+      border-radius: inherit;
     }
+
     .gradient-border::before {
       content: '';
       position: absolute;
-      inset: -1px;
+      inset: 0;
       border-radius: inherit;
-      background: linear-gradient(120deg, rgba(107,214,255,0.28), rgba(157,164,255,0.28));
-      z-index: -1;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(23,61,183,0.4), rgba(0,138,244,0.15), rgba(252,147,70,0.3));
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
     }
+
     .table-dark-glass {
-      background: rgba(12, 18, 35, 0.65);
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
     }
+
+    table thead tr { background-color: var(--surface-soft); }
+    table thead th { color: var(--text-muted); border-bottom-width: 0; }
+
     .chip {
       border-radius: 999px;
       padding: 4px 10px;
       font-size: 0.8rem;
-      color: #dfe7ff;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
+      color: var(--pcr-azul-escuro);
+      border: 1px solid rgba(0,138,244,0.45);
+      background: rgba(0,138,244,0.06);
     }
-    .pill-green { border-color: rgba(125,231,196,0.55); color: #c8f5e2; }
-    .pill-amber { border-color: rgba(255,214,102,0.6); color: #fff0c2; }
-    .pill-red { border-color: rgba(255,149,179,0.55); color: #ffd5df; }
-    .progress { height: 8px; }
+
+    .pill-green {
+      border-color: rgba(0,110,43,0.5);
+      background: rgba(66,218,46,0.08);
+      color: var(--pcr-verde-escuro);
+    }
+
+    .pill-amber {
+      border-color: rgba(252,147,70,0.7);
+      background: rgba(252,147,70,0.1);
+      color: var(--pcr-laranja);
+    }
+
+    .progress { height: 8px; background-color: var(--surface-soft); }
+
+    .text-info    { color: var(--pcr-azul-escuro) !important; }
+    .text-success { color: var(--pcr-verde-escuro) !important; }
+
+    .border-info { border-color: rgba(0,138,244,0.65) !important; }
+
+    .badge.text-bg-info {
+      background-color: rgba(0,138,244,0.06) !important;
+      color: var(--pcr-azul-escuro) !important;
+      border: 1px solid rgba(0,138,244,0.6) !important;
+    }
+
+    .bg-info    { background-color: var(--pcr-azul-claro) !important; }
+    .bg-success { background-color: var(--pcr-verde-claro) !important; }
+
     .search-input {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: #e7ecf6;
+      background: var(--surface-soft);
+      border: 1px solid var(--border-soft);
+      color: var(--text-primary);
     }
-    .search-input:focus { box-shadow: 0 0 0 0.2rem rgba(0,224,255,0.25); }
-    .small-label { color: #97a6c6; font-size: 0.9rem; }
+
+    .search-input:focus {
+      box-shadow: 0 0 0 0.15rem rgba(0,138,244,0.35);
+      border-color: rgba(0,138,244,0.9);
+    }
+
+    .btn-outline-info {
+      color: var(--pcr-azul-escuro);
+      border-color: rgba(0,138,244,0.85);
+      background: #ffffff;
+    }
+
+    .btn-outline-info:hover,
+    .btn-outline-info:focus {
+      color: #ffffff;
+      background-color: var(--pcr-azul-claro);
+      border-color: var(--pcr-azul-claro);
+      box-shadow: 0 0 0 0.15rem rgba(0,138,244,0.4);
+    }
+
+    .btn-outline-light {
+      color: var(--pcr-laranja);
+      border-color: rgba(252,147,70,0.85);
+      background: #ffffff;
+    }
+
+    .btn-outline-light:hover,
+    .btn-outline-light:focus {
+      color: #ffffff;
+      background-color: var(--pcr-laranja);
+      border-color: var(--pcr-laranja);
+      box-shadow: 0 0 0 0.15rem rgba(252,147,70,0.45);
+    }
+
     .footer {
-      color: #91a3c2;
-      border-top: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-soft);
+      background-color: #ffffff;
     }
   </style>
 </head>
@@ -107,15 +204,17 @@
     <header class="hero glass rounded-4 p-4 p-md-5 mb-4 gradient-border">
       <div class="d-flex justify-content-between flex-column flex-md-row gap-3 align-items-start align-items-md-center">
         <div>
+          <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" alt="Logotipo CNH Recife" class="brand-logo mb-3">
           <span class="hero-badge badge rounded-pill px-3 py-2 mb-3 fw-semibold">
             <i class="bi bi-speedometer2 me-1"></i> Painel Dinâmico
           </span>
           <h1 class="fw-bold display-5 mb-2">CNH Recife</h1>
-          <p class="fs-5 text-white-50 mb-3">Monitoramento em tempo real das inscrições, perfis socioeconômicos e etapas de atendimento.</p>
+          <p class="fs-5 text-muted mb-3">Monitoramento em tempo real das inscrições, perfis socioeconômicos e etapas de atendimento.</p>
           <div class="d-flex flex-wrap gap-2">
             <span class="chip"><i class="bi bi-broadcast-pin me-1"></i> Dados via webhook</span>
             <span class="chip pill-green"><i class="bi bi-check-circle me-1"></i> Atualizações automáticas</span>
             <span class="chip pill-amber"><i class="bi bi-clock-history me-1"></i> Refresh manual</span>
+            <span class="chip"><i class="bi bi-play-circle me-1"></i> Início do monitoramento: 06/12/2025 às 16:23</span>
           </div>
         </div>
         <div class="text-end">
@@ -128,12 +227,51 @@
     </header>
 
     <section class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="glass metric-card p-3 rounded-4 h-100 gradient-border">
+          <div class="d-flex align-items-start gap-3">
+            <div class="icon-wrap"><i class="bi bi-graph-up fs-5"></i></div>
+            <div>
+              <p class="small-label mb-1">Acessos ao formulário</p>
+              <h3 class="fw-bold mb-1" id="totalGeral">--</h3>
+              <div class="text-info small">Total geral</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="glass metric-card p-3 rounded-4 h-100 gradient-border">
+          <div class="d-flex align-items-start gap-3">
+            <div class="icon-wrap"><i class="bi bi-calendar-day fs-5"></i></div>
+            <div>
+              <p class="small-label mb-1">Acessos de hoje</p>
+              <h3 class="fw-bold mb-1" id="totalHoje">--</h3>
+              <div class="text-success small">Últimas 24h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="glass metric-card p-3 rounded-4 h-100 gradient-border">
+          <div class="d-flex align-items-start gap-3">
+            <div class="icon-wrap"><i class="bi bi-clock-history fs-5"></i></div>
+            <div>
+              <p class="small-label mb-1">Acessos nesta hora</p>
+              <h3 class="fw-bold mb-1" id="totalHora">--</h3>
+              <div class="text-warning small">Janela de 60 minutos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="row g-3 mb-4">
       <div class="col-md-3">
         <div class="glass metric-card p-3 rounded-4 h-100 gradient-border">
           <div class="d-flex align-items-start gap-3">
             <div class="icon-wrap"><i class="bi bi-people fs-5"></i></div>
             <div>
-              <p class="small-label mb-1">Total de inscrições</p>
+              <p class="small-label mb-1">Inscrições recebidas</p>
               <h3 class="fw-bold mb-1" id="totalInscricoes">--</h3>
               <div class="text-success small" id="novasInscricoes">--</div>
             </div>
@@ -202,11 +340,11 @@
           <ul class="list-unstyled mb-3" id="indicadoresLista"></ul>
           <div>
             <p class="small-label mb-1">Adesão a canais preferenciais</p>
-            <div class="progress bg-dark">
+            <div class="progress">
               <div id="progressWhatsapp" class="progress-bar bg-info" role="progressbar" style="width: 0%;"></div>
             </div>
             <p class="small-label mt-3 mb-1">Mulheres chefes de família</p>
-            <div class="progress bg-dark">
+            <div class="progress">
               <div id="progressMulherChefe" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
             </div>
           </div>
@@ -224,9 +362,9 @@
         </div>
       </div>
       <div class="table-responsive rounded-3 overflow-hidden">
-        <table class="table table-dark table-hover align-middle mb-0 table-dark-glass">
+        <table class="table table-hover align-middle mb-0 table-dark-glass">
           <thead>
-            <tr class="text-white-50">
+            <tr>
               <th>Grupo</th>
               <th>Indicador</th>
               <th class="text-end">Quantidade</th>
@@ -237,7 +375,7 @@
       </div>
     </section>
 
-    <footer class="footer text-center py-3">
+    <footer class="footer text-center py-3 mt-3 rounded-4 glass">
       <div class="small">Painel CNH Recife · Dados recebidos via webhook oficial · Exportações em CSV</div>
     </footer>
   </div>
@@ -251,11 +389,42 @@
       {"cpf":"22233344455","nome_completo":"JOÃO CARLOS DE ALMEIDA","nome_social":null,"data_nascimento":"1987-07-21","idade":37,"nis_pis":"98765432100","data_atualizacao":"2025-02-12","tempo_desde_atualizacao":"8 dias","genero":"Masculino","telefone_whatsapp":"(81) 98989-0002","email":"joao.almeida@example.com","canal_contato_preferencial":"E-mail","cep":"52011000","logradouro":"Avenida Norte","numero":"1500","complemento":null,"bairro":"Casa Amarela","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Sim","situacao_trabalho":"Trabalhador com carteira assinada","mulher_chefe_familia":"Não","acolhimento_institucional":"Não","dependente_tratamento":"Sim","renda_per_capita":1200.50,"raca_cor":"Branca","pessoa_preta_parda":"Não","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Sim","mae_pai_atipico":"Sim","vitima_violencia_domestica":"Não","necessidades_especificas":"Dependente em tratamento","categoria_desejada":"D","validade_cnh":"2027-09-30","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Não autorizo","renda_familiar":4802.00,"analise_socio_ocupacional":"Renda estável, dependente PCD","composicao_familiar":4,"participacao_programas_sociais":"BPC","recinscricao":"Não","possui_recurso_inscricao":"Não","trabalhador_app":"Não"},
       {"cpf":"33344455566","nome_completo":"ANA PAULA DOS SANTOS","nome_social":"ANA SANTOS","data_nascimento":"2000-03-05","idade":24,"nis_pis":"11223344556","data_atualizacao":"2025-01-28","tempo_desde_atualizacao":"23 dias","genero":"Mulher trans","telefone_whatsapp":"(81) 98777-1234","email":"ana.santos@example.com","canal_contato_preferencial":"WhatsApp","cep":"50030000","logradouro":"Rua da Aurora","numero":"45","complemento":"Casa","bairro":"Boa Vista","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Não","situacao_trabalho":"Trabalhador de app","mulher_chefe_familia":"Não","acolhimento_institucional":"Não","dependente_tratamento":"Não","renda_per_capita":950.75,"raca_cor":"Preta","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Sim","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Não","mae_pai_atipico":"Não","vitima_violencia_domestica":"Sim","necessidades_especificas":"Acompanhamento psicológico","categoria_desejada":"AB","validade_cnh":"2026-11-10","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Autorizo","renda_familiar":1901.50,"analise_socio_ocupacional":"Trabalho por aplicativo, vulnerabilidade social","composicao_familiar":2,"participacao_programas_sociais":"Bolsa Família","recinscricao":"Sim","possui_recurso_inscricao":"Não","trabalhador_app":"Sim"},
       {"cpf":"44455566677","nome_completo":"JOSÉ ROBERTO PEREIRA","nome_social":null,"data_nascimento":"1975-11-30","idade":49,"nis_pis":null,"data_atualizacao":"2024-12-15","tempo_desde_atualizacao":"67 dias","genero":"Masculino","telefone_whatsapp":"(81) 98555-9876","email":"jose.roberto@example.com","canal_contato_preferencial":"Telefone","cep":"52061000","logradouro":"Rua Principal","numero":"900","complemento":"Fundos","bairro":"Parnamirim","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Sim","situacao_trabalho":"Desempregado","mulher_chefe_familia":"Não","acolhimento_institucional":"Não","dependente_tratamento":"Não","renda_per_capita":300.00,"raca_cor":"Parda","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Sim","pessoa_quilombola":"Não","pessoa_situacao_rua":"Sim","pessoa_pcd":"Não","mae_pai_atipico":"Não","vitima_violencia_domestica":"Não","necessidades_especificas":"Situação de rua","categoria_desejada":"B","validade_cnh":"2023-08-01","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Não autorizo","renda_familiar":600.00,"analise_socio_ocupacional":"Desempregado, situação de rua","composicao_familiar":2,"participacao_programas_sociais":"Nenhum","recinscricao":"Não","possui_recurso_inscricao":"Sim","trabalhador_app":"Não"},
-      {"cpf":"55566677788","nome_completo":"LUCIANA FERREIRA DA COSTA","nome_social":null,"data_nascimento":"1995-02-18","idade":30,"nis_pis":"55667788990","data_atualizacao":"2025-02-15","tempo_desde_atualizacao":"5 dias","genero":"Feminino","telefone_whatsapp":"(81) 98444-2222","email":"luciana.costa@example.com","canal_contato_preferencial":"WhatsApp","cep":"50720200","logradouro":"Rua da Paz","numero":"35","complemento":"Bloco B, apto 101","bairro":"Cordeiro","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Não","situacao_trabalho":"Autônomo","mulher_chefe_familia":"Sim","acolhimento_institucional":"Não","dependente_tratamento":"Sim","renda_per_capita":730.25,"raca_cor":"Parda","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Sim","mae_pai_atipico":"Sim","vitima_violencia_domestica":"Sim","necessidades_especificas":"Filho TEA","categoria_desejada":"B","validade_cnh":"2029-01-20","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Autorizo","renda_familiar":2921.00,"analise_socio_ocupacional":"Autônoma, mãe atípica, PCD no domicílio","composicao_familiar":4,"participacao_programas_sociais":"Bolsa Família; BPC","recinscricao":"Não","possui_recurso_inscricao":"Não","trabalhador_app":"Não"}
+      {"cpf":"55566677788","nome_completo":"LUCIANA FERREIRA DA COSTA","nome_social":null,"data_nascimento":"1995-02-18","idade":30,"nis_pis":"55667788990","data_atualizacao":"2025-02-15","tempo_desde_atualizacao":"5 dias","genero":"Feminino","telefone_whatsapp":"(81) 98444-2222","email":"luciana.costa@example.com","canal_contato_preferencial":"WhatsApp","cep":"50720200","logradouro":"Rua da Paz","numero":"35","complemento":"Bloco B, apto 101","bairro":"Cordeiro","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Não","situacao_trabalho":"Autônomo","mulher_chefe_familia":"Sim","acolhimento_institucional":"Não","dependente_tratamento":"Sim","renda_per_capita":730.25,"raca_cor":"Parda","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Sim","mae_pai_atipico":"Sim","vitima_violencia_domestica":"Sim","necessidades_especificas":"Filho TEA","categoria_desejada":"B","validade_cnh":"2029-01-20","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Autorizo","renda_familiar":2921.00,"analise_socio_ocupacional":"Autônoma, mãe atípica, PCD no domicílio","composicao_familiar":4,"participacao_programas_sociais":"Bolsa Família; BPC","recinscricao":"Não","possui_recurso_inscricao":"Não","trabalhador_app":"Não"},
+      {"total_geral":"2566","total_hoje":"2566","total_hora_atual":"118"}
     ];
 
     let charts = {};
     let exportCounter = 0;
+    const normalizeTotals = (value, fallback = 0) => {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : fallback;
+    };
+
+    const isTotalsObject = (item = {}) => {
+      if (typeof item !== 'object' || item === null) return false;
+      const hasTotalKey = ['total_geral', 'total_hoje', 'total_hora_atual'].some(key => key in item);
+      const hasPersonKey = ['cpf', 'nome_completo', 'idade', 'data_nascimento'].some(key => key in item);
+      return hasTotalKey && !hasPersonKey;
+    };
+
+    const normalizePayload = (payload = []) => {
+      const data = Array.isArray(payload) ? [...payload] : [];
+      const totalsIndex = data.findIndex(isTotalsObject);
+      const records = data.filter((item, idx) => {
+        if (idx === totalsIndex) return false;
+        if (!item || typeof item !== 'object') return false;
+        return ['cpf', 'nome_completo', 'idade', 'data_nascimento'].some(key => key in item);
+      });
+      const totalsSource = totalsIndex >= 0 ? data[totalsIndex] : {};
+
+      const totals = {
+        total_geral: normalizeTotals(totalsSource.total_geral, records.length),
+        total_hoje: normalizeTotals(totalsSource.total_hoje, 0),
+        total_hora_atual: normalizeTotals(totalsSource.total_hora_atual, 0)
+      };
+
+      return { records, totals };
+    };
 
     const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
 
@@ -304,15 +473,28 @@
             label: 'Quantidade',
             data,
             backgroundColor: colors,
-            borderColor: colors.map(c => c.replace('0.85', '1')),
+            borderColor: colors.map(c => c.replace('0.9', '1')),
             borderWidth: 1,
           }]
         },
         options: {
-          plugins: { legend: { labels: { color: '#d9e2ff' } } },
-          scales: type === 'pie' ? {} : { x: { ticks: { color: '#c7d2f0' } }, y: { ticks: { color: '#c7d2f0' }, beginAtZero: true } }
+          plugins: { legend: { labels: { color: '#4b5563' } } },
+          scales: type === 'pie' || type === 'doughnut' ? {} : {
+            x: { ticks: { color: '#6b7280' } },
+            y: { ticks: { color: '#6b7280' }, beginAtZero: true }
+          }
         }
       });
+    };
+
+    const updateTotals = (totals, fallbackCount = 0) => {
+      const totalGeral = normalizeTotals(totals.total_geral, fallbackCount);
+      const totalHoje = normalizeTotals(totals.total_hoje, 0);
+      const totalHora = normalizeTotals(totals.total_hora_atual, 0);
+
+      document.getElementById('totalGeral').innerText = totalGeral.toLocaleString('pt-BR');
+      document.getElementById('totalHoje').innerText = totalHoje.toLocaleString('pt-BR');
+      document.getElementById('totalHora').innerText = totalHora.toLocaleString('pt-BR');
     };
 
     const updateIndicators = (data) => {
@@ -349,8 +531,8 @@
       list.innerHTML = '';
       indicadores.forEach(item => {
         const li = document.createElement('li');
-        li.className = 'd-flex justify-content-between border-bottom border-secondary-subtle py-2';
-        li.innerHTML = `<span class="text-white-50">${item.label}</span><span class="fw-semibold">${item.value}</span>`;
+        li.className = 'd-flex justify-content-between border-bottom border-light-subtle py-2';
+        li.innerHTML = `<span class="text-muted">${item.label}</span><span class="fw-semibold">${item.value}</span>`;
         list.appendChild(li);
       });
     };
@@ -365,7 +547,14 @@
       }, {});
       const contatoCounts = groupCount(data, 'canal_contato_preferencial');
 
-      const palette = ['rgba(107,214,255,0.8)','rgba(157,164,255,0.8)','rgba(125,231,196,0.8)','rgba(255,214,102,0.8)','rgba(255,149,179,0.8)'];
+      const palette = [
+        'rgba(23,61,183,0.9)',   // azul escuro
+        'rgba(0,138,244,0.9)',   // azul claro
+        'rgba(0,110,43,0.9)',    // verde escuro
+        'rgba(66,218,46,0.9)',   // verde claro
+        'rgba(233,78,27,0.9)',   // laranja
+        'rgba(252,147,70,0.9)'   // amber
+      ];
 
       renderChart('chartGenero', 'pie', Object.keys(generoCounts), Object.values(generoCounts), palette);
       renderChart('chartCategoria', 'doughnut', Object.keys(categoriaCounts), Object.values(categoriaCounts), palette);
@@ -397,7 +586,7 @@
       rows.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="text-white-50">${row.grupo}</td>
+          <td class="text-muted">${row.grupo}</td>
           <td class="fw-semibold">${row.indicador}</td>
           <td class="text-end">${row.qtd}</td>`;
         tbody.appendChild(tr);
@@ -430,10 +619,12 @@
     let currentData = [];
 
     const hydrate = (data) => {
-      currentData = data;
-      updateIndicators(data);
-      renderCharts(data);
-      renderTable(data);
+      const { records, totals } = normalizePayload(data);
+      currentData = records;
+      updateTotals(totals, records.length);
+      updateIndicators(records);
+      renderCharts(records);
+      renderTable(records);
       document.getElementById('lastSync').innerText = new Date().toLocaleString('pt-BR');
     };
 
