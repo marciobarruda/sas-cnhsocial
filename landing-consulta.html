@@ -109,6 +109,10 @@
         <div class="modal-content">
           <div class="modal-header bg-primary text-white">
             <h5 class="modal-title" id="consultaModalLabel">Consultar inscrição</h5>
+            <button type="button" class="btn btn-light btn-sm" id="backButton">
+              <i class="bi bi-arrow-left"></i>
+              Voltar
+            </button>
           </div>
           <div class="modal-body">
             <form id="consultaForm" novalidate>
@@ -170,7 +174,12 @@
       const spinner = submitButton.querySelector(".spinner-border");
       const resultadoWrapper = document.getElementById("resultadoWrapper");
       const resultado = document.getElementById("resultado");
+      const backButton = document.getElementById("backButton");
       const PREFIX = "CNH-S";
+
+      const redirectHome = () => {
+        window.location.href = "https://cnhsocial.recife.pe.gov.br/";
+      };
 
       const enforcePrefix = () => {
         const upperValue = input.value.toUpperCase();
@@ -184,9 +193,10 @@
         enforcePrefix();
         consultaModalElement.addEventListener("click", (event) => {
           if (event.target === consultaModalElement) {
-            window.location.href = "https://cnhsocial.recife.pe.gov.br/";
+            redirectHome();
           }
         });
+        backButton?.addEventListener("click", redirectHome);
       });
 
       input.addEventListener("input", enforcePrefix);
