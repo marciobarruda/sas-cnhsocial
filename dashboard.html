@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CNH Recife | Painel Dinâmico</title>
+  <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,24 +12,24 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
     :root {
-      --bg: #0b1724;
-      --card: rgba(16, 35, 52, 0.92);
-      --accent: #00a3ff;
-      --accent-2: #a668ff;
-      --accent-3: #ffb347;
+      --bg: #0a1d3f;
+      --card: rgba(15, 39, 79, 0.9);
+      --accent: #0f7cc3;
+      --accent-2: #f2b441;
+      --accent-3: #00a6a6;
     }
     * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
     body {
-      background: radial-gradient(circle at 20% 20%, rgba(0, 163, 255, 0.14), transparent 26%),
-                  radial-gradient(circle at 80% 5%, rgba(166, 104, 255, 0.12), transparent 30%),
-                  radial-gradient(circle at 50% 80%, rgba(255, 179, 71, 0.12), transparent 32%),
+      background: radial-gradient(circle at 18% 18%, rgba(15, 124, 195, 0.18), transparent 26%),
+                  radial-gradient(circle at 78% 8%, rgba(242, 180, 65, 0.16), transparent 30%),
+                  radial-gradient(circle at 52% 78%, rgba(0, 166, 166, 0.14), transparent 32%),
                   var(--bg);
       color: #dce6f2;
       min-height: 100vh;
     }
     .glass {
       background: var(--card);
-      border: 1px solid rgba(0, 163, 255, 0.12);
+      border: 1px solid rgba(15, 124, 195, 0.16);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.32);
       backdrop-filter: blur(10px);
     }
@@ -40,13 +41,21 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(120deg, rgba(0, 163, 255, 0.16), rgba(166, 104, 255, 0.18));
-      opacity: 0.85;
+      background: linear-gradient(115deg, rgba(15, 124, 195, 0.25), rgba(0, 166, 166, 0.25), rgba(242, 180, 65, 0.24));
+      opacity: 0.9;
       pointer-events: none;
     }
+    .brand-mark {
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(242, 180, 65, 0.35);
+      border-radius: 18px;
+      padding: 10px 16px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    }
+    .brand-mark img { max-height: 76px; object-fit: contain; }
     .hero-badge {
-      background: rgba(0, 163, 255, 0.16);
-      border: 1px solid rgba(0, 163, 255, 0.34);
+      background: rgba(15, 124, 195, 0.18);
+      border: 1px solid rgba(15, 124, 195, 0.36);
       color: #dce6f2;
     }
     .metric-card {
@@ -60,7 +69,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 14px;
-      background: linear-gradient(145deg, rgba(0,163,255,0.24), rgba(166,104,255,0.2));
+      background: linear-gradient(145deg, rgba(15,124,195,0.3), rgba(242,180,65,0.28));
       color: #0b1724;
     }
     .gradient-border {
@@ -71,18 +80,18 @@
       position: absolute;
       inset: -1px;
       border-radius: inherit;
-      background: linear-gradient(120deg, rgba(0,163,255,0.32), rgba(166,104,255,0.28));
+      background: linear-gradient(120deg, rgba(15,124,195,0.34), rgba(0,166,166,0.32));
       z-index: -1;
     }
     .table-surface {
       background: rgba(15, 35, 52, 0.75);
     }
     .table-surface thead {
-      background: linear-gradient(90deg, rgba(0,163,255,0.22), rgba(166,104,255,0.24));
+      background: linear-gradient(90deg, rgba(15,124,195,0.28), rgba(242,180,65,0.28));
       color: #dce6f2;
     }
     .table-surface tbody tr:hover {
-      background: rgba(0,163,255,0.08);
+      background: rgba(15,124,195,0.12);
     }
     .table-surface th,
     .table-surface td { color: #dce6f2; }
@@ -91,23 +100,23 @@
       padding: 4px 10px;
       font-size: 0.8rem;
       color: #dce6f2;
-      border: 1px solid rgba(0,163,255,0.26);
-      background: rgba(0,163,255,0.12);
+      border: 1px solid rgba(15,124,195,0.26);
+      background: rgba(15,124,195,0.14);
     }
     .pill-green { border-color: rgba(62,213,152,0.55); color: #0b1724; background: rgba(62,213,152,0.22); }
-    .pill-amber { border-color: rgba(245,165,36,0.65); color: #0b1724; background: rgba(245,165,36,0.22); }
-    .pill-red { border-color: rgba(255,107,107,0.6); color: #0b1724; background: rgba(255,107,107,0.24); }
+    .pill-amber { border-color: rgba(242,180,65,0.7); color: #0b1724; background: rgba(242,180,65,0.25); }
+    .pill-red { border-color: rgba(230,90,90,0.62); color: #0b1724; background: rgba(230,90,90,0.24); }
     .progress { height: 8px; }
     .search-input {
       background: rgba(15,35,52,0.75);
-      border: 1px solid rgba(0,163,255,0.16);
+      border: 1px solid rgba(15,124,195,0.2);
       color: #dce6f2;
     }
-    .search-input:focus { box-shadow: 0 0 0 0.2rem rgba(0,163,255,0.35); }
+    .search-input:focus { box-shadow: 0 0 0 0.2rem rgba(15,124,195,0.38); }
     .small-label { color: #9cb2cf; font-size: 0.9rem; }
     .footer {
       color: #9cb2cf;
-      border-top: 1px solid rgba(0,163,255,0.12);
+      border-top: 1px solid rgba(15,124,195,0.14);
     }
     .text-secondary { color: #9cb2cf !important; }
   </style>
@@ -128,7 +137,10 @@
             <span class="chip pill-amber"><i class="bi bi-clock-history me-1"></i> Refresh manual</span>
           </div>
         </div>
-        <div class="text-end">
+        <div class="d-flex flex-column align-items-end gap-2">
+          <div class="brand-mark">
+            <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" alt="Logotipo CNH Recife">
+          </div>
           <button id="refreshBtn" class="btn btn-outline-info mb-2">
             <i class="bi bi-arrow-repeat me-1"></i> Atualizar dados
           </button>
@@ -376,11 +388,11 @@
       const contatoCounts = groupCount(data, 'canal_contato_preferencial');
 
       const palette = [
-        'rgba(0,163,255,0.78)',
-        'rgba(166,104,255,0.78)',
-        'rgba(62,213,152,0.78)',
-        'rgba(245,165,36,0.8)',
-        'rgba(255,107,107,0.8)'
+        'rgba(15,124,195,0.82)',
+        'rgba(0,166,166,0.8)',
+        'rgba(242,180,65,0.82)',
+        'rgba(38,70,130,0.82)',
+        'rgba(230,90,90,0.82)'
       ];
 
       renderChart('chartGenero', 'pie', Object.keys(generoCounts), Object.values(generoCounts), palette);
