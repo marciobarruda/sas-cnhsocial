@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SAS • CNH Social</title>
+    <title>SAS • CNH Recife</title>
     <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -57,19 +57,23 @@
         min-height: 385px;
         overflow: hidden;
         width: 100%;
+        background: none;
       }
 
       header.site-header picture {
-        display: block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
         height: 100%;
       }
 
       header.site-header .hero-image {
         display: block;
-        width: 100%;
+        width: auto;
         height: 100%;
-        object-fit: cover;
+        max-width: 100%;
+        object-fit: contain;
         object-position: center;
       }
 
@@ -213,6 +217,22 @@
         z-index: 2000;
       }
 
+      .availability-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.55);
+        backdrop-filter: blur(2px);
+        z-index: 1500;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      .availability-overlay.is-active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
       .modal-backdrop.is-open {
         display: flex;
       }
@@ -249,6 +269,20 @@
       .modal-message {
         margin-bottom: 1rem;
         color: var(--text-strong);
+      }
+
+      .availability-meta {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+      }
+
+      .availability-countdown {
+        font-weight: 700;
+        color: var(--brand-secondary);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
       }
 
       .modal-list {
@@ -1318,6 +1352,9 @@
             <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
+              <p class="mb-0 fw-semibold fst-italic">
+                Alguns dados são automaticamente preenchidos a partir da base do CadÚnico, conforme previsto no edital.
+              </p>
             </div>
               <div class="row g-4">
                 <div class="col-12 col-md-6">
@@ -1363,7 +1400,6 @@
                       aria-disabled="true"
                     />
                     <label class="form-check-label text-danger fw-bold" for="semTrabalhoFormal">Não tem trabalho formal</label>
-                    <small class="form-text">Informação carregada automaticamente a partir do CadÚnico.</small>
                   </div>
                   <input
                     type="hidden"
@@ -1436,9 +1472,8 @@
                       inputmode="numeric"
                       min="0"
                       step="1"
-                      aria-describedby="composicaoFamiliarHelp"
                     />
-                    <small id="composicaoFamiliarHelp" class="form-text">Pontuação do edital: <span id="pontuacaoComposicaoValor">—</span></small>
+                    <span id="pontuacaoComposicaoValor" class="visually-hidden">—</span>
                   </div>
                   <div class="col-12 col-md-6">
                     <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
@@ -1450,13 +1485,11 @@
                       inputmode="decimal"
                       placeholder="Valor carregado automaticamente"
                       value="{{ $json.data.rendaPerCapita || "" }}"
-                      aria-describedby="rendaHelp"
                       data-required-field="true"
                       readonly
                       aria-readonly="true"
                       required
                     />
-                    <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
                   </div>
                 </div>
               </div>
@@ -1470,9 +1503,7 @@
                   value="{{ (() => { const raw = (($json.data || {}).programaBolsaFamilia ?? ""); const nomePrograma = (($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome || "").toString().trim(); if (raw == null || (typeof raw === "string" && raw.trim() === "")) { return ""; } const rawNorm = raw === true || raw === 1 || raw === "1" || (raw || "").toString().trim().toLowerCase(); const isSim = rawNorm === true || rawNorm === 1 || rawNorm === "1" || rawNorm === "sim" || rawNorm === "true"; return isSim ? `SIM${nomePrograma ? `, ${nomePrograma}` : ""}` : "NÃO"; })() }}"
                   readonly
                   aria-readonly="true"
-                  aria-describedby="programasSociaisHelp"
                 />
-                <small id="programasSociaisHelp" class="form-text">Consulta automática via CadÚnico (BPC/Bolsa Família).</small>
               </div>
             </div>
           </div>
@@ -1537,44 +1568,52 @@
               <h2 class="h4 mb-0">Condições especiais e anexos</h2>
               <span class="legend-badge"><i class="bi bi-paperclip"></i> Anexe os comprovantes solicitados</span>
             </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
-                <select
-                  class="form-select readonly-control"
-                  id="pcd"
-                  name="pcd"
-                  aria-describedby="pcdHelp"
-                  data-required-field="true"
-                  aria-readonly="true"
-                  tabindex="-1"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim" {{ ($json.data.pcd || "") === "sim" ? "selected" : "" }}>Sim</option>
-                  <option value="nao" {{ ($json.data.pcd || "") === "nao" ? "selected" : "" }}>Não</option>
-                </select>
-                <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
-              </div>
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="maeAtipica">
-                  Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)
-                </label>
-                <select
-                  class="form-select"
-                  id="maeAtipica"
-                  name="maeAtipica"
-                  data-required-field="true"
-                  title="A comprovação da condição de mãe ou pai atípico deverá ser realizada mediante apresentação de, no mínimo:\nI – laudo, relatório ou prescrição emitido por profissional de saúde ou por instituição devidamente registrada no respectivo conselho profissional, que comprove a condição da pessoa sob seus cuidados;\nII - declaração técnica do CRAS/CREAS ou certificação/atestado da Secretaria de Assistência Social atestando a condição de vulnerabilidade social;\nIII – declaração técnica emitida por unidade de saúde ou unidade socioassistencial da Prefeitura do Recife, atestando que o(a) candidato(a) é o responsável legal pela pessoa com deficiência, Transtorno do Espectro Autista (TEA), Síndrome de Down ou outra condição congênere que exija cuidados permanentes."
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
-                  <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
-                </select>
-                <small class="form-text">Reserva de 10% (dez por cento) das vagas por convocação do Programa CNH Social Recife para mães e pais atípicos.</small>
-              </div>
-              <div class="col-12">
+              <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                  <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
+                  <select
+                    class="form-select readonly-control"
+                    id="pcd"
+                    name="pcd"
+                    aria-describedby="pcdHelp"
+                    data-required-field="true"
+                    aria-readonly="true"
+                    tabindex="-1"
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="sim" {{ ($json.data.pcd || "") === "sim" ? "selected" : "" }}>Sim</option>
+                    <option value="nao" {{ ($json.data.pcd || "") === "nao" ? "selected" : "" }}>Não</option>
+                  </select>
+                  <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
+                </div>
+                <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
+                  <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
+                    <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
+                    <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
+                    <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
+                    <div class="file-name" id="laudoPcdName"></div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label required" for="maeAtipica">
+                    Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)
+                  </label>
+                  <select
+                    class="form-select"
+                    id="maeAtipica"
+                    name="maeAtipica"
+                    data-required-field="true"
+                    title="A comprovação da condição de mãe ou pai atípico deverá ser realizada mediante apresentação de, no mínimo:\nI – laudo, relatório ou prescrição emitido por profissional de saúde ou por instituição devidamente registrada no respectivo conselho profissional, que comprove a condição da pessoa sob seus cuidados;\nII - declaração técnica do CRAS/CREAS ou certificação/atestado da Secretaria de Assistência Social atestando a condição de vulnerabilidade social;\nIII – declaração técnica emitida por unidade de saúde ou unidade socioassistencial da Prefeitura do Recife, atestando que o(a) candidato(a) é o responsável legal pela pessoa com deficiência, Transtorno do Espectro Autista (TEA), Síndrome de Down ou outra condição congênere que exija cuidados permanentes."
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
+                    <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
+                  </select>
+                  <small class="form-text">Reserva de 10% (dez por cento) das vagas por convocação do Programa CNH Recife para mães e pais atípicos.</small>
+                </div>
+                <div class="col-12">
                 <div class="row g-3 align-items-stretch">
                   <div class="col-12 col-lg-4 d-none" id="docMaeAtipicaLaudoWrapper">
                     <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
@@ -1607,7 +1646,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-md-6" id="vitimaViolenciaWrapper">
                 <label class="form-label required" for="vitimaViolencia"
                   >Vítima de violência doméstica atendida pelos órgãos e serviços especializados do Recife</label
                 >
@@ -1635,16 +1674,8 @@
                   placeholder="Descreva necessidades específicas de atendimento, adaptações ou informações relevantes"
                 >{{ $json.data.necessidadesEspeciais || "" }}</textarea>
               </div>
-              <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
-                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
-                  <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
-                  <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
-                  <div class="file-name" id="laudoPcdName"></div>
                 </div>
-              </div>
-              </div>
-            </section>
+              </section>
               <div class="step-actions" aria-label="Controles da etapa Condições especiais e anexos">
                 <button
                   type="button"
@@ -1752,7 +1783,7 @@
                         data-required-field="true"
                       />
                       <label class="form-check-label" for="lgpd">
-                        Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Social, conforme a Lei Geral de Proteção de Dados.
+                        Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Recife, conforme a Lei Geral de Proteção de Dados.
                       </label>
                       <a href="#" class="d-block small mt-1">Consultar política de privacidade</a>
                     </div>
@@ -2313,6 +2344,26 @@
       const generoSelect = document.getElementById("genero");
       const generoHidden = document.getElementById("generoValor");
       const grupoMulherChefe = document.getElementById("grupoMulherChefe");
+      const vitimaViolenciaWrapper = document.getElementById("vitimaViolenciaWrapper");
+      const vitimaViolenciaSelect = document.getElementById("vitimaViolencia");
+
+      const atualizarVitimaViolencia = () => {
+        const generoAtual = (generoSelect?.value || generoHidden?.value || "").toLowerCase();
+        const esconder = generoAtual === "masculino";
+        if (vitimaViolenciaWrapper) {
+          vitimaViolenciaWrapper.classList.toggle("d-none", esconder);
+        }
+        if (vitimaViolenciaSelect) {
+          vitimaViolenciaSelect.disabled = esconder;
+          if (esconder) {
+            vitimaViolenciaSelect.removeAttribute("required");
+            vitimaViolenciaSelect.value = "";
+          } else {
+            vitimaViolenciaSelect.setAttribute("required", "required");
+          }
+        }
+      };
+
       const atualizarGrupoMulherChefe = () => {
         const generoAtual = (generoSelect?.value || generoHidden?.value || "").toLowerCase();
         if (generoAtual === "feminino") {
@@ -2325,7 +2376,12 @@
           }
         }
       };
+      generoSelect?.addEventListener("change", () => {
+        atualizarGrupoMulherChefe();
+        atualizarVitimaViolencia();
+      });
       atualizarGrupoMulherChefe();
+      atualizarVitimaViolencia();
 
       const atualizarStatusCep = (mensagem, classe) => {
         if (!cepStatus) return;
@@ -2696,8 +2752,15 @@
 
       const form = document.getElementById("cnhSocialForm");
       const submitButton = document.getElementById("submitButton");
+      const submissionEndpoint =
+        "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/6cb0dfd2-7c35-recebimentocnhsocial";
       let validation;
       let submitAttempted = false;
+
+      const setSubmittingState = (isSubmitting) => {
+        submitButton.toggleAttribute("disabled", isSubmitting);
+        submitButton.setAttribute("aria-busy", isSubmitting ? "true" : "false");
+      };
 
       const applyCurrencySubmissionValues = (formData) => {
         if (!formData || typeof formData.set !== "function") return;
@@ -2849,6 +2912,7 @@
 
       let activeModal = null;
       let allowExternalFocusElement = null;
+      let consentModalShown = false;
 
       const getModalFocusableElements = (container) =>
         Array.from(
@@ -2861,6 +2925,9 @@
         if (!activeModal) return;
         if (event.key === "Escape") {
           event.preventDefault();
+          if (activeModal.allowEscape === false) {
+            return;
+          }
           activeModal.close();
           return;
         }
@@ -2916,6 +2983,295 @@
         }
       };
 
+      const availabilityOverlay = document.createElement("div");
+      availabilityOverlay.id = "availabilityOverlay";
+      availabilityOverlay.className = "availability-overlay";
+      availabilityOverlay.setAttribute("aria-hidden", "true");
+      document.body.append(availabilityOverlay);
+
+      const availabilityStart = dayjs("2025-12-06T10:00:00");
+      const availabilityEnd = dayjs("2025-12-24T23:59:59");
+      let availabilityWatcher = null;
+
+      const getAvailabilityState = () => {
+        const now = dayjs();
+        if (!availabilityStart.isValid() || !availabilityEnd.isValid() || !now.isValid()) {
+          return { status: "unknown", target: null };
+        }
+        if (now.isBefore(availabilityStart)) {
+          return { status: "before", target: availabilityStart };
+        }
+        if (now.isAfter(availabilityEnd)) {
+          return { status: "after", target: null };
+        }
+        return { status: "open", target: availabilityEnd };
+      };
+
+      const isWithinAvailabilityWindow = () => {
+        const state = getAvailabilityState();
+        return state.status === "open";
+      };
+
+      const toggleAvailabilityOverlay = (shouldLock) => {
+        if (!availabilityOverlay) return;
+        availabilityOverlay.classList.toggle("is-active", shouldLock);
+      };
+
+      const formatAvailabilityCountdown = (target) => {
+        if (!target || typeof target.isValid !== "function" || !target.isValid()) {
+          return "00d 00h 00m 00s";
+        }
+        const now = dayjs();
+        let totalSeconds = Math.max(0, target.diff(now, "second"));
+        const days = Math.floor(totalSeconds / 86400);
+        totalSeconds -= days * 86400;
+        const hours = Math.floor(totalSeconds / 3600);
+        totalSeconds -= hours * 3600;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds - minutes * 60;
+        const pad = (value) => String(value).padStart(2, "0");
+        return `${pad(days)}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+      };
+
+      const applyAvailabilityState = () => {
+        const state = getAvailabilityState();
+        const locked = state.status !== "open";
+        toggleAvailabilityOverlay(locked);
+        if (locked) {
+          setSubmitButtonState(false);
+        }
+        return state;
+      };
+
+      const createAvailabilityModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
+          }
+
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.availabilityModal = "true";
+          backdrop.setAttribute("data-testid", "availability-modal");
+          backdrop.setAttribute("hidden", "");
+
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "availabilityTitle");
+          card.setAttribute("aria-describedby", "availabilityMessage availabilityCountdown");
+          card.tabIndex = -1;
+
+          const title = document.createElement("p");
+          title.className = "modal-title";
+          title.id = "availabilityTitle";
+
+          const windowMessage = document.createElement("p");
+          windowMessage.className = "availability-meta";
+          windowMessage.id = "availabilityMessage";
+
+          const countdown = document.createElement("p");
+          countdown.className = "availability-countdown";
+          countdown.id = "availabilityCountdown";
+          countdown.setAttribute("aria-live", "polite");
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const okButton = document.createElement("button");
+          okButton.type = "button";
+          okButton.className = "btn btn-primary";
+          okButton.textContent = "Ok, entendi";
+
+          actions.append(okButton);
+          card.append(title, windowMessage, countdown, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = { backdrop, card, title, windowMessage, countdown, okButton };
+          return modalElements;
+        };
+      })();
+
+      const setAvailabilityModalContent = (state) => {
+        const { title, windowMessage, countdown } = createAvailabilityModal();
+        const rangeText = "Período disponível: 06/12/2025 às 10:00 até 24/12/2025 às 23:59:59";
+        let message = rangeText;
+        let icon = "⏰";
+        if (state.status === "before") {
+          icon = "🚦";
+          message = `🚦 As inscrições abrirão em 06/12/2025 às 10:00. ${rangeText}`;
+        } else if (state.status === "after") {
+          icon = "⛔";
+          message = `⛔ Período encerrado em 24/12/2025 às 23:59:59.`;
+        } else if (state.status === "open") {
+          icon = "✅";
+          message = `✅ Inscrições abertas até 24/12/2025 às 23:59:59.`;
+        }
+        title.textContent = `${icon} Período de inscrições`;
+        windowMessage.textContent = message;
+        countdown.textContent = `⏳ Contagem regressiva: ${formatAvailabilityCountdown(state.target)}`;
+      };
+
+      const openAvailabilityModal = (onClose = null) => { 
+        const state = applyAvailabilityState();
+        if (state.status === "open") {
+          return;
+        }
+
+        const { backdrop, card, okButton } = createAvailabilityModal();
+        setAvailabilityModalContent(state);
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+        const handleClose = () => {
+          closeModal();
+          if (typeof onClose === "function") {
+            onClose();
+          }
+        };
+
+        const cleanup = () => {
+          okButton.removeEventListener("click", handleClose);
+        };
+
+        okButton.addEventListener("click", handleClose);
+
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          cleanup,
+          returnFocusElement: previousActive,
+          allowEscape: false,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+
+      const createConsentModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
+          }
+
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.consentModal = "true";
+          backdrop.setAttribute("data-testid", "consent-modal");
+          backdrop.setAttribute("hidden", "");
+
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "consentModalTitle");
+          card.setAttribute("aria-describedby", "consentModalMessage");
+          card.tabIndex = -1;
+
+          const title = document.createElement("p");
+          title.className = "modal-title title--alerta";
+          title.id = "consentModalTitle";
+          title.textContent = "Uso de dados do CadÚnico";
+
+          const message = document.createElement("p");
+          message.className = "modal-message";
+          message.id = "consentModalMessage";
+          message.textContent =
+            "Os dados do CadÚnico Recife serão utilizados para preencher automaticamente partes do formulário.";
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const okButton = document.createElement("button");
+          okButton.type = "button";
+          okButton.className = "btn btn-primary";
+          okButton.textContent = "OK";
+
+          actions.append(okButton);
+          card.append(title, message, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = { backdrop, card, okButton };
+          return modalElements;
+        };
+      })();
+
+      const openConsentModal = () => {
+        consentModalShown = true;
+        const { backdrop, card, okButton } = createConsentModal();
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+        const closeHandler = () => closeModal();
+
+        const cleanup = () => {
+          okButton.removeEventListener("click", closeHandler);
+        };
+
+        okButton.addEventListener("click", closeHandler);
+
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          cleanup,
+          returnFocusElement: previousActive,
+          allowEscape: false,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+      const triggerConsentIfNeeded = () => {
+        if (consentModalShown) return;
+        if (!isWithinAvailabilityWindow()) return;
+        openConsentModal();
+      };
+
+      const syncAvailabilityState = () => {
+        const state = applyAvailabilityState();
+        if (activeModal?.backdrop?.dataset.availabilityModal === "true") {
+          setAvailabilityModalContent(state);
+        }
+        if (state.status === "open") {
+          triggerConsentIfNeeded();
+        }
+      };
+
+      const startAvailabilityWatcher = () => {
+        syncAvailabilityState();
+        if (availabilityWatcher) {
+          clearInterval(availabilityWatcher);
+        }
+        availabilityWatcher = setInterval(syncAvailabilityState, 1000);
+      };
+
       const showFeedbackModal = ({ type, message, items = [], focusElement = null, triggerElement = submitButton }) => {
         const {
           backdrop,
@@ -2957,7 +3313,7 @@
           backdrop,
           card,
           close: closeModal,
-          returnFocusElement: triggerElement || previousActive,
+          returnFocusElement: !isSuccess && focusElement ? focusElement : triggerElement || previousActive,
         };
 
         const focusable = getModalFocusableElements(card);
@@ -3353,7 +3709,8 @@
       const updateSubmitState = () => {
         const extraErrors = validateAdditionalRules();
         const invalidFields = getInvalidFields(extraErrors);
-        setSubmitButtonState(invalidFields.length === 0);
+        const isWindowOpen = isWithinAvailabilityWindow();
+        setSubmitButtonState(invalidFields.length === 0 && isWindowOpen);
         if (submitAttempted) {
           applyValidationUI(invalidFields);
         }
@@ -3723,6 +4080,11 @@
       }
 
       const processSubmissionAttempt = async () => {
+        const availabilityState = applyAvailabilityState();
+        if (availabilityState.status !== "open") {
+          openAvailabilityModal();
+          return false;
+        }
         let isValid = true;
         if (validation) {
           if (typeof validation.revalidate === "function") {
@@ -3738,12 +4100,12 @@
 
         if (!isValid || invalidFields.length) {
           setSubmitButtonState(false);
-          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
+          const focusField = getFirstInvalidFieldElement(invalidFields);
           showFeedbackModal({
             type: "alert",
             message: "Por favor, verifique os campos obrigatórios listados abaixo.",
             items: invalidFields.map((field) => field.label),
-            focusElement: focusField ? focusField.element : null,
+            focusElement: focusField,
             triggerElement: submitButton,
           });
           updateSubmitState();
@@ -3751,70 +4113,89 @@
         }
 
         const formData = new FormData(form);
-        applyCurrencySubmissionValues(formData);
-        const data = {};
-        formData.forEach((value, key) => {
-          if (value instanceof File) {
-            data[key] = value.name || null;
-          } else if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (Array.isArray(data[key])) {
-              data[key].push(value);
-            } else {
-              data[key] = [data[key], value];
+        const removeEmptyFileFields = (data) => {
+          if (!data || typeof data.forEach !== "function") return;
+          const keysToDelete = [];
+          data.forEach((value, key) => {
+            if (value instanceof File && value.size === 0) {
+              keysToDelete.push(key);
             }
-          } else {
-            data[key] = value;
-          }
-        });
-        console.log("Inscrição CNH Social", data);
+          });
+          keysToDelete.forEach((key) => data.delete(key));
+        };
 
-        showFeedbackModal({
-          type: "success",
-          message: "Envio bem-sucedido da inscrição.",
-          triggerElement: submitButton,
-        });
+        applyCurrencySubmissionValues(formData);
+        removeEmptyFileFields(formData);
+        setSubmittingState(true);
 
-        form.reset();
-        if (validation) {
-          if (typeof validation.refreshAll === "function") {
-            validation.refreshAll();
-          } else if (typeof validation.refresh === "function") {
-            validation.refresh();
-          } else {
-            Object.values(validation.fields).forEach((field) => {
-              field.isValid = false;
-              field.elem?.classList.remove("is-invalid", "js-validate-error-field");
-            });
+        try {
+          const response = await fetch(submissionEndpoint, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Falha ao enviar inscrição: ${response.status}`);
           }
+
+          showFeedbackModal({
+            type: "success",
+            message: "Envio bem-sucedido da inscrição.",
+            triggerElement: submitButton,
+          });
+
+          form.reset();
+          if (validation) {
+            if (typeof validation.refreshAll === "function") {
+              validation.refreshAll();
+            } else if (typeof validation.refresh === "function") {
+              validation.refresh();
+            } else {
+              Object.values(validation.fields).forEach((field) => {
+                field.isValid = false;
+                field.elem?.classList.remove("is-invalid", "js-validate-error-field");
+              });
+            }
+          }
+          submitAttempted = false;
+          applyValidationUI([]);
+          setSubmitButtonState(false);
+          const docResidenciaLabel = document.getElementById("docResidenciaLabel");
+          if (docResidenciaLabel) {
+            docResidenciaLabel.classList.remove("required");
+          }
+          [
+            "docResidenciaWrapper",
+            "laudoPcdWrapper",
+            "docMaeAtipicaLaudoWrapper",
+            "docMaeAtipicaCrasWrapper",
+            "docResponsavelWrapper",
+            "docDependenteWrapper",
+            "docDependenteVinculoWrapper",
+            "cnhNumeroWrapper",
+            "cnhValidadeWrapper",
+            "cnhArquivoWrapper",
+          ].forEach((id) => {
+            toggleFileSection(false, id);
+          });
+          grupoMulherChefe.classList.add("d-none");
+          desativarEdicaoEndereco();
+          document.querySelectorAll(".file-name").forEach((holder) => {
+            holder.textContent = "";
+          });
+          setTimeout(() => updateSubmitState(), 0);
+          return true;
+        } catch (error) {
+          console.error(error);
+          showFeedbackModal({
+            type: "alert",
+            message: "Não foi possível enviar a inscrição. Tente novamente.",
+            triggerElement: submitButton,
+          });
+          return false;
+        } finally {
+          setSubmittingState(false);
         }
-        submitAttempted = false;
-        applyValidationUI([]);
-        setSubmitButtonState(false);
-        const docResidenciaLabel = document.getElementById("docResidenciaLabel");
-        if (docResidenciaLabel) {
-          docResidenciaLabel.classList.remove("required");
-        }
-        [
-          "docResidenciaWrapper",
-          "laudoPcdWrapper",
-          "docMaeAtipicaLaudoWrapper",
-          "docMaeAtipicaCrasWrapper",
-          "docResponsavelWrapper",
-          "docDependenteWrapper",
-          "docDependenteVinculoWrapper",
-          "cnhNumeroWrapper",
-          "cnhValidadeWrapper",
-          "cnhArquivoWrapper",
-        ].forEach((id) => {
-          toggleFileSection(false, id);
-        });
-        grupoMulherChefe.classList.add("d-none");
-        desativarEdicaoEndereco();
-        document.querySelectorAll(".file-name").forEach((holder) => {
-          holder.textContent = "";
-        });
-        setTimeout(() => updateSubmitState(), 0);
-        return true;
       };
 
       const updateAgeFieldFromBirthdate = () => {
@@ -4006,6 +4387,16 @@
         reviewButton.addEventListener("click", () => {
           openReviewModal(reviewButton);
         });
+      }
+
+      startAvailabilityWatcher();
+      const initialAvailabilityState = getAvailabilityState();
+      if (initialAvailabilityState.status !== "open") {
+        openAvailabilityModal(() => {
+          triggerConsentIfNeeded();
+        });
+      } else {
+        triggerConsentIfNeeded();
       }
 
       const validarEExibirModal = (formSelector, botaoSelector) => {
