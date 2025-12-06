@@ -46,37 +46,11 @@
         font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: var(--text-strong);
         min-height: 100vh;
-        background: linear-gradient(135deg, rgba(0, 83, 164, 0.08), rgba(0, 163, 255, 0.1));
-      }
-
-      .page-shell {
-        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem 1rem;
-      }
-
-      .brand-card {
-        background: var(--surface-strong);
-        border: 1px solid rgba(0, 83, 164, 0.12);
-        box-shadow: 0 12px 40px rgba(0, 45, 98, 0.12);
-        border-radius: 16px;
-        padding: 1.75rem;
-        max-width: 520px;
-        width: 100%;
-        text-align: center;
-      }
-
-      .brand-card h1 {
-        font-weight: 700;
-        color: var(--brand-primary);
-        margin-bottom: 0.5rem;
-      }
-
-      .brand-card p {
-        color: var(--text-muted);
-        margin-bottom: 1.25rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, rgba(0, 83, 164, 0.08), rgba(0, 163, 255, 0.1));
       }
 
       .modal-lg {
@@ -97,24 +71,7 @@
     </style>
   </head>
   <body>
-    <div class="page-shell">
-      <div class="brand-card">
-        <img
-          src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
-          alt="Prefeitura do Recife - CNH Social"
-          class="mb-3"
-          style="height: 68px"
-        />
-        <h1>Consulta de Inscrição</h1>
-        <p class="mb-3">
-          Informe o número da inscrição para consultar os dados diretamente pelo webhook oficial.
-          O formulário abrirá automaticamente.
-        </p>
-        <button class="btn btn-primary px-4" type="button" data-bs-toggle="modal" data-bs-target="#consultaModal">
-          Abrir consulta
-        </button>
-      </div>
-    </div>
+    <div aria-hidden="true"></div>
 
     <div class="modal fade" id="consultaModal" tabindex="-1" aria-labelledby="consultaModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -125,8 +82,14 @@
           <div class="modal-body">
             <form id="consultaForm" novalidate>
               <label class="form-label fw-semibold" for="inscricaoInput">Número da inscrição</label>
-              <div class="input-group mb-2">
-                <span class="input-group-text" id="inscricaoPrefix"><i class="bi bi-search"></i></span>
+              <div class="input-group mb-2 shadow-sm">
+                <span class="input-group-text bg-white" id="inscricaoPrefix">
+                  <img
+                    src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+                    alt="Prefeitura do Recife - CNH Social"
+                    style="height: 26px"
+                  />
+                </span>
                 <input
                   type="text"
                   class="form-control"
