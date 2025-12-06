@@ -1568,44 +1568,52 @@
               <h2 class="h4 mb-0">Condições especiais e anexos</h2>
               <span class="legend-badge"><i class="bi bi-paperclip"></i> Anexe os comprovantes solicitados</span>
             </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
-                <select
-                  class="form-select readonly-control"
-                  id="pcd"
-                  name="pcd"
-                  aria-describedby="pcdHelp"
-                  data-required-field="true"
-                  aria-readonly="true"
-                  tabindex="-1"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim" {{ ($json.data.pcd || "") === "sim" ? "selected" : "" }}>Sim</option>
-                  <option value="nao" {{ ($json.data.pcd || "") === "nao" ? "selected" : "" }}>Não</option>
-                </select>
-                <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
-              </div>
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="maeAtipica">
-                  Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)
-                </label>
-                <select
-                  class="form-select"
-                  id="maeAtipica"
-                  name="maeAtipica"
-                  data-required-field="true"
-                  title="A comprovação da condição de mãe ou pai atípico deverá ser realizada mediante apresentação de, no mínimo:\nI – laudo, relatório ou prescrição emitido por profissional de saúde ou por instituição devidamente registrada no respectivo conselho profissional, que comprove a condição da pessoa sob seus cuidados;\nII - declaração técnica do CRAS/CREAS ou certificação/atestado da Secretaria de Assistência Social atestando a condição de vulnerabilidade social;\nIII – declaração técnica emitida por unidade de saúde ou unidade socioassistencial da Prefeitura do Recife, atestando que o(a) candidato(a) é o responsável legal pela pessoa com deficiência, Transtorno do Espectro Autista (TEA), Síndrome de Down ou outra condição congênere que exija cuidados permanentes."
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
-                  <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
-                </select>
-                <small class="form-text">Reserva de 10% (dez por cento) das vagas por convocação do Programa CNH Social Recife para mães e pais atípicos.</small>
-              </div>
-              <div class="col-12">
+              <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                  <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
+                  <select
+                    class="form-select readonly-control"
+                    id="pcd"
+                    name="pcd"
+                    aria-describedby="pcdHelp"
+                    data-required-field="true"
+                    aria-readonly="true"
+                    tabindex="-1"
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="sim" {{ ($json.data.pcd || "") === "sim" ? "selected" : "" }}>Sim</option>
+                    <option value="nao" {{ ($json.data.pcd || "") === "nao" ? "selected" : "" }}>Não</option>
+                  </select>
+                  <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
+                </div>
+                <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
+                  <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
+                    <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
+                    <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
+                    <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
+                    <div class="file-name" id="laudoPcdName"></div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label required" for="maeAtipica">
+                    Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)
+                  </label>
+                  <select
+                    class="form-select"
+                    id="maeAtipica"
+                    name="maeAtipica"
+                    data-required-field="true"
+                    title="A comprovação da condição de mãe ou pai atípico deverá ser realizada mediante apresentação de, no mínimo:\nI – laudo, relatório ou prescrição emitido por profissional de saúde ou por instituição devidamente registrada no respectivo conselho profissional, que comprove a condição da pessoa sob seus cuidados;\nII - declaração técnica do CRAS/CREAS ou certificação/atestado da Secretaria de Assistência Social atestando a condição de vulnerabilidade social;\nIII – declaração técnica emitida por unidade de saúde ou unidade socioassistencial da Prefeitura do Recife, atestando que o(a) candidato(a) é o responsável legal pela pessoa com deficiência, Transtorno do Espectro Autista (TEA), Síndrome de Down ou outra condição congênere que exija cuidados permanentes."
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
+                    <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
+                  </select>
+                  <small class="form-text">Reserva de 10% (dez por cento) das vagas por convocação do Programa CNH Social Recife para mães e pais atípicos.</small>
+                </div>
+                <div class="col-12">
                 <div class="row g-3 align-items-stretch">
                   <div class="col-12 col-lg-4 d-none" id="docMaeAtipicaLaudoWrapper">
                     <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
@@ -1666,16 +1674,8 @@
                   placeholder="Descreva necessidades específicas de atendimento, adaptações ou informações relevantes"
                 >{{ $json.data.necessidadesEspeciais || "" }}</textarea>
               </div>
-              <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
-                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
-                  <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
-                  <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
-                  <div class="file-name" id="laudoPcdName"></div>
                 </div>
-              </div>
-              </div>
-            </section>
+              </section>
               <div class="step-actions" aria-label="Controles da etapa Condições especiais e anexos">
                 <button
                   type="button"
