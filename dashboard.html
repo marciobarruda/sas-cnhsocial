@@ -180,9 +180,9 @@
     <section class="row g-4 mb-4">
       <div class="col-lg-8">
         <div class="glass p-3 p-md-4 rounded-4 gradient-border h-100">
-          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">Distribuição de perfis</h5>
-            <div class="chip">Fonte: Webhook CNH Recife</div>
+            <div class="chip">Fonte: Portal CNH Recife</div>
           </div>
           <div class="row g-3">
             <div class="col-md-6"><canvas id="chartGenero"></canvas></div>
@@ -207,10 +207,6 @@
             <p class="small-label mt-3 mb-1">Mulheres chefes de família</p>
             <div class="progress bg-dark">
               <div id="progressMulherChefe" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
-            </div>
-            <p class="small-label mt-3 mb-1">Autorização de imagem</p>
-            <div class="progress bg-dark">
-              <div id="progressImagem" class="progress-bar bg-warning" role="progressbar" style="width: 0%;"></div>
             </div>
           </div>
         </div>
@@ -330,7 +326,6 @@
       const mediaIdade = data.reduce((sum, item) => sum + (item.idade || 0), 0) / Math.max(total, 1);
       const whatsapp = data.filter(i => (i.canal_contato_preferencial || '').toLowerCase().includes('whatsapp')).length;
       const mulherChefe = data.filter(i => (i.mulher_chefe_familia || '').toLowerCase() === 'sim').length;
-      const imagem = data.filter(i => (i.autorizacao_imagem || '').toLowerCase().includes('autorizo')).length;
 
       document.getElementById('totalInscricoes').innerText = total;
       document.getElementById('novasInscricoes').innerText = `${atualizados15} atualizações em 15 dias`;
@@ -341,16 +336,12 @@
 
       const whatsappPct = total ? Math.round((whatsapp / total) * 100) : 0;
       const mulherChefePct = total ? Math.round((mulherChefe / total) * 100) : 0;
-      const imagemPct = total ? Math.round((imagem / total) * 100) : 0;
 
       document.getElementById('progressWhatsapp').style.width = `${whatsappPct}%`;
       document.getElementById('progressMulherChefe').style.width = `${mulherChefePct}%`;
-      document.getElementById('progressImagem').style.width = `${imagemPct}%`;
-
       const indicadores = [
         { label: 'Preferem WhatsApp', value: `${whatsappPct}%` },
         { label: 'Mulheres chefes de família', value: `${mulherChefePct}%` },
-        { label: 'Autorização de imagem', value: `${imagemPct}%` },
         { label: 'PCD declarados', value: `${pcd}` },
         { label: 'Renda familiar média', value: formatCurrency(data.reduce((s, i) => s + (i.renda_familiar || 0), 0) / Math.max(total,1)) }
       ];
@@ -393,20 +384,8 @@
       addGroup('CANAL PREFERENCIAL', groupCount(data, 'canal_contato_preferencial'));
       addGroup('FAIXA DE RENDA PER CAPITA', groupCount(data.map(item => ({ faixa: rendaFaixas(item.renda_per_capita) })), 'faixa'));
 
-      const atualizados = data.filter(item => {
-        if (!item.data_atualizacao) return false;
-        const diffDays = (Date.now() - new Date(item.data_atualizacao).getTime()) / (1000 * 60 * 60 * 24);
-        return diffDays <= 15;
-      }).length;
-      const naoAtualizados = data.length - atualizados;
-      addGroup('STATUS DE ATUALIZAÇÃO', {
-        'ATUALIZADOS ATÉ 15 DIAS': atualizados,
-        'DESATUALIZADOS (ACIMA DE 15 DIAS)': naoAtualizados
-      });
-
       addGroup('TRABALHO / RENDA', groupCount(data, 'situacao_trabalho'));
       addGroup('PROGRAMA SOCIAL', groupCount(data, 'participacao_programas_sociais'));
-      addGroup('AUTORIZAÇÃO DE IMAGEM', groupCount(data, 'autorizacao_imagem'));
       addGroup('DECLARAÇÃO LGPD', groupCount(data, 'termo_lgpd'));
 
       return rows;
