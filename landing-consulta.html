@@ -182,6 +182,11 @@
         consultaModal.show();
         consultaModalElement.addEventListener("shown.bs.modal", () => input.focus());
         enforcePrefix();
+        consultaModalElement.addEventListener("click", (event) => {
+          if (event.target === consultaModalElement) {
+            window.location.href = "https://cnhsocial.recife.pe.gov.br/";
+          }
+        });
       });
 
       input.addEventListener("input", enforcePrefix);
