@@ -214,7 +214,7 @@
           <div class="d-flex align-items-start gap-3">
             <div class="icon-wrap"><i class="bi bi-people fs-5"></i></div>
             <div>
-              <p class="small-label mb-1">Total de inscrições</p>
+              <p class="small-label mb-1">Inscrições recebidas</p>
               <h3 class="fw-bold mb-1" id="totalInscricoes">--</h3>
               <div class="text-success small" id="novasInscricoes">--</div>
             </div>
@@ -343,20 +343,29 @@
       return Number.isFinite(num) ? num : fallback;
     };
 
+    const isTotalsObject = (item = {}) => {
+      if (typeof item !== 'object' || item === null) return false;
+      const hasTotalKey = ['total_geral', 'total_hoje', 'total_hora_atual'].some(key => key in item);
+      const hasPersonKey = ['cpf', 'nome_completo', 'idade', 'data_nascimento'].some(key => key in item);
+      return hasTotalKey && !hasPersonKey;
+    };
+
     const normalizePayload = (payload = []) => {
       const data = Array.isArray(payload) ? [...payload] : [];
-      const lastItem = data[data.length - 1] || {};
-      const hasTotals = ['total_geral', 'total_hoje', 'total_hora_atual'].some(key => key in lastItem);
-      const totals = hasTotals ? {
-        total_geral: normalizeTotals(lastItem.total_geral, data.length - 1),
-        total_hoje: normalizeTotals(lastItem.total_hoje, 0),
-        total_hora_atual: normalizeTotals(lastItem.total_hora_atual, 0)
-      } : {
-        total_geral: data.length,
-        total_hoje: 0,
-        total_hora_atual: 0
+      const totalsIndex = data.findIndex(isTotalsObject);
+      const records = data.filter((item, idx) => {
+        if (idx === totalsIndex) return false;
+        if (!item || typeof item !== 'object') return false;
+        return ['cpf', 'nome_completo', 'idade', 'data_nascimento'].some(key => key in item);
+      });
+      const totalsSource = totalsIndex >= 0 ? data[totalsIndex] : {};
+
+      const totals = {
+        total_geral: normalizeTotals(totalsSource.total_geral, records.length),
+        total_hoje: normalizeTotals(totalsSource.total_hoje, 0),
+        total_hora_atual: normalizeTotals(totalsSource.total_hora_atual, 0)
       };
-      const records = hasTotals ? data.slice(0, -1) : data;
+
       return { records, totals };
     };
 
