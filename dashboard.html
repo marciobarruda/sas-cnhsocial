@@ -11,25 +11,25 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
     :root {
-      --bg-dark: #0b1223;
-      --card-dark: rgba(18, 26, 45, 0.85);
-      --accent: #00e0ff;
-      --accent-2: #7b61ff;
-      --accent-3: #3fe1b0;
+      --bg-dark: #0f172a;
+      --card-dark: rgba(23, 33, 52, 0.82);
+      --accent: #6bd6ff;
+      --accent-2: #9da4ff;
+      --accent-3: #7de7c4;
     }
     * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
     body {
-      background: radial-gradient(circle at 15% 20%, rgba(0, 224, 255, 0.12), transparent 25%),
-                  radial-gradient(circle at 85% 10%, rgba(123, 97, 255, 0.12), transparent 25%),
-                  radial-gradient(circle at 50% 80%, rgba(63, 225, 176, 0.12), transparent 22%),
+      background: radial-gradient(circle at 15% 20%, rgba(107, 214, 255, 0.08), transparent 26%),
+                  radial-gradient(circle at 85% 10%, rgba(157, 164, 255, 0.08), transparent 28%),
+                  radial-gradient(circle at 50% 80%, rgba(125, 231, 196, 0.08), transparent 24%),
                   var(--bg-dark);
-      color: #e7ecf6;
+      color: #e9eef7;
       min-height: 100vh;
     }
     .glass {
       background: var(--card-dark);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
       backdrop-filter: blur(18px);
     }
     .hero {
@@ -40,14 +40,14 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(120deg, rgba(0, 224, 255, 0.1), rgba(123, 97, 255, 0.1));
-      opacity: 0.6;
+      background: linear-gradient(120deg, rgba(107, 214, 255, 0.12), rgba(157, 164, 255, 0.12));
+      opacity: 0.55;
       pointer-events: none;
     }
     .hero-badge {
-      background: rgba(0, 224, 255, 0.12);
-      border: 1px solid rgba(0, 224, 255, 0.4);
-      color: #9be8ff;
+      background: rgba(107, 214, 255, 0.14);
+      border: 1px solid rgba(107, 214, 255, 0.32);
+      color: #c1ecff;
     }
     .metric-card {
       border-radius: 18px;
@@ -60,7 +60,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 14px;
-      background: linear-gradient(145deg, rgba(0,224,255,0.25), rgba(123,97,255,0.25));
+      background: linear-gradient(145deg, rgba(107,214,255,0.18), rgba(157,164,255,0.2));
     }
     .gradient-border {
       position: relative;
@@ -70,7 +70,7 @@
       position: absolute;
       inset: -1px;
       border-radius: inherit;
-      background: linear-gradient(120deg, rgba(0,224,255,0.4), rgba(123,97,255,0.4));
+      background: linear-gradient(120deg, rgba(107,214,255,0.28), rgba(157,164,255,0.28));
       z-index: -1;
     }
     .table-dark-glass {
@@ -81,12 +81,12 @@
       padding: 4px 10px;
       font-size: 0.8rem;
       color: #dfe7ff;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
     }
-    .pill-green { border-color: rgba(63,225,176,0.6); color: #9ff3db; }
-    .pill-amber { border-color: rgba(255,193,7,0.6); color: #ffe9b0; }
-    .pill-red { border-color: rgba(255,82,82,0.6); color: #ffc7c7; }
+    .pill-green { border-color: rgba(125,231,196,0.55); color: #c8f5e2; }
+    .pill-amber { border-color: rgba(255,214,102,0.6); color: #fff0c2; }
+    .pill-red { border-color: rgba(255,149,179,0.55); color: #ffd5df; }
     .progress { height: 8px; }
     .search-input {
       background: rgba(255,255,255,0.06);
@@ -217,7 +217,6 @@
       <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
         <div>
           <h5 class="mb-0">Visão agregada das inscrições</h5>
-          <small class="text-white-50">Somente indicadores quantitativos. Dados pessoais não são exibidos.</small>
         </div>
         <div class="d-flex gap-2 align-items-center">
           <div class="spinner-border spinner-border-sm text-info d-none" role="status" id="loadingSpinner"></div>
@@ -365,7 +364,7 @@
       }, {});
       const contatoCounts = groupCount(data, 'canal_contato_preferencial');
 
-      const palette = ['rgba(0,224,255,0.85)','rgba(123,97,255,0.85)','rgba(63,225,176,0.85)','rgba(255,193,7,0.85)','rgba(255,99,132,0.85)'];
+      const palette = ['rgba(107,214,255,0.8)','rgba(157,164,255,0.8)','rgba(125,231,196,0.8)','rgba(255,214,102,0.8)','rgba(255,149,179,0.8)'];
 
       renderChart('chartGenero', 'pie', Object.keys(generoCounts), Object.values(generoCounts), palette);
       renderChart('chartCategoria', 'doughnut', Object.keys(categoriaCounts), Object.values(categoriaCounts), palette);
