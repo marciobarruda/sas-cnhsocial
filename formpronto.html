@@ -1872,6 +1872,33 @@
       </div>
     </div>
 
+    <div class="modal-backdrop" id="reviewChoiceModal" data-review-choice-modal hidden>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reviewChoiceTitle"
+        aria-describedby="reviewChoiceDesc"
+      >
+        <button type="button" class="modal-close-button" id="reviewChoiceCloseIcon" aria-label="Fechar modal">&times;</button>
+        <p class="modal-title" id="reviewChoiceTitle">
+          <span aria-hidden="true">🤔</span>
+          <span>Como deseja prosseguir?</span>
+        </p>
+        <p class="modal-message" id="reviewChoiceDesc">
+          Deseja revisar os dados antes de enviar ou prefere enviar agora?
+        </p>
+        <div class="modal-actions gap-3">
+          <button type="button" class="btn btn-outline-secondary" id="reviewChoiceReview">
+            <i class="bi bi-search me-2" aria-hidden="true"></i>Revisar inscrição
+          </button>
+          <button type="button" class="btn btn-primary btn-lg px-4" id="reviewChoiceSend">
+            <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar agora
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
@@ -4079,7 +4106,7 @@
         return extraErrors;
       }
 
-      const processSubmissionAttempt = async () => {
+      const processSubmissionAttempt = async ({ triggerElement = submitButton } = {}) => {
         const availabilityState = applyAvailabilityState();
         if (availabilityState.status !== "open") {
           openAvailabilityModal();
@@ -4106,7 +4133,7 @@
             message: "Por favor, verifique os campos obrigatórios listados abaixo.",
             items: invalidFields.map((field) => field.label),
             focusElement: focusField,
-            triggerElement: submitButton,
+            triggerElement,
           });
           updateSubmitState();
           return false;
@@ -4141,7 +4168,7 @@
           showFeedbackModal({
             type: "success",
             message: "Envio bem-sucedido da inscrição.",
-            triggerElement: submitButton,
+            triggerElement,
           });
 
           form.reset();
@@ -4190,7 +4217,7 @@
           showFeedbackModal({
             type: "alert",
             message: "Não foi possível enviar a inscrição. Tente novamente.",
-            triggerElement: submitButton,
+            triggerElement,
           });
           return false;
         } finally {
@@ -4227,6 +4254,11 @@
       const reviewModalClose = document.getElementById("reviewModalClose");
       const reviewModalCloseIcon = document.getElementById("reviewModalCloseIcon");
       const reviewButton = document.getElementById("reviewButton");
+      const reviewChoiceModal = document.getElementById("reviewChoiceModal");
+      const reviewChoiceModalCard = reviewChoiceModal ? reviewChoiceModal.querySelector(".modal-card") : null;
+      const reviewChoiceCloseIcon = document.getElementById("reviewChoiceCloseIcon");
+      const reviewChoiceReviewButton = document.getElementById("reviewChoiceReview");
+      const reviewChoiceSendButton = document.getElementById("reviewChoiceSend");
 
       const getSelectText = (select) => {
         if (!select) return "";
@@ -4266,6 +4298,49 @@
           .map((parte) => (parte || "").trim())
           .filter(Boolean);
         return partes.length ? partes.join(", ") : "";
+      };
+
+      const openReviewChoiceModal = (triggerElement = null) => {
+        if (!reviewChoiceModal || !reviewChoiceModalCard) {
+          openReviewModal(triggerElement || reviewButton);
+          return;
+        }
+
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const closeHandler = () => closeModal();
+        const onBackdropClick = (event) => {
+          if (event.target === reviewChoiceModal) {
+            closeModal();
+          }
+        };
+
+        reviewChoiceCloseIcon?.addEventListener("click", closeHandler);
+        reviewChoiceModal.addEventListener("click", onBackdropClick);
+
+        allowExternalFocusElement = null;
+        reviewChoiceModal.removeAttribute("hidden");
+        reviewChoiceModal.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop: reviewChoiceModal,
+          card: reviewChoiceModalCard,
+          close: closeModal,
+          returnFocusElement: triggerElement || previousActive,
+          cleanup: () => {
+            reviewChoiceCloseIcon?.removeEventListener("click", closeHandler);
+            reviewChoiceModal.removeEventListener("click", onBackdropClick);
+          },
+        };
+
+        const focusable = getModalFocusableElements(reviewChoiceModalCard);
+        const initialFocusTarget = focusable[0] || reviewChoiceModalCard;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
       };
 
       const populateReviewModal = () => {
@@ -4385,7 +4460,21 @@
 
       if (reviewButton) {
         reviewButton.addEventListener("click", () => {
-          openReviewModal(reviewButton);
+          openReviewChoiceModal(reviewButton);
+        });
+      }
+
+      if (reviewChoiceReviewButton) {
+        reviewChoiceReviewButton.addEventListener("click", () => {
+          closeModal();
+          openReviewModal(reviewChoiceReviewButton || reviewButton);
+        });
+      }
+
+      if (reviewChoiceSendButton) {
+        reviewChoiceSendButton.addEventListener("click", async () => {
+          closeModal();
+          await processSubmissionAttempt({ triggerElement: reviewChoiceSendButton });
         });
       }
 
@@ -4408,12 +4497,16 @@
         targetButton.addEventListener("click", async (event) => {
           event.preventDefault();
           closeReviewModalIfOpen();
-          await processSubmissionAttempt();
+          const triggerElement =
+            event.currentTarget instanceof HTMLElement && event.currentTarget !== targetForm
+              ? event.currentTarget
+              : targetButton;
+          await processSubmissionAttempt({ triggerElement });
         });
         targetForm.addEventListener("submit", async (event) => {
           event.preventDefault();
           closeReviewModalIfOpen();
-          await processSubmissionAttempt();
+          await processSubmissionAttempt({ triggerElement: targetButton });
         });
       };
 
