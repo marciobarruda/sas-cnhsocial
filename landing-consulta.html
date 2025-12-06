@@ -79,13 +79,17 @@
         margin-bottom: 1.25rem;
       }
 
+      .modal-lg {
+        --bs-modal-width: 900px;
+      }
+
       .result-box {
         background: #f8f9fb;
         border: 1px dashed var(--border-color);
         border-radius: 12px;
         padding: 0.75rem 1rem;
         color: var(--text-strong);
-        max-height: 240px;
+        max-height: 360px;
         overflow: auto;
         font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
         font-size: 0.95rem;
@@ -113,7 +117,7 @@
     </div>
 
     <div class="modal fade" id="consultaModal" tabindex="-1" aria-labelledby="consultaModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
           <div class="modal-header bg-primary text-white">
             <h5 class="modal-title" id="consultaModalLabel">Consultar inscrição</h5>
