@@ -1646,7 +1646,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-md-6" id="vitimaViolenciaWrapper">
                 <label class="form-label required" for="vitimaViolencia"
                   >Vítima de violência doméstica atendida pelos órgãos e serviços especializados do Recife</label
                 >
@@ -2344,6 +2344,26 @@
       const generoSelect = document.getElementById("genero");
       const generoHidden = document.getElementById("generoValor");
       const grupoMulherChefe = document.getElementById("grupoMulherChefe");
+      const vitimaViolenciaWrapper = document.getElementById("vitimaViolenciaWrapper");
+      const vitimaViolenciaSelect = document.getElementById("vitimaViolencia");
+
+      const atualizarVitimaViolencia = () => {
+        const generoAtual = (generoSelect?.value || generoHidden?.value || "").toLowerCase();
+        const esconder = generoAtual === "masculino";
+        if (vitimaViolenciaWrapper) {
+          vitimaViolenciaWrapper.classList.toggle("d-none", esconder);
+        }
+        if (vitimaViolenciaSelect) {
+          vitimaViolenciaSelect.disabled = esconder;
+          if (esconder) {
+            vitimaViolenciaSelect.removeAttribute("required");
+            vitimaViolenciaSelect.value = "";
+          } else {
+            vitimaViolenciaSelect.setAttribute("required", "required");
+          }
+        }
+      };
+
       const atualizarGrupoMulherChefe = () => {
         const generoAtual = (generoSelect?.value || generoHidden?.value || "").toLowerCase();
         if (generoAtual === "feminino") {
@@ -2356,7 +2376,12 @@
           }
         }
       };
+      generoSelect?.addEventListener("change", () => {
+        atualizarGrupoMulherChefe();
+        atualizarVitimaViolencia();
+      });
       atualizarGrupoMulherChefe();
+      atualizarVitimaViolencia();
 
       const atualizarStatusCep = (mensagem, classe) => {
         if (!cepStatus) return;
