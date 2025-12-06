@@ -2799,6 +2799,44 @@
         }
       };
 
+      const isReadonlyElement = (element) => {
+        if (!element) return false;
+        return (
+          element.readOnly === true ||
+          element.getAttribute("aria-readonly") === "true" ||
+          element.classList.contains("readonly-control")
+        );
+      };
+
+      const isReadonlyAndEmpty = (element) => {
+        if (!isReadonlyElement(element)) return false;
+        const value = (element.value || "").trim();
+        return value === "";
+      };
+
+      const relaxReadonlyEmptyFields = () => {
+        const selectors = ["[readonly]", '[aria-readonly="true"]', ".readonly-control"];
+        const processed = new Set();
+        selectors.forEach((selector) => {
+          form.querySelectorAll(selector).forEach((element) => {
+            if (!element || processed.has(element)) return;
+            processed.add(element);
+            if (!isReadonlyAndEmpty(element)) return;
+            element.removeAttribute("required");
+            element.removeAttribute("aria-required");
+            if (element.dataset && element.dataset.requiredField === "true") {
+              delete element.dataset.requiredField;
+            }
+            if (element.id) {
+              const label = form.querySelector(`label[for="${escapeSelector(element.id)}"]`);
+              if (label) {
+                label.classList.remove("required");
+              }
+            }
+          });
+        });
+      };
+
       const isElementVisible = (element) => {
         if (!element) return false;
         if (element.hidden) return false;
@@ -3646,6 +3684,9 @@
           Object.entries(validation.fields).forEach(([selector, field]) => {
             if (!field.isValid) {
               const element = field.elem || (typeof selector === "string" ? form.querySelector(selector) : null);
+              if (isReadonlyAndEmpty(element)) {
+                return;
+              }
               if (!isElementWithinStep(element)) {
                 return;
               }
@@ -3665,6 +3706,9 @@
         getRequiredElements().forEach((element) => {
           if (!element) return;
           if (!isElementWithinStep(element)) {
+            return;
+          }
+          if (isReadonlyAndEmpty(element)) {
             return;
           }
           if (element.disabled || element.getAttribute("aria-hidden") === "true") {
@@ -3994,9 +4038,18 @@
             },
           ])
           .addField("#rendaFamiliar", [
-            { rule: "required", errorMessage: "Informe a renda familiar" },
             {
               validator: (value) => {
+                const element = document.getElementById("rendaFamiliar");
+                if (isReadonlyAndEmpty(element)) return true;
+                return value.trim() !== "";
+              },
+              errorMessage: "Informe a renda familiar",
+            },
+            {
+              validator: (value) => {
+                const element = document.getElementById("rendaFamiliar");
+                if (isReadonlyAndEmpty(element)) return true;
                 const numeric = parseCurrencyToNumber(value);
                 return value !== "" && !Number.isNaN(numeric) && numeric >= 0;
               },
@@ -4561,6 +4614,7 @@
       enforceEmailConfirmationConsistency();
 
       applyPrefillValues();
+      relaxReadonlyEmptyFields();
       updateTrabalhadorAplicativoVisibility();
       updateAgeFieldFromBirthdate();
       updateTempoAtualizacaoField();
