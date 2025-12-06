@@ -220,11 +220,10 @@
     <section class="glass p-3 p-md-4 rounded-4 gradient-border mb-4">
       <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
         <div>
-          <h5 class="mb-0">Inscrições detalhadas</h5>
-          <small class="text-white-50">Busca por nome, CPF, bairro ou canal preferencial.</small>
+          <h5 class="mb-0">Visão agregada das inscrições</h5>
+          <small class="text-white-50">Somente indicadores quantitativos. Dados pessoais não são exibidos.</small>
         </div>
-        <div class="d-flex gap-2">
-          <input id="searchInput" class="form-control form-control-sm search-input" placeholder="Filtrar inscritos..." />
+        <div class="d-flex gap-2 align-items-center">
           <div class="spinner-border spinner-border-sm text-info d-none" role="status" id="loadingSpinner"></div>
         </div>
       </div>
@@ -232,14 +231,9 @@
         <table class="table table-dark table-hover align-middle mb-0 table-dark-glass">
           <thead>
             <tr class="text-white-50">
-              <th>Nome</th>
-              <th>CPF</th>
-              <th>Gênero</th>
-              <th>Idade</th>
-              <th>Bairro</th>
-              <th>Contato</th>
-              <th>Categoria</th>
-              <th>Atualização</th>
+              <th>Grupo</th>
+              <th>Indicador</th>
+              <th class="text-end">Quantidade</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -268,10 +262,29 @@
     let exportCounter = 0;
 
     const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
-    const formatDate = (value) => value ? new Date(value).toLocaleDateString('pt-BR') : '--';
 
-    const groupCount = (arr, key) => arr.reduce((acc, item) => {
-      const v = item[key] || 'Não informado';
+    const normalizeValue = (value, type = 'generic') => {
+      if (!value) return 'NÃO INFORMADO';
+      const upper = String(value).trim().toUpperCase();
+      const maps = {
+        categoria: {
+          'A_PRIMEIRA': 'PRIMEIRA HABILITAÇÃO - A',
+          'A PRIMEIRA': 'PRIMEIRA HABILITAÇÃO - A',
+          'A': 'A',
+          'AB': 'AB',
+          'B': 'B',
+          'C': 'C',
+          'D': 'D',
+          'E': 'E'
+        }
+      };
+      const mapped = maps[type]?.[upper];
+      if (mapped) return mapped;
+      return upper.replace(/_/g, ' ');
+    };
+
+    const groupCount = (arr, key, type = 'generic') => arr.reduce((acc, item) => {
+      const v = normalizeValue(item[key], type);
       acc[v] = (acc[v] || 0) + 1;
       return acc;
     }, {});
@@ -353,9 +366,9 @@
 
     const renderCharts = (data) => {
       const generoCounts = groupCount(data, 'genero');
-      const categoriaCounts = groupCount(data, 'categoria_desejada');
+      const categoriaCounts = groupCount(data, 'categoria_desejada', 'categoria');
       const rendaCounts = data.reduce((acc, item) => {
-        const faixa = rendaFaixas(item.renda_per_capita);
+        const faixa = normalizeValue(rendaFaixas(item.renda_per_capita));
         acc[faixa] = (acc[faixa] || 0) + 1;
         return acc;
       }, {});
@@ -369,38 +382,55 @@
       renderChart('chartContato', 'bar', Object.keys(contatoCounts), Object.values(contatoCounts), palette);
     };
 
+    const buildAggregatedRows = (data) => {
+      const rows = [];
+      const addGroup = (grupo, counts) => {
+        Object.entries(counts).forEach(([indicador, qtd]) => rows.push({ grupo, indicador, qtd }));
+      };
+
+      addGroup('CATEGORIA DESEJADA', groupCount(data, 'categoria_desejada', 'categoria'));
+      addGroup('GÊNERO', groupCount(data, 'genero'));
+      addGroup('CANAL PREFERENCIAL', groupCount(data, 'canal_contato_preferencial'));
+      addGroup('FAIXA DE RENDA PER CAPITA', groupCount(data.map(item => ({ faixa: rendaFaixas(item.renda_per_capita) })), 'faixa'));
+
+      const atualizados = data.filter(item => {
+        if (!item.data_atualizacao) return false;
+        const diffDays = (Date.now() - new Date(item.data_atualizacao).getTime()) / (1000 * 60 * 60 * 24);
+        return diffDays <= 15;
+      }).length;
+      const naoAtualizados = data.length - atualizados;
+      addGroup('STATUS DE ATUALIZAÇÃO', {
+        'ATUALIZADOS ATÉ 15 DIAS': atualizados,
+        'DESATUALIZADOS (ACIMA DE 15 DIAS)': naoAtualizados
+      });
+
+      addGroup('TRABALHO / RENDA', groupCount(data, 'situacao_trabalho'));
+      addGroup('PROGRAMA SOCIAL', groupCount(data, 'participacao_programas_sociais'));
+      addGroup('AUTORIZAÇÃO DE IMAGEM', groupCount(data, 'autorizacao_imagem'));
+      addGroup('DECLARAÇÃO LGPD', groupCount(data, 'termo_lgpd'));
+
+      return rows;
+    };
+
     const renderTable = (data) => {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
-      data.forEach(item => {
+      const rows = buildAggregatedRows(data);
+      rows.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="fw-semibold">${item.nome_completo}${item.nome_social ? ` <small class='text-info'>(${item.nome_social})</small>` : ''}</td>
-          <td class="text-white-50">${item.cpf}</td>
-          <td>${item.genero || '—'}</td>
-          <td>${item.idade || '—'}</td>
-          <td>${item.bairro || '—'}</td>
-          <td><span class="badge text-bg-info bg-opacity-25 border border-info text-info">${item.canal_contato_preferencial || '—'}</span></td>
-          <td><span class="badge text-bg-success bg-opacity-25 border border-success text-success">${item.categoria_desejada || '—'}</span></td>
-          <td class="text-white-50">${formatDate(item.data_atualizacao)}</td>`;
+          <td class="text-white-50">${row.grupo}</td>
+          <td class="fw-semibold">${row.indicador}</td>
+          <td class="text-end">${row.qtd}</td>`;
         tbody.appendChild(tr);
       });
     };
 
-    const filterTable = (data, term) => {
-      const t = term.toLowerCase();
-      return data.filter(item =>
-        (item.nome_completo || '').toLowerCase().includes(t) ||
-        (item.cpf || '').includes(t) ||
-        (item.bairro || '').toLowerCase().includes(t) ||
-        (item.canal_contato_preferencial || '').toLowerCase().includes(t)
-      );
-    };
-
     const exportCSV = (data) => {
-      const headers = Object.keys(data[0] || {});
-      const rows = data.map(obj => headers.map(h => JSON.stringify(obj[h] ?? '')).join(','));
-      const csv = [headers.join(','), ...rows].join('\n');
+      const rows = buildAggregatedRows(data);
+      const headers = ['GRUPO', 'INDICADOR', 'QUANTIDADE'];
+      const csvRows = rows.map(r => [r.grupo, r.indicador, r.qtd].map(v => JSON.stringify(v ?? '')).join(','));
+      const csv = [headers.join(','), ...csvRows].join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -446,12 +476,9 @@
 
     document.getElementById('refreshBtn').addEventListener('click', loadData);
     document.getElementById('exportBtn').addEventListener('click', () => exportCSV(currentData));
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const filtered = filterTable(currentData, e.target.value);
-      renderTable(filtered);
-    });
 
     loadData();
+    setInterval(loadData, 180000);
   </script>
 </body>
 </html>
