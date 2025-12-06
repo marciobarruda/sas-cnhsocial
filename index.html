@@ -1,1900 +1,883 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SAS • CNH Social</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard CNH Recife • Recife</title>
     <link
       rel="icon"
       href="https://statics.recife.pe.gov.br/images/dynamics/conecta/icons/favicon.png?w=32&h=32&fit=fill&border=2,transparent,shrink"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
     <style>
       :root {
-        --brand-primary: #0053a4;
-        --brand-secondary: #003a73;
-        --brand-highlight: #00a3ff;
-        --surface: #f4f7fb;
-        --surface-strong: #ffffff;
-        --border-color: #d0d7e2;
-        --text-strong: #1b263b;
-        --text-muted: #5b6c8c;
+        --brand: #00a3ff;
+        --brand-deep: #013c71;
+        --bg: #0b1724;
+        --card: #0f2336;
+        --card-strong: #132d43;
+        --text: #dce6f2;
+        --muted: #98a8be;
+        --success: #3ed598;
+        --warning: #f5a524;
+        --danger: #ff6b6b;
+        --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
       }
 
-      *, *::before, *::after {
+      * {
         box-sizing: border-box;
       }
 
       body {
-        font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: var(--surface);
-        color: var(--text-strong);
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at 20% 20%, rgba(0, 163, 255, 0.08), transparent 25%),
+          radial-gradient(circle at 80% 0%, rgba(0, 134, 255, 0.05), transparent 30%),
+          radial-gradient(circle at 50% 80%, rgba(0, 163, 255, 0.07), transparent 40%),
+          var(--bg);
+        color: var(--text);
         min-height: 100vh;
       }
 
-      header.site-header {
-        background: url("https://statics.recife.pe.gov.br/images/dynamics/automacao/header.png?w=3000")
-          center/cover no-repeat;
-        color: #ffffff;
-        padding: 3.5rem 0 2.75rem;
+      header.hero {
+        padding: 2rem 0 1rem;
       }
 
-      header .lead {
-        color: rgba(255, 255, 255, 0.82);
-        max-width: 100%;
-        font-size: 1rem;
-        line-height: 1.65;
-        text-align: justify;
+      .glass {
+        background: rgba(19, 45, 67, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
       }
 
-      .badge-open {
+      .pill {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: 0.95rem;
-        font-weight: 600;
-        padding: 0.45rem 0.9rem;
+        background: rgba(0, 163, 255, 0.15);
+        color: #9cd9ff;
+        padding: 0.55rem 1rem;
         border-radius: 999px;
-        background-color: rgba(255, 255, 255, 0.14);
+        font-weight: 600;
+        letter-spacing: 0.02em;
       }
 
-      .user-greeting {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
+      .hero-title {
+        font-size: clamp(1.8rem, 3vw + 1rem, 3rem);
+        font-weight: 700;
+        line-height: 1.1;
+      }
+
+      .hero-subtitle {
+        color: var(--muted);
         font-size: 1.05rem;
-        font-weight: 600;
-        margin-bottom: 2rem;
-        padding: 1rem 1.5rem;
-        border-radius: 1rem;
-        background: linear-gradient(135deg, rgba(0, 83, 164, 0.09), rgba(0, 163, 255, 0.12));
-        color: var(--text-strong);
-        box-shadow: 0 10px 30px rgba(0, 45, 98, 0.08);
+        max-width: 960px;
       }
 
-      .user-greeting::before {
-        content: "👋";
-        font-size: 1.4rem;
+      .card-neo {
+        background: linear-gradient(135deg, rgba(19, 45, 67, 0.85), rgba(19, 45, 67, 0.65));
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
       }
 
-      .minhas-inscricoes-grid {
-        margin-top: 1rem;
+      .metric-card {
+        padding: 1.4rem;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
       }
 
-      .minhas-inscricao-card {
-        cursor: pointer;
-        transition: transform 0.18s ease, box-shadow 0.18s ease;
-        border: 1px solid rgba(0, 83, 164, 0.12);
-        border-radius: 4px;
+      .metric-icon {
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        font-size: 1.3rem;
       }
 
-      .minhas-inscricao-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(0, 45, 98, 0.12);
-      }
-
-      .minhas-inscricao-card.is-loading {
-        pointer-events: none;
-        opacity: 0.7;
-      }
-
-      .minhas-inscricoes-placeholder {
-        padding: 1.25rem;
-        border-radius: 4px;
-        background: rgba(0, 83, 164, 0.05);
-        border: 1px dashed rgba(0, 83, 164, 0.2);
-        color: var(--text-muted);
-      }
-
-      .resumo-inscricao-list dt {
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-      }
-
-      .resumo-inscricao-list dd {
-        font-weight: 600;
-        color: var(--text-strong);
-      }
-
-      .resumo-inscricao-pre {
-        white-space: pre-wrap;
-        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      .metric-label {
+        color: var(--muted);
         font-size: 0.95rem;
-        background: rgba(0, 83, 164, 0.08);
-        color: var(--brand-secondary);
-        padding: 1rem;
-        border-radius: 0.75rem;
+        margin-bottom: 0.25rem;
       }
 
-      .publicacoes-panel,
-      .updates-panel {
-        border-radius: 4px;
+      .metric-value {
+        font-weight: 700;
+        font-size: 1.9rem;
       }
 
-      .download-card strong {
-        font-size: 1rem;
-        color: var(--text-strong);
-      }
-
-      .download-card p {
-        margin: 0;
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        line-height: 1.4;
-      }
-
-      .download-card a {
-        font-weight: 600;
-      }
-
-      .btn-submit[aria-disabled="true"] {
-        cursor: not-allowed;
-        opacity: 0.65;
-        box-shadow: none;
-      }
-
-      .btn-submit[aria-disabled="true"]:focus-visible {
-        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
-      }
-
-      #publicacoes-list li + li {
-        margin-top: 0.75rem;
-      }
-
-      .publicacoes-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .publicacoes-item-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-      }
-
-      .publicacoes-item-icon {
-        display: inline-block;
-        width: 1.5rem;
-        height: 1.5rem;
-        flex-shrink: 0;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: contain;
-      }
-
-      .publicacoes-item-icon--pdf {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23d32f2f' d='M6 2h7l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%23ef5350' d='M13 2v5h5'/%3E%3Ctext x='12' y='17' text-anchor='middle' font-family='Arial, sans-serif' font-size='7' font-weight='700' fill='%23fff'%3EPDF%3C/text%3E%3C/svg%3E");
-      }
-
-      .publicacoes-item-icon--image {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3' y='4' width='18' height='16' rx='2' fill='%23215695'/%3E%3Crect x='4.5' y='5.5' width='15' height='13' rx='1.2' fill='%233968c8'/%3E%3Ccircle cx='9' cy='11' r='2.2' fill='%23fff59d'/%3E%3Cpath fill='%23c5cae9' d='M6 18l4.2-4.6 2.7 3.2 2.6-3L18 18z'/%3E%3C/svg%3E");
-      }
-
-      .publicacoes-item-icon--generic {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233f51b5' d='M7 2h7l5 5v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%235c6bc0' d='M14 2v5h5'/%3E%3Crect x='8.5' y='12' width='7' height='1.5' rx='.75' fill='%23c5cae9'/%3E%3Crect x='8.5' y='15' width='5' height='1.5' rx='.75' fill='%23c5cae9'/%3E%3C/svg%3E");
-      }
-
-      .publicacoes-item time {
-        flex-shrink: 0;
-      }
-
-      @media (min-width: 576px) {
-        .publicacoes-item {
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-        }
-      }
-
-      @media (max-width: 575.98px) {
-        .publicacoes-item-link {
-          align-items: flex-start;
-        }
-      }
-
-      .updates-panel {
-        border-left: 3px solid var(--brand-highlight);
-        padding-left: 1.2rem;
-        color: var(--text-muted);
-      }
-
-      .updates-panel time {
-        font-size: 0.85rem;
-        color: var(--brand-secondary);
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-      }
-
-      footer {
-        color: var(--text-muted);
-        padding: 2.5rem 0 2rem;
-        font-size: 0.9rem;
-      }
-
-      @media (max-width: 768px) {
-        header.site-header {
-          padding: 2.5rem 0 2rem;
-        }
-
-        .badge-open {
-          width: 100%;
-          justify-content: center;
-        }
-
-        .section-title {
-          justify-content: flex-start;
-        }
-      }
-
-      main {
-        padding-bottom: 4rem;
-      }
-
-      .card-section {
-        border: 1px solid var(--border-color);
-        border-radius: 1rem;
-        background: var(--surface-strong);
-        box-shadow: 0 12px 30px rgba(24, 64, 120, 0.08);
-      }
-
-      .card-section + .card-section {
-        margin-top: 1.5rem;
-      }
-
-      .section-header {
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 0.75rem;
-        margin-bottom: 1.25rem;
-      }
-
-      .required::after {
-        content: "*";
-        color: #d32f2f;
-        margin-left: 0.25rem;
-      }
-
-      .form-text {
-        color: var(--text-muted);
-      }
-
-      .file-input-wrapper {
-        border: 1px dashed var(--border-color);
-        border-radius: 0.75rem;
-        padding: 1rem;
-        background: rgba(0, 83, 164, 0.03);
-      }
-
-      .file-input-wrapper label {
-        font-weight: 600;
-      }
-
-      .file-name {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        margin-top: 0.25rem;
-      }
-
-      .toast-container {
-        z-index: 1080;
-      }
-
-      .legend-badge {
+      .metric-trend {
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        font-size: 0.85rem;
-        color: var(--brand-secondary);
-        background: rgba(0, 83, 164, 0.12);
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .metric-trend.up {
+        background: rgba(62, 213, 152, 0.15);
+        color: #a5f0ce;
+      }
+
+      .metric-trend.down {
+        background: rgba(255, 107, 107, 0.1);
+        color: #ffb3b3;
+      }
+
+      .section-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+
+      .table thead {
+        color: #c6d3e5;
+      }
+
+      .table-dark.table-striped > tbody > tr:nth-of-type(odd) > * {
+        background: rgba(13, 30, 47, 0.65);
+      }
+
+      .badge-soft {
         padding: 0.35rem 0.75rem;
         border-radius: 999px;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.08);
+        color: #e9eff7;
       }
 
-      .tooltip-inner {
-        text-align: left;
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.35rem;
       }
 
-      .btn-outline-primary:focus-visible,
-      .form-control:focus,
-      .form-select:focus,
-      .form-check-input:focus {
-        box-shadow: 0 0 0 0.25rem rgba(0, 83, 164, 0.25);
-        border-color: var(--brand-highlight);
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--muted);
       }
 
-      .border-dashed {
-        border-style: dashed !important;
+      .chart-card canvas {
+        min-height: 240px;
+      }
+
+      .glow {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 10% 20%, rgba(0, 163, 255, 0.13), transparent 30%),
+          radial-gradient(circle at 90% 30%, rgba(255, 255, 255, 0.03), transparent 30%);
+        z-index: 0;
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .table-responsive::-webkit-scrollbar {
+        height: 8px;
+      }
+      .table-responsive::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+      }
+
+      footer {
+        color: var(--muted);
       }
     </style>
   </head>
   <body>
-    <header class="site-header">
-      <div class="container">
-        <div class="badge-open mb-3" role="status" aria-live="polite">
-          <i class="bi bi-info-circle"></i>
-          Inscrições abertas — CNH Social
+    <div class="container py-4">
+      <header class="hero text-white">
+        <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+          <span class="pill">
+            <i class="bi bi-lightning-charge-fill"></i>
+            Dashboard ao vivo
+          </span>
+          <span class="badge-soft">Fonte: CNH Recife • Prefeitura do Recife</span>
         </div>
-        <h1 class="display-5 fw-bold">CNH Social – Secretaria de Assistência Social e Combate à Fome</h1>
-        <p class="lead mt-3">
-          Programa municipal que oferta vagas gratuitas para obtenção ou adição de categorias da Carteira Nacional de Habilitação
-          (CNH) às pessoas em situação de vulnerabilidade social, com prioridade para famílias inscritas no CadÚnico e beneficiárias
-          de políticas socioassistenciais no Recife.
-        </p>
-      </div>
-    </header>
-    <main class="py-5">
-      <div class="container">
-        <section class="mb-5">
-          <div class="row g-4 align-items-start">
-            <div class="col-12 col-lg-7">
-              <div class="card card-section p-4 p-md-5">
-                <div class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-                  <h2 class="h4 mb-0">Como funciona</h2>
-                  <span class="legend-badge"><i class="bi bi-calendar-event"></i> Edital vigente</span>
+        <div class="glass p-4 p-md-5">
+          <div class="d-flex flex-wrap align-items-start gap-4">
+            <div>
+              <p class="mb-2 text-uppercase fw-semibold text-info" style="letter-spacing: 0.04em">
+                Inclusão e Mobilidade
+              </p>
+              <h1 class="hero-title mb-3">Painel de inscrições da CNH Recife</h1>
+              <p class="hero-subtitle mb-0">
+                Monitoramento em tempo real das inscrições para a CNH Recife. Acompanhe
+                perfis sociodemográficos, canais de contato, necessidades específicas e o
+                andamento das validações.
+              </p>
+            </div>
+            <div class="ms-md-auto">
+              <div class="glass p-3 d-inline-flex align-items-center gap-3">
+                <div class="metric-icon bg-primary bg-opacity-25 text-info">
+                  <i class="bi bi-activity"></i>
                 </div>
-                <ul class="list-unstyled mb-4 d-grid gap-3">
-                  <li class="d-flex gap-3">
-                    <i class="bi bi-patch-check-fill text-primary fs-5" aria-hidden="true"></i>
-                    <div>
-                      <strong>Vagas 100% gratuitas.</strong> Incluem aulas teóricas, exames, 01 reteste gratuito e emissão do documento
-                      conforme cronograma do edital.
-                    </div>
-                  </li>
-                  <li class="d-flex gap-3">
-                    <i class="bi bi-people-fill text-primary fs-5" aria-hidden="true"></i>
-                    <div>
-                      <strong>Público prioritário.</strong> Pessoas com renda familiar per capita de até meio salário mínimo, inscritas no CadÚnico,
-                      residentes no Recife há pelo menos 12 meses e com idade a partir de 18 anos na data da inscrição.
-                    </div>
-                  </li>
-                  <li class="d-flex gap-3">
-                    <i class="bi bi-award-fill text-primary fs-5" aria-hidden="true"></i>
-                    <div>
-                      <strong>Cotas e pontuações adicionais.</strong> Pontos extras para mulheres chefes de família, pessoas com deficiência,
-                      responsáveis legais por pessoas com deficiência/autismo, vítimas de violência doméstica, acolhidos institucionalmente,
-                      famílias com dependentes em tratamento continuado e autodeclarados pretos, pardos, indígenas, trans/travestis ou quilombolas.
-                    </div>
-                  </li>
-                  <li class="d-flex gap-3">
-                    <i class="bi bi-flag-fill text-primary fs-5" aria-hidden="true"></i>
-                    <div>
-                      <strong>Compromissos.</strong> Frequência mínima de 75% em todas as etapas, entrega de documentos comprobatórios quando solicitados
-                      e respeito aos prazos de matrícula definidos pelos Centros de Formação de Condutores (CFCs) parceiros.
-                    </div>
-                  </li>
-                </ul>
-                <div class="alert alert-info border-0" role="status">
-                  <i class="bi bi-clock-history me-2" aria-hidden="true"></i>
-                  Inscrições até <strong>30/11/2025</strong>. Resultado preliminar divulgado no portal da Prefeitura e canais oficiais da Secretaria de Assistência Social e Combate à Fome.
+                <div>
+                  <div class="text-uppercase small text-info fw-semibold">Atualização</div>
+                  <div id="last-update" class="fw-bold">Carregando...</div>
+                  <div class="text-muted" style="color: #9ec5f8 !important;">Consulta automática via webhook</div>
                 </div>
               </div>
             </div>
-            <div class="col-12 col-lg-5">
-              <div class="card card-section p-4 h-100">
-                <h3 class="h5 mb-3">Checklist de elegibilidade</h3>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Residir no Recife e comprovar vínculo de, no mínimo, 1 ano.</li>
-                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Estar inscrito(a) no CadÚnico atualizado (até 24 meses).</li>
-                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Ter renda familiar per capita até 1/2 salário mínimo.</li>
-                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Não possuir CNH ativa (para 1ª habilitação) ou possuir CNH válida com mais de 30 dias (para adição).</li>
-                  <li class="list-group-item bg-transparent px-0"><i class="bi bi-check-circle-fill text-success me-2"></i> Não ter sido beneficiário(a) do CNH Social nos últimos 5 anos.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <form id="cnhSocialForm" class="needs-validation" novalidate>
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Dados pessoais (pré-preenchidos)</h2>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-lg-6">
-                <label for="nomeCompleto" class="form-label required">Nome completo</label>
-                <input type="text" class="form-control" id="nomeCompleto" name="nomeCompleto" placeholder="Nome cadastrado no CadÚnico" value="{{ $json.data.nomeCompleto || "" }}" readonly aria-readonly="true" />
-                <div class="form-text">Informações sincronizadas do CadÚnico/Conecta. Campo apenas para conferência.</div>
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="cpf" class="form-label required">CPF</label>
-                <input type="text" class="form-control" id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" readonly aria-readonly="true" />
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="nis" class="form-label required">NIS/PIS</label>
-                <input type="text" class="form-control" id="nis" name="nis" placeholder="Número do CadÚnico" readonly aria-readonly="true" />
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="dataNascimento" class="form-label required">Data de nascimento</label>
-                <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" readonly aria-readonly="true" />
-              </div>
-              <div class="col-12 col-sm-6 col-lg-3">
-                <label for="genero" class="form-label required">Identificação de gênero</label>
-                <select
-                  class="form-select"
-                  id="genero"
-                  name="genero"
-                  aria-describedby="generoHelp"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="feminino">Mulher</option>
-                  <option value="masculino">Homem</option>
-                  <option value="outro">Outro / Não-binário</option>
-                  <option value="nao_informar">Prefiro não informar</option>
-                </select>
-                <small id="generoHelp" class="form-text">Usado apenas para regras de pontuação previstas no edital.</small>
-              </div>
-              <div class="col-12 col-lg-9">
-                <label for="nomeSocial" class="form-label">Nome social</label>
-                <input type="text" class="form-control" id="nomeSocial" name="nomeSocial" maxlength="120" placeholder="Informe se desejar atendimento com nome social" />
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-              <h2 class="h4 mb-0">Endereço</h2>
-              <button class="btn btn-outline-primary btn-sm" type="button" id="btnAtualizarEndereco">
-                <i class="bi bi-pencil-square me-1" aria-hidden="true"></i>Atualizar endereço
-              </button>
-            </div>
-            <div class="alert alert-light border-dashed" role="note">
-              Confirme os dados residenciais. Caso tenha mudado, clique em "Atualizar endereço" e informe o novo endereço. Um comprovante recente poderá ser solicitado.
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-sm-4">
-                <label for="cep" class="form-label required">CEP</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="cep"
-                  name="cep"
-                  inputmode="numeric"
-                  placeholder="00000-000"
-                  readonly
-                  aria-describedby="cepStatus"
-                />
-                <div id="cepStatus" class="form-text" aria-live="polite"></div>
-              </div>
-              <div class="col-12 col-sm-8">
-                <label for="logradouro" class="form-label required">Logradouro</label>
-                <input type="text" class="form-control" id="logradouro" name="logradouro" placeholder="Rua, avenida, travessa" readonly />
-              </div>
-              <div class="col-12 col-sm-4 col-lg-2">
-                <label for="numero" class="form-label required">Número</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="numero"
-                  name="numero"
-                  placeholder="S/N"
-                  readonly
-                  inputmode="text"
-                  pattern="^(?:[0-9]+|S/N)$"
-                  title="Informe apenas números ou S/N"
-                />
-              </div>
-              <div class="col-12 col-sm-8 col-lg-4">
-                <label for="complemento" class="form-label">Complemento</label>
-                <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Apartamento, bloco" readonly />
-              </div>
-              <div class="col-12 col-md-4">
-                <label for="bairro" class="form-label required">Bairro</label>
-                <input type="text" class="form-control" id="bairro" name="bairro" readonly />
-              </div>
-              <div class="col-12 col-md-5">
-                <label for="cidade" class="form-label required">Município</label>
-                <input type="text" class="form-control" id="cidade" name="cidade" readonly value="Recife" />
-              </div>
-              <div class="col-12 col-md-3">
-                <label for="uf" class="form-label required">UF</label>
-                <select class="form-select" id="uf" name="uf" disabled>
-                  <option value="PE">PE</option>
-                </select>
-              </div>
-              <div class="col-12">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="enderecoAtualizado" name="enderecoAtualizado" />
-                  <label class="form-check-label" for="enderecoAtualizado">Meu endereço informado acima está diferente do CadÚnico</label>
-                </div>
-                <small class="form-text">Se marcado, será obrigatório anexar comprovante atualizado (até 90 dias).</small>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docResidenciaWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docResidencia" class="form-label" id="docResidenciaLabel">Comprovante de residência recente (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docResidencia" name="docResidencia" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="docResidenciaHelp" />
-                  <div id="docResidenciaHelp" class="form-text">Envie conta de consumo ou declaração emitida há até 90 dias.</div>
-                  <div class="file-name" id="docResidenciaName"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Contatos</h2>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label for="telefone" class="form-label required">Telefone/WhatsApp</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="telefone"
-                  name="telefone"
-                  inputmode="tel"
-                  placeholder="(81) 90000-0000"
-                  data-required-field="true"
-                  required
-                />
-                <div class="form-text">Informe um número ativo para contato e envio de protocolo.</div>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="email" class="form-label required">E-mail</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="email"
-                  name="email"
-                  placeholder="nome@exemplo.com"
-                  data-required-field="true"
-                  required
-                />
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="emailConfirm" class="form-label required">Confirme o e-mail</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="emailConfirm"
-                  name="emailConfirm"
-                  placeholder="Repita seu e-mail"
-                  aria-describedby="emailConfirmHelp"
-                  data-required-field="true"
-                  required
-                />
-                <div id="emailConfirmHelp" class="form-text">O endereço deve ser idêntico ao campo anterior.</div>
-              </div>
-              <div class="col-12">
-                <label for="preferenciaContato" class="form-label required">Canal de contato preferencial</label>
-                <select
-                  class="form-select"
-                  id="preferenciaContato"
-                  name="preferenciaContato"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="email">E-mail</option>
-                  <option value="ligacao">Ligação telefônica</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Critérios socioassistenciais</h2>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label for="situacaoTrabalho" class="form-label required">Situação de trabalho atual</label>
-                <select
-                  class="form-select"
-                  id="situacaoTrabalho"
-                  name="situacaoTrabalho"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="emprego_formal">Emprego formal</option>
-                  <option value="trabalho_informal">Trabalho informal</option>
-                  <option value="desempregado">Desempregado(a)</option>
-                  <option value="aplicativo">Trabalhador(a) de aplicativo</option>
-                </select>
-              </div>
-              <div class="col-12 col-md-6 d-none" id="grupoMulherChefe">
-                <div class="form-check pt-4">
-                  <input class="form-check-input" type="checkbox" value="sim" id="mulherChefe" name="mulherChefe" />
-                  <label class="form-check-label" for="mulherChefe">Sou mulher e responsável pela renda familiar (chefe de família)</label>
-                </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="acolhimento" name="acolhimento" />
-                  <label class="form-check-label" for="acolhimento">Resido em serviço de acolhimento institucional</label>
-                </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="dependenteTratamento" name="dependenteTratamento" />
-                  <label class="form-check-label" for="dependenteTratamento">Possuo dependente em tratamento terapêutico contínuo</label>
-                </div>
-              </div>
-              <div class="col-12">
-                <label for="rendaFamiliar" class="form-label required">Renda familiar mensal (R$)</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="rendaFamiliar"
-                  name="rendaFamiliar"
-                  min="0"
-                  step="0.01"
-                  placeholder="Informe o valor total da renda familiar"
-                  aria-describedby="rendaHelp"
-                  data-required-field="true"
-                  required
-                />
-                <small id="rendaHelp" class="form-text">Será comparada com o número de integrantes registrado no CadÚnico para verificação do critério de renda per capita.</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Critérios de priorização e diversidade</h2>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label for="racaCor" class="form-label required">Autodeclaração de cor/raça</label>
-                <select
-                  class="form-select"
-                  id="racaCor"
-                  name="racaCor"
-                  aria-describedby="racaCorHelp"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="branca">Branca</option>
-                  <option value="preta">Preta</option>
-                  <option value="parda">Parda</option>
-                  <option value="amarela">Amarela</option>
-                  <option value="indigena">Indígena</option>
-                  <option value="nao_informar">Prefiro não informar</option>
-                </select>
-                <small id="racaCorHelp" class="form-text">Informação usada para ranqueamento e políticas afirmativas conforme edital.</small>
-              </div>
-              <fieldset class="col-12 col-md-6">
-                <legend class="form-label mb-1">Identidade e grupos prioritários</legend>
-                <div class="form-text">Marque se você se enquadra nas cotas adicionais previstas.</div>
-                <div class="form-check mt-2">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaPretaParda" name="pessoaPretaParda" />
-                  <label class="form-check-label" for="pessoaPretaParda">Sou pessoa preta ou parda</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaIndigena" name="pessoaIndigena" />
-                  <label class="form-check-label" for="pessoaIndigena">Sou pessoa indígena</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaTrans" name="pessoaTrans" />
-                  <label class="form-check-label" for="pessoaTrans">Sou pessoa trans, travesti ou não-binária</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="egressoSocioeducativo" name="egressoSocioeducativo" />
-                  <label class="form-check-label" for="egressoSocioeducativo">Sou egresso(a) do sistema socioeducativo</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaQuilombola" name="pessoaQuilombola" />
-                  <label class="form-check-label" for="pessoaQuilombola">Sou quilombola ou pertenço a povos e comunidades tradicionais</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="pessoaRua" name="pessoaRua" />
-                  <label class="form-check-label" for="pessoaRua">Vivo em situação de rua ou em unidade de acolhimento</label>
-                </div>
-              </fieldset>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-              <h2 class="h4 mb-0">Grupos e condições especiais</h2>
-              <span class="legend-badge"><i class="bi bi-paperclip"></i> Anexe os comprovantes solicitados</span>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
-                <select
-                  class="form-select"
-                  id="pcd"
-                  name="pcd"
-                  aria-describedby="pcdHelp"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim">Sim</option>
-                  <option value="nao">Não</option>
-                </select>
-                <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
-              </div>
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="maeAtipica">Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)</label>
-                <select
-                  class="form-select"
-                  id="maeAtipica"
-                  name="maeAtipica"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim">Sim</option>
-                  <option value="nao">Não</option>
-                </select>
-              </div>
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="vitimaViolencia">Vítima de violência doméstica</label>
-                <select
-                  class="form-select"
-                  id="vitimaViolencia"
-                  name="vitimaViolencia"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim">Sim</option>
-                  <option value="nao">Não</option>
-                </select>
-                <small class="form-text">A identidade das candidatas será preservada conforme edital.</small>
-              </div>
-              <div class="col-12">
-                <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
-                <textarea class="form-control" id="necessidadesEspeciais" name="necessidadesEspeciais" rows="3" maxlength="500" placeholder="Descreva necessidades específicas de atendimento, adaptações ou informações relevantes"></textarea>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
-                <div class="file-input-wrapper">
-                  <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
-                  <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
-                  <div class="file-name" id="laudoPcdName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docResponsavelWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docResponsavel" class="form-label required">Comprovante de responsabilidade legal (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docResponsavel" name="docResponsavel" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="docResponsavelName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docViolenciaWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docViolencia" class="form-label">Documento comprobatório ou declaração (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docViolencia" name="docViolencia" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="docViolenciaName"></div>
-                  <small class="form-text">Caso não possua boletim ou medida protetiva, envie declaração simples assinada.</small>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docAcolhimentoWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docAcolhimento" class="form-label required">Declaração da unidade de acolhimento (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docAcolhimento" name="docAcolhimento" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="docAcolhimentoName"></div>
-                </div>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
-                <div class="file-input-wrapper">
-                  <label for="docDependente" class="form-label required">Comprovante de tratamento terapêutico contínuo (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="docDependenteName"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Categoria de habilitação</h2>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label for="categoria" class="form-label required">Categoria desejada</label>
-                <select
-                  class="form-select"
-                  id="categoria"
-                  name="categoria"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="a_primeira">Categoria A (1ª habilitação)</option>
-                  <option value="b_primeira">Categoria B (1ª habilitação)</option>
-                  <option value="adicao_a">Adição de categoria A</option>
-                  <option value="adicao_b">Adição de categoria B</option>
-                </select>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="turno" class="form-label required">Turno preferencial</label>
-                <select
-                  class="form-select"
-                  id="turno"
-                  name="turno"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="manha">Manhã</option>
-                  <option value="tarde">Tarde</option>
-                  <option value="noite">Noite</option>
-                  <option value="indiferente">Indiferente</option>
-                </select>
-              </div>
-              <div class="col-12">
-                <label for="polo" class="form-label required">Polo/CFC de preferência</label>
-                <select
-                  class="form-select"
-                  id="polo"
-                  name="polo"
-                  data-required-field="true"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="cfc_santo_amaro">CFC Santo Amaro – Bairro Santo Amaro</option>
-                  <option value="cfc_ibura">CFC Ibura – Ibura</option>
-                  <option value="cfc_casa_amarela">CFC Casa Amarela – Casa Amarela</option>
-                  <option value="cfc_pina">CFC Pina – Pina</option>
-                  <option value="cfc_varzea">CFC Várzea – Várzea</option>
-                </select>
-              </div>
-              <div class="col-12 col-md-6 d-none" id="cnhNumeroWrapper">
-                <label for="numeroCnh" class="form-label required">Número da CNH (para adição)</label>
-                <input type="text" class="form-control" id="numeroCnh" name="numeroCnh" inputmode="numeric" placeholder="Informe conforme CNH" />
-              </div>
-              <div class="col-12 col-md-6 d-none" id="cnhValidadeWrapper">
-                <label for="validadeCnh" class="form-label required">Validade da CNH</label>
-                <input type="date" class="form-control" id="validadeCnh" name="validadeCnh" aria-describedby="validadeHelp" />
-                <small id="validadeHelp" class="form-text">A CNH precisa ter validade superior a 30 dias na data de inscrição.</small>
-              </div>
-              <div class="col-12 col-lg-6 d-none" id="cnhArquivoWrapper">
-                <div class="file-input-wrapper">
-                  <label for="cnhArquivo" class="form-label required">CNH (frente e verso) – PDF/JPG/PNG até 5 MB</label>
-                  <input class="form-control" type="file" id="cnhArquivo" name="cnhArquivo" accept=".pdf,.jpg,.jpeg,.png" />
-                  <div class="file-name" id="cnhArquivoName"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Documentos complementares</h2>
-            </div>
-            <div class="row g-4">
-              <div class="col-12 col-lg-6">
-                <div class="file-input-wrapper">
-                  <label for="docIdentidade" class="form-label required">Documento oficial com foto (RG ou passaporte) – PDF/JPG/PNG até 5 MB</label>
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="docIdentidade"
-                    name="docIdentidade"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    data-required-field="true"
-                    required
-                  />
-                  <div class="file-name" id="docIdentidadeName"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card card-section p-4 p-md-5">
-            <div class="section-header">
-              <h2 class="h4 mb-0">Declarações e consentimentos</h2>
-            </div>
-            <div class="d-grid gap-3">
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="sim"
-                  id="lgpd"
-                  name="lgpd"
-                  required
-                  data-required-field="true"
-                />
-                <label class="form-check-label" for="lgpd">
-                  Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Social, conforme a Lei Geral de Proteção de Dados.
-                </label>
-                <a href="#" class="d-block small mt-1">Consultar política de privacidade</a>
-              </div>
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="sim"
-                  id="veracidade"
-                  name="veracidade"
-                  required
-                  data-required-field="true"
-                />
-                <label class="form-check-label" for="veracidade">
-                  Declaro verdadeiras todas as informações prestadas e estou ciente de que a falsidade implicará desclassificação e sanções legais.
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="sim" id="imagem" name="imagem" />
-                <label class="form-check-label" for="imagem">Autorizo o uso da minha imagem para divulgação institucional do programa.</label>
-              </div>
-              <div class="form-text">Após o envio, o protocolo será encaminhado para seu e-mail e WhatsApp cadastrados.</div>
-            </div>
-            <div class="mt-4 d-flex flex-column flex-md-row gap-3">
-              <button
-                type="button"
-                class="btn btn-primary btn-lg px-4 btn-submit"
-                id="submitButton"
-                aria-disabled="true"
-                data-ready="false"
-              >
-                <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
-              </button>
-              <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
-                Limpar campos editáveis
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </main>
-
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true" data-bs-focus="false">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="feedbackModalHeader">
-              <span id="feedbackModalEmoji" aria-hidden="true">⚠️</span>
-              <span id="feedbackModalLabel">Alerta</span>
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-          </div>
-          <div class="modal-body">
-            <p id="feedbackModalMessage" class="mb-3">Por favor, preencha os campos obrigatórios destacados.</p>
-            <ul id="feedbackModalList" class="list-unstyled mb-0"></ul>
           </div>
         </div>
-      </div>
+      </header>
+
+      <section class="mt-4">
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="card-neo metric-card position-relative">
+              <div class="glow"></div>
+              <div class="content">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="metric-icon bg-success bg-opacity-25 text-success-emphasis">
+                    <i class="bi bi-people-fill"></i>
+                  </div>
+                  <span class="metric-trend up" id="metric-growth">
+                    <i class="bi bi-graph-up"></i>
+                    +0%
+                  </span>
+                </div>
+                <div class="metric-label">Inscrições carregadas</div>
+                <div class="metric-value" id="metric-total">0</div>
+                <div class="text-muted">Dados fornecidos pelo webhook oficial.</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="card-neo metric-card position-relative">
+              <div class="glow"></div>
+              <div class="content">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="metric-icon bg-warning bg-opacity-25 text-warning">
+                    <i class="bi bi-currency-dollar"></i>
+                  </div>
+                  <span class="metric-trend up" id="metric-income-trend">
+                    <i class="bi bi-arrow-up-right"></i>
+                    +0%
+                  </span>
+                </div>
+                <div class="metric-label">Renda per capita média</div>
+                <div class="metric-value" id="metric-renda">R$ 0,00</div>
+                <div class="text-muted">Perfil socioeconômico das famílias.</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="card-neo metric-card position-relative">
+              <div class="glow"></div>
+              <div class="content">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="metric-icon bg-info bg-opacity-25 text-info">
+                    <i class="bi bi-gender-ambiguous"></i>
+                  </div>
+                  <span class="metric-trend up" id="metric-diversity-trend">
+                    <i class="bi bi-arrow-up-right"></i>
+                    +0%
+                  </span>
+                </div>
+                <div class="metric-label">Diversidade e inclusão</div>
+                <div class="metric-value" id="metric-diversity">0%</div>
+                <div class="text-muted">Mulheres, pessoas trans e PCDs.</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="card-neo metric-card position-relative">
+              <div class="glow"></div>
+              <div class="content">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="metric-icon bg-danger bg-opacity-25 text-danger">
+                    <i class="bi bi-broadcast"></i>
+                  </div>
+                  <span class="metric-trend up" id="metric-contact-trend">
+                    <i class="bi bi-bell"></i>
+                    Multicanal
+                  </span>
+                </div>
+                <div class="metric-label">Canais preferenciais</div>
+                <div class="metric-value" id="metric-contato">--</div>
+                <div class="text-muted">WhatsApp, E-mail e Telefone.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-4">
+        <div class="row g-3">
+          <div class="col-12 col-lg-6">
+            <div class="card-neo chart-card p-3 h-100">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="section-title">Distribuição por idade</span>
+                <div class="legend-item"><span class="status-dot bg-info"></span>Faixas etárias</div>
+              </div>
+              <canvas id="chartIdade"></canvas>
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="card-neo chart-card p-3 h-100">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="section-title">Categorias desejadas</span>
+                <div class="legend-item"><span class="status-dot bg-success"></span>Tipo de CNH</div>
+              </div>
+              <canvas id="chartCategoria"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-4">
+        <div class="card-neo p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <p class="text-uppercase small text-info fw-semibold mb-1" style="letter-spacing: 0.05em">
+                Base individual
+              </p>
+              <span class="section-title">Detalhe das inscrições</span>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+              <button id="refresh-btn" class="btn btn-outline-info btn-sm">
+                <i class="bi bi-arrow-repeat me-1"></i> Atualizar dados
+              </button>
+              <button id="export-btn" class="btn btn-info btn-sm text-dark fw-semibold">
+                <i class="bi bi-download me-1"></i> Exportar CSV
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-dark table-striped align-middle mb-0" aria-live="polite">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Idade</th>
+                  <th>Gênero</th>
+                  <th>Renda per capita</th>
+                  <th>Categoria</th>
+                  <th>Preferência de contato</th>
+                  <th>Atualização</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4">Carregando dados...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <footer class="py-4 text-center">
+        <div class="text-muted">Última sincronização automática: <span id="footer-sync">--</span></div>
+      </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
     <script>
-      const prefillValues = {
-        nomeCompleto: {{ JSON.stringify((($json.data || {}).nomeCompleto) || "") }},
-        cpf: {{ JSON.stringify((($json.data || {}).cpf) || "") }},
-        nis: {{ JSON.stringify((($json.data || {}).nis) || "") }},
-        dataNascimento: {{ JSON.stringify((($json.data || {}).dataNascimento) || "") }},
-        genero: {{ JSON.stringify((($json.data || {}).genero) || "") }},
-        nomeSocial: {{ JSON.stringify((($json.data || {}).nomeSocial) || "") }},
-        cep: {{ JSON.stringify((($json.data || {}).cep) || "") }},
-        logradouro: {{ JSON.stringify((($json.data || {}).logradouro) || "") }},
-        numero: {{ JSON.stringify((($json.data || {}).numero) || "") }},
-        complemento: {{ JSON.stringify((($json.data || {}).complemento) || "") }},
-        bairro: {{ JSON.stringify((($json.data || {}).bairro) || "") }},
-        cidade: {{ JSON.stringify((($json.data || {}).cidade) || "") }},
-        uf: {{ JSON.stringify((($json.data || {}).uf) || "") }},
-        enderecoAtualizado: {{ JSON.stringify((($json.data || {}).enderecoAtualizado) || "") }},
-        telefone: {{ JSON.stringify((($json.data || {}).telefone) || "") }},
-        email: {{ JSON.stringify((($json.data || {}).email) || "") }},
-        situacaoTrabalho: {{ JSON.stringify((($json.data || {}).situacaoTrabalho) || "") }},
-        mulherChefe: {{ JSON.stringify((($json.data || {}).mulherChefe) || "") }},
-        acolhimento: {{ JSON.stringify((($json.data || {}).acolhimento) || "") }},
-        dependenteTratamento: {{ JSON.stringify((($json.data || {}).dependenteTratamento) || "") }},
-        rendaFamiliar: {{ JSON.stringify((($json.data || {}).rendaFamiliar) != null ? ($json.data || {}).rendaFamiliar : "") }},
-        racaCor: {{ JSON.stringify((($json.data || {}).racaCor) || "") }},
-        pessoaPretaParda: {{ JSON.stringify((($json.data || {}).pessoaPretaParda) || "") }},
-        pessoaIndigena: {{ JSON.stringify((($json.data || {}).pessoaIndigena) || "") }},
-        pessoaTrans: {{ JSON.stringify((($json.data || {}).pessoaTrans) || "") }},
-        egressoSocioeducativo: {{ JSON.stringify((($json.data || {}).egressoSocioeducativo) || "") }},
-        pessoaQuilombola: {{ JSON.stringify((($json.data || {}).pessoaQuilombola) || "") }},
-        pessoaRua: {{ JSON.stringify((($json.data || {}).pessoaRua) || "") }},
-        pcd: {{ JSON.stringify((($json.data || {}).pcd) || "") }},
-        maeAtipica: {{ JSON.stringify((($json.data || {}).maeAtipica) || "") }},
-        vitimaViolencia: {{ JSON.stringify((($json.data || {}).vitimaViolencia) || "") }},
-        necessidadesEspeciais: {{ JSON.stringify((($json.data || {}).necessidadesEspeciais) || "") }},
+      const ENDPOINT = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/4d5f64e7-0198-4dce-a44d-57e2acad6048-dashboardCNHRecife";
+      const samplePayload = [
+  {
+    "cpf": "09100800465",
+    "nome_completo": "MARIA JESSYKA LEONEL DA SILVA",
+    "nome_social": null,
+    "data_nascimento": "1991-01-09",
+    "idade": 33,
+    "nis_pis": "12345678901",
+    "data_atualizacao": "2025-02-10",
+    "tempo_desde_atualizacao": "10 dias",
+    "genero": "Feminino",
+    "telefone_whatsapp": "(81) 98888-0001",
+    "email": "maria.jessyka@example.com",
+    "canal_contato_preferencial": "WhatsApp",
+    "cep": "51020000",
+    "logradouro": "Rua das Flores",
+    "numero": "120",
+    "complemento": "Apto 302",
+    "bairro": "Boa Viagem",
+    "cidade": "Recife",
+    "uf": "PE",
+    "endereco_diferente_cadunico": "Não",
+    "situacao_trabalho": "Trabalho informal",
+    "mulher_chefe_familia": "Sim",
+    "acolhimento_institucional": "Não",
+    "dependente_tratamento": "Não",
+    "renda_per_capita": 650.0,
+    "raca_cor": "Parda",
+    "pessoa_preta_parda": "Sim",
+    "pessoa_indigena": "Não",
+    "pessoa_trans": "Não",
+    "egresso_socioeducativo": "Não",
+    "pessoa_quilombola": "Não",
+    "pessoa_situacao_rua": "Não",
+    "pessoa_pcd": "Não",
+    "mae_pai_atipico": "Não",
+    "vitima_violencia_domestica": "Não",
+    "necessidades_especificas": null,
+    "categoria_desejada": "B",
+    "validade_cnh": "2028-05-15",
+    "termo_lgpd": "Aceito",
+    "declaracao_veracidade": "Confirmado",
+    "autorizacao_imagem": "Autorizo",
+    "renda_familiar": 2600.0,
+    "analise_socio_ocupacional": "Baixa renda, chefe de família",
+    "composicao_familiar": 4,
+    "participacao_programas_sociais": "Bolsa Família",
+    "recinscricao": "Não",
+    "possui_recurso_inscricao": "Não",
+    "trabalhador_app": "Não"
+  },
+  {
+    "cpf": "22233344455",
+    "nome_completo": "JOÃO CARLOS DE ALMEIDA",
+    "nome_social": null,
+    "data_nascimento": "1987-07-21",
+    "idade": 37,
+    "nis_pis": "98765432100",
+    "data_atualizacao": "2025-02-12",
+    "tempo_desde_atualizacao": "8 dias",
+    "genero": "Masculino",
+    "telefone_whatsapp": "(81) 98989-0002",
+    "email": "joao.almeida@example.com",
+    "canal_contato_preferencial": "E-mail",
+    "cep": "52011000",
+    "logradouro": "Avenida Norte",
+    "numero": "1500",
+    "complemento": null,
+    "bairro": "Casa Amarela",
+    "cidade": "Recife",
+    "uf": "PE",
+    "endereco_diferente_cadunico": "Sim",
+    "situacao_trabalho": "Trabalhador com carteira assinada",
+    "mulher_chefe_familia": "Não",
+    "acolhimento_institucional": "Não",
+    "dependente_tratamento": "Sim",
+    "renda_per_capita": 1200.5,
+    "raca_cor": "Branca",
+    "pessoa_preta_parda": "Não",
+    "pessoa_indigena": "Não",
+    "pessoa_trans": "Não",
+    "egresso_socioeducativo": "Não",
+    "pessoa_quilombola": "Não",
+    "pessoa_situacao_rua": "Não",
+    "pessoa_pcd": "Sim",
+    "mae_pai_atipico": "Sim",
+    "vitima_violencia_domestica": "Não",
+    "necessidades_especificas": "Dependente em tratamento",
+    "categoria_desejada": "D",
+    "validade_cnh": "2027-09-30",
+    "termo_lgpd": "Aceito",
+    "declaracao_veracidade": "Confirmado",
+    "autorizacao_imagem": "Não autorizo",
+    "renda_familiar": 4802.0,
+    "analise_socio_ocupacional": "Renda estável, dependente PCD",
+    "composicao_familiar": 4,
+    "participacao_programas_sociais": "BPC",
+    "recinscricao": "Não",
+    "possui_recurso_inscricao": "Não",
+    "trabalhador_app": "Não"
+  },
+  {
+    "cpf": "33344455566",
+    "nome_completo": "ANA PAULA DOS SANTOS",
+    "nome_social": "ANA SANTOS",
+    "data_nascimento": "2000-03-05",
+    "idade": 24,
+    "nis_pis": "11223344556",
+    "data_atualizacao": "2025-01-28",
+    "tempo_desde_atualizacao": "23 dias",
+    "genero": "Mulher trans",
+    "telefone_whatsapp": "(81) 98777-1234",
+    "email": "ana.santos@example.com",
+    "canal_contato_preferencial": "WhatsApp",
+    "cep": "50030000",
+    "logradouro": "Rua da Aurora",
+    "numero": "45",
+    "complemento": "Casa",
+    "bairro": "Boa Vista",
+    "cidade": "Recife",
+    "uf": "PE",
+    "endereco_diferente_cadunico": "Não",
+    "situacao_trabalho": "Trabalhador de app",
+    "mulher_chefe_familia": "Não",
+    "acolhimento_institucional": "Não",
+    "dependente_tratamento": "Não",
+    "renda_per_capita": 950.75,
+    "raca_cor": "Preta",
+    "pessoa_preta_parda": "Sim",
+    "pessoa_indigena": "Não",
+    "pessoa_trans": "Sim",
+    "egresso_socioeducativo": "Não",
+    "pessoa_quilombola": "Não",
+    "pessoa_situacao_rua": "Não",
+    "pessoa_pcd": "Não",
+    "mae_pai_atipico": "Não",
+    "vitima_violencia_domestica": "Sim",
+    "necessidades_especificas": "Acompanhamento psicológico",
+    "categoria_desejada": "AB",
+    "validade_cnh": "2026-11-10",
+    "termo_lgpd": "Aceito",
+    "declaracao_veracidade": "Confirmado",
+    "autorizacao_imagem": "Autorizo",
+    "renda_familiar": 1901.5,
+    "analise_socio_ocupacional": "Trabalho por aplicativo, vulnerabilidade social",
+    "composicao_familiar": 2,
+    "participacao_programas_sociais": "Bolsa Família",
+    "recinscricao": "Sim",
+    "possui_recurso_inscricao": "Não",
+    "trabalhador_app": "Sim"
+  },
+  {
+    "cpf": "44455566677",
+    "nome_completo": "JOSÉ ROBERTO PEREIRA",
+    "nome_social": null,
+    "data_nascimento": "1975-11-30",
+    "idade": 49,
+    "nis_pis": null,
+    "data_atualizacao": "2024-12-15",
+    "tempo_desde_atualizacao": "67 dias",
+    "genero": "Masculino",
+    "telefone_whatsapp": "(81) 98555-9876",
+    "email": "jose.roberto@example.com",
+    "canal_contato_preferencial": "Telefone",
+    "cep": "52061000",
+    "logradouro": "Rua Principal",
+    "numero": "900",
+    "complemento": "Fundos",
+    "bairro": "Parnamirim",
+    "cidade": "Recife",
+    "uf": "PE",
+    "endereco_diferente_cadunico": "Sim",
+    "situacao_trabalho": "Desempregado",
+    "mulher_chefe_familia": "Não",
+    "acolhimento_institucional": "Não",
+    "dependente_tratamento": "Não",
+    "renda_per_capita": 300.0,
+    "raca_cor": "Parda",
+    "pessoa_preta_parda": "Sim",
+    "pessoa_indigena": "Não",
+    "pessoa_trans": "Não",
+    "egresso_socioeducativo": "Sim",
+    "pessoa_quilombola": "Não",
+    "pessoa_situacao_rua": "Sim",
+    "pessoa_pcd": "Não",
+    "mae_pai_atipico": "Não",
+    "vitima_violencia_domestica": "Não",
+    "necessidades_especificas": "Situação de rua",
+    "categoria_desejada": "B",
+    "validade_cnh": "2023-08-01",
+    "termo_lgpd": "Aceito",
+    "declaracao_veracidade": "Confirmado",
+    "autorizacao_imagem": "Não autorizo",
+    "renda_familiar": 600.0,
+    "analise_socio_ocupacional": "Desempregado, situação de rua",
+    "composicao_familiar": 2,
+    "participacao_programas_sociais": "Nenhum",
+    "recinscricao": "Não",
+    "possui_recurso_inscricao": "Sim",
+    "trabalhador_app": "Não"
+  },
+  {
+    "cpf": "55566677788",
+    "nome_completo": "LUCIANA FERREIRA DA COSTA",
+    "nome_social": null,
+    "data_nascimento": "1995-02-18",
+    "idade": 30,
+    "nis_pis": "55667788990",
+    "data_atualizacao": "2025-02-15",
+    "tempo_desde_atualizacao": "5 dias",
+    "genero": "Feminino",
+    "telefone_whatsapp": "(81) 98444-2222",
+    "email": "luciana.costa@example.com",
+    "canal_contato_preferencial": "WhatsApp",
+    "cep": "50720200",
+    "logradouro": "Rua da Paz",
+    "numero": "35",
+    "complemento": "Bloco B, apto 101",
+    "bairro": "Cordeiro",
+    "cidade": "Recife",
+    "uf": "PE",
+    "endereco_diferente_cadunico": "Não",
+    "situacao_trabalho": "Autônomo",
+    "mulher_chefe_familia": "Sim",
+    "acolhimento_institucional": "Não",
+    "dependente_tratamento": "Sim",
+    "renda_per_capita": 730.25,
+    "raca_cor": "Parda",
+    "pessoa_preta_parda": "Sim",
+    "pessoa_indigena": "Não",
+    "pessoa_trans": "Não",
+    "egresso_socioeducativo": "Não",
+    "pessoa_quilombola": "Não",
+    "pessoa_situacao_rua": "Não",
+    "pessoa_pcd": "Sim",
+    "mae_pai_atipico": "Sim",
+    "vitima_violencia_domestica": "Sim",
+    "necessidades_especificas": "Filho TEA",
+    "categoria_desejada": "B",
+    "validade_cnh": "2029-01-20",
+    "termo_lgpd": "Aceito",
+    "declaracao_veracidade": "Confirmado",
+    "autorizacao_imagem": "Autorizo",
+    "renda_familiar": 2921.0,
+    "analise_socio_ocupacional": "Autônoma, mãe atípica, PCD no domicílio",
+    "composicao_familiar": 4,
+    "participacao_programas_sociais": "Bolsa Família; BPC",
+    "recinscricao": "Não",
+    "possui_recurso_inscricao": "Não",
+    "trabalhador_app": "Não"
+  }
+];
+
+      const elements = {
+        total: document.getElementById("metric-total"),
+        renda: document.getElementById("metric-renda"),
+        diversity: document.getElementById("metric-diversity"),
+        contato: document.getElementById("metric-contato"),
+        lastUpdate: document.getElementById("last-update"),
+        footerSync: document.getElementById("footer-sync"),
+        tableBody: document.getElementById("table-body"),
+        growth: document.getElementById("metric-growth"),
+        incomeTrend: document.getElementById("metric-income-trend"),
+        diversityTrend: document.getElementById("metric-diversity-trend"),
+        contactTrend: document.getElementById("metric-contact-trend"),
       };
-      const editableFields = ["cep", "logradouro", "numero", "complemento", "bairro", "cidade"];
-      const cepInput = document.getElementById("cep");
-      const numeroInput = document.getElementById("numero");
-      const logradouroInput = document.getElementById("logradouro");
-      const complementoInput = document.getElementById("complemento");
-      const bairroInput = document.getElementById("bairro");
-      const cidadeInput = document.getElementById("cidade");
-      const ufSelect = document.getElementById("uf");
-      const cepStatus = document.getElementById("cepStatus");
-      const btnAtualizarEndereco = document.getElementById("btnAtualizarEndereco");
-      let enderecoEdicaoAtiva = false;
 
-      const maskCpf = IMask(document.getElementById("cpf"), { mask: "000.000.000-00" });
-      const maskCep = IMask(cepInput, { mask: "00000-000" });
-      const maskTelefone = IMask(document.getElementById("telefone"), {
-        mask: "(00) 00000-0000",
-      });
-
-      if (numeroInput) {
-        numeroInput.addEventListener("input", () => {
-          if (numeroInput.readOnly) return;
-          let value = numeroInput.value.toUpperCase();
-          if (value.startsWith("S")) {
-            const length = Math.min(value.length, 3);
-            value = "S/N".slice(0, length === 0 ? 0 : Math.max(length, 1));
-          } else {
-            value = value.replace(/[^0-9]/g, "");
-          }
-          numeroInput.value = value;
-        });
-
-        numeroInput.addEventListener("blur", () => {
-          if (numeroInput.readOnly) return;
-          if (/^S($|\/)$/.test(numeroInput.value)) {
-            numeroInput.value = "S/N";
-          }
-        });
-      }
-
-      const generoSelect = document.getElementById("genero");
-      const grupoMulherChefe = document.getElementById("grupoMulherChefe");
-      generoSelect.addEventListener("change", () => {
-        if (generoSelect.value === "feminino") {
-          grupoMulherChefe.classList.remove("d-none");
-        } else {
-          grupoMulherChefe.classList.add("d-none");
-          document.getElementById("mulherChefe").checked = false;
-        }
-      });
-
-      const atualizarStatusCep = (mensagem, classe) => {
-        if (!cepStatus) return;
-        cepStatus.classList.remove("text-danger", "text-success", "text-muted");
-        if (classe) {
-          cepStatus.classList.add(classe);
-        }
-        cepStatus.textContent = mensagem;
+      const charts = {
+        idade: null,
+        categoria: null,
       };
 
-      const preencherEndereco = (dados) => {
-        if (dados.street || dados.logradouro) logradouroInput.value = dados.street || dados.logradouro;
-        if (dados.neighborhood || dados.bairro) bairroInput.value = dados.neighborhood || dados.bairro;
-        if (dados.city || dados.localidade) cidadeInput.value = dados.city || dados.localidade;
-        if (dados.complement || dados.complemento) complementoInput.value = dados.complement || dados.complemento;
-        if (dados.state && ufSelect) {
-          const possuiOpcao = Array.from(ufSelect.options).some((option) => option.value === dados.state);
-          if (!possuiOpcao) {
-            const novaOpcao = document.createElement("option");
-            novaOpcao.value = dados.state;
-            novaOpcao.textContent = dados.state;
-            ufSelect.appendChild(novaOpcao);
-          }
-          ufSelect.value = dados.state;
-        }
-      };
+      const formatCurrency = (value) =>
+        value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-      const consultarCepBrasilApi = async (cepLimpo) => {
-        if (!cepLimpo || cepLimpo.length !== 8) return;
-        atualizarStatusCep("Consultando CEP na BrasilAPI...", "text-muted");
+      const formatDate = (date) => new Date(date).toLocaleDateString("pt-BR", { timeZone: "UTC" });
+
+      async function fetchDashboardData() {
         try {
-          const resposta = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepLimpo}`);
-          if (!resposta.ok) {
-            throw new Error("CEP não encontrado");
-          }
-          const endereco = await resposta.json();
-          preencherEndereco(endereco);
-          atualizarStatusCep("Endereço localizado automaticamente.", "text-success");
-        } catch (erro) {
-          atualizarStatusCep("Não foi possível localizar o CEP. Preencha os campos manualmente.", "text-danger");
-          if (logradouroInput) {
-            logradouroInput.focus();
-          }
+          const response = await fetch(ENDPOINT, { method: "POST" });
+          if (!response.ok) throw new Error("Falha ao consultar webhook");
+          const data = await response.json();
+          return Array.isArray(data) ? data : samplePayload;
+        } catch (error) {
+          console.warn("Erro ao consultar webhook, usando payload local", error);
+          return samplePayload;
         }
-      };
-
-      btnAtualizarEndereco.addEventListener("click", () => {
-        editableFields.forEach((fieldId) => {
-          const field = document.getElementById(fieldId);
-          field.readOnly = false;
-          field.removeAttribute("aria-readonly");
-        });
-        ufSelect.disabled = false;
-        enderecoEdicaoAtiva = true;
-        btnAtualizarEndereco.setAttribute("aria-pressed", "true");
-        atualizarStatusCep("Informe o CEP e aguarde o preenchimento automático.", "text-muted");
-        cepInput.focus();
-        updateSubmitState();
-      });
-
-      maskCep.on("accept", () => {
-        if (!enderecoEdicaoAtiva) return;
-        if (maskCep.unmaskedValue.length < 8) {
-          atualizarStatusCep("Digite o CEP completo para buscar automaticamente.", "text-muted");
-        }
-      });
-
-      maskCep.on("complete", () => {
-        if (!enderecoEdicaoAtiva) return;
-        consultarCepBrasilApi(maskCep.unmaskedValue);
-      });
-
-      const toggleFileSection = (condition, wrapperId) => {
-        const wrapper = document.getElementById(wrapperId);
-        if (!wrapper) return;
-        if (condition) {
-          wrapper.classList.remove("d-none");
-        } else {
-          wrapper.classList.add("d-none");
-          const inputs = wrapper.querySelectorAll("input, select, textarea");
-          inputs.forEach((input) => {
-            if (input.type === "checkbox" || input.type === "radio") {
-              input.checked = false;
-            } else if (input.type === "file") {
-              input.value = "";
-              const nameHolder = wrapper.querySelector(".file-name");
-              if (nameHolder) nameHolder.textContent = "";
-            } else {
-              input.value = "";
-            }
-            input.classList.remove("is-invalid");
-          });
-        }
-        updateSubmitState();
-      };
-
-      const addFileNameListener = (inputId, displayId) => {
-        const input = document.getElementById(inputId);
-        const display = document.getElementById(displayId);
-        if (!input || !display) return;
-        input.addEventListener("change", () => {
-          const file = input.files && input.files[0];
-          display.textContent = file ? `Arquivo selecionado: ${file.name}` : "";
-        });
-      };
-
-      [
-        ["laudoPcd", "laudoPcdName"],
-        ["docResponsavel", "docResponsavelName"],
-        ["docViolencia", "docViolenciaName"],
-        ["docAcolhimento", "docAcolhimentoName"],
-        ["docDependente", "docDependenteName"],
-        ["docResidencia", "docResidenciaName"],
-        ["docIdentidade", "docIdentidadeName"],
-        ["cnhArquivo", "cnhArquivoName"],
-      ].forEach(([inputId, displayId]) => addFileNameListener(inputId, displayId));
-
-      const pcdSelect = document.getElementById("pcd");
-      pcdSelect.addEventListener("change", () => {
-        toggleFileSection(pcdSelect.value === "sim", "laudoPcdWrapper");
-      });
-
-      const maeAtipica = document.getElementById("maeAtipica");
-      maeAtipica.addEventListener("change", () => {
-        toggleFileSection(maeAtipica.value === "sim", "docResponsavelWrapper");
-      });
-
-      const vitimaViolencia = document.getElementById("vitimaViolencia");
-      vitimaViolencia.addEventListener("change", () => {
-        toggleFileSection(vitimaViolencia.value === "sim", "docViolenciaWrapper");
-      });
-
-      const acolhimento = document.getElementById("acolhimento");
-      acolhimento.addEventListener("change", () => {
-        toggleFileSection(acolhimento.checked, "docAcolhimentoWrapper");
-      });
-
-      const dependenteTratamento = document.getElementById("dependenteTratamento");
-      dependenteTratamento.addEventListener("change", () => {
-        toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
-      });
-
-      const enderecoAtualizado = document.getElementById("enderecoAtualizado");
-      enderecoAtualizado.addEventListener("change", () => {
-        toggleFileSection(enderecoAtualizado.checked, "docResidenciaWrapper");
-        const label = document.getElementById("docResidenciaLabel");
-        if (!label) return;
-        if (enderecoAtualizado.checked) {
-          label.classList.add("required");
-        } else {
-          label.classList.remove("required");
-        }
-      });
-
-      const categoriaSelect = document.getElementById("categoria");
-      categoriaSelect.addEventListener("change", () => {
-        const isAdicao = ["adicao_a", "adicao_b"].includes(categoriaSelect.value);
-        toggleFileSection(isAdicao, "cnhNumeroWrapper");
-        toggleFileSection(isAdicao, "cnhValidadeWrapper");
-        toggleFileSection(isAdicao, "cnhArquivoWrapper");
-      });
-
-      const cpfInput = document.getElementById("cpf");
-      const cpfValidator = (value) => {
-        const digits = value.replace(/\D/g, "");
-        if (digits.length !== 11 || /^([0-9])\1+$/.test(digits)) return false;
-        let sum = 0;
-        for (let i = 0; i < 9; i++) sum += parseInt(digits.charAt(i), 10) * (10 - i);
-        let firstDigit = (sum * 10) % 11;
-        if (firstDigit === 10) firstDigit = 0;
-        if (firstDigit !== parseInt(digits.charAt(9), 10)) return false;
-        sum = 0;
-        for (let i = 0; i < 10; i++) sum += parseInt(digits.charAt(i), 10) * (11 - i);
-        let secondDigit = (sum * 10) % 11;
-        if (secondDigit === 10) secondDigit = 0;
-        return secondDigit === parseInt(digits.charAt(10), 10);
-      };
-
-      const form = document.getElementById("cnhSocialForm");
-      const submitButton = document.getElementById("submitButton");
-      let submitReady = false;
-      let validation;
-
-      const isElementVisible = (element) => {
-        if (!element) return false;
-        let current = element;
-        while (current && current !== document.body) {
-          if (current.hasAttribute && current.hasAttribute("hidden")) {
-            return false;
-          }
-          if (current.classList && current.classList.contains("d-none")) {
-            return false;
-          }
-          current = current.parentElement;
-        }
-        return true;
-      };
-
-      const isFieldFilled = (element) => {
-        if (!element) return true;
-        if (!isElementVisible(element)) return true;
-        if (element.disabled) return true;
-        if (element.type === "checkbox" || element.type === "radio") {
-          if (element.checked) return true;
-          const group = element.name
-            ? form.querySelectorAll(`[name="${CSS.escape(element.name)}"]`)
-            : [];
-          if (group.length) {
-            return Array.from(group).some((input) => input.checked);
-          }
-          return false;
-        }
-        if (element.type === "file") {
-          return element.files && element.files.length > 0;
-        }
-        const value = element.value != null ? String(element.value).trim() : "";
-        return value.length > 0;
-      };
-
-      const setSubmitButtonState = (isReady) => {
-        submitReady = isReady;
-        submitButton.setAttribute("data-ready", isReady ? "true" : "false");
-        submitButton.setAttribute("aria-disabled", isReady ? "false" : "true");
-        submitButton.type = isReady ? "submit" : "button";
-        submitButton.classList.toggle("disabled", !isReady);
-      };
-
-      setSubmitButtonState(false);
-      const feedbackModalElement = document.getElementById("feedbackModal");
-      const feedbackModalHeader = document.getElementById("feedbackModalHeader");
-      const feedbackModalEmoji = document.getElementById("feedbackModalEmoji");
-      const feedbackModalLabel = document.getElementById("feedbackModalLabel");
-      const feedbackModalMessage = document.getElementById("feedbackModalMessage");
-      const feedbackModalList = document.getElementById("feedbackModalList");
-      const feedbackModalInstance = new bootstrap.Modal(feedbackModalElement);
-      let pendingFocusElement = null;
-      let pendingModalType = null;
-
-      feedbackModalElement.addEventListener("shown.bs.modal", () => {
-        if (pendingModalType === "alert") {
-          const firstItem = feedbackModalList.querySelector("li span");
-          if (firstItem) {
-            firstItem.setAttribute("tabindex", "-1");
-            firstItem.focus({ preventScroll: true });
-            setTimeout(() => firstItem.removeAttribute("tabindex"), 0);
-          }
-        }
-      });
-
-      feedbackModalElement.addEventListener("hidden.bs.modal", () => {
-        const focusTarget = pendingFocusElement;
-        const modalType = pendingModalType;
-        pendingFocusElement = null;
-        pendingModalType = null;
-        if (focusTarget && modalType === "alert") {
-          setTimeout(() => focusTarget.focus({ preventScroll: true }), 100);
-        }
-      });
-
-      const fieldLabels = {
-        "#cpf": "CPF",
-        "#genero": "Identificação de gênero",
-        "#situacaoTrabalho": "Situação de trabalho atual",
-        "#telefone": "Telefone/WhatsApp",
-        "#email": "E-mail",
-        "#emailConfirm": "Confirmação de e-mail",
-        "#preferenciaContato": "Canal de contato preferencial",
-        "#cep": "CEP",
-        "#logradouro": "Logradouro",
-        "#numero": "Número do endereço",
-        "#bairro": "Bairro",
-        "#cidade": "Município",
-        "#rendaFamiliar": "Renda familiar mensal",
-        "#pcd": "Pessoa com deficiência (PCD)",
-        "#maeAtipica": "Responsável legal por pessoa PCD/TEA",
-        "#vitimaViolencia": "Vínculo de violência doméstica",
-        "#racaCor": "Autodeclaração de cor/raça",
-        "#categoria": "Categoria desejada",
-        "#turno": "Turno preferencial",
-        "#polo": "Polo/CFC de preferência",
-        "#docIdentidade": "Documento de identificação oficial",
-        "#lgpd": "Consentimento LGPD",
-        "#veracidade": "Declaração de veracidade",
-        "#docResidencia": "Comprovante de residência",
-        "#laudoPcd": "Laudo médico PCD",
-        "#docResponsavel": "Comprovante de responsabilidade legal",
-        "#docViolencia": "Documento de violência doméstica",
-        "#docAcolhimento": "Declaração da unidade de acolhimento",
-        "#docDependente": "Comprovante de tratamento terapêutico contínuo",
-        "#numeroCnh": "Número da CNH",
-        "#validadeCnh": "Validade da CNH",
-        "#cnhArquivo": "Arquivo da CNH",
-      };
-
-      const getFieldLabel = (selector) => {
-        if (fieldLabels[selector]) {
-          return fieldLabels[selector];
-        }
-        const element = form.querySelector(selector);
-        if (element && element.id) {
-          const associatedLabel = form.querySelector(`label[for="${element.id}"]`);
-          if (associatedLabel) {
-            return associatedLabel.textContent.trim();
-          }
-        }
-        return element?.name || selector;
-      };
-
-      const showFeedbackModal = ({ type, message, items = [], focusElement = null }) => {
-        const isSuccess = type === "success";
-        feedbackModalHeader.classList.toggle("text-danger", !isSuccess);
-        feedbackModalHeader.classList.toggle("text-success", isSuccess);
-        feedbackModalEmoji.textContent = isSuccess ? "✅" : "⚠️";
-        feedbackModalLabel.textContent = isSuccess ? "Sucesso" : "Alerta";
-        feedbackModalMessage.textContent = message;
-        feedbackModalList.innerHTML = "";
-        if (items.length) {
-          feedbackModalList.classList.remove("d-none");
-          items.forEach((item) => {
-            const li = document.createElement("li");
-            li.className = "d-flex align-items-start gap-2 mb-1";
-            const icon = document.createElement("i");
-            icon.className = isSuccess
-              ? "bi bi-check-circle-fill text-success mt-1"
-              : "bi bi-exclamation-triangle-fill text-danger mt-1";
-            icon.setAttribute("aria-hidden", "true");
-            const span = document.createElement("span");
-            span.textContent = item;
-            li.append(icon, span);
-            feedbackModalList.appendChild(li);
-          });
-        } else {
-          feedbackModalList.classList.add("d-none");
-        }
-        pendingFocusElement = focusElement;
-        pendingModalType = type;
-        feedbackModalInstance.show();
-      };
-
-      validation = new JustValidate(form, {
-        errorFieldCssClass: "is-invalid",
-        errorLabelCssClass: "text-danger mt-1",
-        focusInvalidField: false,
-        lockForm: true,
-      });
-
-      const collectInvalidFields = (additionalErrors = []) => {
-        const invalidMap = new Map();
-        Object.entries(validation.fields).forEach(([selector, field]) => {
-          if (!field.isValid) {
-            invalidMap.set(selector, {
-              selector,
-              element: field.elem,
-              label: getFieldLabel(selector),
-            });
-          }
-        });
-        const requiredElements = Array.from(form.querySelectorAll("[data-required-field=\"true\"]"));
-        requiredElements.forEach((element) => {
-          const selector = element.id
-            ? `#${element.id}`
-            : element.name
-            ? `[name='${CSS.escape(element.name)}']`
-            : null;
-          if (!selector || invalidMap.has(selector)) {
-            return;
-          }
-          if (!isFieldFilled(element)) {
-            invalidMap.set(selector, {
-              selector,
-              element,
-              label: getFieldLabel(selector),
-            });
-          }
-        });
-        additionalErrors.forEach((error) => {
-          if (!invalidMap.has(error.selector)) {
-            invalidMap.set(error.selector, error);
-          }
-        });
-        return Array.from(invalidMap.values());
-      };
-
-      const updateSubmitState = () => {
-        if (!validation) {
-          setSubmitButtonState(false);
-          return;
-        }
-        const extraErrors = validateAdditionalRules(false);
-        const invalidFields = collectInvalidFields(extraErrors);
-        setSubmitButtonState(invalidFields.length === 0);
-      };
-
-      const applyPrefillValues = () => {
-        if (!prefillValues || typeof prefillValues !== "object") {
-          return;
-        }
-        const hasContent = Object.values(prefillValues).some((value) => {
-          if (value == null) return false;
-          if (typeof value === "string") return value.trim() !== "";
-          return true;
-        });
-        if (!hasContent) {
-          return;
-        }
-
-        const setTextValue = (id, value) => {
-          if (value == null) return;
-          if (typeof value === "string" && value.trim() === "") return;
-          const element = document.getElementById(id);
-          if (!element) return;
-          element.value = value;
-        };
-
-        const setMaskedValue = (maskInstance, fallbackId, value) => {
-          if (value == null) return;
-          if (typeof value === "string" && value.trim() === "") return;
-          if (maskInstance && typeof maskInstance.updateValue === "function") {
-            maskInstance.value = value;
-            maskInstance.updateValue();
-          } else if (maskInstance) {
-            maskInstance.value = value;
-          } else if (fallbackId) {
-            const element = document.getElementById(fallbackId);
-            if (element) {
-              element.value = value;
-            }
-          }
-        };
-
-        const setSelectValue = (id, value, triggerChange = false) => {
-          if (value == null) return;
-          if (typeof value === "string" && value.trim() === "") return;
-          const element = document.getElementById(id);
-          if (!element) return;
-          element.value = value;
-          if (triggerChange) {
-            element.dispatchEvent(new Event("change"));
-          }
-        };
-
-        const setCheckboxValue = (id, value) => {
-          if (value == null) return;
-          const element = document.getElementById(id);
-          if (!element) return;
-          const normalized = typeof value === "string" ? value.toLowerCase() : value;
-          const shouldCheck = normalized === "sim" || normalized === "true" || normalized === true || normalized === 1 || normalized === "1";
-          element.checked = shouldCheck;
-          element.dispatchEvent(new Event("change"));
-        };
-
-        setTextValue("nomeCompleto", prefillValues.nomeCompleto);
-        if (prefillValues.cpf && prefillValues.cpf.trim() !== "") {
-          setMaskedValue(maskCpf, "cpf", prefillValues.cpf);
-        }
-        setTextValue("nis", prefillValues.nis);
-        setTextValue("dataNascimento", prefillValues.dataNascimento);
-        setSelectValue("genero", prefillValues.genero, true);
-        setTextValue("nomeSocial", prefillValues.nomeSocial);
-        if (prefillValues.cep && prefillValues.cep.trim() !== "") {
-          setMaskedValue(maskCep, "cep", prefillValues.cep);
-        }
-        setTextValue("logradouro", prefillValues.logradouro);
-        setTextValue("numero", prefillValues.numero);
-        setTextValue("complemento", prefillValues.complemento);
-        setTextValue("bairro", prefillValues.bairro);
-        setTextValue("cidade", prefillValues.cidade);
-        setSelectValue("uf", prefillValues.uf);
-        setCheckboxValue("enderecoAtualizado", prefillValues.enderecoAtualizado);
-        if (prefillValues.telefone && prefillValues.telefone.trim() !== "") {
-          setMaskedValue(maskTelefone, "telefone", prefillValues.telefone);
-        }
-        setTextValue("email", prefillValues.email);
-        setTextValue("emailConfirm", prefillValues.email);
-        setSelectValue("situacaoTrabalho", prefillValues.situacaoTrabalho);
-        setCheckboxValue("mulherChefe", prefillValues.mulherChefe);
-        setCheckboxValue("acolhimento", prefillValues.acolhimento);
-        setCheckboxValue("dependenteTratamento", prefillValues.dependenteTratamento);
-        setTextValue("rendaFamiliar", prefillValues.rendaFamiliar);
-        setSelectValue("racaCor", prefillValues.racaCor);
-        setCheckboxValue("pessoaPretaParda", prefillValues.pessoaPretaParda);
-        setCheckboxValue("pessoaIndigena", prefillValues.pessoaIndigena);
-        setCheckboxValue("pessoaTrans", prefillValues.pessoaTrans);
-        setCheckboxValue("egressoSocioeducativo", prefillValues.egressoSocioeducativo);
-        setCheckboxValue("pessoaQuilombola", prefillValues.pessoaQuilombola);
-        setCheckboxValue("pessoaRua", prefillValues.pessoaRua);
-        setSelectValue("pcd", prefillValues.pcd, true);
-        setSelectValue("maeAtipica", prefillValues.maeAtipica, true);
-        setSelectValue("vitimaViolencia", prefillValues.vitimaViolencia, true);
-        setTextValue("necessidadesEspeciais", prefillValues.necessidadesEspeciais);
-
-        if (validation) {
-          if (typeof validation.refreshAll === "function") {
-            validation.refreshAll();
-          } else if (typeof validation.refresh === "function") {
-            validation.refresh();
-          }
-        }
-      };
-
-      validation
-        .addField("#genero", [{ rule: "required", errorMessage: "Informe a identificação de gênero" }])
-        .addField("#situacaoTrabalho", [{ rule: "required", errorMessage: "Informe sua situação de trabalho" }])
-        .addField("#telefone", [
-          { rule: "required", errorMessage: "Informe um telefone válido" },
-          {
-            validator: (value) => value.replace(/\D/g, "").length >= 10,
-            errorMessage: "Informe DDD e número",
-          },
-        ])
-        .addField("#email", [{ rule: "required" }, { rule: "email", errorMessage: "E-mail inválido" }])
-        .addField("#emailConfirm", [
-          { rule: "required", errorMessage: "Repita o e-mail informado" },
-          {
-            validator: (value) => value.trim() === (document.getElementById("email").value || "").trim(),
-            errorMessage: "Os e-mails informados devem coincidir",
-          },
-        ])
-        .addField("#preferenciaContato", [{ rule: "required" }])
-        .addField("#cep", [
-          {
-            validator: () => {
-              if (!enderecoEdicaoAtiva) return true;
-              return maskCep.unmaskedValue.length === 8;
-            },
-            errorMessage: "Informe um CEP válido",
-          },
-        ])
-        .addField("#logradouro", [
-          {
-            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
-            errorMessage: "Informe o logradouro",
-          },
-        ])
-        .addField("#numero", [
-          {
-            validator: () => {
-              if (!numeroInput || numeroInput.readOnly) return true;
-              const valor = numeroInput.value.trim();
-              return /^(?:\d+|S\/N)$/.test(valor) && valor.length > 0;
-            },
-            errorMessage: "Informe o número ou S/N",
-          },
-        ])
-        .addField("#bairro", [
-          {
-            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
-            errorMessage: "Informe o bairro",
-          },
-        ])
-        .addField("#cidade", [
-          {
-            validator: (value) => !enderecoEdicaoAtiva || value.trim().length > 0,
-            errorMessage: "Informe o município",
-          },
-        ])
-        .addField("#rendaFamiliar", [
-          { rule: "required", errorMessage: "Informe a renda familiar" },
-          {
-            validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
-            errorMessage: "Valor inválido",
-          },
-        ])
-        .addField("#pcd", [{ rule: "required" }])
-        .addField("#maeAtipica", [{ rule: "required" }])
-        .addField("#vitimaViolencia", [{ rule: "required" }])
-        .addField("#racaCor", [{ rule: "required", errorMessage: "Informe sua autodeclaração" }])
-        .addField("#categoria", [{ rule: "required" }])
-        .addField("#turno", [{ rule: "required" }])
-        .addField("#polo", [{ rule: "required" }])
-        .addField("#docIdentidade", [
-          { rule: "required", errorMessage: "Anexe um documento oficial" },
-          {
-            rule: "files",
-            value: {
-              files: {
-                extensions: ["pdf", "jpg", "jpeg", "png"],
-                maxSize: 5 * 1024 * 1024,
-              },
-            },
-            errorMessage: "Formato ou tamanho inválido (máx. 5 MB)",
-          },
-        ])
-        .addField("#lgpd", [{ rule: "required", errorMessage: "Confirme o consentimento LGPD" }])
-        .addField("#veracidade", [{ rule: "required", errorMessage: "Confirme a declaração de veracidade" }]);
-
-      const handleFormInteraction = async (event) => {
-        const target = event.target;
-        if (!target) return;
-        const selector = target.id ? `#${target.id}` : null;
-        if (selector && validation.fields[selector] && typeof validation.revalidateField === "function") {
-          try {
-            await validation.revalidateField(selector);
-          } catch (error) {
-            /* Ignora erros de revalidação não críticos */
-          }
-        }
-        if (
-          selector === "#email" &&
-          validation.fields["#emailConfirm"] &&
-          typeof validation.revalidateField === "function"
-        ) {
-          try {
-            await validation.revalidateField("#emailConfirm");
-          } catch (error) {
-            /* Ignora erros de revalidação não críticos */
-          }
-        }
-        updateSubmitState();
-      };
-
-      form.addEventListener("input", handleFormInteraction, true);
-      form.addEventListener("change", handleFormInteraction, true);
-      form.addEventListener("reset", () => {
-        setSubmitButtonState(false);
-        setTimeout(() => updateSubmitState(), 0);
-      });
-
-      submitButton.addEventListener("click", async (event) => {
-        if (submitReady) {
-          return;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        let isValid = false;
-        if (typeof validation.revalidate === "function") {
-          isValid = await validation.revalidate();
-        } else {
-          isValid = await validation.validate();
-        }
-        const extraErrors = validateAdditionalRules(true);
-        const invalidFields = collectInvalidFields(extraErrors);
-        if (!isValid || invalidFields.length) {
-          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
-          showFeedbackModal({
-            type: "alert",
-            message: "Por favor, preencha os campos obrigatórios listados antes de enviar.",
-            items: invalidFields.map((field) => field.label),
-            focusElement: focusField ? focusField.element : null,
-          });
-        }
-        updateSubmitState();
-      });
-
-      function validateAdditionalRules(shouldShowErrors = true) {
-        const extraErrors = [];
-        const registerError = (selector, message, element) => {
-          extraErrors.push({
-            selector,
-            element,
-            label: getFieldLabel(selector),
-          });
-          if (shouldShowErrors && validation && typeof validation.showErrors === "function") {
-            validation.showErrors({ [selector]: message });
-          }
-        };
-        const cpfDigits = (cpfInput.value || "").replace(/\D/g, "");
-        if (cpfDigits && cpfDigits.length === 11 && !cpfValidator(cpfInput.value || "")) {
-          registerError("#cpf", "CPF inválido", cpfInput);
-        }
-        if (cpfDigits && cpfDigits.length > 0 && cpfDigits.length !== 11) {
-          registerError("#cpf", "CPF incompleto", cpfInput);
-        }
-        if (pcdSelect.value === "sim" && !document.getElementById("laudoPcd").files.length) {
-          registerError("#laudoPcd", "Anexe o laudo PCD", document.getElementById("laudoPcd"));
-        }
-        if (maeAtipica.value === "sim" && !document.getElementById("docResponsavel").files.length) {
-          registerError(
-            "#docResponsavel",
-            "Anexe os comprovantes",
-            document.getElementById("docResponsavel")
-          );
-        }
-        if (vitimaViolencia.value === "sim" && !document.getElementById("docViolencia").files.length) {
-          registerError(
-            "#docViolencia",
-            "Anexe documento comprobatório ou declaração",
-            document.getElementById("docViolencia")
-          );
-        }
-        if (acolhimento.checked && !document.getElementById("docAcolhimento").files.length) {
-          registerError(
-            "#docAcolhimento",
-            "Anexe declaração do serviço de acolhimento",
-            document.getElementById("docAcolhimento")
-          );
-        }
-        if (dependenteTratamento.checked && !document.getElementById("docDependente").files.length) {
-          registerError(
-            "#docDependente",
-            "Anexe comprovante do tratamento",
-            document.getElementById("docDependente")
-          );
-        }
-        if (enderecoAtualizado.checked && !document.getElementById("docResidencia").files.length) {
-          registerError(
-            "#docResidencia",
-            "Comprovante obrigatório quando atualizar endereço",
-            document.getElementById("docResidencia")
-          );
-        }
-        if (["adicao_a", "adicao_b"].includes(categoriaSelect.value)) {
-          const numeroCnhField = document.getElementById("numeroCnh");
-          if (!numeroCnhField.value.trim()) {
-            registerError("#numeroCnh", "Informe o número da CNH", numeroCnhField);
-          }
-          const validadeField = document.getElementById("validadeCnh");
-          const validade = validadeField.value;
-          if (!validade) {
-            registerError("#validadeCnh", "Informe a validade da CNH", validadeField);
-          } else {
-            const diff = dayjs(validade).diff(dayjs(), "day");
-            if (diff <= 30) {
-              registerError(
-                "#validadeCnh",
-                "A CNH deve ter validade superior a 30 dias",
-                validadeField
-              );
-            }
-          }
-          if (!document.getElementById("cnhArquivo").files.length) {
-            registerError("#cnhArquivo", "Anexe a CNH", document.getElementById("cnhArquivo"));
-          }
-        }
-        return extraErrors;
       }
 
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        let isValid = false;
-        if (typeof validation.revalidate === "function") {
-          isValid = await validation.revalidate();
-        } else {
-          isValid = await validation.validate();
-        }
-        const extraErrors = validateAdditionalRules(true);
-        const invalidFields = collectInvalidFields(extraErrors);
-        if (!isValid || extraErrors.length) {
-          setSubmitButtonState(false);
-          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
-          showFeedbackModal({
-            type: "alert",
-            message: "Por favor, verifique os campos obrigatórios listados abaixo.",
-            items: invalidFields.map((field) => field.label),
-            focusElement: focusField ? focusField.element : null,
-          });
-          updateSubmitState();
+      function buildStats(data) {
+        const total = data.length;
+        const rendaMedia = data.reduce((acc, item) => acc + (item.renda_per_capita || 0), 0) / (total || 1);
+        const diversidadeCount = data.filter(
+          (i) =>
+            (i.genero || "").toLowerCase().includes("femin") ||
+            (i.pessoa_trans || "").toLowerCase() === "sim" ||
+            (i.pessoa_pcd || "").toLowerCase() === "sim"
+        ).length;
+        const diversidadePct = total ? Math.round((diversidadeCount / total) * 100) : 0;
+
+        const contatoMap = data.reduce((map, item) => {
+          const canal = (item.canal_contato_preferencial || "Não informado").trim();
+          map[canal] = (map[canal] || 0) + 1;
+          return map;
+        }, {});
+        const contatoEntries = Object.entries(contatoMap).sort((a, b) => b[1] - a[1]);
+        const topContato = contatoEntries[0] ? `${contatoEntries[0][0]} (${contatoEntries[0][1]})` : "--";
+
+        elements.total.textContent = total.toString();
+        elements.renda.textContent = formatCurrency(rendaMedia || 0);
+        elements.diversity.textContent = `${diversidadePct}%`;
+        elements.contato.textContent = topContato;
+        elements.lastUpdate.textContent = new Date().toLocaleString("pt-BR");
+        elements.footerSync.textContent = elements.lastUpdate.textContent;
+
+        elements.growth.innerHTML = `<i class="bi bi-graph-up"></i> ${total ? "+" + Math.max(1, total - 1) : "0"}`;
+        elements.incomeTrend.innerHTML = `<i class="bi bi-arrow-up-right"></i> ${(rendaMedia / 10).toFixed(1)}%`;
+        elements.diversityTrend.innerHTML = `<i class="bi bi-arrow-up-right"></i> +${diversidadePct}%`;
+        elements.contactTrend.innerHTML = `<i class="bi bi-bell"></i> ${contatoEntries.slice(0, 2).map((c) => c[0]).join(" · ")}`;
+      }
+
+      function buildCharts(data) {
+        const idadeBuckets = {
+          "18-24": 0,
+          "25-34": 0,
+          "35-44": 0,
+          "45-59": 0,
+          "60+": 0,
+        };
+        data.forEach(({ idade }) => {
+          if (idade <= 24) idadeBuckets["18-24"]++;
+          else if (idade <= 34) idadeBuckets["25-34"]++;
+          else if (idade <= 44) idadeBuckets["35-44"]++;
+          else if (idade <= 59) idadeBuckets["45-59"]++;
+          else idadeBuckets["60+"]++;
+        });
+
+        const categoriaBuckets = data.reduce((map, { categoria_desejada }) => {
+          const categoria = categoria_desejada || "Não informado";
+          map[categoria] = (map[categoria] || 0) + 1;
+          return map;
+        }, {});
+
+        const idadeCtx = document.getElementById("chartIdade");
+        const categoriaCtx = document.getElementById("chartCategoria");
+
+        charts.idade?.destroy();
+        charts.categoria?.destroy();
+
+        charts.idade = new Chart(idadeCtx, {
+          type: "bar",
+          data: {
+            labels: Object.keys(idadeBuckets),
+            datasets: [
+              {
+                label: "Inscrições",
+                data: Object.values(idadeBuckets),
+                backgroundColor: "rgba(0, 163, 255, 0.5)",
+                borderRadius: 8,
+                borderSkipped: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: (ctx) => `${ctx.raw} pessoa(s)` } },
+            },
+            scales: {
+              y: { ticks: { color: "#c6d3e5" }, grid: { color: "rgba(255,255,255,0.06)" } },
+              x: { ticks: { color: "#c6d3e5" }, grid: { display: false } },
+            },
+          },
+        });
+
+        charts.categoria = new Chart(categoriaCtx, {
+          type: "doughnut",
+          data: {
+            labels: Object.keys(categoriaBuckets),
+            datasets: [
+              {
+                data: Object.values(categoriaBuckets),
+                backgroundColor: ["#00a3ff", "#3ed598", "#f5a524", "#ff6b6b", "#9c6bff"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            cutout: "65%",
+            plugins: {
+              legend: { labels: { color: "#c6d3e5" } },
+              tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}` } },
+            },
+          },
+        });
+      }
+
+      function buildTable(data) {
+        if (!data.length) {
+          elements.tableBody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">Nenhuma inscrição encontrada.</td></tr>`;
           return;
         }
 
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => {
-          if (value instanceof File) {
-            data[key] = value.name || null;
-          } else if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (Array.isArray(data[key])) {
-              data[key].push(value);
-            } else {
-              data[key] = [data[key], value];
-            }
-          } else {
-            data[key] = value;
-          }
-        });
-        console.log("Inscrição CNH Social", data);
+        const rows = data
+          .map((item) => {
+            const statusColor = item.termo_lgpd === "Aceito" ? "bg-success" : "bg-warning";
+            return `
+              <tr>
+                <td>
+                  <div class="fw-semibold">${item.nome_completo}</div>
+                  <div class="text-muted small">CPF ${item.cpf}</div>
+                </td>
+                <td>${item.idade ?? "--"}</td>
+                <td>
+                  <span class="status-dot ${statusColor}"></span>${item.genero ?? "--"}
+                </td>
+                <td>${formatCurrency(item.renda_per_capita || 0)}</td>
+                <td><span class="badge-soft">${item.categoria_desejada || "--"}</span></td>
+                <td>${item.canal_contato_preferencial || "--"}</td>
+                <td>
+                  <div>${formatDate(item.data_atualizacao || Date.now())}</div>
+                  <small class="text-muted">${item.tempo_desde_atualizacao || "--"}</small>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
 
-        showFeedbackModal({
-          type: "success",
-          message: "Sua inscrição foi enviada com sucesso. Você receberá o protocolo por e-mail e WhatsApp.",
-        });
+        elements.tableBody.innerHTML = rows;
+      }
 
-        form.reset();
-        if (typeof validation.refreshAll === "function") {
-          validation.refreshAll();
-        } else if (typeof validation.refresh === "function") {
-          validation.refresh();
-        } else {
-          Object.values(validation.fields).forEach((field) => {
-            field.isValid = false;
-            field.elem?.classList.remove("is-invalid");
-          });
-        }
-        setSubmitButtonState(false);
-        const docResidenciaLabel = document.getElementById("docResidenciaLabel");
-        if (docResidenciaLabel) {
-          docResidenciaLabel.classList.remove("required");
-        }
-        [
-          "docResidenciaWrapper",
-          "laudoPcdWrapper",
-          "docResponsavelWrapper",
-          "docViolenciaWrapper",
-          "docAcolhimentoWrapper",
-          "docDependenteWrapper",
-          "cnhNumeroWrapper",
-          "cnhValidadeWrapper",
-          "cnhArquivoWrapper",
-        ].forEach((id) => {
-          toggleFileSection(false, id);
+      function exportCsv(data) {
+        const headers = Object.keys(data[0] || {});
+        const csvRows = [headers.join(";")];
+        data.forEach((row) => {
+          const values = headers.map((h) => JSON.stringify(row[h] ?? ""));
+          csvRows.push(values.join(";"));
         });
-        grupoMulherChefe.classList.add("d-none");
-        editableFields.forEach((fieldId) => {
-          const field = document.getElementById(fieldId);
-          if (field) {
-            field.readOnly = true;
-            field.setAttribute("aria-readonly", "true");
-          }
-        });
-        ufSelect.disabled = true;
-        enderecoEdicaoAtiva = false;
-        btnAtualizarEndereco.setAttribute("aria-pressed", "false");
-        if (cepStatus) {
-          cepStatus.textContent = "";
-        }
-        document.querySelectorAll(".file-name").forEach((holder) => {
-          holder.textContent = "";
-        });
-        setTimeout(() => updateSubmitState(), 0);
+        const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `cnh-social-${Date.now()}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function hydrateDashboard() {
+        const data = await fetchDashboardData();
+        buildStats(data);
+        buildCharts(data);
+        buildTable(data);
+        return data;
+      }
+
+      let currentData = samplePayload;
+
+      document.getElementById("refresh-btn").addEventListener("click", async () => {
+        document.getElementById("refresh-btn").disabled = true;
+        currentData = await hydrateDashboard();
+        setTimeout(() => (document.getElementById("refresh-btn").disabled = false), 600);
       });
 
-      applyPrefillValues();
-      updateSubmitState();
+      document.getElementById("export-btn").addEventListener("click", () => exportCsv(currentData));
+
+      (async () => {
+        currentData = await hydrateDashboard();
+      })();
     </script>
   </body>
 </html>
