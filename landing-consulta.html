@@ -57,16 +57,47 @@
         --bs-modal-width: 900px;
       }
 
+      .modal-content {
+        min-height: 70vh;
+      }
+
+      @media (min-width: 768px) {
+        .modal-content {
+          min-height: 75vh;
+        }
+      }
+
+      @media (min-width: 992px) {
+        .modal-content {
+          min-height: 80vh;
+        }
+      }
+
+      .modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .result-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        min-height: 240px;
+      }
+
       .result-box {
         background: #f8f9fb;
         border: 1px dashed var(--border-color);
         border-radius: 12px;
         padding: 0.75rem 1rem;
         color: var(--text-strong);
-        max-height: 360px;
+        flex: 1;
         overflow: auto;
         font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
         font-size: 0.95rem;
+        white-space: pre-wrap;
       }
     </style>
   </head>
@@ -116,8 +147,8 @@
               </div>
             </form>
 
-            <div class="mt-3" id="resultadoWrapper" hidden>
-              <div class="d-flex align-items-center mb-2 gap-2">
+            <div class="mt-3 result-section" id="resultadoWrapper" hidden>
+              <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-journal-text text-primary"></i>
                 <span class="fw-semibold">Resultado da consulta</span>
               </div>
