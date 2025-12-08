@@ -444,7 +444,9 @@
       document.getElementById('totalInscricoes').innerText = total;
       document.getElementById('novasInscricoes').innerText = total ? `${atualizados15} atualizações em 15 dias` : 'Sem inscrições no período';
       document.getElementById('rendaMedia').innerText = formatCurrency(rendaMedia);
-      document.getElementById('pcdPercent').innerText = `${pcd} pessoas PCD · Idade média: ${mediaIdade.toFixed(1)} anos`;
+      document.getElementById('pcdPercent').innerText = rendaValores.length
+        ? 'Média das rendas informadas'
+        : 'Sem dados de renda declarada';
 
       const whatsappPct = total ? Math.round((whatsapp / total) * 100) : 0;
       const mulherChefePct = total ? Math.round((mulherChefe / total) * 100) : 0;
