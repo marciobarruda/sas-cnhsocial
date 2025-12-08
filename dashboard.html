@@ -85,6 +85,7 @@
       background: rgba(8, 19, 39, 0.72);
       border: 1px solid rgba(0, 92, 169, 0.28);
     }
+    .aggregated-wrapper { overflow-x: auto; }
     .aggregated-table { min-width: 520px; }
     .aggregated-table td.text-end, .aggregated-table th.text-end { white-space: nowrap; }
     .chip {
@@ -283,7 +284,7 @@
           <div class="spinner-border spinner-border-sm text-info d-none" role="status" id="loadingSpinner"></div>
         </div>
       </div>
-      <div class="table-responsive rounded-3 overflow-hidden">
+      <div class="table-responsive rounded-3 aggregated-wrapper">
         <table class="table table-dark table-hover align-middle mb-0 table-dark-glass aggregated-table">
           <thead>
             <tr class="text-white-50">
