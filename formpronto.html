@@ -197,6 +197,41 @@
         box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
       }
 
+      .rating-stars {
+        display: flex;
+        gap: 0.35rem;
+        align-items: center;
+        justify-content: center;
+        margin: 1rem 0 0.25rem;
+      }
+
+      .rating-star {
+        font-size: 1.9rem;
+        color: #d0d7e2;
+        background: transparent;
+        border: none;
+        padding: 0.1rem;
+        line-height: 1;
+        transition: transform 0.1s ease, color 0.15s ease;
+      }
+
+      .rating-star:hover,
+      .rating-star:focus-visible {
+        color: #f4b000;
+        outline: none;
+        transform: translateY(-1px);
+      }
+
+      .rating-star.is-active {
+        color: #f4b000;
+      }
+
+      .rating-comment {
+        width: 100%;
+        resize: vertical;
+        min-height: 110px;
+      }
+
       input[type="text"],
       textarea {
         text-transform: uppercase;
@@ -1899,6 +1934,58 @@
       </div>
     </div>
 
+    <div class="modal-backdrop" id="ratingModal" data-rating-modal hidden>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ratingModalTitle"
+        aria-describedby="ratingModalDesc"
+      >
+        <button type="button" class="modal-close-button" id="ratingCloseIcon" aria-label="Fechar avaliação">&times;</button>
+        <p class="modal-title" id="ratingModalTitle">
+          <span aria-hidden="true">⭐</span>
+          <span>Avalie o serviço</span>
+        </p>
+        <p class="modal-message" id="ratingModalDesc">Como foi sua experiência com o envio da inscrição?</p>
+        <div class="rating-stars" role="group" aria-label="Escolha uma nota de 1 a 5">
+          <button type="button" class="rating-star" data-rating-value="1" aria-label="1 estrela">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="rating-star" data-rating-value="2" aria-label="2 estrelas">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="rating-star" data-rating-value="3" aria-label="3 estrelas">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="rating-star" data-rating-value="4" aria-label="4 estrelas">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="rating-star" data-rating-value="5" aria-label="5 estrelas">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="small text-muted text-center mb-2" id="ratingHint">
+          Clique para selecionar a nota. Você pode complementar com um comentário abaixo.
+        </p>
+        <div class="mb-3">
+          <label for="ratingComment" class="form-label">Comentário</label>
+          <p class="form-text">Compartilhe rapidamente o motivo da nota escolhida.</p>
+          <textarea
+            class="form-control rating-comment"
+            id="ratingComment"
+            name="ratingComment"
+            rows="3"
+            placeholder="Digite seu comentário"
+          ></textarea>
+        </div>
+        <div class="modal-actions gap-3">
+          <button type="button" class="btn btn-outline-secondary" id="ratingSkip">Pular</button>
+          <button type="button" class="btn btn-primary" id="ratingSubmit" disabled>Enviar avaliação</button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/imask@7.6.0/dist/imask.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/just-validate@4.6.0/dist/just-validate.production.min.js"></script>
@@ -2981,6 +3068,7 @@
       let successCountdownInterval = null;
       let successRedirectTimeout = null;
       const successRedirectUrl = "https://cnhrecife.recife.pe.gov.br/";
+      const ratingEndpoint = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/avaliacao-cnh";
 
       const clearSuccessRedirectTimers = () => {
         if (successCountdownInterval) {
@@ -4263,6 +4351,8 @@
             throw new Error(`Falha ao enviar inscrição: ${response.status}`);
           }
 
+          await openRatingModal(triggerElement);
+
           showFeedbackModal({
             type: "success",
             message: "Envio bem-sucedido da inscrição.",
@@ -4357,6 +4447,15 @@
       const reviewChoiceCloseIcon = document.getElementById("reviewChoiceCloseIcon");
       const reviewChoiceReviewButton = document.getElementById("reviewChoiceReview");
       const reviewChoiceSendButton = document.getElementById("reviewChoiceSend");
+      const ratingModal = document.getElementById("ratingModal");
+      const ratingModalCard = ratingModal ? ratingModal.querySelector(".modal-card") : null;
+      const ratingCloseIcon = document.getElementById("ratingCloseIcon");
+      const ratingStars = ratingModal ? Array.from(ratingModal.querySelectorAll("[data-rating-value]")) : [];
+      const ratingHint = document.getElementById("ratingHint");
+      const ratingComment = document.getElementById("ratingComment");
+      const ratingSubmitButton = document.getElementById("ratingSubmit");
+      const ratingSkipButton = document.getElementById("ratingSkip");
+      let selectedRating = 0;
 
       const getSelectText = (select) => {
         if (!select) return "";
@@ -4384,6 +4483,153 @@
         const holderText = holder?.textContent?.trim();
         return holderText || "";
       };
+
+      const ratingDefaultHintText =
+        (ratingHint && ratingHint.textContent && ratingHint.textContent.trim()) ||
+        "Clique para selecionar a nota. Você pode complementar com um comentário abaixo.";
+
+      const setRatingHint = (text, { isError = false } = {}) => {
+        if (!ratingHint) return;
+        ratingHint.textContent = text;
+        ratingHint.classList.toggle("text-danger", isError);
+        ratingHint.classList.toggle("text-muted", !isError);
+        ratingHint.setAttribute("role", isError ? "alert" : "status");
+        ratingHint.setAttribute("aria-live", "polite");
+      };
+
+      const updateRatingStars = () => {
+        ratingStars.forEach((star) => {
+          const value = Number.parseInt(star.dataset.ratingValue, 10);
+          const isActive = Number.isFinite(value) && value <= selectedRating;
+          star.classList.toggle("is-active", isActive);
+          star.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+
+        if (ratingSubmitButton) {
+          ratingSubmitButton.toggleAttribute("disabled", selectedRating <= 0);
+        }
+      };
+
+      const resetRatingModalState = () => {
+        selectedRating = 0;
+        if (ratingComment) {
+          ratingComment.value = "";
+        }
+        setRatingHint(ratingDefaultHintText, { isError: false });
+        updateRatingStars();
+      };
+
+      const openRatingModal = (triggerElement = null) =>
+        new Promise((resolve) => {
+          if (!ratingModal || !ratingModalCard) {
+            resolve();
+            return;
+          }
+
+          resetRatingModalState();
+
+          const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+          const submitRating = async ({ requireSelection = false } = {}) => {
+            if (requireSelection && selectedRating <= 0) {
+              setRatingHint("Selecione uma estrela para enviar sua avaliação.", { isError: true });
+              return false;
+            }
+
+            ratingSubmitButton?.setAttribute("aria-busy", "true");
+            if (ratingSubmitButton) {
+              ratingSubmitButton.disabled = true;
+            }
+            if (ratingSkipButton) {
+              ratingSkipButton.disabled = true;
+            }
+
+            try {
+              await fetch(ratingEndpoint, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  rating: selectedRating > 0 ? selectedRating : null,
+                  comment: ratingComment?.value?.trim() || "",
+                }),
+              });
+            } catch (error) {
+              console.error("Erro ao enviar avaliação", error);
+            } finally {
+              ratingSubmitButton?.removeAttribute("aria-busy");
+              if (ratingSubmitButton) {
+                ratingSubmitButton.disabled = selectedRating <= 0;
+              }
+              if (ratingSkipButton) {
+                ratingSkipButton.disabled = false;
+              }
+            }
+
+            return true;
+          };
+
+          const finalize = async ({ requireSelection = false } = {}) => {
+            const sent = await submitRating({ requireSelection });
+            if (!sent && requireSelection) {
+              return;
+            }
+            closeModal();
+            resolve();
+          };
+
+          const handleStarClick = (event) => {
+            const value = Number.parseInt(event.currentTarget.dataset.ratingValue, 10);
+            if (!Number.isFinite(value)) return;
+            selectedRating = value;
+            updateRatingStars();
+            setRatingHint("Obrigado! Se quiser, deixe um breve comentário.");
+          };
+
+          const closeHandler = () => finalize({ requireSelection: false });
+          const backdropHandler = (event) => {
+            if (event.target === ratingModal) {
+              finalize({ requireSelection: false });
+            }
+          };
+          const submitHandler = () => finalize({ requireSelection: true });
+
+          ratingStars.forEach((star) => star.addEventListener("click", handleStarClick));
+          ratingCloseIcon?.addEventListener("click", closeHandler);
+          ratingModal.addEventListener("click", backdropHandler);
+          ratingSkipButton?.addEventListener("click", closeHandler);
+          ratingSubmitButton?.addEventListener("click", submitHandler);
+
+          allowExternalFocusElement = null;
+          ratingModal.removeAttribute("hidden");
+          ratingModal.classList.add("is-open");
+          document.body.style.overflow = "hidden";
+
+          activeModal = {
+            backdrop: ratingModal,
+            card: ratingModalCard,
+            close: closeHandler,
+            returnFocusElement: triggerElement || previousActive,
+            cleanup: () => {
+              ratingStars.forEach((star) => star.removeEventListener("click", handleStarClick));
+              ratingCloseIcon?.removeEventListener("click", closeHandler);
+              ratingModal.removeEventListener("click", backdropHandler);
+              ratingSkipButton?.removeEventListener("click", closeHandler);
+              ratingSubmitButton?.removeEventListener("click", submitHandler);
+              resetRatingModalState();
+            },
+          };
+
+          const focusable = getModalFocusableElements(ratingModalCard);
+          const initialFocusTarget = focusable[0] || ratingModalCard;
+          requestAnimationFrame(() => {
+            initialFocusTarget.focus({ preventScroll: true });
+          });
+
+          document.addEventListener("keydown", handleModalKeydown, true);
+          document.addEventListener("focusin", handleModalFocusIn, true);
+        });
 
       const buildAddressSummary = () => {
         const partes = [
