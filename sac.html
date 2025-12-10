@@ -318,7 +318,6 @@
               "Não consegui resolver",
               "Difícil de encontrar",
             ],
-            preSelecionadas: [],
           },
           2: {
             pergunta: "O que podemos melhorar?",
@@ -330,7 +329,6 @@
               "Não consegui resolver",
               "Difícil de encontrar",
             ],
-            preSelecionadas: ["Foi demorado", "Difícil de usar"],
           },
           3: {
             pergunta: "O que podemos melhorar?",
@@ -341,11 +339,6 @@
               "Informações confusas",
               "Não consegui resolver",
               "Difícil de encontrar",
-            ],
-            preSelecionadas: [
-              "Foi demorado",
-              "Difícil de usar",
-              "Site/aplicativo não funcionou bem",
             ],
           },
           4: {
@@ -358,7 +351,6 @@
               "Não consegui resolver",
               "Difícil de encontrar",
             ],
-            preSelecionadas: [],
           },
           5: {
             pergunta: "Do que você gostou?",
@@ -370,7 +362,6 @@
               "Fácil de usar",
               "Fácil de encontrar",
             ],
-            preSelecionadas: [],
           },
         };
 
@@ -391,10 +382,6 @@
             button.type = "button";
             button.className = "btn chip";
             button.textContent = opcao;
-
-            if (config.preSelecionadas.includes(opcao)) {
-              button.classList.add("active");
-            }
 
             button.addEventListener("click", () => {
               button.classList.toggle("active");
