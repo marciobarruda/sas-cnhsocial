@@ -307,8 +307,6 @@
         const motivosInput = document.getElementById("motivos");
         const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
 
-        let redirectInterval = null;
-
         const feedbackOptions = {
           1: {
             pergunta: "O que podemos melhorar?",
@@ -397,30 +395,10 @@
         };
 
         const iniciarRedirecionamento = (mensagemInicial) => {
-          if (redirectInterval) {
-            clearInterval(redirectInterval);
-          }
-
-          let countdown = 5;
-
           submitFeedback.classList.remove("text-muted", "text-danger");
           submitFeedback.classList.add("text-success");
-
-          const atualizarMensagem = () => {
-            submitFeedback.textContent = `${mensagemInicial} Redirecionando em ${countdown}s...`;
-          };
-
-          atualizarMensagem();
-
-          redirectInterval = setInterval(() => {
-            countdown -= 1;
-            atualizarMensagem();
-
-            if (countdown <= 0) {
-              clearInterval(redirectInterval);
-              window.location.href = redirectUrl;
-            }
-          }, 1000);
+          submitFeedback.textContent = `${mensagemInicial} Redirecionando...`;
+          window.location.href = redirectUrl;
         };
 
         const atualizarEstrelas = (valor) => {
