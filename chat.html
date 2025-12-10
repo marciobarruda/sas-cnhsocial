@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Avaliação do Serviço • CNH Social</title>
+    <title>Tira-Dúvidas • CNH Social</title>
 
     <link
       rel="icon"
@@ -61,80 +61,6 @@
         color: var(--text-muted);
       }
 
-      /* BLOCO DAS ESTRELAS */
-
-      .stars {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-      }
-
-      .star {
-        cursor: pointer;
-        color: #e6e6e6;          /* cor de estrela vazia */
-        font-size: 2.8rem;       /* tamanho maior, parecido com o print */
-        line-height: 1;
-        border: none;
-        background: transparent;
-        padding: 0;
-        text-decoration: none;
-        transition: color 0.15s ease-in-out, transform 0.15s ease-in-out;
-      }
-
-      .star.filled {
-        color: #ffb400;          /* amarelo principal (estrelas cheias) */
-      }
-
-      .star:hover {
-        transform: translateY(-2px);
-        color: #ffc94a;          /* amarelo um pouco mais claro no hover */
-      }
-
-      .star:focus-visible {
-        outline: 2px solid var(--brand-highlight);
-        outline-offset: 2px;
-      }
-
-      .star-labels {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 0.5rem;
-        max-width: 540px;
-        margin: 0.35rem auto 0;
-        font-weight: 600;
-      }
-
-      .star-labels span {
-        display: block;
-        text-align: center;
-        color: var(--brand-primary);
-        font-size: 0.75rem;
-        text-transform: uppercase;
-      }
-
-      .chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        justify-content: center;
-      }
-
-      .chip {
-        border: 1px solid #d6dbe6;
-        color: var(--text-strong);
-        background: #fff;
-        border-radius: 999px;
-        padding: 0.45rem 0.9rem;
-        font-weight: 600;
-        transition: all 0.15s ease-in-out;
-      }
-
-      .chip.active {
-        background: #ebf2ff;
-        border-color: #9ec5ff;
-        color: var(--brand-primary);
-        box-shadow: 0 4px 12px rgba(0, 83, 164, 0.15);
-      }
     </style>
   </head>
 
@@ -156,7 +82,7 @@
                 <h1 class="modal-title h4 mb-1" id="avaliacaoModalLabel">
                   CNH Recife
                 </h1>
-                <p class="mb-0 subtitle fs-5">Avalie este serviço</p>
+                <p class="mb-0 subtitle fs-5">Envie sua dúvida</p>
               </div>
 
               <form
@@ -165,67 +91,6 @@
                 action="https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/avaliacao-cnh"
                 method="POST"
               >
-                <!-- wrapper das estrelas centralizado -->
-                <div class="text-center d-flex flex-column align-items-center gap-2">
-                  <div class="stars" role="radiogroup" aria-label="Nota do serviço">
-                    <button
-                      type="button"
-                      class="btn btn-link star"
-                      data-value="1"
-                      aria-label="1 estrela"
-                    >
-                      ★
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-link star"
-                      data-value="2"
-                      aria-label="2 estrelas"
-                    >
-                      ★
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-link star"
-                      data-value="3"
-                      aria-label="3 estrelas"
-                    >
-                      ★
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-link star"
-                      data-value="4"
-                      aria-label="4 estrelas"
-                    >
-                      ★
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-link star"
-                      data-value="5"
-                      aria-label="5 estrelas"
-                    >
-                      ★
-                    </button>
-                  </div>
-                  <div class="star-labels">
-                    <span>Péssimo</span>
-                    <span>Ruim</span>
-                    <span>Regular</span>
-                    <span>Bom</span>
-                    <span>Excelente</span>
-                  </div>
-                  <input type="hidden" name="nota" id="nota" required />
-                  <div class="invalid-feedback d-block" id="notaFeedback"></div>
-                </div>
-
-                <div class="text-center">
-                  <p class="fw-bold mb-2" id="perguntaLabel">O que podemos melhorar?</p>
-                  <div class="chips" id="chipsContainer"></div>
-                  <input type="hidden" name="feedback" id="feedback" />
-                </div>
-
                 <div class="row g-3">
                   <div class="col-12 col-md-6">
                     <label for="email" class="form-label fw-semibold">E-mail</label>
@@ -256,16 +121,16 @@
                 <div>
                   <div class="d-flex align-items-center justify-content-between mb-1">
                     <label for="comentario" class="form-label fw-semibold mb-0"
-                      >Deixe aqui o seu comentário</label
+                      >Descreva sua dúvida</label
                     >
-                    <small class="text-danger">Obrigatório! Sua sugestão.</small>
+                    <small class="text-danger">Obrigatório! Detalhe sua questão.</small>
                   </div>
                   <textarea
                     class="form-control"
                     id="comentario"
                     name="comentario"
                     rows="4"
-                    placeholder="Comente rapidamente de acordo com a nota escolhida."
+                    placeholder="Escreva sua pergunta ou explique a situação."
                     required
                   ></textarea>
                   <div class="invalid-feedback">Deixe seu comentário.</div>
@@ -285,7 +150,7 @@
                     id="submitButton"
                     class="btn btn-primary flex-fill"
                   >
-                    Enviar avaliação
+                    Enviar dúvida
                   </button>
                 </div>
                 <div
@@ -310,104 +175,11 @@
         });
         modal.show();
 
-        const stars = document.querySelectorAll(".star");
-        const notaInput = document.getElementById("nota");
-        const notaFeedback = document.getElementById("notaFeedback");
         const form = document.getElementById("formAvaliacao");
         const submitFeedback = document.getElementById("submitFeedback");
         const submitButton = document.getElementById("submitButton");
         const cancelButton = document.getElementById("cancelButton");
-        const perguntaLabel = document.getElementById("perguntaLabel");
-        const chipsContainer = document.getElementById("chipsContainer");
-        const feedbackInput = document.getElementById("feedback");
         const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
-
-        const feedbackOptions = {
-          1: {
-            pergunta: "O que podemos melhorar?",
-            opcoes: [
-              "Foi demorado",
-              "Difícil de usar",
-              "Site/aplicativo não funcionou bem",
-              "Informações confusas",
-              "Não consegui resolver",
-              "Difícil de encontrar",
-            ],
-          },
-          2: {
-            pergunta: "O que podemos melhorar?",
-            opcoes: [
-              "Foi demorado",
-              "Difícil de usar",
-              "Site/aplicativo não funcionou bem",
-              "Informações confusas",
-              "Não consegui resolver",
-              "Difícil de encontrar",
-            ],
-          },
-          3: {
-            pergunta: "O que podemos melhorar?",
-            opcoes: [
-              "Foi demorado",
-              "Difícil de usar",
-              "Site/aplicativo não funcionou bem",
-              "Informações confusas",
-              "Não consegui resolver",
-              "Difícil de encontrar",
-            ],
-          },
-          4: {
-            pergunta: "O que podemos melhorar?",
-            opcoes: [
-              "Foi demorado",
-              "Difícil de usar",
-              "Site/aplicativo não funcionou bem",
-              "Informações confusas",
-              "Não consegui resolver",
-              "Difícil de encontrar",
-            ],
-          },
-          5: {
-            pergunta: "Do que você gostou?",
-            opcoes: [
-              "Site/aplicativo funcionou bem",
-              "Consegui resolver",
-              "Informações claras",
-              "Foi rápido",
-              "Fácil de usar",
-              "Fácil de encontrar",
-            ],
-          },
-        };
-
-        const atualizarFeedback = () => {
-          const selecionados = Array.from(
-            chipsContainer.querySelectorAll(".chip.active")
-          ).map((chip) => chip.textContent.trim());
-          feedbackInput.value = selecionados.join(", ");
-        };
-
-        const renderizarChips = (valor) => {
-          const config = feedbackOptions[valor] || feedbackOptions[1];
-          perguntaLabel.textContent = config.pergunta;
-          chipsContainer.innerHTML = "";
-
-          config.opcoes.forEach((opcao) => {
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "btn chip";
-            button.textContent = opcao;
-
-            button.addEventListener("click", () => {
-              button.classList.toggle("active");
-              atualizarFeedback();
-            });
-
-            chipsContainer.appendChild(button);
-          });
-
-          atualizarFeedback();
-        };
 
         const iniciarRedirecionamento = (mensagemInicial) => {
           submitFeedback.classList.remove("text-muted", "text-danger");
@@ -416,41 +188,16 @@
           window.location.href = redirectUrl;
         };
 
-        const atualizarEstrelas = (valor) => {
-          stars.forEach((star) => {
-            const starValue = Number(star.dataset.value);
-            star.classList.toggle("filled", starValue <= valor);
-          });
-        };
-
-        stars.forEach((star) => {
-          star.addEventListener("click", () => {
-            const valor = Number(star.dataset.value);
-            notaInput.value = valor;
-            notaFeedback.textContent = "";
-            renderizarChips(valor);
-            atualizarEstrelas(valor);
-          });
-        });
-
-        renderizarChips(1);
-
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
-
-          if (!notaInput.value) {
-            notaFeedback.textContent = "Selecione uma nota de 1 a 5 estrelas.";
-            modalElement.scrollTop = 0;
-          }
-
-          if (!form.checkValidity() || !notaInput.value) {
+          if (!form.checkValidity()) {
             event.stopPropagation();
             form.classList.add("was-validated");
             return;
           }
 
           form.classList.add("was-validated");
-          submitFeedback.textContent = "Enviando sua avaliação...";
+          submitFeedback.textContent = "Enviando sua dúvida...";
           submitButton.disabled = true;
           cancelButton.disabled = true;
 
@@ -461,15 +208,15 @@
             });
 
             if (!response.ok) {
-              throw new Error("Falha ao enviar a avaliação.");
+              throw new Error("Falha ao enviar a dúvida.");
             }
 
-            iniciarRedirecionamento("Avaliação enviada com sucesso!");
+            iniciarRedirecionamento("Dúvida enviada com sucesso!");
           } catch (error) {
             submitFeedback.classList.remove("text-success", "text-muted");
             submitFeedback.classList.add("text-danger");
             submitFeedback.textContent =
-              "Não foi possível enviar sua avaliação. Tente novamente em instantes.";
+              "Não foi possível enviar sua dúvida. Tente novamente em instantes.";
             submitButton.disabled = false;
             cancelButton.disabled = false;
           }
@@ -479,7 +226,7 @@
           event.preventDefault();
           submitButton.disabled = true;
           cancelButton.disabled = true;
-          iniciarRedirecionamento("Você optou por pular a avaliação.");
+          iniciarRedirecionamento("Você optou por pular o envio da dúvida.");
         });
       });
     </script>
