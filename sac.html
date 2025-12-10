@@ -223,7 +223,7 @@
                 <div class="text-center">
                   <p class="fw-bold mb-2" id="perguntaLabel">O que podemos melhorar?</p>
                   <div class="chips" id="chipsContainer"></div>
-                  <input type="hidden" name="motivos" id="motivos" />
+                  <input type="hidden" name="feedback" id="feedback" />
                 </div>
 
                 <div class="row g-3">
@@ -319,7 +319,7 @@
         const cancelButton = document.getElementById("cancelButton");
         const perguntaLabel = document.getElementById("perguntaLabel");
         const chipsContainer = document.getElementById("chipsContainer");
-        const motivosInput = document.getElementById("motivos");
+        const feedbackInput = document.getElementById("feedback");
         const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
 
         const feedbackOptions = {
@@ -380,11 +380,11 @@
           },
         };
 
-        const atualizarMotivos = () => {
+        const atualizarFeedback = () => {
           const selecionados = Array.from(
             chipsContainer.querySelectorAll(".chip.active")
           ).map((chip) => chip.textContent.trim());
-          motivosInput.value = selecionados.join(", ");
+          feedbackInput.value = selecionados.join(", ");
         };
 
         const renderizarChips = (valor) => {
@@ -400,13 +400,13 @@
 
             button.addEventListener("click", () => {
               button.classList.toggle("active");
-              atualizarMotivos();
+              atualizarFeedback();
             });
 
             chipsContainer.appendChild(button);
           });
 
-          atualizarMotivos();
+          atualizarFeedback();
         };
 
         const iniciarRedirecionamento = (mensagemInicial) => {
