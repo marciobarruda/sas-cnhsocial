@@ -307,6 +307,8 @@
         const motivosInput = document.getElementById("motivos");
         const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
 
+        let redirectInterval = null;
+
         const feedbackOptions = {
           1: {
             pergunta: "O que podemos melhorar?",
@@ -394,6 +396,33 @@
           atualizarMotivos();
         };
 
+        const iniciarRedirecionamento = (mensagemInicial) => {
+          if (redirectInterval) {
+            clearInterval(redirectInterval);
+          }
+
+          let countdown = 5;
+
+          submitFeedback.classList.remove("text-muted", "text-danger");
+          submitFeedback.classList.add("text-success");
+
+          const atualizarMensagem = () => {
+            submitFeedback.textContent = `${mensagemInicial} Redirecionando em ${countdown}s...`;
+          };
+
+          atualizarMensagem();
+
+          redirectInterval = setInterval(() => {
+            countdown -= 1;
+            atualizarMensagem();
+
+            if (countdown <= 0) {
+              clearInterval(redirectInterval);
+              window.location.href = redirectUrl;
+            }
+          }, 1000);
+        };
+
         const atualizarEstrelas = (valor) => {
           stars.forEach((star) => {
             const starValue = Number(star.dataset.value);
@@ -442,20 +471,7 @@
               throw new Error("Falha ao enviar a avaliação.");
             }
 
-            let countdown = 5;
-            submitFeedback.classList.remove("text-muted", "text-danger");
-            submitFeedback.classList.add("text-success");
-            submitFeedback.textContent = `Avaliação enviada com sucesso! Redirecionando em ${countdown}s...`;
-
-            const countdownInterval = setInterval(() => {
-              countdown -= 1;
-              submitFeedback.textContent = `Avaliação enviada com sucesso! Redirecionando em ${countdown}s...`;
-
-              if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                window.location.href = redirectUrl;
-              }
-            }, 1000);
+            iniciarRedirecionamento("Avaliação enviada com sucesso!");
           } catch (error) {
             submitFeedback.classList.remove("text-success", "text-muted");
             submitFeedback.classList.add("text-danger");
@@ -464,6 +480,13 @@
             submitButton.disabled = false;
             cancelButton.disabled = false;
           }
+        });
+
+        cancelButton.addEventListener("click", (event) => {
+          event.preventDefault();
+          submitButton.disabled = true;
+          cancelButton.disabled = true;
+          iniciarRedirecionamento("Você optou por pular a avaliação.");
         });
       });
     </script>
