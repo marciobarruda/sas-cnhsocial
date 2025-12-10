@@ -3,15 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SAS • CNH Social</title>
+    <title>Avaliação do Serviço • CNH Social</title>
 
-    <!-- Favicon / identidade (ajuste se necessário) -->
     <link
       rel="icon"
       href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
     />
 
-    <!-- Fonts + Bootstrap (mesmo espírito do head.txt) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,14 +24,9 @@
     <style>
       :root {
         --brand-primary: #0053a4;
-        --brand-secondary: #003a73;
         --brand-highlight: #00a3ff;
-        --surface: #f4f7fb;
-        --surface-strong: #ffffff;
-        --border-color: #d0d7e2;
         --text-strong: #1b263b;
         --text-muted: #5b6c8c;
-        --shadow-strong: 0 14px 30px rgba(0, 35, 79, 0.15);
       }
 
       *,
@@ -45,152 +38,434 @@
       body {
         font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont,
           "Segoe UI", sans-serif;
-        background: var(--surface);
         color: var(--text-strong);
         min-height: 100vh;
       }
 
-      .modal-backdrop-custom {
-        background: radial-gradient(
-          circle at top,
-          rgba(0, 83, 164, 0.18),
-          rgba(0, 0, 0, 0.55)
-        );
+      .modal-dialog {
+        max-width: 760px;
       }
 
-      .card-programa {
-        border: 1px solid rgba(0, 83, 164, 0.08);
-        background: var(--surface-strong);
-        box-shadow: 0 16px 34px rgba(0, 45, 98, 0.18);
+      .modal-content {
+        border: none;
+        border-radius: 1.25rem;
+        box-shadow: 0 24px 60px rgba(0, 35, 79, 0.2);
       }
 
-      .section-title {
-        display: flex;
-        align-items: center;
-        gap: 0.65rem;
-        font-weight: 700;
-        font-size: 1.2rem;
+      .modal-title {
+        font-weight: 800;
         color: var(--text-strong);
-        margin-bottom: 0;
       }
 
-      .section-title::before {
-        content: "";
-        display: inline-block;
-        width: 32px;
-        height: 3px;
-        border-radius: 999px;
-        background: var(--brand-highlight);
-      }
-
-      .institucional-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        padding: 0.3rem 0.75rem;
-        border-radius: 999px;
-        background: rgba(0, 83, 164, 0.06);
-        color: var(--brand-secondary);
-      }
-
-      .institucional-pill-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--brand-highlight);
-      }
-
-      .contador-texto {
-        font-size: 0.95rem;
+      .subtitle {
         color: var(--text-muted);
       }
 
-      .contador-numero {
-        font-weight: 700;
+      .stars {
+        display: flex;
+        gap: 1.25rem;
+        font-size: 6.25rem;
+        justify-content: center;
+      }
+
+      .star {
+        cursor: pointer;
+        color: #e8e6df;
+        transition: color 0.15s ease-in-out, transform 0.15s ease-in-out;
+      }
+
+      .star.filled {
+        color: #ffbe3c;
+      }
+
+      .star:hover {
+        transform: translateY(-3px);
+        color: #ffc94a;
+      }
+
+      .star-labels {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.5rem;
+        max-width: 540px;
+        margin: 0 auto;
+        font-weight: 600;
+      }
+
+      .star-labels span {
+        display: block;
+        text-align: center;
         color: var(--brand-primary);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+      }
+
+      .chip {
+        border: 1px solid #d6dbe6;
+        color: var(--text-strong);
+        background: #fff;
+        border-radius: 999px;
+        padding: 0.45rem 0.9rem;
+        font-weight: 600;
+        transition: all 0.15s ease-in-out;
+      }
+
+      .chip.active {
+        background: #ebf2ff;
+        border-color: #9ec5ff;
+        color: var(--brand-primary);
+        box-shadow: 0 4px 12px rgba(0, 83, 164, 0.15);
       }
     </style>
   </head>
 
   <body>
-    <!-- Modal Bootstrap -->
     <div
       class="modal fade"
-      id="avisoModal"
+      id="avaliacaoModal"
       tabindex="-1"
-      aria-labelledby="avisoModalLabel"
+      aria-labelledby="avaliacaoModalLabel"
       aria-hidden="true"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
     >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4 card-programa">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
           <div class="modal-body p-4 p-md-5">
-            <div class="d-flex flex-column gap-3">
-              <div class="d-flex justify-content-between align-items-center">
-                <h1 class="section-title" id="avisoModalLabel">
-                  Público-alvo do serviço
+            <div class="d-flex flex-column gap-4">
+              <div class="text-center">
+                <h1 class="modal-title h4 mb-1" id="avaliacaoModalLabel">
+                  CNH Recife
                 </h1>
+                <p class="mb-0 subtitle fs-5">Avalie este serviço</p>
               </div>
 
-              <span class="institucional-pill">
-                <span class="institucional-pill-dot"></span>
-                Informação institucional
-              </span>
+              <form
+                id="formAvaliacao"
+                class="d-flex flex-column gap-4"
+                action="https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/avaliacao-cnh"
+                method="POST"
+              >
+                <div class="text-center d-flex flex-column gap-2">
+                  <div class="stars" role="radiogroup" aria-label="Nota do serviço">
+                    <button
+                      type="button"
+                      class="btn btn-link p-0 star"
+                      data-value="1"
+                      aria-label="1 estrela"
+                    >
+                      ★
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-link p-0 star"
+                      data-value="2"
+                      aria-label="2 estrelas"
+                    >
+                      ★
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-link p-0 star"
+                      data-value="3"
+                      aria-label="3 estrelas"
+                    >
+                      ★
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-link p-0 star"
+                      data-value="4"
+                      aria-label="4 estrelas"
+                    >
+                      ★
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-link p-0 star"
+                      data-value="5"
+                      aria-label="5 estrelas"
+                    >
+                      ★
+                    </button>
+                  </div>
+                  <div class="star-labels text-uppercase small">
+                    <span>Péssimo</span>
+                    <span>Ruim</span>
+                    <span>Regular</span>
+                    <span>Bom</span>
+                    <span>Excelente</span>
+                  </div>
+                  <input type="hidden" name="nota" id="nota" required />
+                  <div class="invalid-feedback d-block" id="notaFeedback"></div>
+                </div>
 
-              <p class="mb-1 mt-2 fs-6 text-muted">
-                ⚠️ Seu CPF não consta no <strong>Cadastro Único.</strong>
-Por isso, <strong>você não está elegível</strong> ao programa CNH Recife no momento.
+                <div class="text-center">
+                  <p class="fw-bold mb-2" id="perguntaLabel">O que podemos melhorar?</p>
+                  <div class="chips" id="chipsContainer"></div>
+                  <input type="hidden" name="motivos" id="motivos" />
+                </div>
 
-<p>Para mais informações ou para atualizar seus dados, procure o CRAS mais próximo da sua residência.</p>
-<p>📍 Eles poderão orientar e regularizar sua situação no CadÚnico.</p>
-              </p>
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <label for="email" class="form-label fw-semibold">E-mail</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="seuemail@exemplo.com"
+                      required
+                    />
+                    <div class="invalid-feedback">Informe um e-mail válido.</div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="nome" class="form-label fw-semibold">Nome</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nome"
+                      name="nome"
+                      placeholder="Digite seu nome"
+                      required
+                    />
+                    <div class="invalid-feedback">Informe seu nome.</div>
+                  </div>
+                </div>
 
-              <p class="contador-texto mb-0">
-                Você será redirecionado para o
-                <strong>Conecta Recife</strong>
-                em
-                <span class="contador-numero" id="contador">10</span>
-                segundos.
-              </p>
+                <div>
+                  <div class="d-flex align-items-center justify-content-between mb-1">
+                    <label for="comentario" class="form-label fw-semibold mb-0"
+                      >Deixe aqui o seu comentário</label
+                    >
+                    <small class="text-danger">Obrigatório! Sua sugestão.</small>
+                  </div>
+                  <textarea
+                    class="form-control"
+                    id="comentario"
+                    name="comentario"
+                    rows="4"
+                    placeholder="Comente rapidamente de acordo com a nota escolhida."
+                    required
+                  ></textarea>
+                  <div class="invalid-feedback">Deixe seu comentário.</div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2 mt-2">
+                  <button
+                    type="button"
+                    id="cancelButton"
+                    class="btn btn-outline-secondary flex-fill"
+                    data-bs-dismiss="modal"
+                  >
+                    Pular
+                  </button>
+                  <button
+                    type="submit"
+                    id="submitButton"
+                    class="btn btn-primary flex-fill"
+                  >
+                    Enviar avaliação
+                  </button>
+                </div>
+                <div
+                  id="submitFeedback"
+                  class="text-center small mt-2 text-muted"
+                ></div>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Exibe o modal automaticamente
-        const modalElement = document.getElementById("avisoModal");
+      document.addEventListener("DOMContentLoaded", () => {
+        const modalElement = document.getElementById("avaliacaoModal");
         const modal = new bootstrap.Modal(modalElement, {
           backdrop: "static",
           keyboard: false,
         });
         modal.show();
 
-        // Contador de 10 segundos
-        let segundos = 10;
-        const contadorSpan = document.getElementById("contador");
+        const stars = document.querySelectorAll(".star");
+        const notaInput = document.getElementById("nota");
+        const notaFeedback = document.getElementById("notaFeedback");
+        const form = document.getElementById("formAvaliacao");
+        const submitFeedback = document.getElementById("submitFeedback");
+        const submitButton = document.getElementById("submitButton");
+        const cancelButton = document.getElementById("cancelButton");
+        const perguntaLabel = document.getElementById("perguntaLabel");
+        const chipsContainer = document.getElementById("chipsContainer");
+        const motivosInput = document.getElementById("motivos");
+        const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
 
-        const intervalo = setInterval(() => {
-          segundos--;
-          if (segundos >= 0) {
-            contadorSpan.textContent = segundos;
+        const feedbackOptions = {
+          1: {
+            pergunta: "O que podemos melhorar?",
+            opcoes: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+              "Informações confusas",
+              "Não consegui resolver",
+              "Difícil de encontrar",
+            ],
+          },
+          2: {
+            pergunta: "O que podemos melhorar?",
+            opcoes: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+              "Informações confusas",
+              "Não consegui resolver",
+              "Difícil de encontrar",
+            ],
+          },
+          3: {
+            pergunta: "O que podemos melhorar?",
+            opcoes: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+              "Informações confusas",
+              "Não consegui resolver",
+              "Difícil de encontrar",
+            ],
+          },
+          4: {
+            pergunta: "O que podemos melhorar?",
+            opcoes: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+              "Informações confusas",
+              "Não consegui resolver",
+              "Difícil de encontrar",
+            ],
+          },
+          5: {
+            pergunta: "Do que você gostou?",
+            opcoes: [
+              "Site/aplicativo funcionou bem",
+              "Consegui resolver",
+              "Informações claras",
+              "Foi rápido",
+              "Fácil de usar",
+              "Fácil de encontrar",
+            ],
+          },
+        };
+
+        const atualizarMotivos = () => {
+          const selecionados = Array.from(
+            chipsContainer.querySelectorAll(".chip.active")
+          ).map((chip) => chip.textContent.trim());
+          motivosInput.value = selecionados.join(", ");
+        };
+
+        const renderizarChips = (valor) => {
+          const config = feedbackOptions[valor] || feedbackOptions[1];
+          perguntaLabel.textContent = config.pergunta;
+          chipsContainer.innerHTML = "";
+
+          config.opcoes.forEach((opcao) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "btn chip";
+            button.textContent = opcao;
+
+            button.addEventListener("click", () => {
+              button.classList.toggle("active");
+              atualizarMotivos();
+            });
+
+            chipsContainer.appendChild(button);
+          });
+
+          atualizarMotivos();
+        };
+
+        const iniciarRedirecionamento = (mensagemInicial) => {
+          submitFeedback.classList.remove("text-muted", "text-danger");
+          submitFeedback.classList.add("text-success");
+          submitFeedback.textContent = `${mensagemInicial} Redirecionando...`;
+          window.location.href = redirectUrl;
+        };
+
+        const atualizarEstrelas = (valor) => {
+          stars.forEach((star) => {
+            const starValue = Number(star.dataset.value);
+            star.classList.toggle("filled", starValue <= valor);
+          });
+        };
+
+        stars.forEach((star) => {
+          star.addEventListener("click", () => {
+            const valor = Number(star.dataset.value);
+            notaInput.value = valor;
+            notaFeedback.textContent = "";
+            renderizarChips(valor);
+            atualizarEstrelas(valor);
+          });
+        });
+
+        renderizarChips(1);
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          if (!notaInput.value) {
+            notaFeedback.textContent = "Selecione uma nota de 1 a 5 estrelas.";
+            modalElement.scrollTop = 0;
           }
 
-          if (segundos <= 0) {
-            clearInterval(intervalo);
-            window.location.href = "https://conecta.recife.pe.gov.br";
+          if (!form.checkValidity() || !notaInput.value) {
+            event.stopPropagation();
+            form.classList.add("was-validated");
+            return;
           }
-        }, 1000);
 
-        console.log("Modal de aviso exibido com contador de redirecionamento.");
+          form.classList.add("was-validated");
+          submitFeedback.textContent = "Enviando sua avaliação...";
+          submitButton.disabled = true;
+          cancelButton.disabled = true;
+
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              body: new FormData(form),
+            });
+
+            if (!response.ok) {
+              throw new Error("Falha ao enviar a avaliação.");
+            }
+
+            iniciarRedirecionamento("Avaliação enviada com sucesso!");
+          } catch (error) {
+            submitFeedback.classList.remove("text-success", "text-muted");
+            submitFeedback.classList.add("text-danger");
+            submitFeedback.textContent =
+              "Não foi possível enviar sua avaliação. Tente novamente em instantes.";
+            submitButton.disabled = false;
+            cancelButton.disabled = false;
+          }
+        });
+
+        cancelButton.addEventListener("click", (event) => {
+          event.preventDefault();
+          submitButton.disabled = true;
+          cancelButton.disabled = true;
+          iniciarRedirecionamento("Você optou por pular a avaliação.");
+        });
       });
     </script>
   </body>
