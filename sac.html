@@ -64,7 +64,7 @@
       .stars {
         display: flex;
         gap: 1.25rem;
-        font-size: 4.75rem;
+        font-size: 5.25rem;
         justify-content: center;
       }
 
@@ -81,6 +81,45 @@
       .star:hover {
         transform: translateY(-3px);
         color: #ffc94a;
+      }
+
+      .star-labels {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.5rem;
+        max-width: 540px;
+        margin: 0 auto;
+        font-weight: 600;
+      }
+
+      .star-labels span {
+        display: block;
+        text-align: center;
+        color: var(--brand-primary);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+      }
+
+      .chip {
+        border: 1px solid #d6dbe6;
+        color: var(--text-strong);
+        background: #fff;
+        border-radius: 999px;
+        padding: 0.45rem 0.9rem;
+        font-weight: 600;
+        transition: all 0.15s ease-in-out;
+      }
+
+      .chip.active {
+        background: #ebf2ff;
+        border-color: #9ec5ff;
+        color: var(--brand-primary);
+        box-shadow: 0 4px 12px rgba(0, 83, 164, 0.15);
       }
     </style>
   </head>
@@ -99,13 +138,11 @@
         <div class="modal-content">
           <div class="modal-body p-4 p-md-5">
             <div class="d-flex flex-column gap-4">
-              <div>
+              <div class="text-center">
                 <h1 class="modal-title h4 mb-1" id="avaliacaoModalLabel">
-                  Avalie o serviço
+                  CNH Recife
                 </h1>
-                <p class="mb-0 subtitle">
-                  Como foi sua experiência com o envio da inscrição?
-                </p>
+                <p class="mb-0 subtitle fs-5">Avalie este serviço</p>
               </div>
 
               <form
@@ -114,7 +151,7 @@
                 action="https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/avaliacao-cnh"
                 method="POST"
               >
-                <div class="text-center">
+                <div class="text-center d-flex flex-column gap-2">
                   <div class="stars" role="radiogroup" aria-label="Nota do serviço">
                     <button
                       type="button"
@@ -157,8 +194,21 @@
                       ★
                     </button>
                   </div>
+                  <div class="star-labels text-uppercase small">
+                    <span>Péssimo</span>
+                    <span>Ruim</span>
+                    <span>Regular</span>
+                    <span>Bom</span>
+                    <span>Excelente</span>
+                  </div>
                   <input type="hidden" name="nota" id="nota" required />
                   <div class="invalid-feedback d-block" id="notaFeedback"></div>
+                </div>
+
+                <div class="text-center">
+                  <p class="fw-bold mb-2" id="perguntaLabel">O que podemos melhorar?</p>
+                  <div class="chips" id="chipsContainer"></div>
+                  <input type="hidden" name="motivos" id="motivos" />
                 </div>
 
                 <div class="row g-3">
@@ -191,7 +241,7 @@
                 <div>
                   <div class="d-flex align-items-center justify-content-between mb-1">
                     <label for="comentario" class="form-label fw-semibold mb-0"
-                      >Comentário</label
+                      >Deixe aqui o seu comentário</label
                     >
                     <small class="text-danger">Obrigatório! Sua sugestão.</small>
                   </div>
@@ -199,7 +249,7 @@
                     class="form-control"
                     id="comentario"
                     name="comentario"
-                    rows="3"
+                    rows="4"
                     placeholder="Comente rapidamente de acordo com a nota escolhida."
                     required
                   ></textarea>
@@ -252,7 +302,110 @@
         const submitFeedback = document.getElementById("submitFeedback");
         const submitButton = document.getElementById("submitButton");
         const cancelButton = document.getElementById("cancelButton");
+        const perguntaLabel = document.getElementById("perguntaLabel");
+        const chipsContainer = document.getElementById("chipsContainer");
+        const motivosInput = document.getElementById("motivos");
         const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
+
+        const feedbackOptions = {
+          1: {
+            pergunta: "O que podemos melhorar?",
+            opcoes: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+              "Informações confusas",
+              "Não consegui resolver",
+              "Difícil de encontrar",
+            ],
+            preSelecionadas: [],
+          },
+          2: {
+            pergunta: "O que podemos melhorar?",
+            opcoes: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+              "Informações confusas",
+              "Não consegui resolver",
+              "Difícil de encontrar",
+            ],
+            preSelecionadas: ["Foi demorado", "Difícil de usar"],
+          },
+          3: {
+            pergunta: "O que podemos melhorar?",
+            opcoes: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+              "Informações confusas",
+              "Não consegui resolver",
+              "Difícil de encontrar",
+            ],
+            preSelecionadas: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+            ],
+          },
+          4: {
+            pergunta: "O que podemos melhorar?",
+            opcoes: [
+              "Foi demorado",
+              "Difícil de usar",
+              "Site/aplicativo não funcionou bem",
+              "Informações confusas",
+              "Não consegui resolver",
+              "Difícil de encontrar",
+            ],
+            preSelecionadas: [],
+          },
+          5: {
+            pergunta: "Do que você gostou?",
+            opcoes: [
+              "Site/aplicativo funcionou bem",
+              "Consegui resolver",
+              "Informações claras",
+              "Foi rápido",
+              "Fácil de usar",
+              "Fácil de encontrar",
+            ],
+            preSelecionadas: [],
+          },
+        };
+
+        const atualizarMotivos = () => {
+          const selecionados = Array.from(
+            chipsContainer.querySelectorAll(".chip.active")
+          ).map((chip) => chip.textContent.trim());
+          motivosInput.value = selecionados.join(", ");
+        };
+
+        const renderizarChips = (valor) => {
+          const config = feedbackOptions[valor] || feedbackOptions[1];
+          perguntaLabel.textContent = config.pergunta;
+          chipsContainer.innerHTML = "";
+
+          config.opcoes.forEach((opcao) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "btn chip";
+            button.textContent = opcao;
+
+            if (config.preSelecionadas.includes(opcao)) {
+              button.classList.add("active");
+            }
+
+            button.addEventListener("click", () => {
+              button.classList.toggle("active");
+              atualizarMotivos();
+            });
+
+            chipsContainer.appendChild(button);
+          });
+
+          atualizarMotivos();
+        };
 
         const atualizarEstrelas = (valor) => {
           stars.forEach((star) => {
@@ -266,9 +419,12 @@
             const valor = Number(star.dataset.value);
             notaInput.value = valor;
             notaFeedback.textContent = "";
+            renderizarChips(valor);
             atualizarEstrelas(valor);
           });
         });
+
+        renderizarChips(1);
 
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
