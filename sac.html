@@ -211,17 +211,26 @@
                 </div>
 
                 <div class="d-flex flex-column flex-sm-row gap-2 mt-2">
-                  <button type="submit" class="btn btn-primary flex-fill">
+                  <button
+                    type="submit"
+                    id="submitButton"
+                    class="btn btn-primary flex-fill"
+                  >
                     Enviar avaliação
                   </button>
                   <button
                     type="button"
+                    id="cancelButton"
                     class="btn btn-outline-secondary flex-fill"
                     data-bs-dismiss="modal"
                   >
                     Cancelar
                   </button>
                 </div>
+                <div
+                  id="submitFeedback"
+                  class="text-center small mt-2 text-muted"
+                ></div>
               </form>
             </div>
           </div>
@@ -244,6 +253,10 @@
         const notaInput = document.getElementById("nota");
         const notaFeedback = document.getElementById("notaFeedback");
         const form = document.getElementById("formAvaliacao");
+        const submitFeedback = document.getElementById("submitFeedback");
+        const submitButton = document.getElementById("submitButton");
+        const cancelButton = document.getElementById("cancelButton");
+        const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
 
         const atualizarEstrelas = (valor) => {
           stars.forEach((star) => {
@@ -261,19 +274,57 @@
           });
         });
 
-        form.addEventListener("submit", (event) => {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
           if (!notaInput.value) {
-            event.preventDefault();
             notaFeedback.textContent = "Selecione uma nota de 1 a 5 estrelas.";
             modalElement.scrollTop = 0;
           }
 
-          if (!form.checkValidity()) {
-            event.preventDefault();
+          if (!form.checkValidity() || !notaInput.value) {
             event.stopPropagation();
+            form.classList.add("was-validated");
+            return;
           }
 
           form.classList.add("was-validated");
+          submitFeedback.textContent = "Enviando sua avaliação...";
+          submitButton.disabled = true;
+          cancelButton.disabled = true;
+
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              body: new FormData(form),
+            });
+
+            if (!response.ok) {
+              throw new Error("Falha ao enviar a avaliação.");
+            }
+
+            let countdown = 5;
+            submitFeedback.classList.remove("text-muted", "text-danger");
+            submitFeedback.classList.add("text-success");
+            submitFeedback.textContent = `Avaliação enviada com sucesso! Redirecionando em ${countdown}s...`;
+
+            const countdownInterval = setInterval(() => {
+              countdown -= 1;
+              submitFeedback.textContent = `Avaliação enviada com sucesso! Redirecionando em ${countdown}s...`;
+
+              if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = redirectUrl;
+              }
+            }, 1000);
+          } catch (error) {
+            submitFeedback.classList.remove("text-success", "text-muted");
+            submitFeedback.classList.add("text-danger");
+            submitFeedback.textContent =
+              "Não foi possível enviar sua avaliação. Tente novamente em instantes.";
+            submitButton.disabled = false;
+            cancelButton.disabled = false;
+          }
         });
       });
     </script>
