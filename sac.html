@@ -25,8 +25,6 @@
       :root {
         --brand-primary: #0053a4;
         --brand-highlight: #00a3ff;
-        --surface: #ffedd4;
-        --surface-strong: #ffffff;
         --text-strong: #1b263b;
         --text-muted: #5b6c8c;
       }
@@ -40,7 +38,6 @@
       body {
         font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont,
           "Segoe UI", sans-serif;
-        background: var(--surface);
         color: var(--text-strong);
         min-height: 100vh;
       }
@@ -66,24 +63,24 @@
 
       .stars {
         display: flex;
-        gap: 1rem;
-        font-size: 4.25rem;
+        gap: 1.25rem;
+        font-size: 4.75rem;
         justify-content: center;
       }
 
       .star {
         cursor: pointer;
-        color: #f2e6c8;
+        color: #e8e6df;
         transition: color 0.15s ease-in-out, transform 0.15s ease-in-out;
       }
 
       .star.filled {
-        color: #f6c343;
+        color: #ffbe3c;
       }
 
       .star:hover {
-        transform: translateY(-2px);
-        color: #ffce3a;
+        transform: translateY(-3px);
+        color: #ffc94a;
       }
     </style>
   </head>
@@ -101,28 +98,24 @@
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
           <div class="modal-body p-4 p-md-5">
-            <div class="d-flex flex-column gap-3">
-              <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <h1 class="modal-title h4" id="avaliacaoModalLabel">
-                    Como foi o atendimento?
-                  </h1>
-                  <p class="mb-0 subtitle">
-                    Avalie nosso serviço e deixe seu comentário para continuarmos
-                    melhorando.
-                  </p>
-                </div>
+            <div class="d-flex flex-column gap-4">
+              <div>
+                <h1 class="modal-title h4 mb-1" id="avaliacaoModalLabel">
+                  Avalie o serviço
+                </h1>
+                <p class="mb-0 subtitle">
+                  Como foi sua experiência com o envio da inscrição?
+                </p>
               </div>
 
               <form
                 id="formAvaliacao"
-                class="d-flex flex-column gap-3"
+                class="d-flex flex-column gap-4"
                 action="https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/avaliacao-cnh"
                 method="POST"
               >
                 <div class="text-center">
-                  <label class="form-label fw-semibold" for="nota">Sua nota</label>
-                  <div class="stars mt-2" role="radiogroup" aria-label="Nota do serviço">
+                  <div class="stars" role="radiogroup" aria-label="Nota do serviço">
                     <button
                       type="button"
                       class="btn btn-link p-0 star"
@@ -169,7 +162,7 @@
                 </div>
 
                 <div class="row g-3">
-                  <div class="col-12">
+                  <div class="col-12 col-md-6">
                     <label for="email" class="form-label fw-semibold">E-mail</label>
                     <input
                       type="email"
@@ -181,7 +174,7 @@
                     />
                     <div class="invalid-feedback">Informe um e-mail válido.</div>
                   </div>
-                  <div class="col-12">
+                  <div class="col-12 col-md-6">
                     <label for="nome" class="form-label fw-semibold">Nome</label>
                     <input
                       type="text"
@@ -196,15 +189,18 @@
                 </div>
 
                 <div>
-                  <label for="comentario" class="form-label fw-semibold"
-                    >Comentário</label
-                  >
+                  <div class="d-flex align-items-center justify-content-between mb-1">
+                    <label for="comentario" class="form-label fw-semibold mb-0"
+                      >Comentário</label
+                    >
+                    <small class="text-danger">Obrigatório! Sua sugestão.</small>
+                  </div>
                   <textarea
                     class="form-control"
                     id="comentario"
                     name="comentario"
                     rows="3"
-                    placeholder="Conte-nos um pouco mais sobre a sua experiência"
+                    placeholder="Comente rapidamente de acordo com a nota escolhida."
                     required
                   ></textarea>
                   <div class="invalid-feedback">Deixe seu comentário.</div>
@@ -212,19 +208,19 @@
 
                 <div class="d-flex flex-column flex-sm-row gap-2 mt-2">
                   <button
-                    type="submit"
-                    id="submitButton"
-                    class="btn btn-primary flex-fill"
-                  >
-                    Enviar avaliação
-                  </button>
-                  <button
                     type="button"
                     id="cancelButton"
                     class="btn btn-outline-secondary flex-fill"
                     data-bs-dismiss="modal"
                   >
-                    Cancelar
+                    Pular
+                  </button>
+                  <button
+                    type="submit"
+                    id="submitButton"
+                    class="btn btn-primary flex-fill"
+                  >
+                    Enviar avaliação
                   </button>
                 </div>
                 <div
