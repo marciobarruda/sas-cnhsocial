@@ -147,6 +147,7 @@
         border-radius: 12px;
         padding: 0.35rem 0.25rem 0.25rem;
         color: var(--text-strong);
+        white-space: pre-wrap;
       }
 
       .result-status {
@@ -260,68 +261,13 @@
       const resultadoLista = document.getElementById("resultadoLista");
       const backButton = document.getElementById("backButton");
 
+      const showStatus = (message, isError = false) => {
+        statusMessage.textContent = message;
+        statusMessage.classList.toggle("text-danger", Boolean(isError));
+      };
+
       const redirectHome = () => {
         window.location.href = "https://cnhsocial.recife.pe.gov.br/";
-      };
-
-      const parseMensagem = (mensagem, fallback) => {
-        const cleaned = (mensagem || "").replace(/\r/g, "");
-        const parts = cleaned
-          .split(/\n+/)
-          .map((line) => line.trim())
-          .filter(Boolean);
-
-        const statusLine = parts.shift() || fallback;
-        const bulletLines = parts
-          .map((line) => line.replace(/^[-–•]\s*/, ""))
-          .filter(Boolean);
-
-        return {
-          statusLine: statusLine || fallback,
-          bulletLines: bulletLines.length ? bulletLines : [statusLine || fallback],
-        };
-      };
-
-      const formatPayload = (inscricao, payloadText) => {
-        const fallbackStatus = `A inscrição ${inscricao} está em processamento.`;
-
-        try {
-          const parsed = JSON.parse(payloadText);
-          if (Array.isArray(parsed) && parsed.length) {
-            const item = parsed[0] || {};
-            const parsedMensagem = parseMensagem(item.mensagem, fallbackStatus);
-            const statusFromPayload =
-              parsedMensagem.statusLine ||
-              (item.status ? `${item.status}${item.inscricao ? ` • ${item.inscricao}` : ""}` : "");
-
-            return {
-              statusLine: statusFromPayload || fallbackStatus,
-              bulletLines: parsedMensagem.bulletLines,
-            };
-          }
-        } catch (error) {
-          // caso não seja JSON, trata pelo texto bruto
-        }
-
-        return payloadText
-          ? parseMensagem(payloadText, fallbackStatus)
-          : {
-              statusLine: fallbackStatus,
-              bulletLines: ["Nenhum detalhe foi retornado para esta inscrição."],
-            };
-      };
-
-      const renderResultado = ({ statusLine, bulletLines }) => {
-        resultadoStatus.textContent = statusLine;
-        resultadoLista.innerHTML = "";
-
-        bulletLines.forEach((line) => {
-          const li = document.createElement("li");
-          li.textContent = line;
-          resultadoLista.appendChild(li);
-        });
-
-        resultadoWrapper.hidden = false;
       };
 
       const postJson = async (url, payload) => {
@@ -380,117 +326,79 @@
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
+        // 1) Sanitiza o CPF e valida tamanho
         const cpfDigits = cpfInput.value.replace(/\D/g, "").slice(0, 11);
 
         if (cpfDigits.length !== 11) {
-          statusMessage.textContent = "CPF inválido. Informe os 11 dígitos.";
-          statusMessage.classList.add("text-danger");
+          showStatus("CPF inválido. Informe os 11 dígitos.", true);
           cpfInput.focus();
           cpfInput.value = cpfDigits;
           return;
         }
 
+        // Limpa estados anteriores
         cpfInput.value = cpfDigits;
         resultadoWrapper.hidden = true;
         resultadoLista.innerHTML = "";
         resultadoStatus.textContent = "";
-        statusMessage.classList.remove("text-danger");
-        statusMessage.textContent = "Consultando inscrição pelo CPF...";
+        showStatus("Consultando inscrição pelo CPF...");
         submitButton.disabled = true;
         spinner.classList.remove("d-none");
 
         try {
+          // 2) Consulta a inscrição pelo CPF informado
           const responseInscricao = await postJson(
             "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-inscricao-por-cpf",
             { cpf: cpfDigits }
           );
 
-          if (!responseInscricao.ok && responseInscricao.status !== 0) {
-            statusMessage.textContent = "Falha ao consultar o CPF.";
-            statusMessage.classList.add("text-danger");
-            renderResultado({
-              statusLine: "Não foi possível obter a inscrição.",
-              bulletLines: [
-                responseInscricao.text || "Resposta vazia ao consultar CPF.",
-                "Tente novamente em instantes.",
-              ],
-            });
-            return;
+          if (!responseInscricao.ok) {
+            throw new Error("Falha ao consultar a inscrição pelo CPF.");
           }
 
-          if (!responseInscricao.ok && responseInscricao.status === 0) {
-            statusMessage.textContent = "Serviço indisponível. Verifique sua conexão.";
-            statusMessage.classList.add("text-danger");
-            renderResultado({
-              statusLine: "Erro de conexão ao consultar CPF.",
-              bulletLines: [
-                "Não foi possível conectar ao serviço de consulta.",
-                "Confirme sua rede e tente novamente.",
-              ],
-            });
-            return;
-          }
-
-          const inscricaoText = responseInscricao.text || "";
-          let inscricao = "";
-
-          try {
-            const parsedInscricao = JSON.parse(inscricaoText);
-            if (Array.isArray(parsedInscricao) && parsedInscricao[0]?.inscricao) {
-              inscricao = String(parsedInscricao[0].inscricao).trim();
-            }
-          } catch (error) {
-            inscricao = inscricaoText.trim();
-          }
+          const inscricaoPayload = JSON.parse(responseInscricao.text || "[]");
+          // Remove qualquer espaço que possa vir junto da inscrição
+          const inscricao = String(inscricaoPayload?.[0]?.inscricao || "")
+            .replace(/\s+/g, "")
+            .trim();
 
           if (!inscricao) {
-            statusMessage.textContent = "Não foi possível obter a inscrição para consulta.";
-            statusMessage.classList.add("text-danger");
-            renderResultado({
-              statusLine: "Falha ao consultar a inscrição pelo CPF.",
-              bulletLines: [inscricaoText || "Resposta vazia ao consultar CPF."],
-            });
-            return;
+            throw new Error("Não foi encontrada inscrição para o CPF informado.");
           }
 
-          statusMessage.textContent = `Consultando inscrição ${inscricao}...`;
+          // 3) Consulta detalhes da inscrição na SE Suite
+          showStatus(`Consultando inscrição ${inscricao}...`);
 
           const responseConsulta = await postJson(
             "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
-            { inscricao }
+            { inscricao: inscricao }
           );
 
-          if (!responseConsulta.ok && responseConsulta.status === 0) {
-            statusMessage.textContent = "Serviço indisponível. Verifique sua conexão.";
-            statusMessage.classList.add("text-danger");
-            renderResultado({
-              statusLine: "Erro de conexão ao consultar a inscrição.",
-              bulletLines: [
-                "Não foi possível conectar ao serviço de consulta.",
-                "Tente novamente em alguns instantes.",
-              ],
-            });
-            return;
-          }
-
-          const payload = responseConsulta.text || "";
           if (!responseConsulta.ok) {
-            statusMessage.textContent = "Consulta concluída com retorno de erro.";
-            statusMessage.classList.add("text-danger");
-          } else {
-            statusMessage.textContent = "Consulta concluída.";
-            statusMessage.classList.remove("text-danger");
+            throw new Error("Não foi possível consultar a inscrição informada.");
           }
 
-          const formatted = formatPayload(inscricao, payload);
-          renderResultado(formatted);
+          const consultaPayload = JSON.parse(responseConsulta.text || "[]");
+          const mensagem = String(consultaPayload?.[0]?.mensagem || "").trim();
+
+          if (!mensagem) {
+            throw new Error("Não foi encontrada inscrição para o CPF informado.");
+          }
+
+          // 4) Exibe mensagem preservando quebras de linha
+          showStatus("Consulta concluída.");
+          resultadoStatus.textContent = mensagem;
+          resultadoLista.innerHTML = "";
+          resultadoWrapper.hidden = false;
         } catch (error) {
-          statusMessage.textContent = "Não foi possível consultar. Verifique a conexão.";
-          statusMessage.classList.add("text-danger");
-          renderResultado({
-            statusLine: "Erro ao consultar.",
-            bulletLines: ["O serviço não pôde ser acessado agora. Tente novamente."],
-          });
+          // Mensagem única para erro em qualquer etapa
+          showStatus(
+            error?.message || "Não foi encontrada inscrição para o CPF informado.",
+            true
+          );
+          resultadoStatus.textContent = "Não foi encontrada inscrição para o CPF informado.";
+          resultadoLista.innerHTML = "";
+          resultadoWrapper.hidden = false;
         } finally {
           submitButton.disabled = false;
           spinner.classList.add("d-none");
