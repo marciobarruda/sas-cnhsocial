@@ -202,7 +202,7 @@
                     name="cpf"
                     inputmode="numeric"
                     minlength="11"
-                    maxlength="14"
+                    maxlength="11"
                     pattern="[0-9]{11}"
                     placeholder="00000000000"
                     aria-describedby="inscricaoPrefix cpfHelp"
@@ -264,28 +264,46 @@
         window.location.href = "https://cnhsocial.recife.pe.gov.br/";
       };
 
-      const formatPayload = (inscricao, payloadText) => {
-        const cleaned = (payloadText || "").replace(/\r/g, "");
-        const lines = cleaned
+      const parseMensagem = (mensagem, fallback) => {
+        const cleaned = (mensagem || "").replace(/\r/g, "");
+        const parts = cleaned
           .split(/\n+/)
           .map((line) => line.trim())
           .filter(Boolean);
 
-        const fallbackStatus = `A inscrição ${inscricao} está em processamento.`;
-        let statusLine = fallbackStatus;
-
-        if (lines.length && /inscri[cç][aã]o/i.test(lines[0])) {
-          statusLine = lines.shift().replace(/^[-–]\s*/, "");
-        }
-
-        const bulletLines = (lines.length ? lines : [])
-          .map((line) => line.replace(/^[-–]\s*/, ""))
+        const statusLine = parts.shift() || fallback;
+        const bulletLines = parts
+          .map((line) => line.replace(/^[-–•]\s*/, ""))
           .filter(Boolean);
 
         return {
-          statusLine,
-          bulletLines: bulletLines.length ? bulletLines : [cleaned || fallbackStatus],
+          statusLine: statusLine || fallback,
+          bulletLines: bulletLines.length ? bulletLines : [statusLine || fallback],
         };
+      };
+
+      const formatPayload = (inscricao, payloadText) => {
+        const fallbackStatus = `A inscrição ${inscricao} está em processamento.`;
+
+        try {
+          const parsed = JSON.parse(payloadText);
+          if (Array.isArray(parsed) && parsed.length) {
+            const item = parsed[0] || {};
+            const parsedMensagem = parseMensagem(item.mensagem, fallbackStatus);
+            const statusFromPayload =
+              parsedMensagem.statusLine ||
+              (item.status ? `${item.status}${item.inscricao ? ` • ${item.inscricao}` : ""}` : "");
+
+            return {
+              statusLine: statusFromPayload || fallbackStatus,
+              bulletLines: parsedMensagem.bulletLines,
+            };
+          }
+        } catch (error) {
+          // caso não seja JSON, trata pelo texto bruto
+        }
+
+        return parseMensagem(payloadText || fallbackStatus, fallbackStatus);
       };
 
       const renderResultado = ({ statusLine, bulletLines }) => {
@@ -310,6 +328,11 @@
           }
         });
         backButton?.addEventListener("click", redirectHome);
+
+        cpfInput.addEventListener("input", () => {
+          const digits = cpfInput.value.replace(/\D/g, "").slice(0, 11);
+          cpfInput.value = digits;
+        });
       });
 
       form.addEventListener("submit", async (event) => {
