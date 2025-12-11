@@ -400,7 +400,7 @@
             inscricao = inscricaoText.trim();
           }
 
-          if (!responseInscricao.ok || !inscricao) {
+          if (!inscricao) {
             statusMessage.textContent = "Não foi possível obter a inscrição para consulta.";
             statusMessage.classList.add("text-danger");
             renderResultado({
@@ -410,7 +410,7 @@
             return;
           }
 
-          statusMessage.textContent = "Consultando detalhes da inscrição...";
+          statusMessage.textContent = `Consultando inscrição ${inscricao}...`;
 
           const responseConsulta = await fetch(
             "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
