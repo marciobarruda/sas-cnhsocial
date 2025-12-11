@@ -177,13 +177,18 @@
                 Aviso importante
               </span>
 
-              <p class="mb-1 mt-2 fs-6 text-muted">
+              <p class="mb-1 mt-2 fs-6 text-muted" id="mensagem-inscricao">
                 <strong>
-                  Já existe uma inscrição ativa para o CPF
+                  Consultando inscrição ativa para o CPF
                   <span id="cpf-mascarado"></span>
-                  no programa CNH Social Recife.
+                  no programa CNH Social Recife...
                 </strong>
               </p>
+
+              <pre
+                id="detalhes-inscricao"
+                class="bg-light border rounded-3 p-3 text-muted small"
+              ></pre>
 
               <p class="contador-texto mb-0">
                 Você será redirecionado para o
@@ -230,6 +235,65 @@
         if (cpfSpan) {
           cpfSpan.textContent = cpfMascarado;
         }
+
+        const mensagemInscricao = document.getElementById("mensagem-inscricao");
+        const detalhesInscricao = document.getElementById("detalhes-inscricao");
+
+        const montarMensagem = (payload) => {
+          const mensagemPrincipal =
+            payload?.mensagem ||
+            payload?.message ||
+            payload?.descricao ||
+            "Inscrição ativa localizada para o CPF informado.";
+
+          const detalhes = payload?.inscricao || payload?.dados || payload;
+
+          return {
+            mensagemPrincipal,
+            detalhesTexto:
+              typeof detalhes === "string"
+                ? detalhes
+                : JSON.stringify(detalhes, null, 2),
+          };
+        };
+
+        const consultarInscricao = async () => {
+          if (!cpfNumeros) {
+            mensagemInscricao.textContent =
+              "Não foi possível identificar o CPF para consulta.";
+            detalhesInscricao.textContent = "";
+            return;
+          }
+
+          try {
+            const resposta = await fetch(
+              "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-inscricao-por-cpf",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ cpfNumeros }),
+              }
+            );
+
+            if (!resposta.ok) {
+              throw new Error(`Erro na consulta: ${resposta.status}`);
+            }
+
+            const payload = await resposta.json();
+            const { mensagemPrincipal, detalhesTexto } = montarMensagem(payload);
+
+            mensagemInscricao.innerHTML = `<strong>${mensagemPrincipal}</strong>`;
+            detalhesInscricao.textContent = detalhesTexto;
+          } catch (erro) {
+            mensagemInscricao.innerHTML =
+              "<strong>Não foi possível recuperar sua inscrição no momento.</strong>";
+            detalhesInscricao.textContent = erro.message;
+          }
+        };
+
+        consultarInscricao();
 
         // Contador com animação
         let segundos = 10;
