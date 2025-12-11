@@ -239,22 +239,32 @@
         const mensagemInscricao = document.getElementById("mensagem-inscricao");
         const detalhesInscricao = document.getElementById("detalhes-inscricao");
 
-        const montarMensagem = (payload) => {
-          const mensagemPrincipal =
+        const extrairMensagemSesuite = (payload) => {
+          if (Array.isArray(payload) && payload.length > 0) {
+            return (
+              payload[0]?.mensagem ||
+              payload[0]?.message ||
+              payload[0]?.descricao ||
+              "Inscrição ativa localizada para o CPF informado."
+            );
+          }
+
+          return (
             payload?.mensagem ||
             payload?.message ||
             payload?.descricao ||
-            "Inscrição ativa localizada para o CPF informado.";
+            "Inscrição ativa localizada para o CPF informado."
+          );
+        };
 
-          const detalhes = payload?.inscricao || payload?.dados || payload;
+        const normalizarDetalhes = (payload) => {
+          const alvo = Array.isArray(payload) && payload.length === 1
+            ? payload[0]
+            : payload;
 
-          return {
-            mensagemPrincipal,
-            detalhesTexto:
-              typeof detalhes === "string"
-                ? detalhes
-                : JSON.stringify(detalhes, null, 2),
-          };
+          return typeof alvo === "string"
+            ? alvo
+            : JSON.stringify(alvo, null, 2);
         };
 
         const consultarInscricao = async () => {
@@ -264,6 +274,32 @@
             detalhesInscricao.textContent = "";
             return;
           }
+
+          const enviarParaSesuite = async (dadosInscricao) => {
+            const respostaSesuite = await fetch(
+              "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dadosInscricao),
+              }
+            );
+
+            if (!respostaSesuite.ok) {
+              throw new Error(`Erro ao consultar SESuite: ${respostaSesuite.status}`);
+            }
+
+            const texto = await respostaSesuite.text();
+            try {
+              return JSON.parse(texto);
+            } catch (erroParsing) {
+              throw new Error(
+                `Retorno do SESuite não é um JSON válido: ${erroParsing.message}`
+              );
+            }
+          };
 
           try {
             const resposta = await fetch(
@@ -281,45 +317,20 @@
               throw new Error(`Erro na consulta: ${resposta.status}`);
             }
 
-            const payload = await resposta.json();
-            const { mensagemPrincipal, detalhesTexto } = montarMensagem(payload);
-
-            const enviarParaSesuite = async (dadosInscricao) => {
-              const respostaSesuite = await fetch(
-                "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(dadosInscricao),
-                }
-              );
-
-              if (!respostaSesuite.ok) {
-                throw new Error(`Erro ao consultar SESuite: ${respostaSesuite.status}`);
-              }
-
-              return respostaSesuite.json();
-            };
-
-            let mensagemComposta = `<strong>${mensagemPrincipal}</strong>`;
-            let detalhesCompostos = detalhesTexto;
+            const payloadInscricao = await resposta.json();
 
             try {
-              const retornoSesuite = await enviarParaSesuite(payload);
-              const { mensagemPrincipal: msgSesuite, detalhesTexto: detalhesSesuite } =
-                montarMensagem(retornoSesuite);
+              const retornoSesuite = await enviarParaSesuite(payloadInscricao);
+              const mensagemPrincipal = extrairMensagemSesuite(retornoSesuite);
+              const detalhesTexto = normalizarDetalhes(retornoSesuite);
 
-              mensagemComposta += `<br /><span class="text-muted small">SESuite: ${msgSesuite}</span>`;
-              detalhesCompostos = `${detalhesTexto}\n\n=== Retorno SESuite ===\n${detalhesSesuite}`;
+              mensagemInscricao.innerHTML = `<strong>${mensagemPrincipal}</strong>`;
+              detalhesInscricao.textContent = detalhesTexto;
             } catch (erroSesuite) {
-              mensagemComposta += `<br /><span class="text-danger small">Não foi possível consultar o SESuite: ${erroSesuite.message}</span>`;
-              detalhesCompostos = `${detalhesTexto}\n\nFalha SESuite: ${erroSesuite.message}`;
+              mensagemInscricao.innerHTML =
+                "<strong>Não foi possível recuperar a situação da inscrição no momento.</strong>";
+              detalhesInscricao.textContent = erroSesuite.message;
             }
-
-            mensagemInscricao.innerHTML = mensagemComposta;
-            detalhesInscricao.textContent = detalhesCompostos;
           } catch (erro) {
             mensagemInscricao.innerHTML =
               "<strong>Não foi possível recuperar sua inscrição no momento.</strong>";
