@@ -1356,18 +1356,6 @@
                 <small class="form-text">Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
                 </div>
               </div>
-              <div class="col-12 col-md-6 d-none" id="autorizacaoAcolhimentoWrapper">
-                <div class="form-check pt-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="sim"
-                    id="autorizacaoAcolhimento"
-                    name="autorizacaoAcolhimento"
-                  />
-                  <label class="form-check-label" for="autorizacaoAcolhimento">Autorizo consulta à base da SAS para confirmação do acolhimento</label>
-                </div>
-              </div>
               <div class="col-12 col-md-6">
                 <div class="form-check">
                   <input
@@ -1415,18 +1403,15 @@
               <div class="col-12 col-md-6">
                 <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   id="rendaFamiliar"
                   name="rendaFamiliar"
-                  min="0"
-                  step="0.01"
+                  inputmode="numeric"
                   placeholder="Valor carregado automaticamente"
                   value="{{ $json.data.rendaPerCapita || "" }}"
                   aria-describedby="rendaHelp"
                   data-required-field="true"
-                  readonly
-                  aria-readonly="true"
                   required
                 />
                 <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
@@ -1558,13 +1543,6 @@
                 </select>
                 <small class="form-text">A identidade das candidatas será preservada conforme edital. Ao marcar esse campo, autorizo confirmação na base de dados da Secretaria da Mulher e da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife.</small>
               </div>
-              <div class="col-12 d-none" id="autorizacaoViolenciaWrapper">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="sim" id="autorizacaoViolencia" name="autorizacaoViolencia" />
-                  <label class="form-check-label" for="autorizacaoViolencia">Autorizo consulta sigilosa nos bancos da Secretaria da Mulher e do CREAS</label>
-                </div>
-                <small class="form-text">Mulheres em situação de violência não devem anexar documentos.</small>
-              </div>
               <div class="col-12">
                 <label for="necessidadesEspeciais" class="form-label">Informações complementares</label>
                 <textarea
@@ -1616,14 +1594,14 @@
               <div class="col-12 col-lg-6 d-none" id="docDependenteWrapper">
                 <div class="file-input-wrapper">
                   <label for="docDependente" class="form-label required">Declaração de tratamento terapêutico contínuo emitida por profissional de saúde (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                  <input class="form-control" type="file" id="docDependente" name="docDependente" accept=".pdf,.jpg,.jpeg,.png" />
                   <div class="file-name" id="docDependenteName"></div>
                 </div>
               </div>
               <div class="col-12 col-lg-6 d-none" id="docDependenteVinculoWrapper">
                 <div class="file-input-wrapper">
                   <label for="docDependenteVinculo" class="form-label required">Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial (PDF/JPG/PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png,.webp" />
+                  <input class="form-control" type="file" id="docDependenteVinculo" name="docDependenteVinculo" accept=".pdf,.jpg,.jpeg,.png" />
                   <div class="file-name" id="docDependenteVinculoName"></div>
                 </div>
               </div>
@@ -2158,6 +2136,27 @@
       const dataAtualizacaoInput = document.getElementById("dataAtualizacaoCadunico");
       const tempoAtualizacaoInput = document.getElementById("tempoAtualizacaoCadunico");
       const cepStatus = document.getElementById("cepStatus");
+
+      if (numeroInput) {
+        const sanitizeNumero = () => {
+          const rawValue = numeroInput.value || "";
+          const trimmed = rawValue.trim();
+          if (!trimmed) {
+            numeroInput.value = "";
+            return;
+          }
+          if (/^s\/?n$/i.test(trimmed)) {
+            numeroInput.value = "S/N";
+            return;
+          }
+          const onlyDigits = trimmed.replace(/\D/g, "");
+          const normalized = onlyDigits.replace(/^0+/, "");
+          numeroInput.value = normalized;
+        };
+        numeroInput.addEventListener("input", sanitizeNumero);
+        numeroInput.addEventListener("blur", sanitizeNumero);
+        sanitizeNumero();
+      }
       let enderecoEdicaoAtiva = false;
 
       const escapeSelector = (value) => {
@@ -2421,6 +2420,47 @@
         updateSubmitState();
       };
 
+      const formatCurrencyBRL = (value) => {
+        const digits = (value || "").toString().replace(/\D/g, "");
+        if (!digits) return "";
+        const numberValue = Number.parseInt(digits, 10) / 100;
+        return numberValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+      };
+
+      const applyCurrencyMask = (input) => {
+        if (!input) return;
+        const handleCurrencyInput = () => {
+          const formatted = formatCurrencyBRL(input.value);
+          input.value = formatted;
+        };
+        input.addEventListener("input", handleCurrencyInput);
+        input.addEventListener("blur", handleCurrencyInput);
+        handleCurrencyInput();
+      };
+
+      const buildProgramasSociaisDisplay = (rawValue) => {
+        const rawString = (rawValue || "").toString().trim();
+        const normalized = rawString.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        const hasProgramFromComma = normalized.startsWith("sim,");
+        const programFromComma = hasProgramFromComma ? rawString.split(",").slice(1).join(",").trim() : "";
+        const programName = programFromComma || (!["", "sim", "s", "nao", "não"].includes(normalized) ? rawString : "");
+        const isSim = normalized === "sim" || normalized === "s" || hasProgramFromComma || Boolean(programName);
+        const displayValue = isSim ? (programName ? `Sim, ${programName}` : "Sim") : (["nao", "não"].includes(normalized) ? "Não" : rawString);
+        return { displayValue, programName };
+      };
+
+      const getProgramasSociaisSubmissionValue = () => {
+        const input = document.getElementById("programasSociais");
+        if (!input) return null;
+        const currentValue = (input.value || "").trim();
+        const normalized = currentValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        const programName = (input.dataset.programName || "").trim();
+        if (normalized.startsWith("sim")) {
+          return programName ? `SIM, ${programName}` : "SIM";
+        }
+        return currentValue;
+      };
+
       const addFileNameListener = (inputId, displayId) => {
         const input = document.getElementById(inputId);
         const display = document.getElementById(displayId);
@@ -2457,21 +2497,17 @@
         toggleFileSection(ativo, "docResponsavelWrapper");
       });
 
-      const vitimaViolencia = document.getElementById("vitimaViolencia");
-      vitimaViolencia.addEventListener("change", () => {
-        toggleFileSection(vitimaViolencia.value === "sim", "autorizacaoViolenciaWrapper");
-      });
-
-      const acolhimento = document.getElementById("acolhimento");
-      acolhimento.addEventListener("change", () => {
-        toggleFileSection(acolhimento.checked, "autorizacaoAcolhimentoWrapper");
-      });
-
       const dependenteTratamento = document.getElementById("dependenteTratamento");
-      dependenteTratamento.addEventListener("change", () => {
+      const updateDependenteTratamento = () => {
         toggleFileSection(dependenteTratamento.checked, "docDependenteWrapper");
         toggleFileSection(dependenteTratamento.checked, "docDependenteVinculoWrapper");
-      });
+        const dependenteFile = document.getElementById("docDependente");
+        if (dependenteFile) {
+          dependenteFile.required = dependenteTratamento.checked;
+        }
+      };
+      dependenteTratamento.addEventListener("change", updateDependenteTratamento);
+      updateDependenteTratamento();
 
       const situacaoTrabalhoSelect = document.getElementById("situacaoTrabalho");
       if (situacaoTrabalhoSelect) {
@@ -2953,8 +2989,6 @@
         "#docDependente": "Declaração de tratamento terapêutico contínuo",
         "#docDependenteVinculo": "Comprovação de vínculo do dependente",
         "#docTrabalhoAplicativo": "Comprovante de trabalho por aplicativo",
-        "#autorizacaoViolencia": "Autorização para consulta sigilosa",
-        "#autorizacaoAcolhimento": "Autorização para consulta do acolhimento",
         "#numeroCnh": "Número da CNH",
         "#validadeCnh": "Validade da CNH",
         "#cnhArquivo": "Arquivo da CNH",
@@ -3412,8 +3446,12 @@
           const pontos = Number.parseInt(prefillValues.composicaoFamiliar, 10);
           pontuacaoSpan.textContent = Number.isFinite(pontos) ? `${pontos} ponto${pontos === 1 ? "" : "s"}` : "—";
         }
-        const programasValue = (prefillValues.programasSociais || "").toString().toLowerCase();
-        setTextValue("programasSociais", programasValue ? (programasValue === "sim" ? "Sim" : "Não") : "");
+        const programasField = document.getElementById("programasSociais");
+        if (programasField) {
+          const programasInfo = buildProgramasSociaisDisplay(prefillValues.programasSociais);
+          programasField.value = programasInfo.displayValue;
+          programasField.dataset.programName = programasInfo.programName || "";
+        }
         preencherCidadePorCepSeNecessario();
 
         if (validation) {
@@ -3484,8 +3522,8 @@
           .addField("#rendaFamiliar", [
             { rule: "required", errorMessage: "Informe a renda familiar" },
             {
-              validator: (value) => value !== "" && !Number.isNaN(parseFloat(value)) && parseFloat(value) >= 0,
-              errorMessage: "Valor inválido",
+              validator: (value) => (value || "").toString().replace(/\D/g, "").length > 0,
+              errorMessage: "Informe um valor válido",
             },
           ])
           .addField("#rendaPerCapitaAtualizada", [
@@ -3565,6 +3603,19 @@
             message,
           });
         };
+        const validateDependenteFile = (input, selector) => {
+          const file = input?.files?.[0];
+          if (!file) return true;
+          const allowedExtensions = [".pdf", ".jpg", ".jpeg", ".png"];
+          const fileName = file.name?.toLowerCase() || "";
+          const hasValidExtension = allowedExtensions.some((ext) => fileName.endsWith(ext));
+          const hasValidSize = file.size <= 5 * 1024 * 1024;
+          if (!hasValidExtension || !hasValidSize) {
+            registerError(selector, "Formato ou tamanho inválido (máx. 5 MB)", input);
+            return false;
+          }
+          return true;
+        };
         const cpfDigits = (cpfInput.value || "").replace(/\D/g, "");
         if (cpfDigits && cpfDigits.length === 11 && !cpfValidator(cpfInput.value || "")) {
           registerError("#cpf", "CPF inválido", cpfInput);
@@ -3586,12 +3637,6 @@
             }
           });
         }
-        if (acolhimento.checked) {
-          const autorizacao = document.getElementById("autorizacaoAcolhimento");
-          if (!autorizacao?.checked) {
-            registerError("#autorizacaoAcolhimento", "Autorize a consulta na base da SAS", autorizacao);
-          }
-        }
         if (dependenteTratamento.checked) {
           [
             ["#docDependente", "Anexe a declaração de tratamento", document.getElementById("docDependente")],
@@ -3599,6 +3644,8 @@
           ].forEach(([selector, message, element]) => {
             if (element && !element.files.length) {
               registerError(selector, message, element);
+            } else if (element) {
+              validateDependenteFile(element, selector);
             }
           });
         }
@@ -3613,12 +3660,6 @@
           const docAplicativo = document.getElementById("docTrabalhoAplicativo");
           if (!docAplicativo?.files.length) {
             registerError("#docTrabalhoAplicativo", "Anexe o comprovante da atividade", docAplicativo);
-          }
-        }
-        if (vitimaViolencia.value === "sim") {
-          const consentimentoViolencia = document.getElementById("autorizacaoViolencia");
-          if (!consentimentoViolencia?.checked) {
-            registerError("#autorizacaoViolencia", "Autorize a consulta sigilosa", consentimentoViolencia);
           }
         }
         const emailValue = (emailInput?.value || "").trim();
@@ -3689,7 +3730,18 @@
           return false;
         }
 
+        const programasSociaisValor = getProgramasSociaisSubmissionValue();
+        if (programasSociaisValor !== null) {
+          const programasField = document.getElementById("programasSociais");
+          if (programasField) {
+            programasField.value = programasSociaisValor;
+          }
+        }
+
         const formData = new FormData(form);
+        if (programasSociaisValor !== null) {
+          formData.set("programasSociais", programasSociaisValor);
+        }
         const data = {};
         formData.forEach((value, key) => {
           if (value instanceof File) {
@@ -3744,8 +3796,6 @@
           "cnhNumeroWrapper",
           "cnhValidadeWrapper",
           "cnhArquivoWrapper",
-          "autorizacaoViolenciaWrapper",
-          "autorizacaoAcolhimentoWrapper",
         ].forEach((id) => {
           toggleFileSection(false, id);
         });
@@ -3803,6 +3853,7 @@
       enforceEmailConfirmationConsistency();
 
       applyPrefillValues();
+      applyCurrencyMask(document.getElementById("rendaFamiliar"));
       updateAgeFieldFromBirthdate();
       updateTempoAtualizacaoField();
       updateSubmitState();
