@@ -329,9 +329,29 @@
         });
         backButton?.addEventListener("click", redirectHome);
 
-        cpfInput.addEventListener("input", () => {
+        const sanitizeCpf = () => {
           const digits = cpfInput.value.replace(/\D/g, "").slice(0, 11);
           cpfInput.value = digits;
+        };
+
+        cpfInput.addEventListener("input", sanitizeCpf);
+
+        cpfInput.addEventListener("keydown", (event) => {
+          const allowedKeys = [
+            "Backspace",
+            "Delete",
+            "Tab",
+            "ArrowLeft",
+            "ArrowRight",
+            "Home",
+            "End",
+          ];
+
+          if (allowedKeys.includes(event.key)) return;
+
+          if (!/^[0-9]$/.test(event.key) || cpfInput.value.length >= 11) {
+            event.preventDefault();
+          }
         });
       });
 
@@ -368,15 +388,24 @@
             }
           );
 
-          const inscricaoPayload = await responseInscricao.text();
-          const inscricao = inscricaoPayload.trim();
+          const inscricaoText = await responseInscricao.text();
+          let inscricao = "";
+
+          try {
+            const parsedInscricao = JSON.parse(inscricaoText);
+            if (Array.isArray(parsedInscricao) && parsedInscricao[0]?.inscricao) {
+              inscricao = String(parsedInscricao[0].inscricao).trim();
+            }
+          } catch (error) {
+            inscricao = inscricaoText.trim();
+          }
 
           if (!responseInscricao.ok || !inscricao) {
             statusMessage.textContent = "Não foi possível obter a inscrição para consulta.";
             statusMessage.classList.add("text-danger");
             renderResultado({
               statusLine: "Falha ao consultar a inscrição pelo CPF.",
-              bulletLines: [inscricaoPayload || "Resposta vazia ao consultar CPF."],
+              bulletLines: [inscricaoText || "Resposta vazia ao consultar CPF."],
             });
             return;
           }
@@ -384,7 +413,7 @@
           statusMessage.textContent = "Consultando detalhes da inscrição...";
 
           const responseConsulta = await fetch(
-            "https://n8n-dev-conectarecife.recife.pe.gov.br/webhook-test/consultar-cnh-sesuite",
+            "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
             {
               method: "POST",
               headers: {
