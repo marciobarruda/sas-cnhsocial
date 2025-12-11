@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SAS • CNH Social</title>
+
+    <link
+      rel="icon"
+      href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --brand-primary: #0053a4;
+        --brand-secondary: #003a73;
+        --brand-highlight: #00a3ff;
+        --surface: #f4f7fb;
+        --surface-strong: #ffffff;
+        --border-color: #d0d7e2;
+        --text-strong: #1b263b;
+        --text-muted: #5b6c8c;
+        --shadow-strong: 0 14px 30px rgba(0, 35, 79, 0.15);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: var(--surface);
+        color: var(--text-strong);
+        min-height: 100vh;
+      }
+
+      .modal-backdrop-custom {
+        background: radial-gradient(
+          circle at top,
+          rgba(0, 83, 164, 0.18),
+          rgba(0, 0, 0, 0.55)
+        );
+      }
+
+      .card-programa {
+        border: 1px solid rgba(0, 83, 164, 0.08);
+        background: var(--surface-strong);
+        box-shadow: 0 16px 34px rgba(0, 45, 98, 0.18);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--text-strong);
+        margin-bottom: 0;
+      }
+
+      .section-title::before {
+        content: "";
+        display: inline-block;
+        width: 32px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--brand-highlight);
+      }
+
+      .institucional-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 0.3rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(0, 83, 164, 0.06);
+        color: var(--brand-secondary);
+      }
+
+      .institucional-pill-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--brand-highlight);
+      }
+
+      .contador-texto {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+      }
+
+      .modal.fade .modal-dialog {
+        transform: translateY(12px) scale(0.98);
+        opacity: 0;
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+      }
+
+      .modal.fade.show .modal-dialog {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+
+      .contador-numero {
+        font-weight: 700;
+        color: var(--brand-primary);
+        display: inline-block;
+      }
+
+      .contador-pulse {
+        animation: contadorPulse 0.35s ease-out;
+      }
+
+      @keyframes contadorPulse {
+        0% {
+          transform: scale(1);
+        }
+        40% {
+          transform: scale(1.25);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .modal-logo {
+        max-width: 120px;
+        height: auto;
+        display: inline-block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div
+      class="modal fade"
+      id="avisoModal"
+      tabindex="-1"
+      aria-labelledby="avisoModalLabel"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 card-programa">
+          <div class="modal-body p-4 p-md-5">
+            <div class="d-flex flex-column gap-3">
+              <div class="text-center mb-2">
+                <img
+                  src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+                  alt="CNH Social Recife"
+                  class="modal-logo"
+                />
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <h1 class="section-title" id="avisoModalLabel">
+                  Inscrição já encontrada
+                </h1>
+              </div>
+
+              <span class="institucional-pill">
+                <span class="institucional-pill-dot"></span>
+                Aviso importante
+              </span>
+
+              <p class="mb-1 mt-2 fs-6 text-muted">
+                <strong>
+                  Já existe uma inscrição ativa para o CPF
+                  <span id="cpf-mascarado"></span>
+                  no programa CNH Social Recife.
+                </strong>
+              </p>
+
+              <p class="contador-texto mb-0">
+                Você será redirecionado para o
+                <strong>portal da CNH Social Recife</strong>
+                em
+                <span class="contador-numero" id="contador">10</span>
+                segundos.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const modalElement = document.getElementById("avisoModal");
+        const modal = new bootstrap.Modal(modalElement, {
+          backdrop: "static",
+          keyboard: false,
+        });
+
+        modalElement.addEventListener("shown.bs.modal", () => {
+          modalElement.classList.add("show");
+        });
+
+        modal.show();
+
+        // CPF vindo do n8n
+        const cpfBruto = "{{ $('Recupera dados').item.json.preferred_username }}";
+        const cpfNumeros = (cpfBruto || "").replace(/\D/g, "");
+        let cpfMascarado = "não identificado";
+
+        // Máscara LGPD: mostra 3 primeiros e 2 últimos dígitos (ex.: 123.***.***-45)
+        if (cpfNumeros.length === 11) {
+          const primeiros3 = cpfNumeros.slice(0, 3);
+          const ultimos2 = cpfNumeros.slice(-2);
+          cpfMascarado = `${primeiros3}.***.***-${ultimos2}`;
+        }
+
+        const cpfSpan = document.getElementById("cpf-mascarado");
+        if (cpfSpan) {
+          cpfSpan.textContent = cpfMascarado;
+        }
+
+        // Contador com animação
+        let segundos = 10;
+        const contadorSpan = document.getElementById("contador");
+
+        const intervalo = setInterval(() => {
+          segundos--;
+
+          if (segundos >= 0) {
+            contadorSpan.textContent = segundos;
+
+            contadorSpan.classList.remove("contador-pulse");
+            void contadorSpan.offsetWidth; // força reflow pra reiniciar animação
+            contadorSpan.classList.add("contador-pulse");
+          }
+
+          if (segundos <= 0) {
+            clearInterval(intervalo);
+            window.location.href = "https://cnhsocial.recife.pe.gov.br/";
+          }
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
