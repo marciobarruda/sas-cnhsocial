@@ -100,11 +100,6 @@
         background: var(--brand-highlight);
       }
 
-      .contador-texto {
-        font-size: 0.95rem;
-        color: var(--text-muted);
-      }
-
       .modal-dialog.modal-lg {
         max-width: 760px;
       }
@@ -120,27 +115,6 @@
         opacity: 1;
       }
 
-      .contador-numero {
-        font-weight: 700;
-        color: var(--brand-primary);
-        display: inline-block;
-      }
-
-      .contador-pulse {
-        animation: contadorPulse 0.35s ease-out;
-      }
-
-      @keyframes contadorPulse {
-        0% {
-          transform: scale(1);
-        }
-        40% {
-          transform: scale(1.25);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
       .modal-logo {
         max-width: 120px;
         height: auto;
@@ -189,18 +163,11 @@
                 </strong>
               </p>
 
-              <pre
-                id="detalhes-inscricao"
-                class="bg-light border rounded-3 p-3 text-muted small"
-              ></pre>
-
-              <p class="contador-texto mb-0">
-                Você será redirecionado para o
-                <strong>portal da CNH Social Recife</strong>
-                em
-                <span class="contador-numero" id="contador">15</span>
-                segundos.
-              </p>
+              <div class="d-flex justify-content-end gap-2 mt-2">
+                <button class="btn btn-outline-secondary" id="fechar-modal">
+                  Fechar
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -241,7 +208,6 @@
         }
 
         const mensagemInscricao = document.getElementById("mensagem-inscricao");
-        const detalhesInscricao = document.getElementById("detalhes-inscricao");
 
         const sanitizeHtml = (texto) =>
           texto
@@ -281,21 +247,10 @@
           );
         };
 
-        const normalizarDetalhes = (payload) => {
-          const alvo = Array.isArray(payload) && payload.length === 1
-            ? payload[0]
-            : payload;
-
-          return typeof alvo === "string"
-            ? alvo
-            : JSON.stringify(alvo, null, 2);
-        };
-
         const consultarInscricao = async () => {
           if (!cpfNumeros) {
             mensagemInscricao.textContent =
               "Não foi possível identificar o CPF para consulta.";
-            detalhesInscricao.textContent = "";
             return;
           }
 
@@ -344,46 +299,28 @@
             try {
               const retornoSesuite = await enviarParaSesuite(payloadInscricao);
               const mensagemPrincipal = extrairMensagemSesuite(retornoSesuite);
-              const detalhesTexto = normalizarDetalhes(retornoSesuite);
 
               const mensagemFormatada = formatarMarkdownSimples(mensagemPrincipal);
 
               mensagemInscricao.innerHTML = `<strong>${mensagemFormatada}</strong>`;
-              detalhesInscricao.textContent = detalhesTexto;
             } catch (erroSesuite) {
               mensagemInscricao.innerHTML =
                 "<strong>Não foi possível recuperar a situação da inscrição no momento.</strong>";
-              detalhesInscricao.textContent = erroSesuite.message;
             }
           } catch (erro) {
             mensagemInscricao.innerHTML =
               "<strong>Não foi possível recuperar sua inscrição no momento.</strong>";
-            detalhesInscricao.textContent = erro.message;
           }
         };
 
         consultarInscricao();
 
-        // Contador com animação
-        let segundos = 15;
-        const contadorSpan = document.getElementById("contador");
-
-        const intervalo = setInterval(() => {
-          segundos--;
-
-          if (segundos >= 0) {
-            contadorSpan.textContent = segundos;
-
-            contadorSpan.classList.remove("contador-pulse");
-            void contadorSpan.offsetWidth; // força reflow pra reiniciar animação
-            contadorSpan.classList.add("contador-pulse");
-          }
-
-          if (segundos <= 0) {
-            clearInterval(intervalo);
+        const fecharBtn = document.getElementById("fechar-modal");
+        if (fecharBtn) {
+          fecharBtn.addEventListener("click", () => {
             window.location.href = "https://cnhsocial.recife.pe.gov.br/";
-          }
-        }, 1000);
+          });
+        }
       });
     </script>
   </body>
