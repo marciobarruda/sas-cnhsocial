@@ -202,6 +202,7 @@
             <i class="bi bi-speedometer2 me-1"></i> Painel Dinâmico
           </span>
           <h1 class="fw-bold display-5 mb-2">CNH Recife</h1>
+          <div id="saudacao" class="text-info fw-semibold mb-2"></div>
           <p class="fs-5 text-white-50 mb-3">Monitoramento em tempo real das inscrições, perfis socioeconômicos e etapas de atendimento.</p>
           <div class="d-flex flex-wrap gap-2">
             <span class="chip"><i class="bi bi-broadcast-pin me-1"></i> Dados via webhook</span>
@@ -379,6 +380,24 @@
           ? part
           : part.charAt(0).toLocaleUpperCase('pt-BR') + part.slice(1))
         .join('');
+    };
+
+    const normalizeName = (name) => {
+      const safe = String(name ?? '').trim();
+      if (!safe) return '';
+      return safe
+        .toLocaleLowerCase('pt-BR')
+        .split(/\s+/)
+        .filter(Boolean)
+        .map(part => part.charAt(0).toLocaleUpperCase('pt-BR') + part.slice(1))
+        .join(' ');
+    };
+
+    const greetingByHour = () => {
+      const hour = Number(new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Recife', hour: '2-digit', hour12: false }).format(new Date()));
+      if (hour < 12) return 'Bom dia';
+      if (hour < 18) return 'Boa tarde';
+      return 'Boa noite';
     };
 
     const isTotalsObject = (item = {}) => {
@@ -593,6 +612,16 @@
     let currentData = [];
     let refreshTimer = null;
 
+    const setGreeting = (username) => {
+      const target = document.getElementById('saudacao');
+      const formatted = normalizeName(username);
+      if (!formatted) {
+        target.textContent = '';
+        return;
+      }
+      target.textContent = `${greetingByHour()}, ${formatted}.`;
+    };
+
     const startAutoRefresh = () => {
       if (refreshTimer) clearInterval(refreshTimer);
       refreshTimer = setInterval(loadData, 180000);
@@ -653,6 +682,7 @@
         const usuario = document.getElementById('usuario').value.trim();
         const senha = document.getElementById('senha').value;
         await authenticate(usuario, senha);
+        setGreeting(usuario);
         document.getElementById('loginScreen').classList.add('d-none');
         document.getElementById('dashboardApp').classList.remove('d-none');
         document.getElementById('refreshBtn').disabled = false;
