@@ -105,6 +105,10 @@
         color: var(--text-muted);
       }
 
+      .modal-dialog.modal-lg {
+        max-width: 760px;
+      }
+
       .modal.fade .modal-dialog {
         transform: translateY(12px) scale(0.98);
         opacity: 0;
@@ -155,7 +159,7 @@
       data-bs-backdrop="static"
       data-bs-keyboard="false"
     >
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 rounded-4 card-programa">
           <div class="modal-body p-4 p-md-5">
             <div class="d-flex flex-column gap-3">
@@ -239,7 +243,27 @@
         const mensagemInscricao = document.getElementById("mensagem-inscricao");
         const detalhesInscricao = document.getElementById("detalhes-inscricao");
 
+        const sanitizeHtml = (texto) =>
+          texto
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+
+        const formatarMarkdownSimples = (texto) => {
+          const seguro = sanitizeHtml(texto);
+          return seguro
+            .replace(/^\s*[-•]\s+/gm, "• ")
+            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\n/g, "<br>");
+        };
+
         const extrairMensagemSesuite = (payload) => {
+          if (typeof payload === "string") {
+            return payload.trim();
+          }
+
           if (Array.isArray(payload) && payload.length > 0) {
             return (
               payload[0]?.mensagem ||
@@ -294,10 +318,8 @@
             const texto = await respostaSesuite.text();
             try {
               return JSON.parse(texto);
-            } catch (erroParsing) {
-              throw new Error(
-                `Retorno do SESuite não é um JSON válido: ${erroParsing.message}`
-              );
+            } catch (_erroParsing) {
+              return texto.trim();
             }
           };
 
@@ -324,7 +346,9 @@
               const mensagemPrincipal = extrairMensagemSesuite(retornoSesuite);
               const detalhesTexto = normalizarDetalhes(retornoSesuite);
 
-              mensagemInscricao.innerHTML = `<strong>${mensagemPrincipal}</strong>`;
+              const mensagemFormatada = formatarMarkdownSimples(mensagemPrincipal);
+
+              mensagemInscricao.innerHTML = `<strong>${mensagemFormatada}</strong>`;
               detalhesInscricao.textContent = detalhesTexto;
             } catch (erroSesuite) {
               mensagemInscricao.innerHTML =
