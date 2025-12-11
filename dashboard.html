@@ -615,6 +615,11 @@
     const setGreeting = (username) => {
       const target = document.getElementById('saudacao');
       const formatted = normalizeName(username);
+      const lowered = formatted.toLocaleLowerCase('pt-BR');
+      if (lowered === 'oto') {
+        target.textContent = 'Oto, você é um fofo! 😍';
+        return;
+      }
       if (!formatted) {
         target.textContent = '';
         return;
