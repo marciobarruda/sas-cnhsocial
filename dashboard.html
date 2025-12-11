@@ -144,10 +144,56 @@
     }
     .bg-info { background-color: var(--brand-highlight) !important; }
     .bg-success { background-color: var(--brand-amber) !important; }
+
+    /* Login overlay */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(0, 200, 240, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 12%, rgba(255, 184, 28, 0.16), transparent 28%),
+        linear-gradient(160deg, rgba(7, 18, 42, 0.95), rgba(13, 33, 80, 0.96));
+      z-index: 2000;
+    }
+    .login-card {
+      width: min(420px, 90vw);
+      background: rgba(0, 44, 102, 0.9);
+      border: 1px solid rgba(0, 200, 240, 0.3);
+      box-shadow: 0 24px 65px rgba(3, 18, 52, 0.48);
+      backdrop-filter: blur(12px);
+    }
+    .login-logo { max-height: 72px; }
   </style>
 </head>
 <body>
-  <div class="container py-4">
+  <div id="loginScreen" class="login-overlay">
+    <div class="login-card rounded-4 p-4">
+      <div class="text-center mb-3">
+        <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" alt="Logotipo CNH Recife" class="login-logo mb-3">
+        <h4 class="fw-bold mb-1">Acesso restrito</h4>
+        <p class="text-white-50 mb-0">Informe usuário e senha para entrar no painel</p>
+      </div>
+      <form id="loginForm" class="d-grid gap-3">
+        <div>
+          <label class="form-label text-white-50">Usuário</label>
+          <input type="text" id="usuario" class="form-control search-input" required autocomplete="username">
+        </div>
+        <div>
+          <label class="form-label text-white-50">Senha</label>
+          <input type="password" id="senha" class="form-control search-input" required autocomplete="current-password">
+        </div>
+        <div class="d-grid gap-2">
+          <button type="submit" id="loginButton" class="btn btn-outline-info">Entrar</button>
+          <div id="loginStatus" class="text-danger small"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboardApp" class="container py-4 d-none">
     <header class="hero glass rounded-4 p-4 p-md-5 mb-4 gradient-border">
       <div class="d-flex justify-content-between flex-column flex-md-row gap-3 align-items-start align-items-md-center">
         <div>
@@ -165,7 +211,7 @@
           </div>
         </div>
         <div class="text-end">
-          <button id="refreshBtn" class="btn btn-outline-info mb-2">
+          <button id="refreshBtn" class="btn btn-outline-info mb-2" disabled>
             <i class="bi bi-arrow-repeat me-1"></i> Atualizar dados
           </button>
           <div class="small-label">Última atualização:<br><span id="lastSync">--</span></div>
@@ -307,6 +353,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
     const endpoint = 'https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/4d5f64e7-0198-4dce-a44d-57e2acad6048-dashboardCNHRecife';
+    const authEndpoint = 'https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/acesso-dashboard';
     const sampleData = [
       {"cpf":"09100800465","nome_completo":"MARIA JESSYKA LEONEL DA SILVA","nome_social":null,"data_nascimento":"1991-01-09","idade":33,"nis_pis":"12345678901","data_atualizacao":"2025-02-10","tempo_desde_atualizacao":"10 dias","genero":"Feminino","telefone_whatsapp":"(81) 98888-0001","email":"maria.jessyka@example.com","canal_contato_preferencial":"WhatsApp","cep":"51020000","logradouro":"Rua das Flores","numero":"120","complemento":"Apto 302","bairro":"Boa Viagem","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Não","situacao_trabalho":"Trabalho informal","mulher_chefe_familia":"Sim","acolhimento_institucional":"Não","dependente_tratamento":"Não","renda_per_capita":650.00,"raca_cor":"Parda","pessoa_preta_parda":"Sim","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Não","mae_pai_atipico":"Não","vitima_violencia_domestica":"Não","necessidades_especificas":null,"categoria_desejada":"B","validade_cnh":"2028-05-15","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Autorizo","renda_familiar":2600.00,"analise_socio_ocupacional":"Baixa renda, chefe de família","composicao_familiar":4,"participacao_programas_sociais":"Bolsa Família","recinscricao":"Não","possui_recurso_inscricao":"Não","trabalhador_app":"Não"},
       {"cpf":"22233344455","nome_completo":"JOÃO CARLOS DE ALMEIDA","nome_social":null,"data_nascimento":"1987-07-21","idade":37,"nis_pis":"98765432100","data_atualizacao":"2025-02-12","tempo_desde_atualizacao":"8 dias","genero":"Masculino","telefone_whatsapp":"(81) 98989-0002","email":"joao.almeida@example.com","canal_contato_preferencial":"E-mail","cep":"52011000","logradouro":"Avenida Norte","numero":"1500","complemento":null,"bairro":"Casa Amarela","cidade":"Recife","uf":"PE","endereco_diferente_cadunico":"Sim","situacao_trabalho":"Trabalhador com carteira assinada","mulher_chefe_familia":"Não","acolhimento_institucional":"Não","dependente_tratamento":"Sim","renda_per_capita":1200.50,"raca_cor":"Branca","pessoa_preta_parda":"Não","pessoa_indigena":"Não","pessoa_trans":"Não","egresso_socioeducativo":"Não","pessoa_quilombola":"Não","pessoa_situacao_rua":"Não","pessoa_pcd":"Sim","mae_pai_atipico":"Sim","vitima_violencia_domestica":"Não","necessidades_especificas":"Dependente em tratamento","categoria_desejada":"D","validade_cnh":"2027-09-30","termo_lgpd":"Aceito","declaracao_veracidade":"Confirmado","autorizacao_imagem":"Não autorizo","renda_familiar":4802.00,"analise_socio_ocupacional":"Renda estável, dependente PCD","composicao_familiar":4,"participacao_programas_sociais":"BPC","recinscricao":"Não","possui_recurso_inscricao":"Não","trabalhador_app":"Não"},
@@ -544,6 +591,12 @@
     };
 
     let currentData = [];
+    let refreshTimer = null;
+
+    const startAutoRefresh = () => {
+      if (refreshTimer) clearInterval(refreshTimer);
+      refreshTimer = setInterval(loadData, 180000);
+    };
 
     const hydrate = (data) => {
       const { records, totals } = normalizePayload(data);
@@ -572,8 +625,45 @@
 
     document.getElementById('refreshBtn').addEventListener('click', loadData);
 
-    loadData();
-    setInterval(loadData, 180000);
+    const setLoginLoading = (loading) => {
+      const btn = document.getElementById('loginButton');
+      btn.disabled = loading;
+      btn.innerHTML = loading
+        ? '<span class="spinner-border spinner-border-sm me-1"></span>Validando...'
+        : 'Entrar';
+    };
+
+    const authenticate = async (usuario, senha) => {
+      const response = await fetch(authEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, senha })
+      });
+      const text = (await response.text()).trim();
+      if (response.ok && text.toLowerCase() === 'login bem sucedido') return true;
+      throw new Error(text || 'Credenciais inválidas');
+    };
+
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = document.getElementById('loginStatus');
+      status.textContent = '';
+      setLoginLoading(true);
+      try {
+        const usuario = document.getElementById('usuario').value.trim();
+        const senha = document.getElementById('senha').value;
+        await authenticate(usuario, senha);
+        document.getElementById('loginScreen').classList.add('d-none');
+        document.getElementById('dashboardApp').classList.remove('d-none');
+        document.getElementById('refreshBtn').disabled = false;
+        await loadData();
+        startAutoRefresh();
+      } catch (err) {
+        status.textContent = err.message || 'Não foi possível autenticar';
+      } finally {
+        setLoginLoading(false);
+      }
+    });
   </script>
 </body>
 </html>
