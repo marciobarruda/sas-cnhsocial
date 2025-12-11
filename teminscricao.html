@@ -194,7 +194,7 @@
                 Você será redirecionado para o
                 <strong>portal da CNH Social Recife</strong>
                 em
-                <span class="contador-numero" id="contador">10</span>
+                <span class="contador-numero" id="contador">15</span>
                 segundos.
               </p>
             </div>
@@ -284,8 +284,42 @@
             const payload = await resposta.json();
             const { mensagemPrincipal, detalhesTexto } = montarMensagem(payload);
 
-            mensagemInscricao.innerHTML = `<strong>${mensagemPrincipal}</strong>`;
-            detalhesInscricao.textContent = detalhesTexto;
+            const enviarParaSesuite = async (dadosInscricao) => {
+              const respostaSesuite = await fetch(
+                "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(dadosInscricao),
+                }
+              );
+
+              if (!respostaSesuite.ok) {
+                throw new Error(`Erro ao consultar SESuite: ${respostaSesuite.status}`);
+              }
+
+              return respostaSesuite.json();
+            };
+
+            let mensagemComposta = `<strong>${mensagemPrincipal}</strong>`;
+            let detalhesCompostos = detalhesTexto;
+
+            try {
+              const retornoSesuite = await enviarParaSesuite(payload);
+              const { mensagemPrincipal: msgSesuite, detalhesTexto: detalhesSesuite } =
+                montarMensagem(retornoSesuite);
+
+              mensagemComposta += `<br /><span class="text-muted small">SESuite: ${msgSesuite}</span>`;
+              detalhesCompostos = `${detalhesTexto}\n\n=== Retorno SESuite ===\n${detalhesSesuite}`;
+            } catch (erroSesuite) {
+              mensagemComposta += `<br /><span class="text-danger small">Não foi possível consultar o SESuite: ${erroSesuite.message}</span>`;
+              detalhesCompostos = `${detalhesTexto}\n\nFalha SESuite: ${erroSesuite.message}`;
+            }
+
+            mensagemInscricao.innerHTML = mensagemComposta;
+            detalhesInscricao.textContent = detalhesCompostos;
           } catch (erro) {
             mensagemInscricao.innerHTML =
               "<strong>Não foi possível recuperar sua inscrição no momento.</strong>";
@@ -296,7 +330,7 @@
         consultarInscricao();
 
         // Contador com animação
-        let segundos = 10;
+        let segundos = 15;
         const contadorSpan = document.getElementById("contador");
 
         const intervalo = setInterval(() => {
