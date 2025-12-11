@@ -659,6 +659,13 @@
 
     document.getElementById('refreshBtn').addEventListener('click', loadData);
 
+    const senhaInput = document.getElementById('senha');
+    senhaInput.addEventListener('paste', (event) => {
+      event.preventDefault();
+      const plain = (event.clipboardData || window.clipboardData)?.getData('text') || '';
+      senhaInput.value = plain.trim();
+    });
+
     const setLoginLoading = (loading) => {
       const btn = document.getElementById('loginButton');
       btn.disabled = loading;
@@ -685,7 +692,7 @@
       setLoginLoading(true);
       try {
         const usuario = document.getElementById('usuario').value.trim();
-        const senha = document.getElementById('senha').value;
+        const senha = document.getElementById('senha').value.trim();
         await authenticate(usuario, senha);
         setGreeting(usuario);
         document.getElementById('loginScreen').classList.add('d-none');
