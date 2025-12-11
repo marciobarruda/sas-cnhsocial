@@ -357,7 +357,10 @@
           }
 
           const inscricaoPayload = JSON.parse(responseInscricao.text || "[]");
-          const inscricao = String(inscricaoPayload?.[0]?.inscricao || "").trim();
+          // Remove qualquer espaço que possa vir junto da inscrição
+          const inscricao = String(inscricaoPayload?.[0]?.inscricao || "")
+            .replace(/\s+/g, "")
+            .trim();
 
           if (!inscricao) {
             throw new Error("Não foi encontrada inscrição para o CPF informado.");
@@ -368,7 +371,7 @@
 
           const responseConsulta = await postJson(
             "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
-            { inscricao }
+            { inscricao: inscricao }
           );
 
           if (!responseConsulta.ok) {
