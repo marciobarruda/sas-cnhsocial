@@ -319,6 +319,24 @@
         resultadoWrapper.hidden = false;
       };
 
+      const postJson = async (url, payload) => {
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+            cache: "no-store",
+          });
+
+          const text = await response.text();
+          return { ok: response.ok, status: response.status, text };
+        } catch (error) {
+          return { ok: false, status: 0, text: "", error };
+        }
+      };
+
       document.addEventListener("DOMContentLoaded", () => {
         consultaModal.show();
         consultaModalElement.addEventListener("shown.bs.modal", () => cpfInput.focus());
@@ -377,18 +395,38 @@
         spinner.classList.remove("d-none");
 
         try {
-          const responseInscricao = await fetch(
+          const responseInscricao = await postJson(
             "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-inscricao-por-cpf",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ cpf: cpfDigits }),
-            }
+            { cpf: cpfDigits }
           );
 
-          const inscricaoText = await responseInscricao.text();
+          if (!responseInscricao.ok && responseInscricao.status !== 0) {
+            statusMessage.textContent = "Falha ao consultar o CPF.";
+            statusMessage.classList.add("text-danger");
+            renderResultado({
+              statusLine: "Não foi possível obter a inscrição.",
+              bulletLines: [
+                responseInscricao.text || "Resposta vazia ao consultar CPF.",
+                "Tente novamente em instantes.",
+              ],
+            });
+            return;
+          }
+
+          if (!responseInscricao.ok && responseInscricao.status === 0) {
+            statusMessage.textContent = "Serviço indisponível. Verifique sua conexão.";
+            statusMessage.classList.add("text-danger");
+            renderResultado({
+              statusLine: "Erro de conexão ao consultar CPF.",
+              bulletLines: [
+                "Não foi possível conectar ao serviço de consulta.",
+                "Confirme sua rede e tente novamente.",
+              ],
+            });
+            return;
+          }
+
+          const inscricaoText = responseInscricao.text || "";
           let inscricao = "";
 
           try {
@@ -412,18 +450,25 @@
 
           statusMessage.textContent = `Consultando inscrição ${inscricao}...`;
 
-          const responseConsulta = await fetch(
+          const responseConsulta = await postJson(
             "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ inscricao }),
-            }
+            { inscricao }
           );
 
-          const payload = await responseConsulta.text();
+          if (!responseConsulta.ok && responseConsulta.status === 0) {
+            statusMessage.textContent = "Serviço indisponível. Verifique sua conexão.";
+            statusMessage.classList.add("text-danger");
+            renderResultado({
+              statusLine: "Erro de conexão ao consultar a inscrição.",
+              bulletLines: [
+                "Não foi possível conectar ao serviço de consulta.",
+                "Tente novamente em alguns instantes.",
+              ],
+            });
+            return;
+          }
+
+          const payload = responseConsulta.text || "";
           const formatted = formatPayload(inscricao, payload);
           renderResultado(formatted);
           statusMessage.textContent = responseConsulta.ok
@@ -435,7 +480,7 @@
           statusMessage.classList.add("text-danger");
           renderResultado({
             statusLine: "Erro ao consultar.",
-            bulletLines: [String(error)],
+            bulletLines: ["O serviço não pôde ser acessado agora. Tente novamente."],
           });
         } finally {
           submitButton.disabled = false;
