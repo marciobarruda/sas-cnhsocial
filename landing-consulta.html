@@ -137,24 +137,35 @@
       }
 
       .result-section {
-        flex: 1;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        min-height: 260px;
+        padding: 0 0.25rem;
       }
 
-      .result-box {
-        background: #f8f9fb;
-        border: 1px dashed var(--border-color);
-        border-radius: 14px;
-        padding: 0.9rem 1.05rem;
+      .result-message {
+        border-radius: 12px;
+        padding: 0.35rem 0.25rem 0.25rem;
         color: var(--text-strong);
-        flex: 1;
-        overflow: auto;
-        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-        font-size: 0.96rem;
-        white-space: pre-wrap;
+      }
+
+      .result-status {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.65rem;
+        font-weight: 700;
+        color: var(--brand-secondary);
+      }
+
+      .result-list {
+        margin: 0.35rem 0 0;
+        padding-left: 1.2rem;
+        color: var(--text-muted);
+        line-height: 1.55;
+      }
+
+      .result-list li + li {
+        margin-top: 0.25rem;
       }
     </style>
   </head>
@@ -217,12 +228,18 @@
               </form>
             </div>
 
-            <div class="card-surface result-section" id="resultadoWrapper" hidden>
+            <div class="result-section" id="resultadoWrapper" hidden>
               <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-journal-text text-primary"></i>
                 <span class="fw-semibold">Resultado da consulta</span>
               </div>
-              <pre class="result-box mb-0" id="resultado"></pre>
+              <div class="result-message" id="resultado">
+                <div class="result-status" id="resultadoStatusRow">
+                  <span class="fs-5" aria-hidden="true">⏳</span>
+                  <div id="resultadoStatus"></div>
+                </div>
+                <ul class="result-list" id="resultadoLista"></ul>
+              </div>
             </div>
           </div>
         </div>
@@ -239,11 +256,49 @@
       const submitButton = document.getElementById("submitButton");
       const spinner = submitButton.querySelector(".spinner-border");
       const resultadoWrapper = document.getElementById("resultadoWrapper");
-      const resultado = document.getElementById("resultado");
+      const resultadoStatus = document.getElementById("resultadoStatus");
+      const resultadoLista = document.getElementById("resultadoLista");
       const backButton = document.getElementById("backButton");
 
       const redirectHome = () => {
         window.location.href = "https://cnhsocial.recife.pe.gov.br/";
+      };
+
+      const formatPayload = (inscricao, payloadText) => {
+        const cleaned = (payloadText || "").replace(/\r/g, "");
+        const lines = cleaned
+          .split(/\n+/)
+          .map((line) => line.trim())
+          .filter(Boolean);
+
+        const fallbackStatus = `A inscrição ${inscricao} está em processamento.`;
+        let statusLine = fallbackStatus;
+
+        if (lines.length && /inscri[cç][aã]o/i.test(lines[0])) {
+          statusLine = lines.shift().replace(/^[-–]\s*/, "");
+        }
+
+        const bulletLines = (lines.length ? lines : [])
+          .map((line) => line.replace(/^[-–]\s*/, ""))
+          .filter(Boolean);
+
+        return {
+          statusLine,
+          bulletLines: bulletLines.length ? bulletLines : [cleaned || fallbackStatus],
+        };
+      };
+
+      const renderResultado = ({ statusLine, bulletLines }) => {
+        resultadoStatus.textContent = statusLine;
+        resultadoLista.innerHTML = "";
+
+        bulletLines.forEach((line) => {
+          const li = document.createElement("li");
+          li.textContent = line;
+          resultadoLista.appendChild(li);
+        });
+
+        resultadoWrapper.hidden = false;
       };
 
       document.addEventListener("DOMContentLoaded", () => {
@@ -270,6 +325,9 @@
         }
 
         cpfInput.value = cpfDigits;
+        resultadoWrapper.hidden = true;
+        resultadoLista.innerHTML = "";
+        resultadoStatus.textContent = "";
         statusMessage.classList.remove("text-danger");
         statusMessage.textContent = "Consultando inscrição pelo CPF...";
         submitButton.disabled = true;
@@ -293,8 +351,10 @@
           if (!responseInscricao.ok || !inscricao) {
             statusMessage.textContent = "Não foi possível obter a inscrição para consulta.";
             statusMessage.classList.add("text-danger");
-            resultado.textContent = inscricaoPayload || "(Resposta vazia ao consultar CPF)";
-            resultadoWrapper.hidden = false;
+            renderResultado({
+              statusLine: "Falha ao consultar a inscrição pelo CPF.",
+              bulletLines: [inscricaoPayload || "Resposta vazia ao consultar CPF."],
+            });
             return;
           }
 
@@ -312,8 +372,8 @@
           );
 
           const payload = await responseConsulta.text();
-          resultado.textContent = `Inscrição encontrada: ${inscricao}\n\n${payload || "(Resposta vazia)"}`;
-          resultadoWrapper.hidden = false;
+          const formatted = formatPayload(inscricao, payload);
+          renderResultado(formatted);
           statusMessage.textContent = responseConsulta.ok
             ? "Consulta concluída."
             : "Consulta concluída com retorno de erro.";
@@ -321,8 +381,10 @@
         } catch (error) {
           statusMessage.textContent = "Não foi possível consultar. Verifique a conexão.";
           statusMessage.classList.add("text-danger");
-          resultado.textContent = String(error);
-          resultadoWrapper.hidden = false;
+          renderResultado({
+            statusLine: "Erro ao consultar.",
+            bulletLines: [String(error)],
+          });
         } finally {
           submitButton.disabled = false;
           spinner.classList.add("d-none");
