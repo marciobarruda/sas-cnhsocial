@@ -303,7 +303,12 @@
           // caso não seja JSON, trata pelo texto bruto
         }
 
-        return parseMensagem(payloadText || fallbackStatus, fallbackStatus);
+        return payloadText
+          ? parseMensagem(payloadText, fallbackStatus)
+          : {
+              statusLine: fallbackStatus,
+              bulletLines: ["Nenhum detalhe foi retornado para esta inscrição."],
+            };
       };
 
       const renderResultado = ({ statusLine, bulletLines }) => {
@@ -469,12 +474,16 @@
           }
 
           const payload = responseConsulta.text || "";
+          if (!responseConsulta.ok) {
+            statusMessage.textContent = "Consulta concluída com retorno de erro.";
+            statusMessage.classList.add("text-danger");
+          } else {
+            statusMessage.textContent = "Consulta concluída.";
+            statusMessage.classList.remove("text-danger");
+          }
+
           const formatted = formatPayload(inscricao, payload);
           renderResultado(formatted);
-          statusMessage.textContent = responseConsulta.ok
-            ? "Consulta concluída."
-            : "Consulta concluída com retorno de erro.";
-          statusMessage.classList.toggle("text-danger", !responseConsulta.ok);
         } catch (error) {
           statusMessage.textContent = "Não foi possível consultar. Verifique a conexão.";
           statusMessage.classList.add("text-danger");
