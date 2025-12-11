@@ -176,7 +176,7 @@
           <div class="modal-body">
             <div class="card-surface">
               <form id="consultaForm" novalidate>
-                <label class="form-label fw-semibold" for="inscricaoInput">Número da inscrição</label>
+                <label class="form-label fw-semibold" for="cpfInput">CPF do candidato</label>
                 <div class="input-group mb-2 shadow-sm">
                   <span class="input-group-text bg-white" id="inscricaoPrefix">
                     <img
@@ -187,23 +187,22 @@
                   <input
                     type="text"
                     class="form-control"
-                    id="inscricaoInput"
-                    name="inscricao"
-                    value="CNH-S"
-                    minlength="15"
-                    maxlength="15"
-                    pattern="CNH-S\\d{10}"
-                    placeholder="CNH-S2025000001"
-                    aria-describedby="inscricaoPrefix inscricaoHelp"
+                    id="cpfInput"
+                    name="cpf"
+                    inputmode="numeric"
+                    minlength="11"
+                    maxlength="14"
+                    pattern="[0-9]{11}"
+                    placeholder="00000000000"
+                    aria-describedby="inscricaoPrefix cpfHelp"
                     required
                   />
                 </div>
-                <div class="mb-3 helper-text" id="inscricaoHelp">
-                  A inscrição sempre começa com "CNH-S" seguida do ano (4 dígitos) e do sequencial com 6 dígitos. Exemplo:
-                  CNHSOCIAL2025123456.
+                <div class="mb-3 helper-text" id="cpfHelp">
+                  Informe os 11 dígitos do CPF (apenas números). Exemplo: 12345678901.
                 </div>
                 <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
-                  <small class="text-muted" id="statusMessage">Preencha e clique em consultar.</small>
+                  <small class="text-muted" id="statusMessage">Informe o CPF para consultar.</small>
                   <div class="actions-row">
                     <button class="btn btn-outline-secondary" type="button" id="backButton">
                       <i class="bi bi-arrow-left"></i>
@@ -235,29 +234,21 @@
       const consultaModalElement = document.getElementById("consultaModal");
       const consultaModal = new bootstrap.Modal(consultaModalElement);
       const form = document.getElementById("consultaForm");
-      const input = document.getElementById("inscricaoInput");
+      const cpfInput = document.getElementById("cpfInput");
       const statusMessage = document.getElementById("statusMessage");
       const submitButton = document.getElementById("submitButton");
       const spinner = submitButton.querySelector(".spinner-border");
       const resultadoWrapper = document.getElementById("resultadoWrapper");
       const resultado = document.getElementById("resultado");
       const backButton = document.getElementById("backButton");
-      const PREFIX = "CNH-S";
 
       const redirectHome = () => {
         window.location.href = "https://cnhsocial.recife.pe.gov.br/";
       };
 
-      const enforcePrefix = () => {
-        const upperValue = input.value.toUpperCase();
-        const digits = upperValue.replace(PREFIX, "").replace(/\D/g, "").slice(0, 10);
-        input.value = `${PREFIX}${digits}`;
-      };
-
       document.addEventListener("DOMContentLoaded", () => {
         consultaModal.show();
-        consultaModalElement.addEventListener("shown.bs.modal", () => input.focus());
-        enforcePrefix();
+        consultaModalElement.addEventListener("shown.bs.modal", () => cpfInput.focus());
         consultaModalElement.addEventListener("click", (event) => {
           if (event.target === consultaModalElement) {
             redirectHome();
@@ -266,47 +257,67 @@
         backButton?.addEventListener("click", redirectHome);
       });
 
-      input.addEventListener("input", enforcePrefix);
-
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        enforcePrefix();
-        const inscricao = input.value.trim().toUpperCase();
-        const apenasDigitos = inscricao.replace(/CNH-S/i, "").replace(/\D/g, "");
-        const inscricaoNormalizada = `${PREFIX}${apenasDigitos}`;
+        const cpfDigits = cpfInput.value.replace(/\D/g, "").slice(0, 11);
 
-        if (inscricaoNormalizada.length < PREFIX.length + 10) {
-          statusMessage.textContent = "Complete todos os 10 dígitos após CNH-S.";
+        if (cpfDigits.length !== 11) {
+          statusMessage.textContent = "CPF inválido. Informe os 11 dígitos.";
           statusMessage.classList.add("text-danger");
-          input.focus();
+          cpfInput.focus();
+          cpfInput.value = cpfDigits;
           return;
         }
 
-        input.value = inscricaoNormalizada;
+        cpfInput.value = cpfDigits;
         statusMessage.classList.remove("text-danger");
-        statusMessage.textContent = "Enviando...";
+        statusMessage.textContent = "Consultando inscrição pelo CPF...";
         submitButton.disabled = true;
         spinner.classList.remove("d-none");
 
         try {
-          const response = await fetch(
+          const responseInscricao = await fetch(
+            "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-inscricao-por-cpf",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ cpf: cpfDigits }),
+            }
+          );
+
+          const inscricaoPayload = await responseInscricao.text();
+          const inscricao = inscricaoPayload.trim();
+
+          if (!responseInscricao.ok || !inscricao) {
+            statusMessage.textContent = "Não foi possível obter a inscrição para consulta.";
+            statusMessage.classList.add("text-danger");
+            resultado.textContent = inscricaoPayload || "(Resposta vazia ao consultar CPF)";
+            resultadoWrapper.hidden = false;
+            return;
+          }
+
+          statusMessage.textContent = "Consultando detalhes da inscrição...";
+
+          const responseConsulta = await fetch(
             "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ inscricao: inscricaoNormalizada }),
+              body: JSON.stringify({ inscricao }),
             }
           );
 
-          const payload = await response.text();
-          resultado.textContent = payload || "(Resposta vazia)";
+          const payload = await responseConsulta.text();
+          resultado.textContent = `Inscrição encontrada: ${inscricao}\n\n${payload || "(Resposta vazia)"}`;
           resultadoWrapper.hidden = false;
-          statusMessage.textContent = response.ok
+          statusMessage.textContent = responseConsulta.ok
             ? "Consulta concluída."
             : "Consulta concluída com retorno de erro.";
-          statusMessage.classList.toggle("text-danger", !response.ok);
+          statusMessage.classList.toggle("text-danger", !responseConsulta.ok);
         } catch (error) {
           statusMessage.textContent = "Não foi possível consultar. Verifique a conexão.";
           statusMessage.classList.add("text-danger");
