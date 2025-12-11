@@ -79,6 +79,12 @@
           <div class="modal-body p-4 p-md-5">
             <div class="d-flex flex-column gap-4">
               <div class="text-center">
+                <img
+                  src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+                  alt="CNH Recife"
+                  class="img-fluid mb-3"
+                  style="max-height: 72px"
+                />
                 <h1 class="modal-title h4 mb-1" id="avaliacaoModalLabel">
                   CNH Recife
                 </h1>
@@ -138,14 +144,6 @@
 
                 <div class="d-flex flex-column flex-sm-row gap-2 mt-2">
                   <button
-                    type="button"
-                    id="cancelButton"
-                    class="btn btn-outline-secondary flex-fill"
-                    data-bs-dismiss="modal"
-                  >
-                    Pular
-                  </button>
-                  <button
                     type="submit"
                     id="submitButton"
                     class="btn btn-primary flex-fill"
@@ -178,7 +176,6 @@
         const form = document.getElementById("formAvaliacao");
         const submitFeedback = document.getElementById("submitFeedback");
         const submitButton = document.getElementById("submitButton");
-        const cancelButton = document.getElementById("cancelButton");
         const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
 
         const iniciarRedirecionamento = (mensagemInicial) => {
@@ -199,7 +196,6 @@
           form.classList.add("was-validated");
           submitFeedback.textContent = "Enviando sua dúvida...";
           submitButton.disabled = true;
-          cancelButton.disabled = true;
 
           try {
             const response = await fetch(form.action, {
@@ -218,15 +214,7 @@
             submitFeedback.textContent =
               "Não foi possível enviar sua dúvida. Tente novamente em instantes.";
             submitButton.disabled = false;
-            cancelButton.disabled = false;
           }
-        });
-
-        cancelButton.addEventListener("click", (event) => {
-          event.preventDefault();
-          submitButton.disabled = true;
-          cancelButton.disabled = true;
-          iniciarRedirecionamento("Você optou por pular o envio da dúvida.");
         });
       });
     </script>
