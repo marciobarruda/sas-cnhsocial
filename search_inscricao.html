@@ -111,7 +111,7 @@
       }
 
       .modal-dialog.modal-lg {
-        max-width: 760px;
+        max-width: 1000px;
       }
 
       .modal.fade .modal-dialog {
@@ -154,7 +154,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        min-width: 720px;
+        min-width: 880px;
       }
 
       .status-step {
@@ -189,6 +189,8 @@
         align-items: center;
         justify-content: center;
         line-height: 1;
+        filter: grayscale(1);
+        opacity: 0.55;
       }
 
       .status-check {
@@ -246,6 +248,11 @@
 
       .status-current .status-label {
         color: var(--text-strong);
+      }
+
+      .status-current .status-icon {
+        filter: none;
+        opacity: 1;
       }
 
       .status-pending .status-node {
