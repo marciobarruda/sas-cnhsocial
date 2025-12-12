@@ -137,6 +137,7 @@
                     name="comentario"
                     rows="4"
                     placeholder="Escreva sua pergunta ou explique a situação."
+                    aria-required="true"
                     required
                   ></textarea>
                   <div class="invalid-feedback">Deixe seu comentário.</div>
@@ -149,6 +150,13 @@
                     class="btn btn-primary flex-fill"
                   >
                     Enviar dúvida
+                  </button>
+                  <button
+                    type="button"
+                    id="closeButton"
+                    class="btn btn-outline-secondary flex-fill"
+                  >
+                    Fechar
                   </button>
                 </div>
                 <div
@@ -177,6 +185,12 @@
         const submitFeedback = document.getElementById("submitFeedback");
         const submitButton = document.getElementById("submitButton");
         const redirectUrl = "https://cnhrecife.recife.pe.gov.br";
+        const closeButton = document.getElementById("closeButton");
+        const closeRedirectUrl = "https://cnh.recife.pe.gov.br";
+
+        closeButton.addEventListener("click", () => {
+          window.location.href = closeRedirectUrl;
+        });
 
         const iniciarRedirecionamento = (mensagemInicial) => {
           submitFeedback.classList.remove("text-muted", "text-danger");
