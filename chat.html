@@ -189,7 +189,8 @@
         const closeRedirectUrl = "https://cnh.recife.pe.gov.br";
 
         closeButton.addEventListener("click", () => {
-          window.location.href = closeRedirectUrl;
+          const targetWindow = window.top ?? window;
+          targetWindow.location.href = closeRedirectUrl;
         });
 
         const iniciarRedirecionamento = (mensagemInicial) => {
