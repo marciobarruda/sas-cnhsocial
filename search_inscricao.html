@@ -140,6 +140,96 @@
         height: auto;
       }
 
+      .status-progress {
+        background: rgba(0, 83, 164, 0.04);
+        border: 1px solid rgba(0, 83, 164, 0.08);
+        border-radius: 1rem;
+        padding: 1rem 1.25rem;
+      }
+
+      .status-steps {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .status-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.35rem;
+      }
+
+      .status-node {
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        border: 2px solid var(--border-color);
+        background: #fff;
+        display: grid;
+        place-items: center;
+        color: var(--brand-secondary);
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .status-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .status-connector {
+        height: 2px;
+        background: var(--border-color);
+        flex: 1;
+        min-width: 40px;
+      }
+
+      .status-connector-active {
+        background: linear-gradient(90deg, var(--brand-highlight), var(--brand-primary));
+      }
+
+      .status-completed .status-node {
+        background: var(--brand-primary);
+        border-color: var(--brand-primary);
+        color: #fff;
+        box-shadow: 0 0 0 4px rgba(0, 83, 164, 0.12);
+      }
+
+      .status-completed .status-label {
+        color: var(--brand-secondary);
+      }
+
+      .status-current .status-node {
+        background: #fff;
+        border-color: var(--brand-highlight);
+        color: var(--brand-highlight);
+        box-shadow: 0 0 0 4px rgba(0, 163, 255, 0.15);
+      }
+
+      .status-current .status-label {
+        color: var(--text-strong);
+      }
+
+      .status-pending .status-node {
+        background: #fff;
+        border-color: var(--border-color);
+        color: var(--border-color);
+      }
+
+      @media (max-width: 768px) {
+        .status-steps {
+          gap: 0.5rem;
+        }
+
+        .status-step {
+          flex: 1 1 calc(50% - 0.5rem);
+        }
+      }
+
       @media (min-width: 768px) {
         .page-wrapper {
           padding: 3rem 1.5rem;
@@ -235,6 +325,10 @@
                 Detalhamento
               </span>
 
+              <div class="status-progress d-none" id="status-progresso" aria-live="polite">
+                <div class="status-steps" id="status-steps"></div>
+              </div>
+
               <p class="mb-1 mt-2 fs-6 text-muted" id="mensagem-inscricao">
                 <strong>
                   Consultando inscrição ativa para o CPF
@@ -268,6 +362,170 @@
           backdrop: "static",
           keyboard: false,
         });
+        const barraStatus = document.getElementById("status-progresso");
+        const stepsContainer = document.getElementById("status-steps");
+
+        const fluxoStatus = [
+          {
+            chave: "inscricao-processamento",
+            rotulo: "Inscrição em processamento",
+          },
+          { chave: "analise-inscricao", rotulo: "Análise de inscrição" },
+          { chave: "analise-recurso", rotulo: "Análise de recurso" },
+          {
+            chave: "analise-rede-protecao",
+            rotulo: "Análise Rede de Proteção",
+          },
+          {
+            chave: "analise-sociofamiliar",
+            rotulo: "Análise Sociofamiliar",
+          },
+          {
+            chave: "analise-socioassistencial",
+            rotulo: "Análise Socioassistencial",
+          },
+          {
+            chave: "analise-socioocupacional",
+            rotulo: "Análise Socioocupacional",
+          },
+          {
+            chave: "analise-dependencia-terapeutica",
+            rotulo: "Análise dependência terapêutica",
+          },
+        ];
+
+        const statusAliases = {
+          "inscricao em processamento": "Inscrição em processamento",
+          "recebe dados do front": "Inscrição em processamento",
+          "analise inscricao": "Análise de inscrição",
+          "analise de inscricao": "Análise de inscrição",
+          "analise da inscricao": "Análise de inscrição",
+          "analise recurso": "Análise de recurso",
+          "analise de recurso": "Análise de recurso",
+          "analise rede de protecao": "Análise Rede de Proteção",
+          "analise rede de protecao social": "Análise Rede de Proteção",
+          "analise sociofamiliar": "Análise Sociofamiliar",
+          "analise socioassistencial": "Análise Socioassistencial",
+          "analise socio ocupacional": "Análise Socioocupacional",
+          "analise socioocupacional": "Análise Socioocupacional",
+          "analise dependencia terapeutica": "Análise dependência terapêutica",
+          "analise de dependencia terapeutica": "Análise dependência terapêutica",
+          "analisar dependencia terapeutica": "Análise dependência terapêutica",
+        };
+
+        const normalizarStatusTexto = (texto) =>
+          texto
+            .normalize("NFD")
+            .replace(/\p{Diacritic}/gu, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9\s]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        const identificarStatusNoTexto = (texto) => {
+          if (!texto || typeof texto !== "string") return null;
+          const normalizado = normalizarStatusTexto(texto);
+          if (!normalizado) return null;
+
+          if (statusAliases[normalizado]) {
+            return statusAliases[normalizado];
+          }
+
+          for (const etapa of fluxoStatus) {
+            const etapaNormalizada = normalizarStatusTexto(etapa.rotulo);
+            if (normalizado.includes(etapaNormalizada)) {
+              return etapa.rotulo;
+            }
+          }
+
+          return null;
+        };
+
+        const construirBarraStatus = () => {
+          if (!stepsContainer) return;
+
+          stepsContainer.innerHTML = "";
+
+          fluxoStatus.forEach((etapa, index) => {
+            const passo = document.createElement("div");
+            passo.className = "status-step status-pending";
+            passo.dataset.status = etapa.rotulo;
+            passo.innerHTML = `
+              <div class="status-node">${index + 1}</div>
+              <div class="status-label">${etapa.rotulo}</div>
+            `;
+            stepsContainer.appendChild(passo);
+
+            if (index < fluxoStatus.length - 1) {
+              const connector = document.createElement("div");
+              connector.className = "status-connector";
+              stepsContainer.appendChild(connector);
+            }
+          });
+        };
+
+        const limparEstadoBarra = () => {
+          if (!stepsContainer) return;
+          stepsContainer
+            .querySelectorAll(".status-step")
+            .forEach((step) =>
+              step.classList.remove(
+                "status-completed",
+                "status-current",
+                "status-pending"
+              )
+            );
+          stepsContainer
+            .querySelectorAll(".status-connector")
+            .forEach((connector) =>
+              connector.classList.remove("status-connector-active")
+            );
+        };
+
+        const atualizarBarraStatus = (statusTexto) => {
+          if (!barraStatus || !stepsContainer) return;
+          const statusIdentificado = identificarStatusNoTexto(statusTexto);
+
+          if (!statusIdentificado) {
+            barraStatus.classList.add("d-none");
+            return;
+          }
+
+          barraStatus.classList.remove("d-none");
+          limparEstadoBarra();
+
+          const steps = stepsContainer.querySelectorAll(".status-step");
+          let encontrouStatus = false;
+
+          steps.forEach((step) => {
+            const rotulo = step.dataset.status;
+
+            if (encontrouStatus) {
+              step.classList.add("status-pending");
+              return;
+            }
+
+            if (rotulo === statusIdentificado) {
+              step.classList.add("status-current");
+              encontrouStatus = true;
+            } else {
+              step.classList.add("status-completed");
+            }
+          });
+
+          const connectors = stepsContainer.querySelectorAll(".status-connector");
+          connectors.forEach((connector, index) => {
+            const step = steps[index];
+            const ativo =
+              step?.classList.contains("status-completed") ||
+              step?.classList.contains("status-current");
+            if (ativo) {
+              connector.classList.add("status-connector-active");
+            }
+          });
+        };
+
+        construirBarraStatus();
 
         modalElement.addEventListener("shown.bs.modal", () => {
           modalElement.classList.add("show");
@@ -318,6 +576,54 @@
             return `${primeiros3}.***.***-${ultimos2}`;
           }
           return "não identificado";
+        };
+
+        const extrairStatusDaResposta = (
+          payloadInscricao,
+          retornoSesuite,
+          mensagemPrincipal
+        ) => {
+          const candidatos = [];
+          const adicionar = (valor) => {
+            if (valor && typeof valor === "string") {
+              candidatos.push(valor);
+            }
+          };
+
+          if (payloadInscricao && typeof payloadInscricao === "object") {
+            adicionar(payloadInscricao.status);
+            adicionar(payloadInscricao.situacao);
+            adicionar(payloadInscricao.status_inscricao);
+            adicionar(payloadInscricao.situacao_inscricao);
+            adicionar(payloadInscricao.atividadeAtual);
+
+            if (Array.isArray(payloadInscricao)) {
+              payloadInscricao.forEach((item) => {
+                adicionar(item?.status);
+                adicionar(item?.situacao);
+              });
+            }
+          }
+
+          if (retornoSesuite && typeof retornoSesuite === "object") {
+            adicionar(retornoSesuite.status);
+            adicionar(retornoSesuite.situacao);
+            adicionar(retornoSesuite.status_inscricao);
+            adicionar(retornoSesuite.situacao_inscricao);
+          } else if (typeof retornoSesuite === "string") {
+            adicionar(retornoSesuite);
+          }
+
+          adicionar(mensagemPrincipal);
+
+          for (const candidato of candidatos) {
+            const identificado = identificarStatusNoTexto(candidato);
+            if (identificado) {
+              return identificado;
+            }
+          }
+
+          return null;
         };
 
         const atualizarCpfMascarado = (cpfNumeros) => {
@@ -385,14 +691,23 @@
               const retornoSesuite = await enviarParaSesuite(payloadInscricao);
               const mensagemPrincipal = extrairMensagemSesuite(retornoSesuite);
 
+              const statusIdentificado = extrairStatusDaResposta(
+                payloadInscricao,
+                retornoSesuite,
+                mensagemPrincipal
+              );
+
               const mensagemFormatada = formatarMarkdownSimples(mensagemPrincipal);
 
+              atualizarBarraStatus(statusIdentificado || fluxoStatus[0]?.rotulo);
               mensagemInscricao.innerHTML = `<strong>${mensagemFormatada}</strong>`;
             } catch (erroSesuite) {
+              atualizarBarraStatus(null);
               mensagemInscricao.innerHTML =
                 "<strong>Não foi possível recuperar a situação da inscrição no momento.</strong>";
             }
           } catch (erro) {
+            atualizarBarraStatus(null);
             mensagemInscricao.innerHTML =
               "<strong>Não foi possível recuperar sua inscrição no momento.</strong>";
           }
@@ -426,6 +741,7 @@
           cpfInput.classList.remove("is-invalid");
           atualizarCpfMascarado(cpfNormalizado);
           definirMensagemInicial(cpfNormalizado);
+          atualizarBarraStatus(fluxoStatus[0]?.rotulo);
           modal.show();
           consultarInscricao(cpfNormalizado);
         });
