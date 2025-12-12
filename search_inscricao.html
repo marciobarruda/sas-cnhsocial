@@ -48,18 +48,19 @@
         min-height: 100vh;
       }
 
-      .modal-backdrop-custom {
-        background: radial-gradient(
-          circle at top,
-          rgba(0, 83, 164, 0.18),
-          rgba(0, 0, 0, 0.55)
-        );
+      .page-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
       }
 
       .card-programa {
         border: 1px solid rgba(0, 83, 164, 0.08);
         background: var(--surface-strong);
         box-shadow: 0 16px 34px rgba(0, 45, 98, 0.18);
+        border-radius: 1.25rem;
       }
 
       .section-title {
@@ -100,6 +101,14 @@
         background: var(--brand-highlight);
       }
 
+      .modal-backdrop-custom {
+        background: radial-gradient(
+          circle at top,
+          rgba(0, 83, 164, 0.18),
+          rgba(0, 0, 0, 0.55)
+        );
+      }
+
       .modal-dialog.modal-lg {
         max-width: 760px;
       }
@@ -120,10 +129,81 @@
         height: auto;
         display: inline-block;
       }
+
+      .form-control:focus {
+        border-color: var(--brand-highlight);
+        box-shadow: 0 0 0 0.2rem rgba(0, 163, 255, 0.25);
+      }
+
+      .logo {
+        max-width: 200px;
+        height: auto;
+      }
+
+      @media (min-width: 768px) {
+        .page-wrapper {
+          padding: 3rem 1.5rem;
+        }
+      }
     </style>
   </head>
 
   <body>
+    <main class="page-wrapper">
+      <div class="container" style="max-width: 720px">
+        <div class="card card-programa border-0 p-4 p-md-5">
+          <div class="text-center mb-4">
+            <img
+              src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+              alt="CNH Social Recife"
+              class="logo"
+            />
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="section-title">Consultar inscrição</h1>
+            <span class="institucional-pill">
+              <span class="institucional-pill-dot"></span>
+              Informe seu CPF para continuar
+            </span>
+          </div>
+
+          <form id="consulta-form" novalidate>
+            <div class="mb-3">
+              <label for="cpf" class="form-label">CPF</label>
+              <input
+                type="text"
+                inputmode="numeric"
+                pattern="\d{11}"
+                maxlength="11"
+                class="form-control form-control-lg"
+                id="cpf"
+                name="cpf"
+                placeholder="Digite apenas números"
+                required
+              />
+              <div class="form-text">Digite exatamente 11 dígitos numéricos.</div>
+              <div class="invalid-feedback" id="cpf-feedback">
+                Informe um CPF válido com 11 dígitos numéricos.
+              </div>
+            </div>
+
+            <div class="d-grid d-md-flex gap-2">
+              <button type="submit" class="btn btn-primary btn-lg px-4">
+                Consultar inscrição
+              </button>
+              <a
+                class="btn btn-outline-secondary btn-lg px-4"
+                href="https://cnhsocial.recife.pe.gov.br/"
+              >
+                Voltar para o site
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
     <div
       class="modal fade"
       id="avisoModal"
@@ -145,9 +225,9 @@
                 />
               </div>
               <div class="d-flex justify-content-between align-items-center">
-                <h1 class="section-title" id="avisoModalLabel">
+                <h2 class="section-title" id="avisoModalLabel">
                   Inscrição já encontrada
-                </h1>
+                </h2>
               </div>
 
               <span class="institucional-pill">
@@ -178,6 +258,11 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("consulta-form");
+        const cpfInput = document.getElementById("cpf");
+        const feedbackCpf = document.getElementById("cpf-feedback");
+        const mensagemInscricao = document.getElementById("mensagem-inscricao");
+        const cpfSpan = document.getElementById("cpf-mascarado");
         const modalElement = document.getElementById("avisoModal");
         const modal = new bootstrap.Modal(modalElement, {
           backdrop: "static",
@@ -187,27 +272,6 @@
         modalElement.addEventListener("shown.bs.modal", () => {
           modalElement.classList.add("show");
         });
-
-        modal.show();
-
-        // CPF vindo do n8n
-        const cpfBruto = "{{ $('Recupera dados').item.json.preferred_username }}";
-        const cpfNumeros = (cpfBruto || "").replace(/\D/g, "");
-        let cpfMascarado = "não identificado";
-
-        // Máscara LGPD: mostra 3 primeiros e 2 últimos dígitos (ex.: 123.***.***-45)
-        if (cpfNumeros.length === 11) {
-          const primeiros3 = cpfNumeros.slice(0, 3);
-          const ultimos2 = cpfNumeros.slice(-2);
-          cpfMascarado = `${primeiros3}.***.***-${ultimos2}`;
-        }
-
-        const cpfSpan = document.getElementById("cpf-mascarado");
-        if (cpfSpan) {
-          cpfSpan.textContent = cpfMascarado;
-        }
-
-        const mensagemInscricao = document.getElementById("mensagem-inscricao");
 
         const sanitizeHtml = (texto) =>
           texto
@@ -247,7 +311,28 @@
           );
         };
 
-        const consultarInscricao = async () => {
+        const mascararCpf = (cpf) => {
+          if (cpf.length === 11) {
+            const primeiros3 = cpf.slice(0, 3);
+            const ultimos2 = cpf.slice(-2);
+            return `${primeiros3}.***.***-${ultimos2}`;
+          }
+          return "não identificado";
+        };
+
+        const atualizarCpfMascarado = (cpfNumeros) => {
+          if (cpfSpan) {
+            cpfSpan.textContent = mascararCpf(cpfNumeros);
+          }
+        };
+
+        const definirMensagemInicial = (cpfNumeros) => {
+          mensagemInscricao.innerHTML = `<strong>Consultando inscrição ativa para o CPF ${mascararCpf(
+            cpfNumeros
+          )} no programa CNH Social Recife...</strong>`;
+        };
+
+        const consultarInscricao = async (cpfNumeros) => {
           if (!cpfNumeros) {
             mensagemInscricao.textContent =
               "Não foi possível identificar o CPF para consulta.";
@@ -313,7 +398,37 @@
           }
         };
 
-        consultarInscricao();
+        const normalizarCpf = (valor) => valor.replace(/\D/g, "").slice(0, 11);
+
+        cpfInput.addEventListener("input", (event) => {
+          const apenasNumeros = normalizarCpf(event.target.value);
+          event.target.value = apenasNumeros;
+          if (apenasNumeros.length === 11) {
+            cpfInput.classList.remove("is-invalid");
+          }
+        });
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+
+          const cpfNormalizado = normalizarCpf(cpfInput.value);
+
+          if (cpfNormalizado.length !== 11) {
+            cpfInput.classList.add("is-invalid");
+            if (feedbackCpf) {
+              feedbackCpf.textContent =
+                "Informe um CPF válido com 11 dígitos numéricos.";
+            }
+            cpfInput.focus();
+            return;
+          }
+
+          cpfInput.classList.remove("is-invalid");
+          atualizarCpfMascarado(cpfNormalizado);
+          definirMensagemInicial(cpfNormalizado);
+          modal.show();
+          consultarInscricao(cpfNormalizado);
+        });
 
         const fecharBtn = document.getElementById("fechar-modal");
         if (fecharBtn) {
