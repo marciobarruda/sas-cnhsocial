@@ -566,6 +566,7 @@
           const normalizado = normalizarStatusTexto(statusTexto);
 
           // Verifica se é um status de conclusão que deve avançar automaticamente
+          // Usamos includes aqui para detectar frases dentro do texto recebido (mensagens longas)
           for (const [statusConcluido, proximaEtapa] of Object.entries(etapasCompletadas)) {
             const statusNormalizado = normalizarStatusTexto(statusConcluido);
             if (normalizado.includes(statusNormalizado)) {
@@ -738,27 +739,6 @@
             const identificado = identificarStatusNoTexto(candidato);
             if (identificado) {
               return candidato;
-            }
-
-            // Heurística: detectar padrões em mensagens longas onde palavras ficam separadas
-            // Ex.: "A inscrição CNH-S... foi rejeitada." → deve identificar como rejeitada
-            if (typeof candidato === "string") {
-              const normal = normalizarStatusTexto(candidato);
-
-              // inscrição ... rejeitada ou inscrição ... acatada
-              if (/\binscricao\b[\s\S]*\brejeitada\b/.test(normal) || /\binscricao\b[\s\S]*\bacatada\b/.test(normal)) {
-                return candidato;
-              }
-
-              // análise de recurso (com ou sem código prefixo como '85 -')
-              if (normal.includes("analise de recurso") || normal.includes("analise recurso")) {
-                return candidato;
-              }
-
-              // análise de pontuação
-              if (normal.includes("analise de pontuacao") || normal.includes("analise pontuacao") || normal.includes("analise da pontuacao") || normal.includes("pontuacao")) {
-                return candidato;
-              }
             }
           }
 
