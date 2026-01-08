@@ -518,12 +518,14 @@
           return null;
         };
 
-        const construirBarraStatus = () => {
+        const construirBarraStatus = (hiddenSteps = []) => {
           if (!stepsContainer) return;
 
           stepsContainer.innerHTML = "";
 
-          fluxoStatus.forEach((etapa, index) => {
+          const etapasVisiveis = fluxoStatus.filter((etapa) => !hiddenSteps.includes(etapa.rotulo));
+
+          etapasVisiveis.forEach((etapa, index) => {
             const passo = document.createElement("div");
             passo.className = "status-step status-pending";
             passo.dataset.status = etapa.rotulo;
@@ -536,7 +538,7 @@
             `;
             stepsContainer.appendChild(passo);
 
-            if (index < fluxoStatus.length - 1) {
+            if (index < etapasVisiveis.length - 1) {
               const connector = document.createElement("div");
               connector.className = "status-connector";
               stepsContainer.appendChild(connector);
@@ -585,41 +587,43 @@
         };
 
         // Decide a etapa a partir do texto exibido (mensagem formatada)
+        // Retorna um objeto { step: string|null, hide: Array<string> }
         const mapMessageToStep = (texto) => {
-          if (!texto || typeof texto !== 'string') return null;
+          if (!texto || typeof texto !== 'string') return { step: null, hide: [] };
           const norm = normalizarStatusTexto(texto);
 
           // prioridade: recurso + pontuação -> Aguardando recurso e resultado final
           if (norm.includes('recurso') && (norm.includes('pontuacao') || norm.includes('pontuação'))) {
-            return 'Aguardando recurso e resultado final';
+            return { step: 'Aguardando recurso e resultado final', hide: [] };
           }
 
-          // acatada -> Análise de pontuação (novo comportamento solicitado)
+          // acatada -> Análise de pontuação (novo comportamento)
           if (norm.includes('acatada')) {
-            return 'Análise de pontuação';
+            // quando acatada, ocultar passos relativos a recurso
+            return { step: 'Análise de pontuação', hide: ['Aguardando recurso', 'Análise de recurso'] };
           }
 
-          // rejeitada -> Aguardando recurso (conforme regra solicitada)
+          // rejeitada -> Aguardando recurso
           if (norm.includes('rejeitada')) {
-            return 'Aguardando recurso';
+            return { step: 'Aguardando recurso', hide: [] };
           }
 
           // análise da pontuação -> Análise de pontuação
           if (norm.includes('analise') && (norm.includes('pontuacao') || norm.includes('pontuação'))) {
-            return 'Análise de pontuação';
+            return { step: 'Análise de pontuação', hide: [] };
           }
 
           // análise de recurso -> Análise de recurso
           if (norm.includes('analise') && norm.includes('recurso')) {
-            return 'Análise de recurso';
+            return { step: 'Análise de recurso', hide: [] };
           }
 
           // recurso simples -> Aguardando recurso
           if (norm.includes('recurso')) {
-            return 'Aguardando recurso';
+            return { step: 'Aguardando recurso', hide: [] };
           }
 
-          return null;
+          return { step: null, hide: [] };
         };
 
         const atualizarBarraStatus = (statusBruto) => {
@@ -878,7 +882,13 @@
               mensagemInscricao.innerHTML = `<strong>${mensagemFormatada}</strong>`;
 
               // Em seguida decide a etapa a partir do texto exibido e avança a barra com animação
-              const etapaDaMensagem = mapMessageToStep(mensagemPrincipal);
+              const resultadoMapa = mapMessageToStep(mensagemPrincipal);
+              const etapaDaMensagem = resultadoMapa?.step;
+              const hidden = resultadoMapa?.hide || [];
+
+              // Reconstruir a barra com passos ocultos, se houver
+              construirBarraStatus(hidden);
+
               const alvo = etapaDaMensagem || statusBruto || fluxoStatus[0]?.rotulo;
 
               // Pequeno atraso para deixar o usuário ler a mensagem antes de animar
