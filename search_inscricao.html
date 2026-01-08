@@ -576,14 +576,15 @@
           return null;
         };
 
-        const atualizarBarraStatus = (statusTexto) => {
+        const atualizarBarraStatus = (statusBruto) => {
           if (!barraStatus || !stepsContainer) return;
           
           // Primeiro verifica se deve avançar automaticamente
-          const statusAvancado = determinarStatusFinal(statusTexto);
-          const statusFinal = statusAvancado || statusTexto;
+          const statusAvancado = determinarStatusFinal(statusBruto);
+          const statusParaIdentificar = statusAvancado || statusBruto;
           
-          const statusIdentificado = identificarStatusNoTexto(statusFinal);
+          // Agora identifica o status
+          const statusIdentificado = identificarStatusNoTexto(statusParaIdentificar);
 
           if (!statusIdentificado) {
             barraStatus.classList.add("d-none");
@@ -736,7 +737,7 @@
           for (const candidato of candidatos) {
             const identificado = identificarStatusNoTexto(candidato);
             if (identificado) {
-              return identificado;
+              return candidato;
             }
           }
 
@@ -808,7 +809,7 @@
               const retornoSesuite = await enviarParaSesuite(payloadInscricao);
               const mensagemPrincipal = extrairMensagemSesuite(retornoSesuite);
 
-              const statusIdentificado = extrairStatusDaResposta(
+              const statusBruto = extrairStatusDaResposta(
                 payloadInscricao,
                 retornoSesuite,
                 mensagemPrincipal
@@ -816,7 +817,7 @@
 
               const mensagemFormatada = formatarMarkdownSimples(mensagemPrincipal);
 
-              atualizarBarraStatus(statusIdentificado || fluxoStatus[0]?.rotulo);
+              atualizarBarraStatus(statusBruto || fluxoStatus[0]?.rotulo);
               mensagemInscricao.innerHTML = `<strong>${mensagemFormatada}</strong>`;
             } catch (erroSesuite) {
               atualizarBarraStatus(null);
