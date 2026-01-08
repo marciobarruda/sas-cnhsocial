@@ -20,6 +20,8 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <!-- Animate.css para animações simples nos nós de status -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-VdOQz3b1GkD9ajGq6j2Yq7wV8N6z1Q6qKZl+d2wQkexsQwqk9k1r1kXv0Jg7u0mQp3FQfKkJx3q5yZ2sQZ6q3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
       :root {
@@ -446,6 +448,11 @@
             icone: "🎯",
           },
           {
+            chave: "resultado-analise-pontuacao",
+            rotulo: "Resultado da análise de pontuação",
+            icone: "📈",
+          },
+          {
             chave: "resultado-final",
             rotulo: "Aguardando recurso e resultado final",
             icone: "✅",
@@ -577,6 +584,44 @@
           return null;
         };
 
+        // Decide a etapa a partir do texto exibido (mensagem formatada)
+        const mapMessageToStep = (texto) => {
+          if (!texto || typeof texto !== 'string') return null;
+          const norm = normalizarStatusTexto(texto);
+
+          // prioridade: recurso + pontuação -> Aguardando recurso e resultado final
+          if (norm.includes('recurso') && (norm.includes('pontuacao') || norm.includes('pontuação'))) {
+            return 'Aguardando recurso e resultado final';
+          }
+
+          // acatada -> Resultado da análise preliminar
+          if (norm.includes('acatada')) {
+            return 'Resultado da análise preliminar';
+          }
+
+          // rejeitada -> Aguardando recurso (conforme regra solicitada)
+          if (norm.includes('rejeitada')) {
+            return 'Aguardando recurso';
+          }
+
+          // análise da pontuação -> Análise de pontuação
+          if (norm.includes('analise') && (norm.includes('pontuacao') || norm.includes('pontuação'))) {
+            return 'Análise de pontuação';
+          }
+
+          // análise de recurso -> Análise de recurso
+          if (norm.includes('analise') && norm.includes('recurso')) {
+            return 'Análise de recurso';
+          }
+
+          // recurso simples -> Aguardando recurso
+          if (norm.includes('recurso')) {
+            return 'Aguardando recurso';
+          }
+
+          return null;
+        };
+
         const atualizarBarraStatus = (statusBruto) => {
           if (!barraStatus || !stepsContainer) return;
           
@@ -624,6 +669,17 @@
               connector.classList.add("status-connector-active");
             }
           });
+
+          // animação: aplicar classe animate.css ao nó atual
+          const currentNode = stepsContainer.querySelector('.status-step.status-current .status-node');
+          if (currentNode) {
+            currentNode.classList.add('animate__animated', 'animate__pulse');
+            const handleEnd = () => {
+              currentNode.classList.remove('animate__animated', 'animate__pulse');
+              currentNode.removeEventListener('animationend', handleEnd);
+            };
+            currentNode.addEventListener('animationend', handleEnd);
+          }
         };
 
         construirBarraStatus();
@@ -818,8 +874,18 @@
 
               const mensagemFormatada = formatarMarkdownSimples(mensagemPrincipal);
 
-              atualizarBarraStatus(statusBruto || fluxoStatus[0]?.rotulo);
+              // Exibe a mensagem primeiro
               mensagemInscricao.innerHTML = `<strong>${mensagemFormatada}</strong>`;
+
+              // Em seguida decide a etapa a partir do texto exibido e avança a barra com animação
+              const etapaDaMensagem = mapMessageToStep(mensagemPrincipal);
+              const alvo = etapaDaMensagem || statusBruto || fluxoStatus[0]?.rotulo;
+
+              // Pequeno atraso para deixar o usuário ler a mensagem antes de animar
+              setTimeout(() => {
+                atualizarBarraStatus(alvo);
+              }, 450);
+
             } catch (erroSesuite) {
               atualizarBarraStatus(null);
               mensagemInscricao.innerHTML =
