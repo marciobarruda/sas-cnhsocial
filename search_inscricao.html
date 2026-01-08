@@ -568,7 +568,7 @@
           // Verifica se é um status de conclusão que deve avançar automaticamente
           for (const [statusConcluido, proximaEtapa] of Object.entries(etapasCompletadas)) {
             const statusNormalizado = normalizarStatusTexto(statusConcluido);
-            if (normalizado.includes(statusNormalizado)) {
+            if (normalizado === statusNormalizado) {
               return proximaEtapa;
             }
           }
@@ -640,10 +640,18 @@
 
         const formatarMarkdownSimples = (texto) => {
           const seguro = sanitizeHtml(texto);
-          return seguro
+          let formatado = seguro
             .replace(/^\s*[-•]\s+/gm, "• ")
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
             .replace(/\n/g, "<br>");
+          
+          // Destacar justificativa em vermelho
+          formatado = formatado.replace(
+            /📌\s*Justificativa:<br>(.*?)(?=<br><br>|<br>-|$)/s,
+            '📌 <span style="color: #dc3545; font-weight: 600;">Justificativa:</span><br><span style="color: #dc3545;">$1</span>'
+          );
+          
+          return formatado;
         };
 
         const extrairMensagemSesuite = (payload) => {
