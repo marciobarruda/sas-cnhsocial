@@ -20,12 +20,15 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <!-- Animate.css para animações simples nos nós de status -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-VdOQz3b1GkD9ajGq6j2Yq7wV8N6z1Q6qKZl+d2wQkexsQwqk9k1r1kXv0Jg7u0mQp3FQfKkJx3q5yZ2sQZ6q3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
       :root {
         --brand-primary: #0053a4;
         --brand-secondary: #003a73;
         --brand-highlight: #00a3ff;
+        --brand-success: #16b364;
         --surface: #f4f7fb;
         --surface-strong: #ffffff;
         --border-color: #d0d7e2;
@@ -48,18 +51,19 @@
         min-height: 100vh;
       }
 
-      .modal-backdrop-custom {
-        background: radial-gradient(
-          circle at top,
-          rgba(0, 83, 164, 0.18),
-          rgba(0, 0, 0, 0.55)
-        );
+      .page-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
       }
 
       .card-programa {
         border: 1px solid rgba(0, 83, 164, 0.08);
         background: var(--surface-strong);
         box-shadow: 0 16px 34px rgba(0, 45, 98, 0.18);
+        border-radius: 1.25rem;
       }
 
       .section-title {
@@ -100,8 +104,17 @@
         background: var(--brand-highlight);
       }
 
+      .modal-backdrop-custom {
+        background: radial-gradient(
+          circle at top,
+          rgba(0, 83, 164, 0.18),
+          rgba(0, 0, 0, 0.55)
+        );
+      }
+
       .modal-dialog.modal-lg {
-        max-width: 760px;
+        max-width: 1280px;
+        width: min(96vw, 1280px);
       }
 
       .modal.fade .modal-dialog {
@@ -120,10 +133,218 @@
         height: auto;
         display: inline-block;
       }
+
+      .form-control:focus {
+        border-color: var(--brand-highlight);
+        box-shadow: 0 0 0 0.2rem rgba(0, 163, 255, 0.25);
+      }
+
+      .logo {
+        max-width: 200px;
+        height: auto;
+      }
+
+      .status-progress {
+        background: #f7fbff;
+        border: 1px solid rgba(0, 83, 164, 0.08);
+        border-radius: 1.25rem;
+        padding: 1rem 1.25rem 0.75rem;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      }
+
+      .status-steps {
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .status-step {
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.45rem;
+        position: relative;
+        min-width: 80px;
+        padding: 0;
+      }
+
+      .status-node {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 2px solid var(--border-color);
+        background: #fff;
+        display: grid;
+        place-items: center;
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 8px 16px rgba(0, 45, 98, 0.1);
+      }
+
+      .status-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        filter: grayscale(1);
+        opacity: 0.55;
+      }
+
+      .status-check {
+        display: none;
+        font-size: 1rem;
+      }
+
+      .status-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        line-height: 1.3;
+      }
+
+      .status-connector {
+        height: 6px;
+        background: #e3e8f0;
+        flex: 1 1 50px;
+        min-width: 32px;
+        border-radius: 999px;
+        position: relative;
+        align-self: flex-start;
+        margin: 20px -23px 0;
+      }
+
+      .status-connector-active {
+        background: linear-gradient(90deg, var(--brand-success), var(--brand-highlight));
+        box-shadow: 0 4px 10px rgba(22, 179, 100, 0.15);
+      }
+
+      .status-completed .status-node {
+        background: var(--brand-success);
+        border-color: var(--brand-success);
+        color: #fff;
+        box-shadow: 0 0 0 6px rgba(22, 179, 100, 0.15);
+      }
+
+      .status-completed .status-icon {
+        display: none;
+      }
+
+      .status-completed .status-check {
+        display: inline;
+      }
+
+      .status-completed .status-label {
+        color: var(--brand-secondary);
+      }
+
+      .status-current .status-node {
+        background: #fff;
+        border-color: var(--brand-highlight);
+        color: var(--brand-highlight);
+        box-shadow: 0 0 0 6px rgba(0, 163, 255, 0.18);
+      }
+
+      .status-current .status-label {
+        color: var(--text-strong);
+      }
+
+      .status-current .status-icon {
+        filter: none;
+        opacity: 1;
+      }
+
+      .status-pending .status-node {
+        background: #fff;
+        border-color: var(--border-color);
+        color: var(--border-color);
+        box-shadow: 0 2px 6px rgba(0, 35, 79, 0.05);
+      }
+
+      @media (max-width: 768px) {
+        .modal-dialog.modal-lg {
+          width: 100%;
+        }
+
+        .status-steps {
+          gap: 0.4rem;
+        }
+
+        .status-step {
+          min-width: 100px;
+        }
+      }
+
+      @media (min-width: 768px) {
+        .page-wrapper {
+          padding: 3rem 1.5rem;
+        }
+      }
     </style>
   </head>
 
   <body>
+    <main class="page-wrapper">
+      <div class="container" style="max-width: 720px">
+        <div class="card card-programa border-0 p-4 p-md-5">
+          <div class="text-center mb-4">
+            <img
+              src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+              alt="CNH Social Recife"
+              class="logo"
+            />
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="section-title">Consultar inscrição</h1>
+            <span class="institucional-pill">
+              <span class="institucional-pill-dot"></span>
+              Informe seu CPF para continuar
+            </span>
+          </div>
+
+          <form id="consulta-form" novalidate>
+            <div class="mb-3">
+              <label for="cpf" class="form-label">CPF</label>
+              <input
+                type="text"
+                inputmode="numeric"
+                pattern="\d{11}"
+                maxlength="11"
+                class="form-control form-control-lg"
+                id="cpf"
+                name="cpf"
+                placeholder="Digite apenas números"
+                required
+              />
+              <div class="form-text">Digite os 11 números do seu CPF.</div>
+              <div class="invalid-feedback" id="cpf-feedback">
+                Informe um CPF válido com 11 dígitos numéricos.
+              </div>
+            </div>
+
+            <div class="d-grid d-md-flex gap-2">
+              <button type="submit" class="btn btn-primary btn-lg px-4">
+                Consultar inscrição
+              </button>
+              <a
+                class="btn btn-outline-secondary btn-lg px-4"
+                href="https://cnhsocial.recife.pe.gov.br/"
+              >
+                Voltar para o site
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
     <div
       class="modal fade"
       id="avisoModal"
@@ -145,15 +366,19 @@
                 />
               </div>
               <div class="d-flex justify-content-between align-items-center">
-                <h1 class="section-title" id="avisoModalLabel">
-                  Inscrição já encontrada
-                </h1>
+                <h2 class="section-title" id="avisoModalLabel">
+                  Processamento da inscrição
+                </h2>
               </div>
 
               <span class="institucional-pill">
                 <span class="institucional-pill-dot"></span>
-                Aviso importante
+                Detalhamento
               </span>
+
+              <div class="status-progress d-none" id="status-progresso" aria-live="polite">
+                <div class="status-steps" id="status-steps"></div>
+              </div>
 
               <p class="mb-1 mt-2 fs-6 text-muted" id="mensagem-inscricao">
                 <strong>
@@ -178,36 +403,294 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("consulta-form");
+        const cpfInput = document.getElementById("cpf");
+        const feedbackCpf = document.getElementById("cpf-feedback");
+        const mensagemInscricao = document.getElementById("mensagem-inscricao");
+        const cpfSpan = document.getElementById("cpf-mascarado");
         const modalElement = document.getElementById("avisoModal");
         const modal = new bootstrap.Modal(modalElement, {
           backdrop: "static",
           keyboard: false,
         });
+        const barraStatus = document.getElementById("status-progresso");
+        const stepsContainer = document.getElementById("status-steps");
+
+        const fluxoStatus = [
+          {
+            chave: "inscricao-processamento",
+            rotulo: "Inscrição em processamento",
+            icone: "📥",
+          },
+          {
+            chave: "analise-inscricao",
+            rotulo: "Análise de inscrição",
+            icone: "📄",
+          },
+          {
+            chave: "resultado-analise-preliminar",
+            rotulo: "Resultado da análise preliminar",
+            icone: "📊",
+          },
+          {
+            chave: "aguardando-recurso",
+            rotulo: "Aguardando recurso",
+            icone: "⏳",
+          },
+          {
+            chave: "analise-recurso",
+            rotulo: "Análise de recurso",
+            icone: "🔁",
+          },
+          {
+            chave: "analise-pontuacao",
+            rotulo: "Análise de pontuação",
+            icone: "🎯",
+          },
+          {
+            chave: "resultado-analise-pontuacao",
+            rotulo: "Resultado da análise de pontuação",
+            icone: "📈",
+          },
+          {
+            chave: "resultado-final",
+            rotulo: "Aguardando recurso e resultado final",
+            icone: "✅",
+          },
+        ];
+
+        const statusAliases = {
+          // Etapa 1: Inscrição em processamento
+          "inscricao em processamento": "Inscrição em processamento",
+          "recebe dados do front": "Inscrição em processamento",
+          
+          // Etapa 2: Análise de inscrição
+          "analise inscricao": "Análise de inscrição",
+          "analise de inscricao": "Análise de inscrição",
+          "analise da inscricao": "Análise de inscrição",
+          
+          // Etapa 3: Resultado da análise preliminar (conclusão da análise)
+          "resultado da analise preliminar": "Resultado da análise preliminar",
+          "inscricao acatada": "Análise de pontuação",
+          "inscricao rejeitada": "Resultado da análise preliminar",
+          
+          // Etapa 4: Aguardando recurso
+          "aguardando recurso": "Aguardando recurso",
+          
+          // Etapa 5: Análise de recurso
+          "analise recurso": "Análise de recurso",
+          "analise de recurso": "Análise de recurso",
+          "85 - analise de recurso": "Análise de recurso",
+          
+          // Etapa 6: Análise de pontuação
+          "analise pontuacao": "Análise de pontuação",
+          "analise de pontuacao": "Análise de pontuação",
+          
+          // Etapa 7: Aguardando recurso e resultado final
+          "aguardando recurso e resultado final": "Aguardando recurso e resultado final",
+        };
+
+        const normalizarStatusTexto = (texto) =>
+          texto
+            .normalize("NFD")
+            .replace(/\p{Diacritic}/gu, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9\s]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        const identificarStatusNoTexto = (texto) => {
+          if (!texto || typeof texto !== "string") return null;
+          const normalizado = normalizarStatusTexto(texto);
+          if (!normalizado) return null;
+
+          if (statusAliases[normalizado]) {
+            return statusAliases[normalizado];
+          }
+
+          for (const etapa of fluxoStatus) {
+            const etapaNormalizada = normalizarStatusTexto(etapa.rotulo);
+            if (normalizado.includes(etapaNormalizada)) {
+              return etapa.rotulo;
+            }
+          }
+
+          return null;
+        };
+
+        const construirBarraStatus = (hiddenSteps = []) => {
+          if (!stepsContainer) return;
+
+          stepsContainer.innerHTML = "";
+
+          const etapasVisiveis = fluxoStatus.filter((etapa) => !hiddenSteps.includes(etapa.rotulo));
+
+          etapasVisiveis.forEach((etapa, index) => {
+            const passo = document.createElement("div");
+            passo.className = "status-step status-pending";
+            passo.dataset.status = etapa.rotulo;
+            passo.innerHTML = `
+              <div class="status-node" aria-hidden="true">
+                <span class="status-icon">${etapa.icone || index + 1}</span>
+                <span class="status-check">✓</span>
+              </div>
+              <div class="status-label">${etapa.rotulo}</div>
+            `;
+            stepsContainer.appendChild(passo);
+
+            if (index < etapasVisiveis.length - 1) {
+              const connector = document.createElement("div");
+              connector.className = "status-connector";
+              stepsContainer.appendChild(connector);
+            }
+          });
+        };
+
+        const limparEstadoBarra = () => {
+          if (!stepsContainer) return;
+          stepsContainer
+            .querySelectorAll(".status-step")
+            .forEach((step) =>
+              step.classList.remove(
+                "status-completed",
+                "status-current",
+                "status-pending"
+              )
+            );
+          stepsContainer
+            .querySelectorAll(".status-connector")
+            .forEach((connector) =>
+              connector.classList.remove("status-connector-active")
+            );
+        };
+
+        const etapasCompletadas = {
+          "Inscrição acatada": "Análise de pontuação",
+          "Inscrição rejeitada": "Resultado da análise preliminar",
+        };
+
+        const determinarStatusFinal = (statusTexto) => {
+          if (!statusTexto) return null;
+
+          const normalizado = normalizarStatusTexto(statusTexto);
+
+          // Verifica se é um status de conclusão que deve avançar automaticamente
+          // Usamos includes aqui para detectar frases dentro do texto recebido (mensagens longas)
+          for (const [statusConcluido, proximaEtapa] of Object.entries(etapasCompletadas)) {
+            const statusNormalizado = normalizarStatusTexto(statusConcluido);
+            if (normalizado.includes(statusNormalizado)) {
+              return proximaEtapa;
+            }
+          }
+
+          return null;
+        };
+
+        // Decide a etapa a partir do texto exibido (mensagem formatada)
+        // Retorna um objeto { step: string|null, hide: Array<string> }
+        const mapMessageToStep = (texto) => {
+          if (!texto || typeof texto !== 'string') return { step: null, hide: [] };
+          const norm = normalizarStatusTexto(texto);
+
+          // prioridade: recurso + pontuação -> Aguardando recurso e resultado final
+          if (norm.includes('recurso') && (norm.includes('pontuacao') || norm.includes('pontuação'))) {
+            return { step: 'Aguardando recurso e resultado final', hide: [] };
+          }
+
+          // acatada -> Análise de pontuação (novo comportamento)
+          if (norm.includes('acatada')) {
+            // quando acatada, ocultar passos relativos a recurso
+            return { step: 'Análise de pontuação', hide: ['Aguardando recurso', 'Análise de recurso'] };
+          }
+
+          // rejeitada -> Aguardando recurso
+          if (norm.includes('rejeitada')) {
+            return { step: 'Aguardando recurso', hide: [] };
+          }
+
+          // análise da pontuação -> Análise de pontuação
+          if (norm.includes('analise') && (norm.includes('pontuacao') || norm.includes('pontuação'))) {
+            return { step: 'Análise de pontuação', hide: [] };
+          }
+
+          // análise de recurso -> Análise de recurso
+          if (norm.includes('analise') && norm.includes('recurso')) {
+            return { step: 'Análise de recurso', hide: [] };
+          }
+
+          // recurso simples -> Aguardando recurso
+          if (norm.includes('recurso')) {
+            return { step: 'Aguardando recurso', hide: [] };
+          }
+
+          return { step: null, hide: [] };
+        };
+
+        const atualizarBarraStatus = (statusBruto) => {
+          if (!barraStatus || !stepsContainer) return;
+          
+          // Primeiro verifica se deve avançar automaticamente
+          const statusAvancado = determinarStatusFinal(statusBruto);
+          const statusParaIdentificar = statusAvancado || statusBruto;
+          
+          // Agora identifica o status
+          const statusIdentificado = identificarStatusNoTexto(statusParaIdentificar);
+
+          if (!statusIdentificado) {
+            barraStatus.classList.add("d-none");
+            return;
+          }
+
+          barraStatus.classList.remove("d-none");
+          limparEstadoBarra();
+
+          const steps = stepsContainer.querySelectorAll(".status-step");
+          let encontrouStatus = false;
+
+          steps.forEach((step) => {
+            const rotulo = step.dataset.status;
+
+            if (encontrouStatus) {
+              step.classList.add("status-pending");
+              return;
+            }
+
+            if (rotulo === statusIdentificado) {
+              step.classList.add("status-current");
+              encontrouStatus = true;
+            } else {
+              step.classList.add("status-completed");
+            }
+          });
+
+          const connectors = stepsContainer.querySelectorAll(".status-connector");
+          connectors.forEach((connector, index) => {
+            const step = steps[index];
+            const ativo =
+              step?.classList.contains("status-completed") ||
+              step?.classList.contains("status-current");
+            if (ativo) {
+              connector.classList.add("status-connector-active");
+            }
+          });
+
+          // animação: aplicar classe animate.css ao nó atual
+          const currentNode = stepsContainer.querySelector('.status-step.status-current .status-node');
+          if (currentNode) {
+            currentNode.classList.add('animate__animated', 'animate__pulse');
+            const handleEnd = () => {
+              currentNode.classList.remove('animate__animated', 'animate__pulse');
+              currentNode.removeEventListener('animationend', handleEnd);
+            };
+            currentNode.addEventListener('animationend', handleEnd);
+          }
+        };
+
+        construirBarraStatus();
 
         modalElement.addEventListener("shown.bs.modal", () => {
           modalElement.classList.add("show");
         });
-
-        modal.show();
-
-        // CPF vindo do n8n
-        const cpfBruto = "{{ $('Recupera dados').item.json.preferred_username }}";
-        const cpfNumeros = (cpfBruto || "").replace(/\D/g, "");
-        let cpfMascarado = "não identificado";
-
-        // Máscara LGPD: mostra 3 primeiros e 2 últimos dígitos (ex.: 123.***.***-45)
-        if (cpfNumeros.length === 11) {
-          const primeiros3 = cpfNumeros.slice(0, 3);
-          const ultimos2 = cpfNumeros.slice(-2);
-          cpfMascarado = `${primeiros3}.***.***-${ultimos2}`;
-        }
-
-        const cpfSpan = document.getElementById("cpf-mascarado");
-        if (cpfSpan) {
-          cpfSpan.textContent = cpfMascarado;
-        }
-
-        const mensagemInscricao = document.getElementById("mensagem-inscricao");
 
         const sanitizeHtml = (texto) =>
           texto
@@ -219,10 +702,18 @@
 
         const formatarMarkdownSimples = (texto) => {
           const seguro = sanitizeHtml(texto);
-          return seguro
+          let formatado = seguro
             .replace(/^\s*[-•]\s+/gm, "• ")
             .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
             .replace(/\n/g, "<br>");
+          
+          // Destacar justificativa em vermelho
+          formatado = formatado.replace(
+            /📌\s*Justificativa:<br>(.*?)(?=<br><br>|<br>-|$)/s,
+            '📌 <span style="color: #dc3545; font-weight: 600;">Justificativa:</span><br><span style="color: #dc3545;">$1</span>'
+          );
+          
+          return formatado;
         };
 
         const extrairMensagemSesuite = (payload) => {
@@ -247,7 +738,86 @@
           );
         };
 
-        const consultarInscricao = async () => {
+        const mascararCpf = (cpf) => {
+          if (cpf.length === 11) {
+            const primeiros3 = cpf.slice(0, 3);
+            const ultimos2 = cpf.slice(-2);
+            return `${primeiros3}.***.***-${ultimos2}`;
+          }
+          return "não identificado";
+        };
+
+        const extrairStatusDaResposta = (
+          payloadInscricao,
+          retornoSesuite,
+          mensagemPrincipal
+        ) => {
+          const candidatos = [];
+          const adicionar = (valor) => {
+            if (valor && typeof valor === "string") {
+              candidatos.push(valor);
+            }
+          };
+
+          if (payloadInscricao && typeof payloadInscricao === "object") {
+            adicionar(payloadInscricao.status);
+            adicionar(payloadInscricao.situacao);
+            adicionar(payloadInscricao.status_inscricao);
+            adicionar(payloadInscricao.situacao_inscricao);
+            adicionar(payloadInscricao.atividadeAtual);
+            adicionar(payloadInscricao.workflowStatusRaw);
+
+            if (Array.isArray(payloadInscricao)) {
+              payloadInscricao.forEach((item) => {
+                adicionar(item?.status);
+                adicionar(item?.situacao);
+                adicionar(item?.workflowStatusRaw);
+              });
+            }
+          }
+
+          if (retornoSesuite && typeof retornoSesuite === "object") {
+            adicionar(retornoSesuite.status);
+            adicionar(retornoSesuite.situacao);
+            adicionar(retornoSesuite.status_inscricao);
+            adicionar(retornoSesuite.situacao_inscricao);
+            adicionar(retornoSesuite.workflowStatusRaw);
+            
+            if (Array.isArray(retornoSesuite)) {
+              retornoSesuite.forEach((item) => {
+                adicionar(item?.status);
+                adicionar(item?.workflowStatusRaw);
+              });
+            }
+          } else if (typeof retornoSesuite === "string") {
+            adicionar(retornoSesuite);
+          }
+
+          adicionar(mensagemPrincipal);
+
+          for (const candidato of candidatos) {
+            const identificado = identificarStatusNoTexto(candidato);
+            if (identificado) {
+              return candidato;
+            }
+          }
+
+          return null;
+        };
+
+        const atualizarCpfMascarado = (cpfNumeros) => {
+          if (cpfSpan) {
+            cpfSpan.textContent = mascararCpf(cpfNumeros);
+          }
+        };
+
+        const definirMensagemInicial = (cpfNumeros) => {
+          mensagemInscricao.innerHTML = `<strong>Consultando inscrição ativa para o CPF ${mascararCpf(
+            cpfNumeros
+          )} no programa CNH Social Recife...</strong>`;
+        };
+
+        const consultarInscricao = async (cpfNumeros) => {
           if (!cpfNumeros) {
             mensagemInscricao.textContent =
               "Não foi possível identificar o CPF para consulta.";
@@ -300,20 +870,76 @@
               const retornoSesuite = await enviarParaSesuite(payloadInscricao);
               const mensagemPrincipal = extrairMensagemSesuite(retornoSesuite);
 
+              const statusBruto = extrairStatusDaResposta(
+                payloadInscricao,
+                retornoSesuite,
+                mensagemPrincipal
+              );
+
               const mensagemFormatada = formatarMarkdownSimples(mensagemPrincipal);
 
+              // Exibe a mensagem primeiro
               mensagemInscricao.innerHTML = `<strong>${mensagemFormatada}</strong>`;
+
+              // Em seguida decide a etapa a partir do texto exibido e avança a barra com animação
+              const resultadoMapa = mapMessageToStep(mensagemPrincipal);
+              const etapaDaMensagem = resultadoMapa?.step;
+              const hidden = resultadoMapa?.hide || [];
+
+              // Reconstruir a barra com passos ocultos, se houver
+              construirBarraStatus(hidden);
+
+              const alvo = etapaDaMensagem || statusBruto || fluxoStatus[0]?.rotulo;
+
+              // Pequeno atraso para deixar o usuário ler a mensagem antes de animar
+              setTimeout(() => {
+                atualizarBarraStatus(alvo);
+              }, 450);
+
             } catch (erroSesuite) {
+              atualizarBarraStatus(null);
               mensagemInscricao.innerHTML =
                 "<strong>Não foi possível recuperar a situação da inscrição no momento.</strong>";
             }
           } catch (erro) {
+            atualizarBarraStatus(null);
             mensagemInscricao.innerHTML =
               "<strong>Não foi possível recuperar sua inscrição no momento.</strong>";
           }
         };
 
-        consultarInscricao();
+        const normalizarCpf = (valor) => valor.replace(/\D/g, "").slice(0, 11);
+
+        cpfInput.addEventListener("input", (event) => {
+          const apenasNumeros = normalizarCpf(event.target.value);
+          event.target.value = apenasNumeros;
+          if (apenasNumeros.length === 11) {
+            cpfInput.classList.remove("is-invalid");
+          }
+        });
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+
+          const cpfNormalizado = normalizarCpf(cpfInput.value);
+
+          if (cpfNormalizado.length !== 11) {
+            cpfInput.classList.add("is-invalid");
+            if (feedbackCpf) {
+              feedbackCpf.textContent =
+                "Informe um CPF válido com 11 dígitos numéricos.";
+            }
+            cpfInput.focus();
+            return;
+          }
+
+          cpfInput.classList.remove("is-invalid");
+          atualizarCpfMascarado(cpfNormalizado);
+          definirMensagemInicial(cpfNormalizado);
+          atualizarBarraStatus(fluxoStatus[0]?.rotulo);
+          modal.show();
+          consultarInscricao(cpfNormalizado);
+        });
 
         const fecharBtn = document.getElementById("fechar-modal");
         if (fecharBtn) {
