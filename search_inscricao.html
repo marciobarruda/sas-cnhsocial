@@ -471,7 +471,7 @@
           
           // Etapa 3: Resultado da análise preliminar (conclusão da análise)
           "resultado da analise preliminar": "Resultado da análise preliminar",
-          "inscricao acatada": "Resultado da análise preliminar",
+          "inscricao acatada": "Análise de pontuação",
           "inscricao rejeitada": "Resultado da análise preliminar",
           
           // Etapa 4: Aguardando recurso
@@ -563,7 +563,7 @@
         };
 
         const etapasCompletadas = {
-          "Inscrição acatada": "Resultado da análise preliminar",
+          "Inscrição acatada": "Análise de pontuação",
           "Inscrição rejeitada": "Resultado da análise preliminar",
         };
 
@@ -594,9 +594,9 @@
             return 'Aguardando recurso e resultado final';
           }
 
-          // acatada -> Resultado da análise preliminar
+          // acatada -> Análise de pontuação (novo comportamento solicitado)
           if (norm.includes('acatada')) {
-            return 'Resultado da análise preliminar';
+            return 'Análise de pontuação';
           }
 
           // rejeitada -> Aguardando recurso (conforme regra solicitada)
