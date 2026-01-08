@@ -483,12 +483,6 @@
           "aguardando recurso e resultado final": "Aguardando recurso e resultado final",
         };
 
-        // Índice com chaves normalizadas para garantir correspondência independente de
-        // pontuação, hífens ou espaços extras no valor recebido
-        const statusAliasIndex = Object.fromEntries(
-          Object.keys(statusAliases).map((k) => [normalizarStatusTexto(k), statusAliases[k]])
-        );
-
         const normalizarStatusTexto = (texto) =>
           texto
             .normalize("NFD")
@@ -503,12 +497,10 @@
           const normalizado = normalizarStatusTexto(texto);
           if (!normalizado) return null;
 
-          // Primeiro tenta correspondência exata contra os aliases normalizados
-          if (statusAliasIndex[normalizado]) {
-            return statusAliasIndex[normalizado];
+          if (statusAliases[normalizado]) {
+            return statusAliases[normalizado];
           }
 
-          // Em seguida tenta detectar pelo rótulo das etapas (busca por inclusão)
           for (const etapa of fluxoStatus) {
             const etapaNormalizada = normalizarStatusTexto(etapa.rotulo);
             if (normalizado.includes(etapaNormalizada)) {
