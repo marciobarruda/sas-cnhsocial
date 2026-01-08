@@ -562,17 +562,17 @@
 
         const determinarStatusFinal = (statusTexto) => {
           if (!statusTexto) return null;
-          
+
           const normalizado = normalizarStatusTexto(statusTexto);
-          
+
           // Verifica se é um status de conclusão que deve avançar automaticamente
           for (const [statusConcluido, proximaEtapa] of Object.entries(etapasCompletadas)) {
             const statusNormalizado = normalizarStatusTexto(statusConcluido);
-            if (normalizado === statusNormalizado) {
+            if (normalizado.includes(statusNormalizado)) {
               return proximaEtapa;
             }
           }
-          
+
           return null;
         };
 
