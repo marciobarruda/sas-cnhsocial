@@ -1008,7 +1008,6 @@
                       id="nomeSocial"
                       name="nomeSocial"
                       maxlength="120"
-                      placeholder="Informe se desejar atendimento com nome social"
                       value="{{ $json.data.nomeSocial || "" }}"
                     />
                   </div>
@@ -2218,7 +2217,13 @@
       const dataAtualizacaoInput = document.getElementById("dataAtualizacaoCadunico");
       const tempoAtualizacaoInput = document.getElementById("tempoAtualizacaoCadunico");
       const cepStatus = document.getElementById("cepStatus");
+      const nomeSocialInput = document.getElementById("nomeSocial");
       let enderecoEdicaoAtiva = false;
+
+      if (nomeSocialInput) {
+        nomeSocialInput.readOnly = false;
+        nomeSocialInput.removeAttribute("aria-readonly");
+      }
 
       const escapeSelector = (value) => {
         const string = value == null ? "" : String(value);
