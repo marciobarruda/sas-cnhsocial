@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SAS • CNH Social</title>
+    <title>SAS • CNH Recife</title>
     <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -57,19 +57,23 @@
         min-height: 385px;
         overflow: hidden;
         width: 100%;
+        background: none;
       }
 
       header.site-header picture {
-        display: block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
         height: 100%;
       }
 
       header.site-header .hero-image {
         display: block;
-        width: 100%;
+        width: auto;
         height: 100%;
-        object-fit: cover;
+        max-width: 100%;
+        object-fit: contain;
         object-position: center;
       }
 
@@ -193,6 +197,41 @@
         box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35);
       }
 
+      .rating-stars {
+        display: flex;
+        gap: 0.35rem;
+        align-items: center;
+        justify-content: center;
+        margin: 1rem 0 0.25rem;
+      }
+
+      .rating-star {
+        font-size: 1.9rem;
+        color: #d0d7e2;
+        background: transparent;
+        border: none;
+        padding: 0.1rem;
+        line-height: 1;
+        transition: transform 0.1s ease, color 0.15s ease;
+      }
+
+      .rating-star:hover,
+      .rating-star:focus-visible {
+        color: #f4b000;
+        outline: none;
+        transform: translateY(-1px);
+      }
+
+      .rating-star.is-active {
+        color: #f4b000;
+      }
+
+      .rating-comment {
+        width: 100%;
+        resize: vertical;
+        min-height: 110px;
+      }
+
       input[type="text"],
       textarea {
         text-transform: uppercase;
@@ -211,6 +250,22 @@
         padding: 1.5rem;
         background-color: rgba(17, 24, 39, 0.6);
         z-index: 2000;
+      }
+
+      .availability-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.55);
+        backdrop-filter: blur(2px);
+        z-index: 1500;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      .availability-overlay.is-active {
+        opacity: 1;
+        pointer-events: auto;
       }
 
       .modal-backdrop.is-open {
@@ -249,6 +304,20 @@
       .modal-message {
         margin-bottom: 1rem;
         color: var(--text-strong);
+      }
+
+      .availability-meta {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+      }
+
+      .availability-countdown {
+        font-weight: 700;
+        color: var(--brand-secondary);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
       }
 
       .modal-list {
@@ -1318,6 +1387,9 @@
             <div class="card card-section p-4 p-md-5">
             <div class="section-header">
               <h2 class="h4 mb-0">Contexto socioassistencial</h2>
+              <p class="mb-0 fw-semibold fst-italic">
+                Alguns dados são automaticamente preenchidos a partir da base do CadÚnico, conforme previsto no edital.
+              </p>
             </div>
               <div class="row g-4">
                 <div class="col-12 col-md-6">
@@ -1363,7 +1435,6 @@
                       aria-disabled="true"
                     />
                     <label class="form-check-label text-danger fw-bold" for="semTrabalhoFormal">Não tem trabalho formal</label>
-                    <small class="form-text">Informação carregada automaticamente a partir do CadÚnico.</small>
                   </div>
                   <input
                     type="hidden"
@@ -1436,9 +1507,8 @@
                       inputmode="numeric"
                       min="0"
                       step="1"
-                      aria-describedby="composicaoFamiliarHelp"
                     />
-                    <small id="composicaoFamiliarHelp" class="form-text">Pontuação do edital: <span id="pontuacaoComposicaoValor">—</span></small>
+                    <span id="pontuacaoComposicaoValor" class="visually-hidden">—</span>
                   </div>
                   <div class="col-12 col-md-6">
                     <label for="rendaFamiliar" class="form-label required">Renda per capita mensal (R$)</label>
@@ -1450,13 +1520,11 @@
                       inputmode="decimal"
                       placeholder="Valor carregado automaticamente"
                       value="{{ $json.data.rendaPerCapita || "" }}"
-                      aria-describedby="rendaHelp"
                       data-required-field="true"
                       readonly
                       aria-readonly="true"
                       required
                     />
-                    <small id="rendaHelp" class="form-text">Informação sincronizada com o CadÚnico para verificação da renda per capita.</small>
                   </div>
                 </div>
               </div>
@@ -1470,9 +1538,7 @@
                   value="{{ (() => { const raw = (($json.data || {}).programaBolsaFamilia ?? ""); const nomePrograma = (($json.data || {}).programaSocialNome || ($json.data || {}).programaBolsaFamiliaNome || "").toString().trim(); if (raw == null || (typeof raw === "string" && raw.trim() === "")) { return ""; } const rawNorm = raw === true || raw === 1 || raw === "1" || (raw || "").toString().trim().toLowerCase(); const isSim = rawNorm === true || rawNorm === 1 || rawNorm === "1" || rawNorm === "sim" || rawNorm === "true"; return isSim ? `SIM${nomePrograma ? `, ${nomePrograma}` : ""}` : "NÃO"; })() }}"
                   readonly
                   aria-readonly="true"
-                  aria-describedby="programasSociaisHelp"
                 />
-                <small id="programasSociaisHelp" class="form-text">Consulta automática via CadÚnico (BPC/Bolsa Família).</small>
               </div>
             </div>
           </div>
@@ -1537,44 +1603,52 @@
               <h2 class="h4 mb-0">Condições especiais e anexos</h2>
               <span class="legend-badge"><i class="bi bi-paperclip"></i> Anexe os comprovantes solicitados</span>
             </div>
-            <div class="row g-4">
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
-                <select
-                  class="form-select readonly-control"
-                  id="pcd"
-                  name="pcd"
-                  aria-describedby="pcdHelp"
-                  data-required-field="true"
-                  aria-readonly="true"
-                  tabindex="-1"
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim" {{ ($json.data.pcd || "") === "sim" ? "selected" : "" }}>Sim</option>
-                  <option value="nao" {{ ($json.data.pcd || "") === "nao" ? "selected" : "" }}>Não</option>
-                </select>
-                <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
-              </div>
-              <div class="col-12 col-md-6">
-                <label class="form-label required" for="maeAtipica">
-                  Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)
-                </label>
-                <select
-                  class="form-select"
-                  id="maeAtipica"
-                  name="maeAtipica"
-                  data-required-field="true"
-                  title="A comprovação da condição de mãe ou pai atípico deverá ser realizada mediante apresentação de, no mínimo:\nI – laudo, relatório ou prescrição emitido por profissional de saúde ou por instituição devidamente registrada no respectivo conselho profissional, que comprove a condição da pessoa sob seus cuidados;\nII - declaração técnica do CRAS/CREAS ou certificação/atestado da Secretaria de Assistência Social atestando a condição de vulnerabilidade social;\nIII – declaração técnica emitida por unidade de saúde ou unidade socioassistencial da Prefeitura do Recife, atestando que o(a) candidato(a) é o responsável legal pela pessoa com deficiência, Transtorno do Espectro Autista (TEA), Síndrome de Down ou outra condição congênere que exija cuidados permanentes."
-                  required
-                >
-                  <option value="">Selecione</option>
-                  <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
-                  <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
-                </select>
-                <small class="form-text">Reserva de 10% (dez por cento) das vagas por convocação do Programa CNH Social Recife para mães e pais atípicos.</small>
-              </div>
-              <div class="col-12">
+              <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                  <label class="form-label required" for="pcd">Pessoa com deficiência (PCD)</label>
+                  <select
+                    class="form-select readonly-control"
+                    id="pcd"
+                    name="pcd"
+                    aria-describedby="pcdHelp"
+                    data-required-field="true"
+                    aria-readonly="true"
+                    tabindex="-1"
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="sim" {{ ($json.data.pcd || "") === "sim" ? "selected" : "" }}>Sim</option>
+                    <option value="nao" {{ ($json.data.pcd || "") === "nao" ? "selected" : "" }}>Não</option>
+                  </select>
+                  <small id="pcdHelp" class="form-text">Em caso afirmativo, apresente laudo médico conforme modelos do SUS.</small>
+                </div>
+                <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
+                  <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
+                    <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
+                    <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
+                    <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
+                    <div class="file-name" id="laudoPcdName"></div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label required" for="maeAtipica">
+                    Sou mãe/pai atípico (responsável legal por pessoa PCD/TEA)
+                  </label>
+                  <select
+                    class="form-select"
+                    id="maeAtipica"
+                    name="maeAtipica"
+                    data-required-field="true"
+                    title="A comprovação da condição de mãe ou pai atípico deverá ser realizada mediante apresentação de, no mínimo:\nI – laudo, relatório ou prescrição emitido por profissional de saúde ou por instituição devidamente registrada no respectivo conselho profissional, que comprove a condição da pessoa sob seus cuidados;\nII - declaração técnica do CRAS/CREAS ou certificação/atestado da Secretaria de Assistência Social atestando a condição de vulnerabilidade social;\nIII – declaração técnica emitida por unidade de saúde ou unidade socioassistencial da Prefeitura do Recife, atestando que o(a) candidato(a) é o responsável legal pela pessoa com deficiência, Transtorno do Espectro Autista (TEA), Síndrome de Down ou outra condição congênere que exija cuidados permanentes."
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="sim" {{ ($json.data.maeAtipica || "") === "sim" ? "selected" : "" }}>Sim</option>
+                    <option value="nao" {{ ($json.data.maeAtipica || "") === "nao" ? "selected" : "" }}>Não</option>
+                  </select>
+                  <small class="form-text">Reserva de 10% (dez por cento) das vagas por convocação do Programa CNH Recife para mães e pais atípicos.</small>
+                </div>
+                <div class="col-12">
                 <div class="row g-3 align-items-stretch">
                   <div class="col-12 col-lg-4 d-none" id="docMaeAtipicaLaudoWrapper">
                     <div class="file-input-wrapper h-100" title="É necessário incluir este documento conforme consta no edital.">
@@ -1607,7 +1681,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-md-6" id="vitimaViolenciaWrapper">
                 <label class="form-label required" for="vitimaViolencia"
                   >Vítima de violência doméstica atendida pelos órgãos e serviços especializados do Recife</label
                 >
@@ -1635,16 +1709,8 @@
                   placeholder="Descreva necessidades específicas de atendimento, adaptações ou informações relevantes"
                 >{{ $json.data.necessidadesEspeciais || "" }}</textarea>
               </div>
-              <div class="col-12 col-lg-6 d-none" id="laudoPcdWrapper">
-                <div class="file-input-wrapper" title="É necessário incluir este documento conforme consta no edital.">
-                  <label for="laudoPcd" class="form-label required">Laudo médico PCD (PDF, JPG ou PNG até 5 MB)</label>
-                  <input class="form-control" type="file" id="laudoPcd" name="laudoPcd" accept=".pdf,.jpg,.jpeg,.png" aria-describedby="laudoPcdInfo" />
-                  <div id="laudoPcdInfo" class="form-text">Documento emitido por serviço público ou conveniado (validade 12 meses).</div>
-                  <div class="file-name" id="laudoPcdName"></div>
                 </div>
-              </div>
-              </div>
-            </section>
+              </section>
               <div class="step-actions" aria-label="Controles da etapa Condições especiais e anexos">
                 <button
                   type="button"
@@ -1752,7 +1818,7 @@
                         data-required-field="true"
                       />
                       <label class="form-check-label" for="lgpd">
-                        Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Social, conforme a Lei Geral de Proteção de Dados.
+                        Li e autorizo o tratamento dos meus dados pessoais para execução do Programa CNH Recife, conforme a Lei Geral de Proteção de Dados.
                       </label>
                       <a href="#" class="d-block small mt-1">Consultar política de privacidade</a>
                     </div>
@@ -1837,6 +1903,85 @@
           >
             <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar inscrição
           </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="reviewChoiceModal" data-review-choice-modal hidden>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reviewChoiceTitle"
+        aria-describedby="reviewChoiceDesc"
+      >
+        <button type="button" class="modal-close-button" id="reviewChoiceCloseIcon" aria-label="Fechar modal">&times;</button>
+        <p class="modal-title" id="reviewChoiceTitle">
+          <span aria-hidden="true">🤔</span>
+          <span>Como deseja prosseguir?</span>
+        </p>
+        <p class="modal-message" id="reviewChoiceDesc">
+          Deseja revisar os dados antes de enviar ou prefere enviar agora?
+        </p>
+        <div class="modal-actions gap-3">
+          <button type="button" class="btn btn-outline-secondary" id="reviewChoiceReview">
+            <i class="bi bi-search me-2" aria-hidden="true"></i>Revisar inscrição
+          </button>
+          <button type="button" class="btn btn-primary btn-lg px-4" id="reviewChoiceSend">
+            <i class="bi bi-send-fill me-2" aria-hidden="true"></i>Enviar agora
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="ratingModal" data-rating-modal hidden>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ratingModalTitle"
+        aria-describedby="ratingModalDesc"
+      >
+        <button type="button" class="modal-close-button" id="ratingCloseIcon" aria-label="Fechar avaliação">&times;</button>
+        <p class="modal-title" id="ratingModalTitle">
+          <span aria-hidden="true">⭐</span>
+          <span>Avalie o serviço</span>
+        </p>
+        <p class="modal-message" id="ratingModalDesc">Como foi sua experiência com o envio da inscrição?</p>
+        <div class="rating-stars" role="group" aria-label="Escolha uma nota de 1 a 5">
+          <button type="button" class="rating-star" data-rating-value="1" aria-label="1 estrela">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="rating-star" data-rating-value="2" aria-label="2 estrelas">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="rating-star" data-rating-value="3" aria-label="3 estrelas">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="rating-star" data-rating-value="4" aria-label="4 estrelas">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="rating-star" data-rating-value="5" aria-label="5 estrelas">
+            <i class="bi bi-star-fill" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="small text-muted text-center mb-2" id="ratingHint">
+          Clique para selecionar a nota. Você pode complementar com um comentário abaixo.
+        </p>
+        <div class="mb-3">
+          <label for="ratingComment" class="form-label">Comentário</label>
+          <p class="form-text">Compartilhe rapidamente o motivo da nota escolhida.</p>
+          <textarea
+            class="form-control rating-comment"
+            id="ratingComment"
+            name="ratingComment"
+            rows="3"
+            placeholder="Digite seu comentário"
+          ></textarea>
+        </div>
+        <div class="modal-actions gap-3">
+          <button type="button" class="btn btn-outline-secondary" id="ratingSkip">Pular</button>
+          <button type="button" class="btn btn-primary" id="ratingSubmit" disabled>Enviar avaliação</button>
         </div>
       </div>
     </div>
@@ -2313,6 +2458,26 @@
       const generoSelect = document.getElementById("genero");
       const generoHidden = document.getElementById("generoValor");
       const grupoMulherChefe = document.getElementById("grupoMulherChefe");
+      const vitimaViolenciaWrapper = document.getElementById("vitimaViolenciaWrapper");
+      const vitimaViolenciaSelect = document.getElementById("vitimaViolencia");
+
+      const atualizarVitimaViolencia = () => {
+        const generoAtual = (generoSelect?.value || generoHidden?.value || "").toLowerCase();
+        const esconder = generoAtual === "masculino";
+        if (vitimaViolenciaWrapper) {
+          vitimaViolenciaWrapper.classList.toggle("d-none", esconder);
+        }
+        if (vitimaViolenciaSelect) {
+          vitimaViolenciaSelect.disabled = esconder;
+          if (esconder) {
+            vitimaViolenciaSelect.removeAttribute("required");
+            vitimaViolenciaSelect.value = "";
+          } else {
+            vitimaViolenciaSelect.setAttribute("required", "required");
+          }
+        }
+      };
+
       const atualizarGrupoMulherChefe = () => {
         const generoAtual = (generoSelect?.value || generoHidden?.value || "").toLowerCase();
         if (generoAtual === "feminino") {
@@ -2325,7 +2490,12 @@
           }
         }
       };
+      generoSelect?.addEventListener("change", () => {
+        atualizarGrupoMulherChefe();
+        atualizarVitimaViolencia();
+      });
       atualizarGrupoMulherChefe();
+      atualizarVitimaViolencia();
 
       const atualizarStatusCep = (mensagem, classe) => {
         if (!cepStatus) return;
@@ -2696,8 +2866,15 @@
 
       const form = document.getElementById("cnhSocialForm");
       const submitButton = document.getElementById("submitButton");
+      const submissionEndpoint =
+        "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/6cb0dfd2-7c35-recebimentocnhsocial";
       let validation;
       let submitAttempted = false;
+
+      const setSubmittingState = (isSubmitting) => {
+        submitButton.toggleAttribute("disabled", isSubmitting);
+        submitButton.setAttribute("aria-busy", isSubmitting ? "true" : "false");
+      };
 
       const applyCurrencySubmissionValues = (formData) => {
         if (!formData || typeof formData.set !== "function") return;
@@ -2707,6 +2884,44 @@
         if (!Number.isNaN(numeric)) {
           formData.set("rendaFamiliar", numeric.toString());
         }
+      };
+
+      const isReadonlyElement = (element) => {
+        if (!element) return false;
+        return (
+          element.readOnly === true ||
+          element.getAttribute("aria-readonly") === "true" ||
+          element.classList.contains("readonly-control")
+        );
+      };
+
+      const isReadonlyAndEmpty = (element) => {
+        if (!isReadonlyElement(element)) return false;
+        const value = (element.value || "").trim();
+        return value === "";
+      };
+
+      const relaxReadonlyEmptyFields = () => {
+        const selectors = ["[readonly]", '[aria-readonly="true"]', ".readonly-control"];
+        const processed = new Set();
+        selectors.forEach((selector) => {
+          form.querySelectorAll(selector).forEach((element) => {
+            if (!element || processed.has(element)) return;
+            processed.add(element);
+            if (!isReadonlyAndEmpty(element)) return;
+            element.removeAttribute("required");
+            element.removeAttribute("aria-required");
+            if (element.dataset && element.dataset.requiredField === "true") {
+              delete element.dataset.requiredField;
+            }
+            if (element.id) {
+              const label = form.querySelector(`label[for="${escapeSelector(element.id)}"]`);
+              if (label) {
+                label.classList.remove("required");
+              }
+            }
+          });
+        });
       };
 
       const isElementVisible = (element) => {
@@ -2849,6 +3064,22 @@
 
       let activeModal = null;
       let allowExternalFocusElement = null;
+      let consentModalShown = false;
+      let successCountdownInterval = null;
+      let successRedirectTimeout = null;
+      const successRedirectUrl = "https://cnhrecife.recife.pe.gov.br/";
+      const ratingEndpoint = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/avaliacao-cnh";
+
+      const clearSuccessRedirectTimers = () => {
+        if (successCountdownInterval) {
+          clearInterval(successCountdownInterval);
+          successCountdownInterval = null;
+        }
+        if (successRedirectTimeout) {
+          clearTimeout(successRedirectTimeout);
+          successRedirectTimeout = null;
+        }
+      };
 
       const getModalFocusableElements = (container) =>
         Array.from(
@@ -2861,6 +3092,9 @@
         if (!activeModal) return;
         if (event.key === "Escape") {
           event.preventDefault();
+          if (activeModal.allowEscape === false) {
+            return;
+          }
           activeModal.close();
           return;
         }
@@ -2916,6 +3150,295 @@
         }
       };
 
+      const availabilityOverlay = document.createElement("div");
+      availabilityOverlay.id = "availabilityOverlay";
+      availabilityOverlay.className = "availability-overlay";
+      availabilityOverlay.setAttribute("aria-hidden", "true");
+      document.body.append(availabilityOverlay);
+
+      const availabilityStart = dayjs("2025-12-06T10:00:00");
+      const availabilityEnd = dayjs("2025-12-24T23:59:59");
+      let availabilityWatcher = null;
+
+      const getAvailabilityState = () => {
+        const now = dayjs();
+        if (!availabilityStart.isValid() || !availabilityEnd.isValid() || !now.isValid()) {
+          return { status: "unknown", target: null };
+        }
+        if (now.isBefore(availabilityStart)) {
+          return { status: "before", target: availabilityStart };
+        }
+        if (now.isAfter(availabilityEnd)) {
+          return { status: "after", target: null };
+        }
+        return { status: "open", target: availabilityEnd };
+      };
+
+      const isWithinAvailabilityWindow = () => {
+        const state = getAvailabilityState();
+        return state.status === "open";
+      };
+
+      const toggleAvailabilityOverlay = (shouldLock) => {
+        if (!availabilityOverlay) return;
+        availabilityOverlay.classList.toggle("is-active", shouldLock);
+      };
+
+      const formatAvailabilityCountdown = (target) => {
+        if (!target || typeof target.isValid !== "function" || !target.isValid()) {
+          return "00d 00h 00m 00s";
+        }
+        const now = dayjs();
+        let totalSeconds = Math.max(0, target.diff(now, "second"));
+        const days = Math.floor(totalSeconds / 86400);
+        totalSeconds -= days * 86400;
+        const hours = Math.floor(totalSeconds / 3600);
+        totalSeconds -= hours * 3600;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds - minutes * 60;
+        const pad = (value) => String(value).padStart(2, "0");
+        return `${pad(days)}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+      };
+
+      const applyAvailabilityState = () => {
+        const state = getAvailabilityState();
+        const locked = state.status !== "open";
+        toggleAvailabilityOverlay(locked);
+        if (locked) {
+          setSubmitButtonState(false);
+        }
+        return state;
+      };
+
+      const createAvailabilityModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
+          }
+
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.availabilityModal = "true";
+          backdrop.setAttribute("data-testid", "availability-modal");
+          backdrop.setAttribute("hidden", "");
+
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "availabilityTitle");
+          card.setAttribute("aria-describedby", "availabilityMessage availabilityCountdown");
+          card.tabIndex = -1;
+
+          const title = document.createElement("p");
+          title.className = "modal-title";
+          title.id = "availabilityTitle";
+
+          const windowMessage = document.createElement("p");
+          windowMessage.className = "availability-meta";
+          windowMessage.id = "availabilityMessage";
+
+          const countdown = document.createElement("p");
+          countdown.className = "availability-countdown";
+          countdown.id = "availabilityCountdown";
+          countdown.setAttribute("aria-live", "polite");
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const okButton = document.createElement("button");
+          okButton.type = "button";
+          okButton.className = "btn btn-primary";
+          okButton.textContent = "Ok, entendi";
+
+          actions.append(okButton);
+          card.append(title, windowMessage, countdown, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = { backdrop, card, title, windowMessage, countdown, okButton };
+          return modalElements;
+        };
+      })();
+
+      const setAvailabilityModalContent = (state) => {
+        const { title, windowMessage, countdown } = createAvailabilityModal();
+        const rangeText = "Período disponível: 06/12/2025 às 10:00 até 24/12/2025 às 23:59:59";
+        let message = rangeText;
+        let icon = "⏰";
+        if (state.status === "before") {
+          icon = "🚦";
+          message = `🚦 As inscrições abrirão em 06/12/2025 às 10:00. ${rangeText}`;
+        } else if (state.status === "after") {
+          icon = "⛔";
+          message = `⛔ Período encerrado em 24/12/2025 às 23:59:59.`;
+        } else if (state.status === "open") {
+          icon = "✅";
+          message = `✅ Inscrições abertas até 24/12/2025 às 23:59:59.`;
+        }
+        title.textContent = `${icon} Período de inscrições`;
+        windowMessage.textContent = message;
+        countdown.textContent = `⏳ Contagem regressiva: ${formatAvailabilityCountdown(state.target)}`;
+      };
+
+      const openAvailabilityModal = (onClose = null) => { 
+        const state = applyAvailabilityState();
+        if (state.status === "open") {
+          return;
+        }
+
+        const { backdrop, card, okButton } = createAvailabilityModal();
+        setAvailabilityModalContent(state);
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+        const handleClose = () => {
+          closeModal();
+          if (typeof onClose === "function") {
+            onClose();
+          }
+        };
+
+        const cleanup = () => {
+          okButton.removeEventListener("click", handleClose);
+        };
+
+        okButton.addEventListener("click", handleClose);
+
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          cleanup,
+          returnFocusElement: previousActive,
+          allowEscape: false,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+
+      const createConsentModal = (() => {
+        let modalElements = null;
+        return () => {
+          if (modalElements) {
+            return modalElements;
+          }
+
+          const backdrop = document.createElement("div");
+          backdrop.className = "modal-backdrop";
+          backdrop.dataset.consentModal = "true";
+          backdrop.setAttribute("data-testid", "consent-modal");
+          backdrop.setAttribute("hidden", "");
+
+          const card = document.createElement("div");
+          card.className = "modal-card";
+          card.setAttribute("role", "dialog");
+          card.setAttribute("aria-modal", "true");
+          card.setAttribute("aria-labelledby", "consentModalTitle");
+          card.setAttribute("aria-describedby", "consentModalMessage");
+          card.tabIndex = -1;
+
+          const title = document.createElement("p");
+          title.className = "modal-title title--alerta";
+          title.id = "consentModalTitle";
+          title.textContent = "Uso de dados do CadÚnico";
+
+          const message = document.createElement("p");
+          message.className = "modal-message";
+          message.id = "consentModalMessage";
+          message.textContent =
+            "Os dados do CadÚnico Recife serão utilizados para preencher automaticamente partes do formulário.";
+
+          const actions = document.createElement("div");
+          actions.className = "modal-actions";
+
+          const okButton = document.createElement("button");
+          okButton.type = "button";
+          okButton.className = "btn btn-primary";
+          okButton.textContent = "OK";
+
+          actions.append(okButton);
+          card.append(title, message, actions);
+          backdrop.append(card);
+          document.body.append(backdrop);
+
+          modalElements = { backdrop, card, okButton };
+          return modalElements;
+        };
+      })();
+
+      const openConsentModal = () => {
+        consentModalShown = true;
+        const { backdrop, card, okButton } = createConsentModal();
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+        const closeHandler = () => closeModal();
+
+        const cleanup = () => {
+          okButton.removeEventListener("click", closeHandler);
+        };
+
+        okButton.addEventListener("click", closeHandler);
+
+        backdrop.removeAttribute("hidden");
+        backdrop.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop,
+          card,
+          close: closeModal,
+          cleanup,
+          returnFocusElement: previousActive,
+          allowEscape: false,
+        };
+
+        const focusable = getModalFocusableElements(card);
+        const initialFocusTarget = focusable[0] || card;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
+      };
+
+      const triggerConsentIfNeeded = () => {
+        if (consentModalShown) return;
+        if (!isWithinAvailabilityWindow()) return;
+        openConsentModal();
+      };
+
+      const syncAvailabilityState = () => {
+        const state = applyAvailabilityState();
+        if (activeModal?.backdrop?.dataset.availabilityModal === "true") {
+          setAvailabilityModalContent(state);
+        }
+        if (state.status === "open") {
+          triggerConsentIfNeeded();
+        }
+      };
+
+      const startAvailabilityWatcher = () => {
+        syncAvailabilityState();
+        if (availabilityWatcher) {
+          clearInterval(availabilityWatcher);
+        }
+        availabilityWatcher = setInterval(syncAvailabilityState, 1000);
+      };
+
       const showFeedbackModal = ({ type, message, items = [], focusElement = null, triggerElement = submitButton }) => {
         const {
           backdrop,
@@ -2929,7 +3452,38 @@
         } = createFeedbackModal();
 
         const isSuccess = type === "success";
+        clearSuccessRedirectTimers();
         messageElement.textContent = message;
+
+        if (isSuccess) {
+          const lineBreak = document.createElement("br");
+          const countdownLabel = document.createElement("span");
+          countdownLabel.textContent = "Redirecionando para o portal CNH Recife em ";
+          const countdownValue = document.createElement("strong");
+          const countdownSuffix = document.createElement("span");
+          countdownSuffix.textContent = "...";
+
+          let remainingSeconds = 5;
+          const updateCountdown = (value) => {
+            countdownValue.textContent = `${value}s`;
+          };
+          updateCountdown(remainingSeconds);
+
+          messageElement.append(lineBreak, countdownLabel, countdownValue, countdownSuffix);
+
+          successCountdownInterval = setInterval(() => {
+            remainingSeconds -= 1;
+            if (remainingSeconds >= 0) {
+              updateCountdown(remainingSeconds);
+            } else {
+              clearSuccessRedirectTimers();
+            }
+          }, 1000);
+
+          successRedirectTimeout = setTimeout(() => {
+            window.location.href = successRedirectUrl;
+          }, 5000);
+        }
         list.innerHTML = "";
         if (items.length && !isSuccess) {
           list.hidden = false;
@@ -2957,7 +3511,7 @@
           backdrop,
           card,
           close: closeModal,
-          returnFocusElement: triggerElement || previousActive,
+          returnFocusElement: !isSuccess && focusElement ? focusElement : triggerElement || previousActive,
         };
 
         const focusable = getModalFocusableElements(card);
@@ -3218,6 +3772,9 @@
           Object.entries(validation.fields).forEach(([selector, field]) => {
             if (!field.isValid) {
               const element = field.elem || (typeof selector === "string" ? form.querySelector(selector) : null);
+              if (isReadonlyAndEmpty(element)) {
+                return;
+              }
               if (!isElementWithinStep(element)) {
                 return;
               }
@@ -3237,6 +3794,9 @@
         getRequiredElements().forEach((element) => {
           if (!element) return;
           if (!isElementWithinStep(element)) {
+            return;
+          }
+          if (isReadonlyAndEmpty(element)) {
             return;
           }
           if (element.disabled || element.getAttribute("aria-hidden") === "true") {
@@ -3353,7 +3913,8 @@
       const updateSubmitState = () => {
         const extraErrors = validateAdditionalRules();
         const invalidFields = getInvalidFields(extraErrors);
-        setSubmitButtonState(invalidFields.length === 0);
+        const isWindowOpen = isWithinAvailabilityWindow();
+        setSubmitButtonState(invalidFields.length === 0 && isWindowOpen);
         if (submitAttempted) {
           applyValidationUI(invalidFields);
         }
@@ -3565,9 +4126,18 @@
             },
           ])
           .addField("#rendaFamiliar", [
-            { rule: "required", errorMessage: "Informe a renda familiar" },
             {
               validator: (value) => {
+                const element = document.getElementById("rendaFamiliar");
+                if (isReadonlyAndEmpty(element)) return true;
+                return value.trim() !== "";
+              },
+              errorMessage: "Informe a renda familiar",
+            },
+            {
+              validator: (value) => {
+                const element = document.getElementById("rendaFamiliar");
+                if (isReadonlyAndEmpty(element)) return true;
                 const numeric = parseCurrencyToNumber(value);
                 return value !== "" && !Number.isNaN(numeric) && numeric >= 0;
               },
@@ -3722,7 +4292,12 @@
         return extraErrors;
       }
 
-      const processSubmissionAttempt = async () => {
+      const processSubmissionAttempt = async ({ triggerElement = submitButton } = {}) => {
+        const availabilityState = applyAvailabilityState();
+        if (availabilityState.status !== "open") {
+          openAvailabilityModal();
+          return false;
+        }
         let isValid = true;
         if (validation) {
           if (typeof validation.revalidate === "function") {
@@ -3738,83 +4313,104 @@
 
         if (!isValid || invalidFields.length) {
           setSubmitButtonState(false);
-          const focusField = invalidFields.find((field) => field.element && typeof field.element.focus === "function");
+          const focusField = getFirstInvalidFieldElement(invalidFields);
           showFeedbackModal({
             type: "alert",
             message: "Por favor, verifique os campos obrigatórios listados abaixo.",
             items: invalidFields.map((field) => field.label),
-            focusElement: focusField ? focusField.element : null,
-            triggerElement: submitButton,
+            focusElement: focusField,
+            triggerElement,
           });
           updateSubmitState();
           return false;
         }
 
         const formData = new FormData(form);
-        applyCurrencySubmissionValues(formData);
-        const data = {};
-        formData.forEach((value, key) => {
-          if (value instanceof File) {
-            data[key] = value.name || null;
-          } else if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (Array.isArray(data[key])) {
-              data[key].push(value);
-            } else {
-              data[key] = [data[key], value];
+        const removeEmptyFileFields = (data) => {
+          if (!data || typeof data.forEach !== "function") return;
+          const keysToDelete = [];
+          data.forEach((value, key) => {
+            if (value instanceof File && value.size === 0) {
+              keysToDelete.push(key);
             }
-          } else {
-            data[key] = value;
-          }
-        });
-        console.log("Inscrição CNH Social", data);
+          });
+          keysToDelete.forEach((key) => data.delete(key));
+        };
 
-        showFeedbackModal({
-          type: "success",
-          message: "Envio bem-sucedido da inscrição.",
-          triggerElement: submitButton,
-        });
+        applyCurrencySubmissionValues(formData);
+        removeEmptyFileFields(formData);
+        setSubmittingState(true);
 
-        form.reset();
-        if (validation) {
-          if (typeof validation.refreshAll === "function") {
-            validation.refreshAll();
-          } else if (typeof validation.refresh === "function") {
-            validation.refresh();
-          } else {
-            Object.values(validation.fields).forEach((field) => {
-              field.isValid = false;
-              field.elem?.classList.remove("is-invalid", "js-validate-error-field");
-            });
+        try {
+          const response = await fetch(submissionEndpoint, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Falha ao enviar inscrição: ${response.status}`);
           }
+
+          await openRatingModal(triggerElement);
+
+          showFeedbackModal({
+            type: "success",
+            message: "Envio bem-sucedido da inscrição.",
+            triggerElement,
+          });
+
+          form.reset();
+          if (validation) {
+            if (typeof validation.refreshAll === "function") {
+              validation.refreshAll();
+            } else if (typeof validation.refresh === "function") {
+              validation.refresh();
+            } else {
+              Object.values(validation.fields).forEach((field) => {
+                field.isValid = false;
+                field.elem?.classList.remove("is-invalid", "js-validate-error-field");
+              });
+            }
+          }
+          submitAttempted = false;
+          applyValidationUI([]);
+          setSubmitButtonState(false);
+          const docResidenciaLabel = document.getElementById("docResidenciaLabel");
+          if (docResidenciaLabel) {
+            docResidenciaLabel.classList.remove("required");
+          }
+          [
+            "docResidenciaWrapper",
+            "laudoPcdWrapper",
+            "docMaeAtipicaLaudoWrapper",
+            "docMaeAtipicaCrasWrapper",
+            "docResponsavelWrapper",
+            "docDependenteWrapper",
+            "docDependenteVinculoWrapper",
+            "cnhNumeroWrapper",
+            "cnhValidadeWrapper",
+            "cnhArquivoWrapper",
+          ].forEach((id) => {
+            toggleFileSection(false, id);
+          });
+          grupoMulherChefe.classList.add("d-none");
+          desativarEdicaoEndereco();
+          document.querySelectorAll(".file-name").forEach((holder) => {
+            holder.textContent = "";
+          });
+          setTimeout(() => updateSubmitState(), 0);
+          return true;
+        } catch (error) {
+          console.error(error);
+          showFeedbackModal({
+            type: "alert",
+            message: "Não foi possível enviar a inscrição. Tente novamente.",
+            triggerElement,
+          });
+          return false;
+        } finally {
+          setSubmittingState(false);
         }
-        submitAttempted = false;
-        applyValidationUI([]);
-        setSubmitButtonState(false);
-        const docResidenciaLabel = document.getElementById("docResidenciaLabel");
-        if (docResidenciaLabel) {
-          docResidenciaLabel.classList.remove("required");
-        }
-        [
-          "docResidenciaWrapper",
-          "laudoPcdWrapper",
-          "docMaeAtipicaLaudoWrapper",
-          "docMaeAtipicaCrasWrapper",
-          "docResponsavelWrapper",
-          "docDependenteWrapper",
-          "docDependenteVinculoWrapper",
-          "cnhNumeroWrapper",
-          "cnhValidadeWrapper",
-          "cnhArquivoWrapper",
-        ].forEach((id) => {
-          toggleFileSection(false, id);
-        });
-        grupoMulherChefe.classList.add("d-none");
-        desativarEdicaoEndereco();
-        document.querySelectorAll(".file-name").forEach((holder) => {
-          holder.textContent = "";
-        });
-        setTimeout(() => updateSubmitState(), 0);
-        return true;
       };
 
       const updateAgeFieldFromBirthdate = () => {
@@ -3846,6 +4442,20 @@
       const reviewModalClose = document.getElementById("reviewModalClose");
       const reviewModalCloseIcon = document.getElementById("reviewModalCloseIcon");
       const reviewButton = document.getElementById("reviewButton");
+      const reviewChoiceModal = document.getElementById("reviewChoiceModal");
+      const reviewChoiceModalCard = reviewChoiceModal ? reviewChoiceModal.querySelector(".modal-card") : null;
+      const reviewChoiceCloseIcon = document.getElementById("reviewChoiceCloseIcon");
+      const reviewChoiceReviewButton = document.getElementById("reviewChoiceReview");
+      const reviewChoiceSendButton = document.getElementById("reviewChoiceSend");
+      const ratingModal = document.getElementById("ratingModal");
+      const ratingModalCard = ratingModal ? ratingModal.querySelector(".modal-card") : null;
+      const ratingCloseIcon = document.getElementById("ratingCloseIcon");
+      const ratingStars = ratingModal ? Array.from(ratingModal.querySelectorAll("[data-rating-value]")) : [];
+      const ratingHint = document.getElementById("ratingHint");
+      const ratingComment = document.getElementById("ratingComment");
+      const ratingSubmitButton = document.getElementById("ratingSubmit");
+      const ratingSkipButton = document.getElementById("ratingSkip");
+      let selectedRating = 0;
 
       const getSelectText = (select) => {
         if (!select) return "";
@@ -3874,6 +4484,153 @@
         return holderText || "";
       };
 
+      const ratingDefaultHintText =
+        (ratingHint && ratingHint.textContent && ratingHint.textContent.trim()) ||
+        "Clique para selecionar a nota. Você pode complementar com um comentário abaixo.";
+
+      const setRatingHint = (text, { isError = false } = {}) => {
+        if (!ratingHint) return;
+        ratingHint.textContent = text;
+        ratingHint.classList.toggle("text-danger", isError);
+        ratingHint.classList.toggle("text-muted", !isError);
+        ratingHint.setAttribute("role", isError ? "alert" : "status");
+        ratingHint.setAttribute("aria-live", "polite");
+      };
+
+      const updateRatingStars = () => {
+        ratingStars.forEach((star) => {
+          const value = Number.parseInt(star.dataset.ratingValue, 10);
+          const isActive = Number.isFinite(value) && value <= selectedRating;
+          star.classList.toggle("is-active", isActive);
+          star.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+
+        if (ratingSubmitButton) {
+          ratingSubmitButton.toggleAttribute("disabled", selectedRating <= 0);
+        }
+      };
+
+      const resetRatingModalState = () => {
+        selectedRating = 0;
+        if (ratingComment) {
+          ratingComment.value = "";
+        }
+        setRatingHint(ratingDefaultHintText, { isError: false });
+        updateRatingStars();
+      };
+
+      const openRatingModal = (triggerElement = null) =>
+        new Promise((resolve) => {
+          if (!ratingModal || !ratingModalCard) {
+            resolve();
+            return;
+          }
+
+          resetRatingModalState();
+
+          const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+          const submitRating = async ({ requireSelection = false } = {}) => {
+            if (requireSelection && selectedRating <= 0) {
+              setRatingHint("Selecione uma estrela para enviar sua avaliação.", { isError: true });
+              return false;
+            }
+
+            ratingSubmitButton?.setAttribute("aria-busy", "true");
+            if (ratingSubmitButton) {
+              ratingSubmitButton.disabled = true;
+            }
+            if (ratingSkipButton) {
+              ratingSkipButton.disabled = true;
+            }
+
+            try {
+              await fetch(ratingEndpoint, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  rating: selectedRating > 0 ? selectedRating : null,
+                  comment: ratingComment?.value?.trim() || "",
+                }),
+              });
+            } catch (error) {
+              console.error("Erro ao enviar avaliação", error);
+            } finally {
+              ratingSubmitButton?.removeAttribute("aria-busy");
+              if (ratingSubmitButton) {
+                ratingSubmitButton.disabled = selectedRating <= 0;
+              }
+              if (ratingSkipButton) {
+                ratingSkipButton.disabled = false;
+              }
+            }
+
+            return true;
+          };
+
+          const finalize = async ({ requireSelection = false } = {}) => {
+            const sent = await submitRating({ requireSelection });
+            if (!sent && requireSelection) {
+              return;
+            }
+            closeModal();
+            resolve();
+          };
+
+          const handleStarClick = (event) => {
+            const value = Number.parseInt(event.currentTarget.dataset.ratingValue, 10);
+            if (!Number.isFinite(value)) return;
+            selectedRating = value;
+            updateRatingStars();
+            setRatingHint("Obrigado! Se quiser, deixe um breve comentário.");
+          };
+
+          const closeHandler = () => finalize({ requireSelection: false });
+          const backdropHandler = (event) => {
+            if (event.target === ratingModal) {
+              finalize({ requireSelection: false });
+            }
+          };
+          const submitHandler = () => finalize({ requireSelection: true });
+
+          ratingStars.forEach((star) => star.addEventListener("click", handleStarClick));
+          ratingCloseIcon?.addEventListener("click", closeHandler);
+          ratingModal.addEventListener("click", backdropHandler);
+          ratingSkipButton?.addEventListener("click", closeHandler);
+          ratingSubmitButton?.addEventListener("click", submitHandler);
+
+          allowExternalFocusElement = null;
+          ratingModal.removeAttribute("hidden");
+          ratingModal.classList.add("is-open");
+          document.body.style.overflow = "hidden";
+
+          activeModal = {
+            backdrop: ratingModal,
+            card: ratingModalCard,
+            close: closeHandler,
+            returnFocusElement: triggerElement || previousActive,
+            cleanup: () => {
+              ratingStars.forEach((star) => star.removeEventListener("click", handleStarClick));
+              ratingCloseIcon?.removeEventListener("click", closeHandler);
+              ratingModal.removeEventListener("click", backdropHandler);
+              ratingSkipButton?.removeEventListener("click", closeHandler);
+              ratingSubmitButton?.removeEventListener("click", submitHandler);
+              resetRatingModalState();
+            },
+          };
+
+          const focusable = getModalFocusableElements(ratingModalCard);
+          const initialFocusTarget = focusable[0] || ratingModalCard;
+          requestAnimationFrame(() => {
+            initialFocusTarget.focus({ preventScroll: true });
+          });
+
+          document.addEventListener("keydown", handleModalKeydown, true);
+          document.addEventListener("focusin", handleModalFocusIn, true);
+        });
+
       const buildAddressSummary = () => {
         const partes = [
           document.getElementById("logradouro")?.value,
@@ -3885,6 +4642,49 @@
           .map((parte) => (parte || "").trim())
           .filter(Boolean);
         return partes.length ? partes.join(", ") : "";
+      };
+
+      const openReviewChoiceModal = (triggerElement = null) => {
+        if (!reviewChoiceModal || !reviewChoiceModalCard) {
+          openReviewModal(triggerElement || reviewButton);
+          return;
+        }
+
+        const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const closeHandler = () => closeModal();
+        const onBackdropClick = (event) => {
+          if (event.target === reviewChoiceModal) {
+            closeModal();
+          }
+        };
+
+        reviewChoiceCloseIcon?.addEventListener("click", closeHandler);
+        reviewChoiceModal.addEventListener("click", onBackdropClick);
+
+        allowExternalFocusElement = null;
+        reviewChoiceModal.removeAttribute("hidden");
+        reviewChoiceModal.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+
+        activeModal = {
+          backdrop: reviewChoiceModal,
+          card: reviewChoiceModalCard,
+          close: closeModal,
+          returnFocusElement: triggerElement || previousActive,
+          cleanup: () => {
+            reviewChoiceCloseIcon?.removeEventListener("click", closeHandler);
+            reviewChoiceModal.removeEventListener("click", onBackdropClick);
+          },
+        };
+
+        const focusable = getModalFocusableElements(reviewChoiceModalCard);
+        const initialFocusTarget = focusable[0] || reviewChoiceModalCard;
+        requestAnimationFrame(() => {
+          initialFocusTarget.focus({ preventScroll: true });
+        });
+
+        document.addEventListener("keydown", handleModalKeydown, true);
+        document.addEventListener("focusin", handleModalFocusIn, true);
       };
 
       const populateReviewModal = () => {
@@ -4004,8 +4804,32 @@
 
       if (reviewButton) {
         reviewButton.addEventListener("click", () => {
-          openReviewModal(reviewButton);
+          openReviewChoiceModal(reviewButton);
         });
+      }
+
+      if (reviewChoiceReviewButton) {
+        reviewChoiceReviewButton.addEventListener("click", () => {
+          closeModal();
+          openReviewModal(reviewChoiceReviewButton || reviewButton);
+        });
+      }
+
+      if (reviewChoiceSendButton) {
+        reviewChoiceSendButton.addEventListener("click", async () => {
+          closeModal();
+          await processSubmissionAttempt({ triggerElement: reviewChoiceSendButton });
+        });
+      }
+
+      startAvailabilityWatcher();
+      const initialAvailabilityState = getAvailabilityState();
+      if (initialAvailabilityState.status !== "open") {
+        openAvailabilityModal(() => {
+          triggerConsentIfNeeded();
+        });
+      } else {
+        triggerConsentIfNeeded();
       }
 
       const validarEExibirModal = (formSelector, botaoSelector) => {
@@ -4017,12 +4841,16 @@
         targetButton.addEventListener("click", async (event) => {
           event.preventDefault();
           closeReviewModalIfOpen();
-          await processSubmissionAttempt();
+          const triggerElement =
+            event.currentTarget instanceof HTMLElement && event.currentTarget !== targetForm
+              ? event.currentTarget
+              : targetButton;
+          await processSubmissionAttempt({ triggerElement });
         });
         targetForm.addEventListener("submit", async (event) => {
           event.preventDefault();
           closeReviewModalIfOpen();
-          await processSubmissionAttempt();
+          await processSubmissionAttempt({ triggerElement: targetButton });
         });
       };
 
@@ -4032,6 +4860,7 @@
       enforceEmailConfirmationConsistency();
 
       applyPrefillValues();
+      relaxReadonlyEmptyFields();
       updateTrabalhadorAplicativoVisibility();
       updateAgeFieldFromBirthdate();
       updateTempoAtualizacaoField();
