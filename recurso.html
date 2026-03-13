@@ -1,373 +1,387 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Interposição de Recursos • CNH Social</title>
 
-    <link
-      rel="icon"
-      href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interposição de Recursos • CNH Social</title>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
+  <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
 
-    <style>
-      :root {
-        --brand-primary: #0053a4;
-        --brand-highlight: #00a3ff;
-        --surface: #f4f7fb;
-        --surface-strong: #ffffff;
-        --border-color: #d0d7e2;
-        --text-strong: #1b263b;
-        --text-muted: #5b6c8c;
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --brand-primary: #0053a4;
+      --brand-highlight: #00a3ff;
+      --surface: #f4f7fb;
+      --surface-strong: #ffffff;
+      --border-color: #d0d7e2;
+      --text-strong: #1b263b;
+      --text-muted: #5b6c8c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--surface);
+      color: var(--text-strong);
+    }
+
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .card-programa {
+      border: 1px solid rgba(0, 83, 164, 0.08);
+      background: var(--surface-strong);
+      border-radius: 1rem;
+      box-shadow: 0 18px 40px rgba(0, 30, 70, 0.08);
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .muted {
+      color: var(--text-muted);
+    }
+
+    .required-note {
+      color: #8b0000;
+      font-weight: 600;
+    }
+
+    .file-list {
+      margin-top: 0.5rem;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    .file-item small {
+      color: var(--text-muted);
+    }
+
+    #verificacao-area .form-check-input {
+      width: 1.1rem;
+      height: 1.1rem;
+      border: 2px solid var(--brand-primary);
+    }
+
+    #verificacao-area .form-check-input:checked {
+      background-color: var(--brand-primary);
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 0.2rem rgba(0, 83, 164, 0.15);
+    }
+
+    #verificacao-area .form-check-label {
+      font-weight: 600;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
+    }
 
-      * {
-        box-sizing: border-box;
-      }
+    .spinner-inline {
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid rgba(0, 0, 0, 0.08);
+      border-right-color: var(--brand-highlight);
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.8s linear infinite;
+    }
+  </style>
+</head>
 
-      body {
-        font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
-        background: var(--surface);
-        color: var(--text-strong);
-      }
-
-      .page-wrapper {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 1rem;
-      }
-
-      .card-programa {
-        border: 1px solid rgba(0, 83, 164, 0.08);
-        background: var(--surface-strong);
-        border-radius: 1rem;
-        box-shadow: 0 18px 40px rgba(0, 30, 70, 0.08);
-      }
-
-      .section-title {
-        font-weight: 700;
-        font-size: 1.25rem;
-      }
-
-      .muted {
-        color: var(--text-muted);
-      }
-
-      .required-note {
-        color: #8b0000;
-        font-weight: 600;
-      }
-
-      .file-list {
-        margin-top: 0.5rem;
-      }
-
-      .file-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.9rem;
-        flex-wrap: wrap;
-      }
-
-      .file-item small {
-        color: var(--text-muted);
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .spinner-inline {
-        width: 1rem;
-        height: 1rem;
-        border: 2px solid rgba(0, 0, 0, 0.08);
-        border-right-color: var(--brand-highlight);
-        border-radius: 50%;
-        display: inline-block;
-        animation: spin 0.8s linear infinite;
-      }
-    </style>
-  </head>
-
-  <body>
-    <main class="page-wrapper">
-      <div class="container" style="max-width: 820px">
-        <div class="card card-programa border-0 p-4 p-md-5">
-          <div class="text-center mb-3">
-            <img
-              src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
-              alt="CNH Social Recife"
-              style="max-width: 180px"
-            />
-          </div>
-
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="section-title mb-0">Interposição de Recurso</h1>
-          </div>
-
-          <form id="recurso-form" class="row g-3" novalidate>
-            <div class="col-12">
-              <label for="cpf" class="form-label"
-                >CPF <span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                inputmode="numeric"
-                maxlength="14"
-                class="form-control form-control-lg"
-                id="cpf"
-                name="cpf"
-                placeholder="000.000.000-00"
-                required
-              />
-              <div class="form-text muted">
-                Digite somente números; o sistema fará a busca automática.
-              </div>
-              <div class="invalid-feedback">
-                Informe um CPF válido (11 dígitos).
-              </div>
-            </div>
-
-            <div id="verificacao-area" class="col-12" style="display: none">
-              <div class="card border-0 shadow-sm p-3 mb-3">
-                <div class="d-flex align-items-center mb-2">
-                  <i
-                    class="bi bi-shield-lock-fill me-2"
-                    style="color: var(--brand-primary)"
-                  ></i>
-                  <strong>Confirme suas informações</strong>
-                </div>
-                <p id="verif-instruction" class="muted mb-2">Por motivo de segurança, confirme qual é a sua <strong>data de nascimento</strong>.</p>
-
-                <div id="verif-content"><!-- preenchido dinamicamente --></div>
-
-                <div class="d-flex justify-content-end mt-3">
-                  <button
-                    id="verif-confirm-btn"
-                    type="button"
-                    class="btn btn-primary"
-                    disabled
-                  >
-                    Confirmar
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-12">
-              <label for="inscricao" class="form-label">Inscrição</label>
-              <input
-                type="text"
-                id="inscricao"
-                name="inscricao"
-                class="form-control form-control-lg"
-                placeholder="Inscrição"
-                readonly
-              />
-            </div>
-
-            <div class="col-12">
-              <label for="nome" class="form-label">Nome do solicitante</label>
-              <input
-                type="text"
-                id="nome"
-                name="nome"
-                class="form-control form-control-lg"
-                placeholder="Nome do solicitante"
-                readonly
-              />
-            </div>
-
-            <div class="col-12">
-              <div
-                class="alert alert-warning d-flex align-items-center"
-                role="alert"
-              >
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <div>
-                  <strong>Documentos:</strong> envie frente e verso — serão
-                  aceitos até 5 arquivos em PDF, JPEG ou PNG (conforme edital).
-                </div>
-              </div>
-            </div>
-
-            <div id="arquivos-area" class="col-12" style="display: none">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <div>
-                  <strong>Documentos anexados</strong>
-                  <div class="form-text muted">
-                    Pelo menos um arquivo é obrigatório. Serão aceitos até 5
-                    arquivos em PDF, JPEG ou PNG (frente/verso), conforme edital.
-                  </div>
-                </div>
-                <div class="required-note">Pelo menos 1 arquivo</div>
-              </div>
-
-              <div class="row g-3">
-                <div class="col-12">
-                  <label class="form-label">Arquivo 1 (obrigatório)</label>
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="file1"
-                    name="file1"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    required
-                  />
-                </div>
-
-                <div class="col-12" style="display: none">
-                  <label class="form-label">Arquivo 2</label>
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="file2"
-                    name="file2"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />
-                </div>
-
-                <div class="col-12" style="display: none">
-                  <label class="form-label">Arquivo 3</label>
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="file3"
-                    name="file3"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />
-                </div>
-
-                <div class="col-12" style="display: none">
-                  <label class="form-label">Arquivo 4</label>
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="file4"
-                    name="file4"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />
-                </div>
-
-                <div class="col-12" style="display: none">
-                  <label class="form-label">Arquivo 5</label>
-                  <input
-                    class="form-control"
-                    type="file"
-                    id="file5"
-                    name="file5"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                  />
-                </div>
-
-                <div class="col-12">
-                  <div id="files-list" class="file-list"></div>
-                </div>
-
-                <div class="col-12" id="justificativa-wrapper" style="display: none">
-                  <label for="justificativa" class="form-label"
-                    >Justificativa <span class="text-danger">*</span></label
-                  >
-                  <textarea
-                    id="justificativa"
-                    name="justificativa"
-                    class="form-control"
-                    rows="4"
-                    placeholder="Descreva a justificativa do recurso"
-                    required
-                  ></textarea>
-                  <div class="form-text muted">
-                    Explique por que está interpondo o recurso.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-12 d-flex justify-content-end gap-2 mt-3">
-              <a class="btn btn-outline-secondary btn-lg" href="index.html"
-                >Voltar</a
-              >
-
-              <button
-                type="submit"
-                id="submit-btn"
-                class="btn btn-primary btn-lg"
-                disabled
-              >
-                <span id="submit-text">Enviar recurso</span>
-              </button>
-            </div>
-          </form>
+<body>
+  <div id="prazo-banner" class="position-fixed top-0 end-0 p-3" style="z-index: 1080; display: none;">
+    <div class="alert alert-info shadow-sm mb-0">
+      <div class="d-flex align-items-center gap-2">
+        <span class="fs-5">⏳</span>
+        <div>
+          <strong>Prazo para envio de recurso</strong>
+          <div class="small">Termina em <span id="prazo-countdown">--:--:--</span></div>
         </div>
       </div>
-    </main>
+    </div>
+  </div>
+  <main class="page-wrapper">
+    <div class="container" style="max-width: 820px">
+      <div class="card card-programa border-0 p-4 p-md-5">
+        <div class="text-center mb-3">
+          <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+            alt="CNH Social Recife" style="max-width: 180px" />
+        </div>
 
-    <!-- Modal de resultado -->
-    <div
-      class="modal fade"
-      id="resultadoModal"
-      tabindex="-1"
-      aria-labelledby="resultadoModalLabel"
-      aria-hidden="true"
-      data-bs-backdrop="static"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 rounded-4 card-programa">
-          <div class="modal-body p-4 p-md-5">
-            <div class="d-flex flex-column gap-3">
-              <div class="text-center mb-2">
-                <img
-                  src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
-                  alt="CNH Social Recife"
-                  style="max-width: 120px"
-                />
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="section-title mb-0">Interposição de Recurso</h1>
+        </div>
+
+        <form id="recurso-form" class="row g-3" novalidate>
+          <div class="col-12">
+            <label for="cpf" class="form-label">CPF <span class="text-danger">*</span></label>
+            <input type="text" inputmode="numeric" maxlength="14" class="form-control form-control-lg" id="cpf"
+              name="cpf" placeholder="000.000.000-00" required />
+            <div class="form-text muted">
+              Digite somente números; o sistema fará a busca automática.
+            </div>
+            <div class="invalid-feedback">
+              Informe um CPF válido (11 dígitos).
+            </div>
+          </div>
+
+          <div id="verificacao-area" class="col-12" style="display: none">
+            <div class="card border-0 shadow-sm p-3 mb-3">
+              <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-shield-lock-fill me-2" style="color: var(--brand-primary)"></i>
+                <strong>Confirme suas informações</strong>
+              </div>
+              <p id="verif-instruction" class="muted mb-2">Por motivo de seguran&ccedil;a, confirme qual &eacute; a sua
+                <strong>data de nascimento</strong>.
+              </p>
+
+              <div id="verif-content"><!-- preenchido dinamicamente --></div>
+
+              <div class="d-flex justify-content-end mt-3">
+                <button id="verif-confirm-btn" type="button" class="btn btn-primary" disabled>
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row: Inscrição + Pontuação -->
+          <div class="row g-3" id="inscricao-pontuacao-row" style="display: none">
+            <div class="col-md-6 col-12" id="inscricao-wrapper">
+              <label for="inscricao" class="form-label">Inscrição</label>
+              <input type="text" id="inscricao" name="inscricao" class="form-control form-control-lg"
+                placeholder="Inscrição" readonly />
+            </div>
+            <div class="col-md-6 col-12" id="pontuacao-wrapper">
+              <label class="form-label">Pontuação</label>
+              <div id="pontuacao-box" class="d-flex align-items-center justify-content-center p-3 rounded-3" style="
+                  background: linear-gradient(135deg, #0053a4 0%, #00a3ff 100%);
+                  color: #fff;
+                  font-size: 1.5rem;
+                  font-weight: 700;
+                  min-height: 58px;
+                  box-shadow: 0 4px 15px rgba(0, 83, 164, 0.3);
+                ">
+                <i class="bi bi-star-fill me-2"></i>
+                <span id="pontuacao-value">--</span>
+                <span class="ms-1" style="font-size: 0.9rem; font-weight: 400;">pontos</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12" id="nome-wrapper" style="display: none">
+            <label for="nome" class="form-label">Nome do solicitante</label>
+            <input type="text" id="nome" name="nome" class="form-control form-control-lg"
+              placeholder="Nome do solicitante" readonly />
+          </div>
+
+          <div class="col-12" id="docs-warning" style="display: none">
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+              <i class="bi bi-info-circle-fill me-2"></i>
+              <div>
+                <strong>Documentos:</strong> envie frente e verso — até 5 arquivos em PDF, JPEG ou PNG.
+              </div>
+            </div>
+          </div>
+
+          <div id="arquivos-area" class="col-12" style="display: none">
+            <div class="col-12" id="justificativa-wrapper" style="display: none">
+              <label for="justificativa" class="form-label">Justificativa <span class="text-danger">*</span></label>
+              <textarea id="justificativa" name="justificativa" class="form-control" rows="4"
+                placeholder="Descreva a justificativa do recurso" required></textarea>
+              <div class="form-text muted">
+                Explique por que está interpondo o recurso.
+              </div>
+            </div>
+
+            <div class="d-flex flex-column gap-2 mb-2 mt-3">
+              <div>
+                <strong>Documentos anexados</strong>
+                <div class="form-text muted">
+                  Pelo menos um arquivo é obrigatório. Até 5 arquivos em PDF, JPEG ou PNG (frente/verso).
+                </div>
+              </div>
+              <div class="alert alert-warning d-flex align-items-center py-2 px-3 mb-0 w-100">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                <strong>Pelo menos 1 arquivo</strong>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Arquivo 1 (obrigatório)</label>
+                <input class="form-control" type="file" id="file1" name="file1" accept=".pdf,.jpg,.jpeg,.png"
+                  required />
               </div>
 
-              <h2 class="section-title" id="resultadoModalLabel">
-                Retorno do envio do recurso
-              </h2>
+              <div class="col-12" style="display: none">
+                <label class="form-label">Arquivo 2</label>
+                <input class="form-control" type="file" id="file2" name="file2" accept=".pdf,.jpg,.jpeg,.png" />
+              </div>
 
-              <pre
-                id="resultado-json"
-                class="p-3"
-                style="
+              <div class="col-12" style="display: none">
+                <label class="form-label">Arquivo 3</label>
+                <input class="form-control" type="file" id="file3" name="file3" accept=".pdf,.jpg,.jpeg,.png" />
+              </div>
+
+              <div class="col-12" style="display: none">
+                <label class="form-label">Arquivo 4</label>
+                <input class="form-control" type="file" id="file4" name="file4" accept=".pdf,.jpg,.jpeg,.png" />
+              </div>
+
+              <div class="col-12" style="display: none">
+                <label class="form-label">Arquivo 5</label>
+                <input class="form-control" type="file" id="file5" name="file5" accept=".pdf,.jpg,.jpeg,.png" />
+              </div>
+
+              <div class="col-12">
+                <div id="files-list" class="file-list"></div>
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+        <a class="btn btn-outline-secondary btn-lg" href="index.html">Voltar</a>
+
+        <button type="submit" id="submit-btn" class="btn btn-primary btn-lg" disabled>
+          <span id="submit-text">Enviar recurso</span>
+        </button>
+      </div>
+      </form>
+    </div>
+    </div>
+  </main>
+
+  <!-- Modal de resultado -->
+  <div class="modal fade" id="resultadoModal" tabindex="-1" aria-labelledby="resultadoModalLabel" aria-hidden="true"
+    data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 rounded-4 card-programa">
+        <div class="modal-body p-4 p-md-5">
+          <div class="d-flex flex-column gap-3">
+            <div class="text-center mb-2">
+              <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+                alt="CNH Social Recife" style="max-width: 120px" />
+            </div>
+
+            <h2 class="section-title d-flex align-items-center gap-2" id="resultadoModalLabel">
+              <i id="resultado-modal-icon" class="bi bi-info-circle-fill"></i>
+              <span id="resultado-modal-title">Retorno do envio do recurso</span>
+            </h2>
+
+            <pre id="resultado-json" class="p-3" style="
                   background: #f7f9fb;
                   border-radius: 0.5rem;
                   max-height: 360px;
                   overflow: auto;
                   border: 1px solid #e6eef8;
                   white-space: pre-wrap;
-                "
-              ></pre>
+                "></pre>
 
-              <div class="d-flex justify-content-end">
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Fechar
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de prazo -->
+  <div class="modal fade" id="prazoModal" tabindex="-1" aria-labelledby="prazoModalLabel" aria-hidden="true"
+    data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 card-programa">
+        <div class="modal-body p-4">
+          <div class="d-flex align-items-start gap-3">
+            <span class="fs-1">⛔</span>
+            <div>
+              <h4 class="text-danger mb-2" id="prazoModalLabel">Fora do prazo</h4>
+              <div class="mb-3 text-danger">
+                O período para interposição de recursos é de
+                <strong>09/02/2026 00:00:00</strong> até
+                <strong>25/02/2026 23:59:59</strong>.
+              </div>
+              <div class="alert alert-warning d-flex align-items-center gap-2">
+                <span>⏳</span>
+                <span>Disponível em <strong id="prazo-modal-countdown">--:--:--</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de redirecionamento -->
+  <div class="modal fade" id="redirectModal" tabindex="-1" aria-labelledby="redirectModalLabel" aria-hidden="true"
+    data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 card-programa">
+        <div class="modal-body p-4">
+          <h2 class="section-title" id="redirectModalLabel">Redirecionamento</h2>
+          <p>
+            Você será redirecionado para
+            <a href="https://cnhrecife.recife.pe.gov.br/" target="_blank">cnhrecife.recife.pe.gov.br</a>
+            em <strong><span id="redirect-countdown">10</span>s</strong>.
+          </p>
+          <div class="d-flex justify-content-end gap-2">
+            <button id="redirect-cancel-btn" class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">
+              Cancelar
+            </button>
+            <button id="redirect-now-btn" class="btn btn-primary" type="button">
+              Ir agora
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de erro -->
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true"
+    data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-4 card-programa">
+        <div class="modal-body p-4">
+          <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-exclamation-triangle-fill fs-1 text-danger"></i>
+            <div>
+              <h4 class="text-danger mb-2" id="errorModalTitle">Erro</h4>
+              <div id="errorModalMessage" class="mb-3"></div>
+              <div class="text-end">
+                <button id="errorModalOk" class="btn btn-primary" data-bs-dismiss="modal" type="button">
+                  OK
                 </button>
               </div>
             </div>
@@ -375,728 +389,770 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Modal de redirecionamento -->
-    <div
-      class="modal fade"
-      id="redirectModal"
-      tabindex="-1"
-      aria-labelledby="redirectModalLabel"
-      aria-hidden="true"
-      data-bs-backdrop="static"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4 card-programa">
-          <div class="modal-body p-4">
-            <h2 class="section-title" id="redirectModalLabel">Redirecionamento</h2>
-            <p>
-              Você será redirecionado para
-              <a href="https://cnhrecife.recife.pe.gov.br/" target="_blank"
-                >cnhrecife.recife.pe.gov.br</a
-              >
-              em <strong><span id="redirect-countdown">10</span>s</strong>.
-            </p>
-            <div class="d-flex justify-content-end gap-2">
-              <button
-                id="redirect-cancel-btn"
-                class="btn btn-outline-secondary"
-                data-bs-dismiss="modal"
-                type="button"
-              >
-                Cancelar
-              </button>
-              <button id="redirect-now-btn" class="btn btn-primary" type="button">
-                Ir agora
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Dependências JS -->
+  <script src="https://unpkg.com/imask"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Modal de erro -->
-    <div
-      class="modal fade"
-      id="errorModal"
-      tabindex="-1"
-      aria-labelledby="errorModalLabel"
-      aria-hidden="true"
-      data-bs-backdrop="static"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4 card-programa">
-          <div class="modal-body p-4">
-            <div class="d-flex align-items-start gap-3">
-              <i class="bi bi-exclamation-triangle-fill fs-1 text-danger"></i>
-              <div>
-                <h4 class="text-danger mb-2" id="errorModalTitle">Erro</h4>
-                <div id="errorModalMessage" class="mb-3"></div>
-                <div class="text-end">
-                  <button
-                    id="errorModalOk"
-                    class="btn btn-primary"
-                    data-bs-dismiss="modal"
-                    type="button"
-                  >
-                    OK
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Seu JS -->
+  <script>
+    (() => {
+      const startWindow = new Date(2026, 1, 9, 0, 0, 0);
+      const endWindow = new Date(2026, 1, 28, 23, 59, 59);
+      const MAX_FILE_MB = 10;
+      const fileIds = ["file1", "file2", "file3", "file4", "file5"];
 
-    <!-- Dependências JS -->
-    <script src="https://unpkg.com/imask"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      const filesList = document.getElementById("files-list");
+      const recursoForm = document.getElementById("recurso-form");
+      const submitText = document.getElementById("submit-text");
+      const submitBtn = document.getElementById("submit-btn");
+      const arquivosArea = document.getElementById("arquivos-area");
+      const verificacaoArea = document.getElementById("verificacao-area");
+      const verifContent = document.getElementById("verif-content");
+      const verifConfirmBtn = document.getElementById("verif-confirm-btn");
+      const nomeEl = document.getElementById("nome");
+      const inscricaoEl = document.getElementById("inscricao");
+      const inscricaoWrapper = document.getElementById('inscricao-wrapper');
+      const nomeWrapper = document.getElementById('nome-wrapper');
+      const docsWarning = document.getElementById('docs-warning');
+      const justificativaWrapper = document.getElementById("justificativa-wrapper");
+      const justificativaEl = document.getElementById("justificativa");
+      const cpfEl = document.getElementById("cpf");
+      const inscricaoPontuacaoRow = document.getElementById("inscricao-pontuacao-row");
+      const pontuacaoValueEl = document.getElementById("pontuacao-value");
+      let currentVerification = null;
 
-    <!-- Seu JS -->
-    <script>
-      (() => {
-        const MAX_FILE_MB = 10;
-        const fileIds = ["file1", "file2", "file3", "file4", "file5"];
+      if (!recursoForm || !submitBtn || !submitText || !cpfEl) {
+        console.error("Elementos essenciais não encontrados no DOM.");
+        return;
+      }
 
-        const filesList = document.getElementById("files-list");
-        const recursoForm = document.getElementById("recurso-form");
-        const submitText = document.getElementById("submit-text");
-        const submitBtn = document.getElementById("submit-btn");
-        const arquivosArea = document.getElementById("arquivos-area");
-        const verificacaoArea = document.getElementById("verificacao-area");
-        const verifContent = document.getElementById("verif-content");
-        const verifConfirmBtn = document.getElementById("verif-confirm-btn");
-        const nomeEl = document.getElementById("nome");
-        const inscricaoEl = document.getElementById("inscricao");
-        const inscricaoWrapper = document.getElementById('inscricao-wrapper');
-        const nomeWrapper = document.getElementById('nome-wrapper');
-        const docsWarning = document.getElementById('docs-warning');
-        const justificativaWrapper = document.getElementById("justificativa-wrapper");
-        const justificativaEl = document.getElementById("justificativa");
-        const cpfEl = document.getElementById("cpf");
-        let currentVerification = null;
+      function validarCPFFormato(value) {
+        return /^\d{11}$/.test(value);
+      }
 
-        if (!recursoForm || !submitBtn || !submitText || !cpfEl) {
-          console.error("Elementos essenciais não encontrados no DOM.");
-          return;
-        }
+      function onlyDigits(value) {
+        return (value || "").replace(/\D/g, "");
+      }
 
-        function validarCPFFormato(value) {
-          return /^\d{11}$/.test(value);
-        }
+      // máscara CPF
+      if (window.IMask) {
+        IMask(cpfEl, { mask: "000.000.000-00" });
+      } else {
+        console.warn("IMask não carregou; CPF ficará sem máscara.");
+      }
 
-        function onlyDigits(value) {
-          return (value || "").replace(/\D/g, "");
-        }
+      function checkFormReady() {
+        const cpfOk = validarCPFFormato(onlyDigits(cpfEl.value));
+        const inscrOk = inscricaoEl && inscricaoEl.value.trim() !== "";
+        const nomeOk = nomeEl && nomeEl.value.trim() !== "";
+        const algum = fileIds.some((id) => {
+          const f = document.getElementById(id);
+          return f && f.files && f.files.length > 0;
+        });
+        const justificativaOk =
+          !justificativaEl ||
+          !justificativaEl.required ||
+          justificativaEl.value.trim() !== "";
+        submitBtn.disabled = !(cpfOk && inscrOk && nomeOk && algum && justificativaOk);
+      }
 
-        // máscara CPF
-        if (window.IMask) {
-          IMask(cpfEl, { mask: "000.000.000-00" });
+      function formatCountdown(ms) {
+        const total = Math.max(0, Math.floor(ms / 1000));
+        const days = Math.floor(total / 86400);
+        const hours = Math.floor((total % 86400) / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const seconds = total % 60;
+        const h = String(hours).padStart(2, "0");
+        const m = String(minutes).padStart(2, "0");
+        const s = String(seconds).padStart(2, "0");
+        return days > 0 ? `${days}d ${h}:${m}:${s}` : `${h}:${m}:${s}`;
+      }
+
+      function updateAvailabilityUI() {
+        const now = new Date();
+        const banner = document.getElementById("prazo-banner");
+        const bannerCountdown = document.getElementById("prazo-countdown");
+        const modalCountdown = document.getElementById("prazo-modal-countdown");
+        const isOpen = now >= startWindow && now <= endWindow;
+
+        if (isOpen) {
+          if (banner) banner.style.display = "block";
+          if (bannerCountdown) bannerCountdown.textContent = formatCountdown(endWindow - now);
+          const modalEl = document.getElementById("prazoModal");
+          if (modalEl) {
+            const instance = bootstrap.Modal.getInstance(modalEl);
+            if (instance) instance.hide();
+          }
         } else {
-          console.warn("IMask não carregou; CPF ficará sem máscara.");
+          if (banner) banner.style.display = "none";
+          const remaining = now < startWindow ? startWindow - now : 0;
+          if (modalCountdown) {
+            modalCountdown.textContent = now < startWindow ? formatCountdown(remaining) : "00:00:00";
+          }
+          const modalEl = document.getElementById("prazoModal");
+          if (modalEl && (!bootstrap.Modal.getInstance(modalEl))) {
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+          } else if (modalEl) {
+            const instance = bootstrap.Modal.getInstance(modalEl);
+            if (instance) instance.show();
+          }
         }
 
-        function checkFormReady() {
-          const cpfOk = validarCPFFormato(onlyDigits(cpfEl.value));
-          const inscrOk = inscricaoEl && inscricaoEl.value.trim() !== "";
-          const nomeOk = nomeEl && nomeEl.value.trim() !== "";
-          const algum = fileIds.some((id) => {
-            const f = document.getElementById(id);
-            return f && f.files && f.files.length > 0;
-          });
-          const justificativaOk =
-            !justificativaEl ||
-            !justificativaEl.required ||
-            justificativaEl.value.trim() !== "";
-          submitBtn.disabled = !(cpfOk && inscrOk && nomeOk && algum && justificativaOk);
+        if (submitBtn) submitBtn.disabled = !isOpen || submitBtn.disabled;
+        if (!isOpen) {
+          try { recursoForm.querySelectorAll("input, textarea, button").forEach((el) => { if (el.id !== "verif-confirm-btn") el.disabled = true; }); } catch (e) { }
+        } else {
+          try { recursoForm.querySelectorAll("input, textarea, button").forEach((el) => { if (el.id !== "verif-confirm-btn") el.disabled = false; }); } catch (e) { }
+          checkFormReady();
         }
+      }
 
-        function renderFilesList() {
-          if (!filesList) return;
-          filesList.innerHTML = "";
+      function renderFilesList() {
+        if (!filesList) return;
+        filesList.innerHTML = "";
 
-          fileIds.forEach((id) => {
-            const input = document.getElementById(id);
-            if (input && input.files && input.files.length) {
-              const f = input.files[0];
-              const item = document.createElement("div");
-              item.className = "file-item";
-              item.innerHTML = `
+        fileIds.forEach((id) => {
+          const input = document.getElementById(id);
+          if (input && input.files && input.files.length) {
+            const f = input.files[0];
+            const item = document.createElement("div");
+            item.className = "file-item";
+            item.innerHTML = `
                 <i class="bi bi-file-earmark-fill"></i>
                 <strong>${f.name}</strong>
                 <small>· ${(f.size / 1024 / 1024).toFixed(2)} MB</small>
                 <button type="button" class="btn btn-sm btn-link text-danger ms-2" data-file="${id}">Remover</button>
               `;
-              filesList.appendChild(item);
-            }
-          });
-
-          filesList
-            .querySelectorAll('button[data-file]')
-            .forEach((btn) => {
-              btn.addEventListener("click", () => {
-                const id = btn.getAttribute("data-file");
-                const el = document.getElementById(id);
-                if (el) el.value = "";
-                renderFilesList();
-                checkFormReady();
-              });
-            });
-        }
-
-        fileIds.forEach((id) => {
-          const input = document.getElementById(id);
-          if (!input) return;
-          input.addEventListener("change", () => {
-            renderFilesList();
-            updateFileInputsVisibility();
-            checkFormReady();
-          });
+            filesList.appendChild(item);
+          }
         });
 
-        function updateFileInputsVisibility() {
-          for (let i = 0; i < fileIds.length; i++) {
-            const id = fileIds[i];
-            const el = document.getElementById(id);
-            if (!el) continue;
-            const wrapper = el.closest(".col-12");
-            if (!wrapper) continue;
+        filesList
+          .querySelectorAll('button[data-file]')
+          .forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const id = btn.getAttribute("data-file");
+              const el = document.getElementById(id);
+              if (el) el.value = "";
+              renderFilesList();
+              checkFormReady();
+            });
+          });
+      }
 
-            if (i === 0) {
-              wrapper.style.display = "block";
-              continue;
-            }
-
-            const prev = document.getElementById(fileIds[i - 1]);
-            const show = prev && prev.files && prev.files.length > 0;
-
-            if (show) {
-              wrapper.style.display = "block";
-            } else {
-              wrapper.style.display = "none";
-              el.value = "";
-            }
-          }
+      fileIds.forEach((id) => {
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.addEventListener("change", () => {
           renderFilesList();
-        }
+          updateFileInputsVisibility();
+          checkFormReady();
+        });
+      });
 
-        // ---------- Verificação (data + email) ----------
-        function shuffleArray(a) {
-          for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
+      function updateFileInputsVisibility() {
+        for (let i = 0; i < fileIds.length; i++) {
+          const id = fileIds[i];
+          const el = document.getElementById(id);
+          if (!el) continue;
+          const wrapper = el.closest(".col-12");
+          if (!wrapper) continue;
+
+          if (i === 0) {
+            wrapper.style.display = "block";
+            continue;
           }
-          return a;
+
+          const prev = document.getElementById(fileIds[i - 1]);
+          const show = prev && prev.files && prev.files.length > 0;
+
+          if (show) {
+            wrapper.style.display = "block";
+          } else {
+            wrapper.style.display = "none";
+            el.value = "";
+          }
+        }
+        renderFilesList();
+      }
+
+      // ---------- Verificação (data + email) ----------
+      function shuffleArray(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function formatISODate(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      }
+
+      function formatDateBR(iso) {
+        if (!iso) return "";
+        const parts = iso.split("-");
+        if (parts.length !== 3) return iso;
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+
+      function parseDateNormalized(val) {
+        if (!val) return null;
+        const s = String(val).trim();
+        // YYYY-MM-DD or YYYY/MM/DD
+        let m = s.match(/^(\d{4})[-\/](\d{2})[-\/](\d{2})/);
+        if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+        // DD/MM/YYYY or DD-MM-YYYY
+        m = s.match(/^(\d{2})[-\/](\d{2})[-\/](\d{4})/);
+        if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+        // try Date parse fallback
+        const d = new Date(s);
+        if (!isNaN(d)) return formatISODate(d);
+        return null;
+      }
+
+      function generateDateOptions(trueDateStr) {
+        // espera trueDateStr em qualquer formato; garante incluir a data verdadeira quando possível
+        const set = new Set();
+        const trueIso = parseDateNormalized(trueDateStr);
+        let t = null;
+
+        if (trueIso) {
+          // criar a data no horário local para evitar deslocamentos de fuso
+          t = new Date(`${trueIso}T00:00:00`);
+          set.add(trueIso);
+
+          // gerar alternativas únicas no mesmo ano até +/-12 dias
+          let attempts = 0;
+          while (set.size < 3 && attempts < 40) {
+            attempts++;
+            const d = new Date(t);
+            const delta = getRandomInt(2, 12);
+            const sign = Math.random() < 0.5 ? -1 : 1;
+            d.setDate(t.getDate() + sign * delta);
+            if (d.getFullYear() !== t.getFullYear()) d.setFullYear(t.getFullYear());
+            set.add(formatISODate(d));
+          }
         }
 
-        function getRandomInt(min, max) {
-          return Math.floor(Math.random() * (max - min + 1)) + min;
+        // preencher com datas próximas ao hoje se necessário
+        let filler = new Date();
+        while (set.size < 3) {
+          filler.setDate(filler.getDate() + getRandomInt(1, 3));
+          set.add(formatISODate(new Date(filler)));
         }
 
-        function formatISODate(d) {
-          const y = d.getFullYear();
-          const m = String(d.getMonth() + 1).padStart(2, "0");
-          const day = String(d.getDate()).padStart(2, "0");
-          return `${y}-${m}-${day}`;
+        return shuffleArray(Array.from(set));
+      }
+      function maskEmail(email) {
+        if (!email) return "";
+        const e = String(email).trim();
+        const at = e.indexOf("@");
+        const local = at > 0 ? e.slice(0, at) : e;
+        if (!local) return "";
+
+        if (local.length <= 2) {
+          return local[0] + "*".repeat(Math.max(0, local.length - 1));
         }
 
-        function formatDateBR(iso) {
-          if (!iso) return "";
-          const parts = iso.split("-");
-          if (parts.length !== 3) return iso;
-          return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        let midStart = Math.floor(local.length / 2) - 1;
+        if (midStart < 1) midStart = 1;
+        const mid = local.slice(midStart, midStart + 2);
+        const leftStars = "*".repeat(Math.max(0, midStart - 1));
+        const rightStars = "*".repeat(Math.max(0, local.length - (midStart + mid.length)));
+        return `${local[0]}${leftStars}${mid}${rightStars}`;
+      }
+
+      function showErrorModal(message, title = "Erro", onHidden = null) {
+        const el = document.getElementById("errorModal");
+        if (!el || !window.bootstrap) {
+          alert(message);
+          if (typeof onHidden === "function") onHidden();
+          return;
         }
+        const titleEl = document.getElementById("errorModalTitle");
+        const msgEl = document.getElementById("errorModalMessage");
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl) msgEl.textContent = message;
 
-        function parseDateNormalized(val) {
-          if (!val) return null;
-          const s = String(val).trim();
-          // YYYY-MM-DD or YYYY/MM/DD
-          let m = s.match(/^(\d{4})[-\/](\d{2})[-\/](\d{2})/);
-          if (m) return `${m[1]}-${m[2]}-${m[3]}`;
-          // DD/MM/YYYY or DD-MM-YYYY
-          m = s.match(/^(\d{2})[-\/](\d{2})[-\/](\d{4})/);
-          if (m) return `${m[3]}-${m[2]}-${m[1]}`;
-          // try Date parse fallback
-          const d = new Date(s);
-          if (!isNaN(d)) return formatISODate(d);
-          return null;
-        }
+        const bs = new bootstrap.Modal(el);
+        const handler = () => {
+          if (typeof onHidden === "function") onHidden();
+          el.removeEventListener("hidden.bs.modal", handler);
+        };
+        el.addEventListener("hidden.bs.modal", handler);
+        bs.show();
+      }
 
-        function generateDateOptions(trueDateStr) {
-          // espera trueDateStr em qualquer formato; garante incluir a data verdadeira quando possível
-          const set = new Set();
-          const trueIso = parseDateNormalized(trueDateStr);
-          let t = null;
+      function showVerificationPanel(trueBirth, trueEmail, item) {
+        if (!verificacaoArea || !verifContent || !verifConfirmBtn) return;
 
-          if (trueIso) {
-            // criar a data no horário local para evitar deslocamentos de fuso
-            t = new Date(`${trueIso}T00:00:00`);
-            set.add(trueIso);
+        verifContent.innerHTML = "";
+        verifConfirmBtn.disabled = true;
 
-            // gerar alternativas únicas no mesmo ano até +/-12 dias
-            let attempts = 0;
-            while (set.size < 3 && attempts < 40) {
-              attempts++;
-              const d = new Date(t);
-              const delta = getRandomInt(2, 12);
-              const sign = Math.random() < 0.5 ? -1 : 1;
-              d.setDate(t.getDate() + sign * delta);
-              if (d.getFullYear() !== t.getFullYear()) d.setFullYear(t.getFullYear());
-              set.add(formatISODate(d));
+        currentVerification = {
+          trueDate: trueBirth || "",
+          trueDateNormalized: parseDateNormalized(trueBirth),
+          trueEmail: trueEmail || "",
+          item: item || null,
+        };
+
+        function finalize() {
+          verificacaoArea.style.display = "none";
+          if (arquivosArea) arquivosArea.style.display = "block";
+
+          if (justificativaWrapper && justificativaEl) {
+            justificativaWrapper.style.display = "block";
+            justificativaEl.required = true;
+          }
+
+          if (currentVerification && currentVerification.item) {
+            const it = currentVerification.item;
+            if (inscricaoEl) inscricaoEl.value = it.inscricao || "";
+            if (nomeEl) nomeEl.value = it.nomecompleto || it.nome || "";
+            // preencher pontuação
+            if (pontuacaoValueEl) {
+              const pontos = it.prepontuacao ?? it.pontuacao ?? "--";
+              pontuacaoValueEl.textContent = pontos;
             }
+            // exibir campos somente agora (usando row que contém inscricao + pontuacao)
+            if (inscricaoPontuacaoRow) inscricaoPontuacaoRow.style.display = 'flex';
+            if (nomeWrapper) nomeWrapper.style.display = 'block';
+            if (docsWarning) docsWarning.style.display = 'block';
           }
 
-          // preencher com datas próximas ao hoje se necessário
-          let filler = new Date();
-          while (set.size < 3) {
-            filler.setDate(filler.getDate() + getRandomInt(1, 3));
-            set.add(formatISODate(new Date(filler)));
-          }
-
-          return shuffleArray(Array.from(set));
+          updateFileInputsVisibility();
+          // limpar instrução por segurança
+          try { document.getElementById('verif-instruction').textContent = 'Por motivo de seguran\u00e7a, confirme qual \u00e9 a sua data de nascimento.'; } catch (e) { }
+          checkFormReady();
+          currentVerification = null;
         }
 
-        function maskEmail(email) {
-          if (!email) return "";
-          const e = String(email).trim();
-          const at = e.indexOf("@");
-          if (at <= 0) return e.replace(/.(?=.{2})/g, "*");
-
-          const local = e.slice(0, at);
-          const domain = e.slice(at + 1);
-
-          let maskedLocal;
-          if (local.length <= 2) maskedLocal = "*".repeat(local.length);
-          else maskedLocal = local[0] + "*".repeat(Math.max(1, local.length - 2)) + local.slice(-1);
-
-          const parts = domain.split(".");
-          const tld = parts.pop();
-          const domainName = parts.join(".");
-          let maskedDomainName;
-          if (!domainName) maskedDomainName = "***";
-          else if (domainName.length <= 3)
-            maskedDomainName = domainName[0] + "*".repeat(Math.max(1, domainName.length - 1));
-          else maskedDomainName = domainName.slice(0, 2) + "*".repeat(Math.max(1, domainName.length - 3));
-
-          return `${maskedLocal}@${maskedDomainName}.${tld}`;
+        if (!currentVerification.trueDate && !currentVerification.trueEmail) {
+          finalize();
+          return;
         }
 
-        function showErrorModal(message, title = "Erro", onHidden = null) {
-          const el = document.getElementById("errorModal");
-          if (!el || !window.bootstrap) {
-            alert(message);
-            if (typeof onHidden === "function") onHidden();
-            return;
-          }
-          const titleEl = document.getElementById("errorModalTitle");
-          const msgEl = document.getElementById("errorModalMessage");
-          if (titleEl) titleEl.textContent = title;
-          if (msgEl) msgEl.textContent = message;
+        const needDate = !!currentVerification.trueDate;
+        const needEmail = !!currentVerification.trueEmail;
 
-          const bs = new bootstrap.Modal(el);
-          const handler = () => {
-            if (typeof onHidden === "function") onHidden();
-            el.removeEventListener("hidden.bs.modal", handler);
-          };
-          el.addEventListener("hidden.bs.modal", handler);
-          bs.show();
-        }
-
-        function showVerificationPanel(trueBirth, trueEmail, item) {
-          if (!verificacaoArea || !verifContent || !verifConfirmBtn) return;
-
+        function renderEmailStep() {
           verifContent.innerHTML = "";
-          verifConfirmBtn.disabled = true;
+          // instrução específica para etapa de e-mail
+          try { document.getElementById('verif-instruction').textContent = ''; } catch (e) { }
+          const masked = maskEmail(currentVerification.trueEmail || "");
 
-          currentVerification = {
-            trueDate: trueBirth || "",
-            trueDateNormalized: parseDateNormalized(trueBirth),
-            trueEmail: trueEmail || "",
-            item: item || null,
-          };
-
-          function finalize() {
-            verificacaoArea.style.display = "none";
-            if (arquivosArea) arquivosArea.style.display = "block";
-
-            if (justificativaWrapper && justificativaEl) {
-              justificativaWrapper.style.display = "block";
-              justificativaEl.required = true;
-            }
-
-            if (currentVerification && currentVerification.item) {
-              const it = currentVerification.item;
-              if (inscricaoEl) inscricaoEl.value = it.inscricao || "";
-              if (nomeEl) nomeEl.value = it.nomecompleto || it.nome || "";
-              // exibir campos somente agora
-              if (inscricaoWrapper) inscricaoWrapper.style.display = 'block';
-              if (nomeWrapper) nomeWrapper.style.display = 'block';
-              if (docsWarning) docsWarning.style.display = 'block';
-            }
-
-            updateFileInputsVisibility();
-            // limpar instrução por segurança
-            try { document.getElementById('verif-instruction').textContent = ''; } catch (e) {}
-            checkFormReady();
-            currentVerification = null;
-          }
-
-          if (!currentVerification.trueDate && !currentVerification.trueEmail) {
-            finalize();
-            return;
-          }
-
-          const needDate = !!currentVerification.trueDate;
-          const needEmail = !!currentVerification.trueEmail;
-
-          function renderEmailStep() {
-            verifContent.innerHTML = "";
-            // instrução específica para etapa de e-mail
-            try { document.getElementById('verif-instruction').textContent = 'Agora, confirme o seu e-mail cadastrado no sistema.'; } catch(e) {}
-            const masked = maskEmail(currentVerification.trueEmail || "");
-
-            const emailHtml = document.createElement("div");
-            emailHtml.innerHTML = `
+          const emailHtml = document.createElement("div");
+          emailHtml.innerHTML = `
               <div class="mb-3">
-                <div class="form-text mb-2">E-mail cadastrado (mascarado): <strong>${masked}</strong></div>
+                <div class="form-text mb-2">Agora confirme o email <strong>${masked}</strong> cadastrado em sua inscricao.</div>
                 <input type="email" class="form-control" id="verif-email-input" placeholder="Digite seu e-mail completo para confirmar" />
                 <div id="verif-email-err" class="form-text text-danger" style="display:none">E-mail não confere.</div>
               </div>
             `;
-            verifContent.appendChild(emailHtml);
+          verifContent.appendChild(emailHtml);
 
-            const input = document.getElementById("verif-email-input");
-            const err = document.getElementById("verif-email-err");
+          const input = document.getElementById("verif-email-input");
+          const err = document.getElementById("verif-email-err");
 
-            input.addEventListener("input", () => {
-              verifConfirmBtn.disabled = !input.value.trim();
-              if (err) err.style.display = "none";
-            });
+          input.addEventListener("input", () => {
+            verifConfirmBtn.disabled = !input.value.trim();
+            if (err) err.style.display = "none";
+          });
 
-            verifConfirmBtn.textContent = "Confirmar e-mail";
-            verifConfirmBtn.disabled = true;
+          verifConfirmBtn.textContent = "Confirmar e-mail";
+          verifConfirmBtn.disabled = true;
 
-            verifConfirmBtn.onclick = () => {
-              const val = (input.value || "").trim().toLowerCase();
-              if (val === (currentVerification.trueEmail || "").trim().toLowerCase()) {
-                finalize();
-              } else {
-                if (err) err.style.display = "block";
-                showErrorModal("E-mail não confere. Verifique e tente novamente.", "Erro", () => {
-                  input.value = "";
-                  verifConfirmBtn.disabled = true;
-                  try { input.focus(); } catch (e) {}
-                });
-              }
-            };
-          }
+          verifConfirmBtn.onclick = () => {
+            const val = (input.value || "").trim().toLowerCase();
+            if (val === (currentVerification.trueEmail || "").trim().toLowerCase()) {
+              finalize();
+            } else {
+              if (err) err.style.display = "block";
+              showErrorModal("E-mail não confere. Verifique e tente novamente.", "Erro", () => {
+                input.value = "";
+                verifConfirmBtn.disabled = true;
+                try { input.focus(); } catch (e) { }
+              });
+            }
+          };
+        }
 
-          if (needDate) {
-            const dateOpts = generateDateOptions(currentVerification.trueDate);
-
-            const dateHtml = document.createElement("div");
-            dateHtml.innerHTML = `
+        if (needDate) {
+          const dateHtml = document.createElement("div");
+          dateHtml.innerHTML = `
               <div class="mb-3">
-                <div role="group" aria-label="datas">
-                  ${dateOpts
-                    .map((d, i) => `
-                      <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="verif-date" id="verif-date-${i}" value="${d}">
-                        <label class="form-check-label" for="verif-date-${i}">${formatDateBR(d)}</label>
-                      </div>
-                    `)
-                    .join("")}
-                </div>
+                <div class="form-text mb-2">Por motivo de seguran&ccedil;a, confirme qual &eacute; a sua data de nascimento.</div>
+                <input type="date" class="form-control" id="verif-date-input" />
+                <div id="verif-date-err" class="form-text text-danger" style="display:none">Data de nascimento nao confere.</div>
               </div>
             `;
-            verifContent.appendChild(dateHtml);
+          verifContent.appendChild(dateHtml);
 
-            const enableDate = () => {
-              verifConfirmBtn.disabled = !verifContent.querySelector('input[name="verif-date"]:checked');
-            };
-            verifContent
-              .querySelectorAll('input[name="verif-date"]')
-              .forEach((el) => el.addEventListener("change", enableDate));
+          const input = document.getElementById("verif-date-input");
+          const err = document.getElementById("verif-date-err");
 
-            // instrução específica para etapa de data
-            try { document.getElementById('verif-instruction').textContent = 'Por motivo de segurança, confirme qual é a sua data de nascimento.'; } catch(e) {}
+          input.addEventListener("input", () => {
+            verifConfirmBtn.disabled = !input.value;
+            if (err) err.style.display = "none";
+          });
 
-            verifConfirmBtn.textContent = "Confirmar data";
-            verifConfirmBtn.disabled = true;
+          // instrucao especifica para etapa de data
+          try { document.getElementById('verif-instruction').textContent = ''; } catch (e) { }
 
-            verifConfirmBtn.onclick = () => {
-              const selDate = verifContent.querySelector('input[name="verif-date"]:checked');
-              if (!selDate) return;
+          verifConfirmBtn.textContent = "Confirmar data";
+          verifConfirmBtn.disabled = true;
 
-              const okDate = selDate.value === (currentVerification.trueDateNormalized || "");
-              if (okDate) {
-                verifContent.innerHTML = "";
-                if (needEmail) renderEmailStep();
-                else finalize();
-              } else {
-                showErrorModal("Data de nascimento não confere. Tente novamente.", "Erro", () => {
-                  verifContent
-                    .querySelectorAll('input[name="verif-date"]:checked')
-                    .forEach((n) => (n.checked = false));
-                  verifConfirmBtn.disabled = true;
-                  const first = verifContent.querySelector('input[name="verif-date"]');
-                  if (first) first.focus();
-                });
-              }
-            };
-          } else if (needEmail) {
-            renderEmailStep();
+          verifConfirmBtn.onclick = () => {
+            if (!input.value) return;
+            const normalized = parseDateNormalized(input.value);
+            const okDate = normalized === (currentVerification.trueDateNormalized || "");
+            if (okDate) {
+              verifContent.innerHTML = "";
+              try { document.getElementById('verif-instruction').textContent = ''; } catch (e) { }
+              if (needEmail) renderEmailStep();
+              else finalize();
+            } else {
+              if (err) err.style.display = "block";
+              showErrorModal("Data de nascimento nao confere. Tente novamente.", "Erro", () => {
+                input.value = "";
+                verifConfirmBtn.disabled = true;
+                try { input.focus(); } catch (e) { }
+              });
+            }
+          };
+        } else if (needEmail) {
+          renderEmailStep();
+        }
+
+        verificacaoArea.style.display = "block";
+      }
+
+      function hideVerificationPanel() {
+        if (!verificacaoArea || !verifContent || !verifConfirmBtn) return;
+        verificacaoArea.style.display = "none";
+        verifContent.innerHTML = "";
+        try { document.getElementById('verif-instruction').textContent = 'Por motivo de seguran\u00e7a, confirme qual \u00e9 a sua data de nascimento.'; } catch (e) { }
+        verifConfirmBtn.disabled = true;
+        verifConfirmBtn.textContent = "Confirmar";
+        verifConfirmBtn.onclick = null;
+        currentVerification = null;
+      }
+
+      if (justificativaEl) {
+        justificativaEl.addEventListener("input", checkFormReady);
+      }
+
+      function resetDependent() {
+        if (inscricaoEl) inscricaoEl.value = "";
+        if (nomeEl) nomeEl.value = "";
+        if (justificativaEl) justificativaEl.value = "";
+
+        if (justificativaWrapper && justificativaEl) {
+          justificativaWrapper.style.display = "none";
+          justificativaEl.required = false;
+        }
+
+        if (filesList) filesList.innerHTML = "";
+
+        fileIds.forEach((id) => {
+          const f = document.getElementById(id);
+          if (f) f.value = "";
+        });
+        if (arquivosArea) arquivosArea.style.display = "none";
+        if (inscricaoPontuacaoRow) inscricaoPontuacaoRow.style.display = "none";
+        if (pontuacaoValueEl) pontuacaoValueEl.textContent = "--";
+        if (nomeWrapper) nomeWrapper.style.display = "none";
+        if (docsWarning) docsWarning.style.display = "none";
+        updateFileInputsVisibility();
+        try { hideVerificationPanel(); } catch (e) { }
+
+        submitBtn.disabled = true;
+      }
+
+      async function buscarDadosPorCPF(cpfRaw) {
+        const cpf = onlyDigits(cpfRaw);
+        if (!validarCPFFormato(cpf)) return;
+
+        submitBtn.disabled = true;
+        submitText.textContent = "Pesquisando...";
+
+        try {
+          console.debug("buscar-dados-cnh payload", { cpf });
+
+          const resp = await fetch(
+            "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/buscar-dados-cnh",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ cpf }),
+            }
+          );
+
+          if (!resp.ok) throw new Error("Erro na requisição");
+
+          const data = await resp.json();
+
+          if (!Array.isArray(data) || data.length === 0) {
+            resetDependent();
+            alert("Nenhum registro encontrado para o CPF informado.");
+            return;
           }
 
-          verificacaoArea.style.display = "block";
-        }
-
-        function hideVerificationPanel() {
-          if (!verificacaoArea || !verifContent || !verifConfirmBtn) return;
-          verificacaoArea.style.display = "none";
-          verifContent.innerHTML = "";
-          try { document.getElementById('verif-instruction').textContent = ''; } catch (e) {}
-          verifConfirmBtn.disabled = true;
-          verifConfirmBtn.textContent = "Confirmar";
-          verifConfirmBtn.onclick = null;
-          currentVerification = null;
-        }
-
-        if (justificativaEl) {
-          justificativaEl.addEventListener("input", checkFormReady);
-        }
-
-        function resetDependent() {
+          const item = data[0];
           if (inscricaoEl) inscricaoEl.value = "";
           if (nomeEl) nomeEl.value = "";
-          if (justificativaEl) justificativaEl.value = "";
 
+          const trueBirth =
+            item.dataNascimento || item.nascimento || item.datanascimento || item.birthdate || null;
+          const trueEmail = item.email || item.emailPrincipal || item.e_mail || null;
+
+          showVerificationPanel(trueBirth, trueEmail, item);
+
+          if (arquivosArea) arquivosArea.style.display = "none";
+          if (inscricaoPontuacaoRow) inscricaoPontuacaoRow.style.display = "none";
+          if (nomeWrapper) nomeWrapper.style.display = "none";
+          if (docsWarning) docsWarning.style.display = "none";
           if (justificativaWrapper && justificativaEl) {
             justificativaWrapper.style.display = "none";
             justificativaEl.required = false;
           }
 
-          if (filesList) filesList.innerHTML = "";
+          checkFormReady();
+        } catch (err) {
+          console.error(err);
+          resetDependent();
+          alert("Erro ao buscar dados. Tente novamente mais tarde.");
+        } finally {
+          submitText.textContent = "Enviar recurso";
+        }
+      }
 
-          fileIds.forEach((id) => {
-            const f = document.getElementById(id);
-            if (f) f.value = "";
-          });
+      cpfEl.addEventListener("input", function (e) {
+        const valDigits = onlyDigits(e.target.value);
 
-          if (arquivosArea) arquivosArea.style.display = "none";
-          updateFileInputsVisibility();
-
-          try { hideVerificationPanel(); } catch (e) {}
-
-          submitBtn.disabled = true;
+        if (!valDigits) {
+          resetDependent();
+          cpfEl.classList.remove("is-invalid");
+          return;
         }
 
-        async function buscarDadosPorCPF(cpfRaw) {
-          const cpf = onlyDigits(cpfRaw);
-          if (!validarCPFFormato(cpf)) return;
+        if (!validarCPFFormato(valDigits)) {
+          cpfEl.classList.toggle("is-invalid", valDigits.length !== 11);
+          return;
+        }
 
-          submitBtn.disabled = true;
-          submitText.textContent = "Pesquisando...";
+        cpfEl.classList.remove("is-invalid");
+        buscarDadosPorCPF(valDigits);
+      });
 
-          try {
-            console.debug("buscar-dados-cnh payload", { cpf });
+      recursoForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        if (submitBtn.disabled) return;
 
-            const resp = await fetch(
-              "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/buscar-dados-cnh",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ cpf }),
-              }
-            );
+        for (const id of fileIds) {
+          const f = document.getElementById(id);
+          if (f && f.files && f.files[0]) {
+            const file = f.files[0];
+            const mb = file.size / 1024 / 1024;
 
-            if (!resp.ok) throw new Error("Erro na requisição");
-
-            const data = await resp.json();
-
-            if (!Array.isArray(data) || data.length === 0) {
-              resetDependent();
-              alert("Nenhum registro encontrado para o CPF informado.");
+            if (mb > MAX_FILE_MB) {
+              alert(`Arquivo ${file.name} excede o limite de ${MAX_FILE_MB} MB.`);
               return;
             }
 
-            const item = data[0];
-            if (inscricaoEl) inscricaoEl.value = "";
-            if (nomeEl) nomeEl.value = "";
-
-            const trueBirth =
-              item.dataNascimento || item.nascimento || item.datanascimento || item.birthdate || null;
-            const trueEmail = item.email || item.emailPrincipal || item.e_mail || null;
-
-            showVerificationPanel(trueBirth, trueEmail, item);
-
-            if (arquivosArea) arquivosArea.style.display = "none";
-            if (justificativaWrapper && justificativaEl) {
-              justificativaWrapper.style.display = "none";
-              justificativaEl.required = false;
+            const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+            if (!allowedTypes.includes(file.type)) {
+              alert(
+                `Tipo do arquivo ${file.name} não é permitido. São aceitos: PDF, JPEG, PNG.`
+              );
+              return;
             }
-
-            checkFormReady();
-          } catch (err) {
-            console.error(err);
-            resetDependent();
-            alert("Erro ao buscar dados. Tente novamente mais tarde.");
-          } finally {
-            submitText.textContent = "Enviar recurso";
           }
         }
 
-        cpfEl.addEventListener("input", function (e) {
-          const valDigits = onlyDigits(e.target.value);
+        const fd = new FormData();
+        fd.append("cpf", onlyDigits(cpfEl.value));
+        fd.append("inscricao", inscricaoEl ? inscricaoEl.value : "");
+        fd.append("nome", nomeEl ? nomeEl.value : "");
+        fd.append("justificativa", justificativaEl ? justificativaEl.value.trim() : "");
 
-          if (!valDigits) {
-            resetDependent();
-            cpfEl.classList.remove("is-invalid");
-            return;
-          }
-
-          if (!validarCPFFormato(valDigits)) {
-            cpfEl.classList.toggle("is-invalid", valDigits.length !== 11);
-            return;
-          }
-
-          cpfEl.classList.remove("is-invalid");
-          buscarDadosPorCPF(valDigits);
+        fileIds.forEach((id) => {
+          const f = document.getElementById(id);
+          if (f && f.files && f.files[0]) fd.append(id, f.files[0]);
         });
 
-        recursoForm.addEventListener("submit", async function (e) {
-          e.preventDefault();
-          if (submitBtn.disabled) return;
+        try {
+          submitBtn.disabled = true;
+          submitText.textContent = "Enviando...";
 
-          for (const id of fileIds) {
-            const f = document.getElementById(id);
-            if (f && f.files && f.files[0]) {
-              const file = f.files[0];
-              const mb = file.size / 1024 / 1024;
+          const resp = await fetch(
+            "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-recurso-cnh",
+            { method: "POST", body: fd }
+          );
 
-              if (mb > MAX_FILE_MB) {
-                alert(`Arquivo ${file.name} excede o limite de ${MAX_FILE_MB} MB.`);
-                return;
-              }
-
-              const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-              if (!allowedTypes.includes(file.type)) {
-                alert(
-                  `Tipo do arquivo ${file.name} não é permitido. São aceitos: PDF, JPEG, PNG.`
-                );
-                return;
-              }
-            }
-          }
-
-          const fd = new FormData();
-          fd.append("cpf", onlyDigits(cpfEl.value));
-          fd.append("inscricao", inscricaoEl ? inscricaoEl.value : "");
-          fd.append("nome", nomeEl ? nomeEl.value : "");
-          fd.append("justificativa", justificativaEl ? justificativaEl.value.trim() : "");
-
-          fileIds.forEach((id) => {
-            const f = document.getElementById(id);
-            if (f && f.files && f.files[0]) fd.append(id, f.files[0]);
-          });
-
+          const rawText = await resp.text();
+          let retorno = null;
           try {
-            submitBtn.disabled = true;
-            submitText.textContent = "Enviando...";
-
-            const resp = await fetch(
-              "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-recurso-cnh",
-              { method: "POST", body: fd }
-            );
-
-            const retorno = await resp.json();
-
-            if (retorno) {
-              if (inscricaoEl) inscricaoEl.value = retorno.inscricao || inscricaoEl.value || "";
-              if (nomeEl) nomeEl.value = retorno.nomecompleto || retorno.nome || nomeEl.value || "";
-              checkFormReady();
-            }
-
-            document.getElementById("resultado-json").textContent = JSON.stringify(retorno, null, 2);
-
-            const modal = new bootstrap.Modal(document.getElementById("resultadoModal"));
-            modal.show();
-
-            const resultadoCloseBtn = document.querySelector(
-              '#resultadoModal [data-bs-dismiss="modal"]'
-            );
-
-            if (resultadoCloseBtn) {
-              resultadoCloseBtn.addEventListener(
-                "click",
-                () => {
-                  try { recursoForm.reset(); } catch (e) {}
-                  resetDependent();
-                  cpfEl.classList.remove("is-invalid");
-                  const res = document.getElementById("resultado-json");
-                  if (res) res.textContent = "";
-
-                  const resultadoModalEl = document.getElementById("resultadoModal");
-                  const onHidden = () => {
-                    const redirectModalEl = document.getElementById("redirectModal");
-                    const redirectModal = new bootstrap.Modal(redirectModalEl);
-                    redirectModal.show();
-                    startRedirectCountdown(10);
-                    resultadoModalEl.removeEventListener("hidden.bs.modal", onHidden);
-                  };
-                  resultadoModalEl.addEventListener("hidden.bs.modal", onHidden);
-                },
-                { once: true }
-              );
-            }
-
-            // Contador e redirecionamento
-            let redirectTimer = null;
-            function startRedirectCountdown(seconds) {
-              const display = document.getElementById("redirect-countdown");
-              const redirectModalEl = document.getElementById("redirectModal");
-              const url = "https://cnhrecife.recife.pe.gov.br/";
-              let remaining = seconds;
-
-              if (display) display.textContent = remaining;
-
-              const redirectNowBtn = document.getElementById("redirect-now-btn");
-              if (redirectNowBtn) {
-                redirectNowBtn.onclick = () => {
-                  if (redirectTimer) clearInterval(redirectTimer);
-                  window.location.href = url;
-                };
-              }
-
-              if (redirectTimer) clearInterval(redirectTimer);
-              redirectTimer = setInterval(() => {
-                remaining -= 1;
-                if (display) display.textContent = remaining;
-                if (remaining <= 0) {
-                  clearInterval(redirectTimer);
-                  redirectTimer = null;
-                  window.location.href = url;
-                }
-              }, 1000);
-
-              const cleanup = function () {
-                if (redirectTimer) {
-                  clearInterval(redirectTimer);
-                  redirectTimer = null;
-                }
-                redirectModalEl.removeEventListener("hidden.bs.modal", cleanup);
-              };
-              redirectModalEl.addEventListener("hidden.bs.modal", cleanup);
-            }
-          } catch (err) {
-            console.error(err);
-            alert("Erro ao enviar o recurso. Tente novamente.");
-          } finally {
-            submitBtn.disabled = false;
-            submitText.textContent = "Enviar recurso";
+            retorno = rawText ? JSON.parse(rawText) : "";
+          } catch (e) {
+            retorno = rawText;
           }
-        });
-      })();
-    </script>
-  </body>
+
+          if (retorno) {
+            if (inscricaoEl) inscricaoEl.value = retorno.inscricao || inscricaoEl.value || "";
+            if (nomeEl) nomeEl.value = retorno.nomecompleto || retorno.nome || nomeEl.value || "";
+            checkFormReady();
+          }
+
+          const successText =
+            typeof retorno === "string" ? retorno.toLowerCase() : "";
+          const isSuccess =
+            (retorno &&
+              (retorno.sucesso === true ||
+                retorno.success === true ||
+                retorno.status === "success" ||
+                retorno.ok === true)) ||
+            (successText.includes("sucesso") || successText.includes("success") || successText.includes("✅"));
+
+          const resultadoLabel = document.getElementById("resultadoModalLabel");
+          const resultadoTitle = document.getElementById("resultado-modal-title");
+          const resultadoIcon = document.getElementById("resultado-modal-icon");
+
+          if (resultadoLabel) {
+            resultadoLabel.classList.remove("text-success", "text-danger");
+            resultadoLabel.classList.add(isSuccess ? "text-success" : "text-danger");
+          }
+          if (resultadoTitle) {
+            resultadoTitle.textContent = isSuccess ? "Sucesso" : "Falha";
+          }
+          if (resultadoIcon) {
+            resultadoIcon.className = `bi ${isSuccess ? "bi-check-circle-fill" : "bi-x-circle-fill"
+              }`;
+          }
+
+          const payloadText =
+            retorno && typeof retorno === "object"
+              ? JSON.stringify(retorno, null, 2)
+              : String(retorno ?? "");
+          document.getElementById("resultado-json").textContent = payloadText;
+
+          const modal = new bootstrap.Modal(document.getElementById("resultadoModal"));
+          modal.show();
+
+          const resultadoCloseBtn = document.querySelector(
+            '#resultadoModal [data-bs-dismiss="modal"]'
+          );
+
+          if (resultadoCloseBtn) {
+            resultadoCloseBtn.addEventListener(
+              "click",
+              () => {
+                try { recursoForm.reset(); } catch (e) { }
+                resetDependent();
+                cpfEl.classList.remove("is-invalid");
+                const res = document.getElementById("resultado-json");
+                if (res) res.textContent = "";
+
+                const resultadoModalEl = document.getElementById("resultadoModal");
+                const onHidden = () => {
+                  const redirectModalEl = document.getElementById("redirectModal");
+                  const redirectModal = new bootstrap.Modal(redirectModalEl);
+                  redirectModal.show();
+                  startRedirectCountdown(10);
+                  resultadoModalEl.removeEventListener("hidden.bs.modal", onHidden);
+                };
+                resultadoModalEl.addEventListener("hidden.bs.modal", onHidden);
+              },
+              { once: true }
+            );
+          }
+
+          // Contador e redirecionamento
+          let redirectTimer = null;
+          function startRedirectCountdown(seconds) {
+            const display = document.getElementById("redirect-countdown");
+            const redirectModalEl = document.getElementById("redirectModal");
+            const url = "https://cnhrecife.recife.pe.gov.br/";
+            let remaining = seconds;
+
+            if (display) display.textContent = remaining;
+
+            const redirectNowBtn = document.getElementById("redirect-now-btn");
+            if (redirectNowBtn) {
+              redirectNowBtn.onclick = () => {
+                if (redirectTimer) clearInterval(redirectTimer);
+                window.location.href = url;
+              };
+            }
+
+            if (redirectTimer) clearInterval(redirectTimer);
+            redirectTimer = setInterval(() => {
+              remaining -= 1;
+              if (display) display.textContent = remaining;
+              if (remaining <= 0) {
+                clearInterval(redirectTimer);
+                redirectTimer = null;
+                window.location.href = url;
+              }
+            }, 1000);
+
+            const cleanup = function () {
+              if (redirectTimer) {
+                clearInterval(redirectTimer);
+                redirectTimer = null;
+              }
+              redirectModalEl.removeEventListener("hidden.bs.modal", cleanup);
+            };
+            redirectModalEl.addEventListener("hidden.bs.modal", cleanup);
+          }
+        } catch (err) {
+          console.error(err);
+
+          const resultadoLabel = document.getElementById("resultadoModalLabel");
+          const resultadoTitle = document.getElementById("resultado-modal-title");
+          const resultadoIcon = document.getElementById("resultado-modal-icon");
+          const payloadText =
+            err && err.message
+              ? String(err.message)
+              : "Erro ao enviar o recurso. Tente novamente.";
+
+          if (resultadoLabel) {
+            resultadoLabel.classList.remove("text-success", "text-danger");
+            resultadoLabel.classList.add("text-danger");
+          }
+          if (resultadoTitle) {
+            resultadoTitle.textContent = "Falha";
+          }
+          if (resultadoIcon) {
+            resultadoIcon.className = "bi bi-x-circle-fill";
+          }
+
+          const resultadoJson = document.getElementById("resultado-json");
+          if (resultadoJson) resultadoJson.textContent = payloadText;
+
+          const modal = new bootstrap.Modal(document.getElementById("resultadoModal"));
+          modal.show();
+        } finally {
+          submitBtn.disabled = false;
+          submitText.textContent = "Enviar recurso";
+        }
+      });
+
+      updateAvailabilityUI();
+      setInterval(updateAvailabilityUI, 1000);
+    })();
+  </script>
+</body>
+
 </html>

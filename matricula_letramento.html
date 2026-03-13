@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Matrícula • Letramento Digital</title>
+    <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --brand-primary: #0053a4;
+            --brand-secondary: #00a3ff;
+            --surface: #f0f4f9;
+            --surface-strong: #ffffff;
+            --text-strong: #1b263b;
+            --text-muted: #5b6c8c;
+            --success: #198754;
+            --step-inactive: #ced4da;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Public Sans", system-ui, sans-serif;
+            background: var(--surface);
+            color: var(--text-strong);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .page-wrapper {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        /* Badge topo */
+        .prog-badge {
+            display: inline-block;
+            background: #e8f0fb;
+            color: var(--brand-primary);
+            font-size: .78rem;
+            font-weight: 600;
+            letter-spacing: .03em;
+            padding: .25rem .75rem;
+            border-radius: 99px;
+            margin-bottom: 1rem;
+        }
+
+        .page-title {
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-strong);
+            margin-bottom: .5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            max-width: 680px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Cards */
+        .info-card,
+        .confirm-card {
+            background: var(--surface-strong);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            box-shadow: 0 4px 24px rgba(0, 30, 70, .07);
+        }
+
+        .info-card h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        /* Aula Inaugural */
+        .aula-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--brand-primary);
+            border-radius: .5rem;
+            padding: 1.1rem 1.25rem;
+            margin-top: 1.25rem;
+        }
+
+        .aula-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            margin-bottom: .75rem;
+        }
+
+        .aula-info {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: .35rem .75rem;
+            font-size: .92rem;
+            margin-bottom: .85rem;
+        }
+
+        .aula-info .label {
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .aula-footer {
+            font-size: .85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Confirm card */
+        .confirm-card h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+        }
+
+        /* Steps */
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: .75rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-dot {
+            width: 1.1rem;
+            height: 1.1rem;
+            border-radius: 50%;
+            background: var(--step-inactive);
+            flex-shrink: 0;
+            margin-top: .25rem;
+            transition: background .3s;
+        }
+
+        .step-dot.active {
+            background: var(--brand-primary);
+        }
+
+        .step-dot.done {
+            background: var(--success);
+        }
+
+        .step-label {
+            font-size: .88rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: var(--text-strong);
+        }
+
+        .step.done .step-label {
+            color: var(--success);
+            text-decoration: line-through;
+        }
+
+        /* Buttons */
+        .btn-confirm {
+            width: 100%;
+            padding: .85rem 1.25rem;
+            border-radius: .65rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity .2s, transform .1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            margin-bottom: .75rem;
+        }
+
+        .btn-confirm:active {
+            transform: scale(.98);
+        }
+
+        .btn-confirm:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .btn-step1 {
+            background: var(--brand-primary);
+            color: #fff;
+        }
+
+        .btn-step1:hover:not(:disabled) {
+            background: #00419e;
+        }
+
+        .btn-step2 {
+            background: var(--text-strong);
+            color: #fff;
+        }
+
+        .btn-step2:hover:not(:disabled) {
+            background: #0a1628;
+        }
+
+        .status-msg {
+            font-size: .82rem;
+            color: var(--text-muted);
+            margin-top: .5rem;
+            line-height: 1.5;
+        }
+
+        /* Sucesso final */
+        .success-banner {
+            display: none;
+            background: #d1f0e0;
+            border: 1px solid #a3dfbf;
+            color: #0d4f2d;
+            border-radius: .65rem;
+            padding: 1rem 1.25rem;
+            font-weight: 500;
+            font-size: .9rem;
+            margin-top: .75rem;
+            align-items: flex-start;
+            gap: .6rem;
+        }
+
+        .success-banner.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn .35s ease both;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+
+        <!-- Cabeçalho -->
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+                alt="CNH Social Recife" style="height: 42px; object-fit: contain; opacity: .88;" />
+            <span class="prog-badge" style="margin-bottom:0">Programa CNH Social Recife</span>
+        </div>
+        <h1 class="page-title" id="page-title"></h1>
+        <p class="page-subtitle">
+            Para garantir sua participação no programa, clique no botão <strong>"Confirmar matrícula"</strong>.
+        </p>
+
+        <!-- Layout de duas colunas -->
+        <div class="row g-4 align-items-start">
+
+            <!-- Coluna esquerda – informações -->
+            <div class="col-lg-7">
+                <div class="info-card">
+                    <h2>O que você precisa fazer agora</h2>
+                    <p style="color:var(--text-muted);font-size:.93rem;line-height:1.6;margin-bottom:0">
+                        Para garantir sua participação no programa, clique no botão <strong>"Confirmar
+                            matrícula"</strong>.
+                        Após a confirmação, um segundo botão será habilitado para confirmar sua presença na aula
+                        inaugural.
+                    </p>
+
+                    <!-- Bloco Aula Inaugural -->
+                    <div class="aula-card">
+                        <h3><i class="bi bi-calendar-event me-1"></i>Aula Inaugural – Letramento Digital</h3>
+                        <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:.85rem">
+                            Convidamos você para um momento de acolhimento e orientações sobre as próximas etapas do
+                            programa.
+                        </p>
+                        <div class="aula-info">
+                            <span class="label">Data</span>
+                            <span><strong>12 de março</strong></span>
+                            <span class="label">Horário</span>
+                            <span>09h</span>
+                            <span class="label">Local</span>
+                            <span>
+                                <strong>Teatro de Santa Isabel</strong><br />
+                                Praça da República, Bairro de Santo Antônio.
+                            </span>
+                        </div>
+                        <p class="aula-footer">
+                            Sua presença é muito importante. Cada aluno poderá levar 1 convidado(a) para a aula
+                            inaugural. Confirme sua participação após concluir a matrícula.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna direita – confirmações -->
+            <div class="col-lg-5">
+                <div class="confirm-card">
+                    <h2>Confirmações</h2>
+
+                    <!-- Etapa 1 -->
+                    <div class="step active" id="step1-indicator">
+                        <div class="step-dot active" id="dot1"></div>
+                        <span class="step-label">Passo 1: Confirmar matrícula</span>
+                    </div>
+
+                    <button class="btn-confirm btn-step1" id="btn-matricula">
+                        <i class="bi bi-check2-circle"></i>
+                        Confirmar matrícula
+                    </button>
+
+                    <!-- Etapa 2 -->
+                    <div class="step mt-2" id="step2-indicator">
+                        <div class="step-dot" id="dot2"></div>
+                        <span class="step-label">Passo 2: Confirmar presença (Aula Inaugural)</span>
+                    </div>
+
+                    <div id="acoes-aula" class="d-flex flex-column gap-2 mb-3">
+                        <button class="btn-confirm btn-step2" id="btn-aula-sozinho" disabled
+                            style="margin-bottom:0; font-size:0.95rem;">
+                            <i class="bi bi-person-check"></i>
+                            Confirmar presença (vou sozinho)
+                        </button>
+                        <button class="btn-confirm btn-step2" id="btn-aula-acompanhado" disabled
+                            style="margin-bottom:0; font-size:0.95rem;">
+                            <i class="bi bi-people-fill"></i>
+                            Confirmar presença (vou acompanhado c/ 1 convidado)
+                        </button>
+                    </div>
+
+                    <!-- Status -->
+                    <p class="status-msg" id="status-msg">
+                        Aguardando confirmação da matrícula.<br />
+                        <span style="font-style:italic">Finalize os dois passos para concluir sua confirmação.</span>
+                    </p>
+
+                    <!-- Banner de sucesso final -->
+                    <div class="success-banner animate-in" id="success-banner">
+                        <i class="bi bi-patch-check-fill fs-5" style="flex-shrink:0;color:var(--success)"></i>
+                        <div>
+                            <strong>Tudo confirmado!</strong><br />
+                            Sua matrícula e presença na aula inaugural foram registradas com sucesso.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /row -->
+    </div><!-- /page-wrapper -->
+
+    <!-- Modal: já confirmado -->
+    <div class="modal fade" id="jaConfirmadoModal" tabindex="-1" aria-labelledby="jaConfirmadoLabel" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4" style="box-shadow:0 18px 40px rgba(0,30,70,.12)">
+                <div class="modal-body p-4 p-md-5">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-info-circle-fill text-primary" style="font-size:2.5rem"></i>
+                    </div>
+                    <h5 class="text-center fw-bold mb-3" id="jaConfirmadoLabel">Confirmação já registrada</h5>
+                    <div id="jaConfirmadoMsg" class="text-center" style="font-size:.93rem;color:#444"></div>
+                    <div class="text-center mt-4">
+                        <button type="button" class="btn btn-primary px-4"
+                            onclick="window.location.href='https://cnhrecife.recife.pe.gov.br'">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campos ocultos com dados do n8n -->
+    <input type="hidden" id="cpf" value="{{ $('Execute a SQL query').item.json.cpf }}" />
+    <input type="hidden" id="nome" value="{{ $('Execute a SQL query').item.json.nomecompleto }}" />
+    <input type="hidden" id="inscricao" value="{{ $('Execute a SQL query').item.json.inscricao }}" />
+    <input type="hidden" id="genero" value="{{ $json.genero }}" />
+    <input type="hidden" id="categoria" value="{{ $json.categoria }}" />
+    <input type="hidden" id="classificacao" value="{{ $json.classificacao }}" />
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (() => {
+            const inscricao = document.getElementById("inscricao").value.trim();
+            const cpf = document.getElementById("cpf").value.trim();
+            const nomeCompleto = document.getElementById("nome").value.trim();
+
+            // Extrai primeiro nome com capitalização correta
+            const rawFirst = nomeCompleto.split(/\s+/)[0] || "";
+            const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1).toLowerCase();
+
+            // Gênero vindo diretamente do n8n ({{ $json.genero }})
+            const genero = (document.getElementById("genero").value || "").trim().toUpperCase();
+            const genWord = (genero === "F" || genero === "FEMININO" || genero === "Feminino" || genero === "feminino") ? "aprovada" : "aprovado";
+
+            // Preenche o título da página
+            const titleEl = document.getElementById("page-title");
+            if (titleEl) titleEl.textContent = `Parabéns ${firstName}, você foi ${genWord}! 🎉`;
+            const btnMatric = document.getElementById("btn-matricula");
+            const btnAulaSozinho = document.getElementById("btn-aula-sozinho");
+            const btnAulaAcompanhado = document.getElementById("btn-aula-acompanhado");
+            const statusMsg = document.getElementById("status-msg");
+            const banner = document.getElementById("success-banner");
+            const dot1 = document.getElementById("dot1");
+            const dot2 = document.getElementById("dot2");
+            const step1Ind = document.getElementById("step1-indicator");
+            const step2Ind = document.getElementById("step2-indicator");
+
+            const ENDPOINT = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/letramento";
+
+            // === Verificação prévia: CPF já confirmado? ===
+            (async () => {
+                try {
+                    const resp = await fetch(`${ENDPOINT}?cpf=${encodeURIComponent(cpf)}`, {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json" },
+                    });
+                    const text = await resp.text();
+
+                    // Se o retorno NÃO indicar ausência de confirmação, mostra modal
+                    const semConfirmacao = /ainda não existe confirma/i.test(text);
+                    if (!semConfirmacao && text.trim() !== "") {
+                        document.getElementById("jaConfirmadoMsg").textContent = text;
+                        new bootstrap.Modal(document.getElementById("jaConfirmadoModal")).show();
+                    }
+                } catch (err) {
+                    // Erro silencioso: exibe formulário normalmente
+                    console.warn("Pré-verificação falhou, exibindo formulário normalmente.", err);
+                }
+            })();
+
+            async function postPayload(extra = {}) {
+                const resp = await fetch(ENDPOINT, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ inscricao, ...extra }),
+                });
+                // Lê como texto para evitar erro de parse JSON
+                const text = await resp.text();
+                console.debug("postPayload response", resp.status, text);
+                // Só lança erro em falhas de rede reais (fetch throw) ou erro explícito de servidor
+                // Status 4xx/5xx sem corpo também são tratados normalmente
+                return text;
+            }
+
+            // Payload completo compartilhado entre os dois botões
+            function fullPayload(extra = {}) {
+                return {
+                    inscricao: inscricao,
+                    cpf: document.getElementById("cpf").value.trim(),
+                    nomecompleto: document.getElementById("nome").value.trim(),
+                    categoria: document.getElementById("categoria").value.trim(),
+                    classificacao: document.getElementById("classificacao").value.trim(),
+                    ...extra,
+                };
+            }
+
+            // === Botão 1 – Apenas libera o Botão 2 (sem POST) ===
+            btnMatric.addEventListener("click", () => {
+                btnMatric.disabled = true;
+                btnMatric.innerHTML = `<i class="bi bi-check-circle-fill"></i> Matrícula confirmada`;
+                btnMatric.style.background = "var(--success)";
+
+                dot1.className = "step-dot done";
+                step1Ind.className = "step done";
+
+                if (btnAulaSozinho) btnAulaSozinho.disabled = false;
+                if (btnAulaAcompanhado) btnAulaAcompanhado.disabled = false;
+                dot2.className = "step-dot active";
+                step2Ind.className = "step active";
+                statusMsg.innerHTML = `Matrícula confirmada ✅<br>Agora confirme sua presença na aula inaugural.`;
+
+                setTimeout(() => {
+                    const el = btnAulaSozinho || btnAulaAcompanhado;
+                    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+                }, 250);
+            });
+
+            // === Botões 2 – Confirmar presença na aula ===
+            async function confirmarAula(acompanhado, btnClicado) {
+                if (btnAulaSozinho) btnAulaSozinho.disabled = true;
+                if (btnAulaAcompanhado) btnAulaAcompanhado.disabled = true;
+
+                const htmlOriginal = btnClicado.innerHTML;
+                btnClicado.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Enviando...`;
+
+                try {
+                    await postPayload(fullPayload({
+                        etapa: "aula_inaugural",
+                        acompanhado: acompanhado
+                    }));
+
+                    // Marcar step 2 como concluído
+                    dot2.className = "step-dot done";
+                    step2Ind.className = "step done";
+
+                    // Esconde o botão não clicado e atualiza o clicado
+                    if (acompanhado) {
+                        if (btnAulaSozinho) btnAulaSozinho.style.display = 'none';
+                        btnAulaAcompanhado.innerHTML = `<i class="bi bi-calendar2-check-fill"></i> Presença (com convidado) confirmada`;
+                        btnAulaAcompanhado.style.background = "var(--success)";
+                    } else {
+                        if (btnAulaAcompanhado) btnAulaAcompanhado.style.display = 'none';
+                        btnAulaSozinho.innerHTML = `<i class="bi bi-calendar2-check-fill"></i> Presença (sozinho) confirmada`;
+                        btnAulaSozinho.style.background = "var(--success)";
+                    }
+
+                    statusMsg.style.display = "none";
+                    banner.classList.add("show");
+
+                } catch (err) {
+                    console.error(err);
+                    if (btnAulaSozinho) btnAulaSozinho.disabled = false;
+                    if (btnAulaAcompanhado) btnAulaAcompanhado.disabled = false;
+                    btnClicado.innerHTML = htmlOriginal;
+                    statusMsg.innerHTML = `<span class="text-danger">Erro ao confirmar. Tente novamente.</span>`;
+                }
+            }
+
+            if (btnAulaSozinho) {
+                btnAulaSozinho.addEventListener("click", () => confirmarAula(false, btnAulaSozinho));
+            }
+            if (btnAulaAcompanhado) {
+                btnAulaAcompanhado.addEventListener("click", () => confirmarAula(true, btnAulaAcompanhado));
+            }
+        })();
+    </script>
+</body>
+
+</html>
