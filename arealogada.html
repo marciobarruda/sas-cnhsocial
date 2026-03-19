@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Programa Talentos Públicos Recife - Trajetórias</title>
+    <link rel="icon"
+        href="https://statics.recife.pe.gov.br/images/dynamics/conecta/icons/favicon.png?w=32&h=32&fit=fill&border=2,transparent,shrink" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        /* Styles from head.txt */
+        :root {
+            --brand-primary: #0053a4;
+            --brand-secondary: #003a73;
+            --brand-highlight: #00a3ff;
+            --surface: #ffedd4;
+            --surface-strong: #ffffff;
+            --border-color: #d0d7e2;
+            --text-strong: #1b263b;
+            --text-muted: #5b6c8c;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--text-strong);
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Sidebar Styles (Custom) */
+        .sidebar {
+            width: 280px;
+            background-color: var(--brand-secondary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.8rem 1.5rem;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--brand-highlight);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            flex-grow: 1;
+            transition: all 0.3s;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Styles adapted from head.txt */
+        .form-wrapper {
+            background: var(--surface-strong);
+            border-radius: 1rem;
+            padding: clamp(1.5rem, 2vw + 1rem, 3rem);
+            box-shadow: 0 12px 30px rgba(24, 64, 120, 0.08);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--brand-secondary);
+        }
+
+        .form-text,
+        .help-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .required::after {
+            content: " *";
+            color: #d32f2f;
+            margin-left: 0.25rem;
+        }
+
+        .btn-primary {
+            background-color: var(--brand-primary);
+            border-color: var(--brand-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--brand-secondary);
+            border-color: var(--brand-secondary);
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border-left: 5px solid var(--brand-highlight);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .file-input-wrapper {
+            border: 1px dashed var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            background: rgba(0, 83, 164, 0.03);
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        #email {
+            text-transform: lowercase;
+        }
+
+        #lotacaoSegundoCargo,
+        input[name^="uni_name_"],
+        input[name^="uni_country_"],
+        input[name^="uni_course_"] {
+            text-transform: uppercase;
+        }
+
+        /* Floating Button Styles */
+        .university-actions {
+            position: sticky;
+            bottom: 2rem;
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+            pointer-events: none;
+            margin-top: 1.5rem;
+        }
+
+        .btn-floating {
+            pointer-events: auto;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 83, 164, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            background-color: var(--brand-primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-floating:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 83, 164, 0.4);
+            background-color: var(--brand-secondary);
+            color: white;
+        }
+
+        .btn-floating:active {
+            transform: translateY(0);
+        }
+
+        .btn-floating i {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Mobile Toggle -->
+    <button class="btn btn-primary d-lg-none position-fixed top-0 start-0 m-3 z-3"
+        onclick="document.querySelector('.sidebar').classList.toggle('show')">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h5 class="m-0 fw-bold">Talentos Públicos</h5>
+            <small class="opacity-75">Recife - Trajetórias</small>
+        </div>
+        <div class="d-flex flex-column py-3">
+            <a href="#" class="nav-link active" onclick="showSection('inscricao')">
+                <i class="bi bi-pencil-square"></i> Inscrição
+            </a>
+            <a href="#" class="nav-link" onclick="showSection('minhas-inscricoes'); loadMinhasInscricoes();">
+                <i class="bi bi-card-list"></i> Minhas Inscrições
+            </a>
+            <a href="#" class="nav-link" onclick="showSection('recursos')">
+                <i class="bi bi-arrow-repeat"></i> Recursos
+            </a>
+            <a href="#" class="nav-link" onclick="showSection('documentos')">
+                <i class="bi bi-folder-plus"></i> Docs. Complementares
+            </a>
+            <a href="#" class="nav-link" onclick="showSection('publicacoes')">
+                <i class="bi bi-journal-text"></i> Publicações
+            </a>
+            <a href="#" class="nav-link" onclick="showSection('acompanhamento')">
+                <i class="bi bi-clipboard-data"></i> Acompanhamento
+            </a>
+        </div>
+        <div class="mt-auto p-3 border-top border-secondary bg-dark bg-opacity-25">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-white rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold shadow-sm"
+                    style="width: 40px; height: 40px;">{{ $json.nomeCompleto.split(' ').slice(0, 2).map(n =>
+                    n[0]).join('').toUpperCase() }}</div>
+                <div class="small text-white">
+                    <div class="fw-bold">{{$json.nomeCompleto}}</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Inscrição Section -->
+        <div id="inscricao" class="content-section active">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="h3 fw-bold text-primary mb-1">Formulário de Inscrição</h2>
+                    <p class="text-muted mb-0">Preencha seus dados para participar do processo seletivo.</p>
+                </div>
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Em Preenchimento</span>
+            </div>
+
+            <div id="msgInscricaoFechada" class="text-center py-5 d-none">
+                <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                <h4 class="mt-3">Inscrições Encerradas</h4>
+                <p class="text-muted">O período de submissão de candidaturas foi encerrado. Fique atento às próximas
+                    etapas no cronograma.</p>
+            </div>
+
+            <div id="msgInscricaoConcluida" class="text-center py-5 d-none">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                <h4 class="mt-3">Inscrições Realizadas</h4>
+                <p class="text-muted">Você já realizou a inscrição para todas as suas matrículas disponíveis.</p>
+                <button class="btn btn-outline-primary mt-2"
+                    onclick="showSection('minhas-inscricoes'); loadMinhasInscricoes();">
+                    Ver Minhas Inscrições
+                </button>
+            </div>
+
+            <form id="formInscricao" class="needs-validation d-none" novalidate>
+
+                <!-- Dados do Servidor (Readonly) -->
+                <div class="form-wrapper">
+                    <h4 class="mb-4 text-secondary border-bottom pb-2">1. Dados do Servidor</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control bg-light" value="{{$json.nomeCompleto}}" readonly
+                                id="nomeCompleto">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">CPF</label>
+                            <input type="text" class="form-control bg-light" value="{{$json.cpf}}" readonly id="cpf">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control bg-light" value="{{$json.dataNascimento}}" readonly
+                                id="dataNascimento">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Matrícula</label>
+                            <select class="form-select bg-light" id="matricula" onchange="onMatriculaChange()">
+                                <option value="" selected disabled>Selecione...</option>
+                                <option value="0">{{ $json.vinculos[0].matricula }}</option>
+                                {{ $json.vinculos && $json.vinculos[1] ? '<option value="1">' +
+                                    $json.vinculos[1].matricula + '</option>' : '' }}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Cargo</label>
+                            <input type="text" class="form-control bg-light" readonly id="cargo">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Vínculo</label>
+                            <input type="text" class="form-control bg-light" readonly id="vinculo">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Data de Admissão</label>
+                            <input type="text" class="form-control bg-light" readonly id="dataAdmissao">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dados Complementares -->
+                <div class="form-wrapper">
+                    <h4 class="mb-4 text-secondary border-bottom pb-2">2. Dados Complementares</h4>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label required">Nacionalidade</label>
+                            <select class="form-select" required id="nacionalidade">
+                                <option value="">Selecione...</option>
+                                <option value="brasileira">Brasileira</option>
+                                <option value="afegane">Afegane</option>
+                                <option value="sul-africana">Sul-Africana</option>
+                                <option value="albanesa">Albanesa</option>
+                                <option value="alema">Alemã</option>
+                                <option value="andorrana">Andorrana</option>
+                                <option value="angolana">Angolana</option>
+                                <option value="antiguana">Antiguana</option>
+                                <option value="saudita">Saudita</option>
+                                <option value="argelina">Argelina</option>
+                                <option value="argentina">Argentina</option>
+                                <option value="armenia">Armênia</option>
+                                <option value="australiana">Australiana</option>
+                                <option value="austriaca">Austríaca</option>
+                                <option value="azerbaijana">Azerbaijana</option>
+                                <option value="bahamense">Bahamense</option>
+                                <option value="bangladeshiana">Bangladeshiana</option>
+                                <option value="barbadiana">Barbadiana</option>
+                                <option value="barenita">Barenita</option>
+                                <option value="belga">Belga</option>
+                                <option value="belizenha">Belizenha</option>
+                                <option value="beninense">Beninense</option>
+                                <option value="bielorrussa">Bielorrussa</option>
+                                <option value="boliviana">Boliviana</option>
+                                <option value="bosniaca">Bósniaca</option>
+                                <option value="botsuanesa">Botsuanesa</option>
+                                <option value="bruneiana">Bruneiana</option>
+                                <option value="bulgara">Búlgara</option>
+                                <option value="burquinense">Burquinense</option>
+                                <option value="burundesa">Burundesa</option>
+                                <option value="butanesa">Butanesa</option>
+                                <option value="cabo-verdiana">Cabo-Verdiana</option>
+                                <option value="camaronesa">Camaronesa</option>
+                                <option value="cambojana">Cambojana</option>
+                                <option value="canadense">Canadense</option>
+                                <option value="catariana">Catariana</option>
+                                <option value="cazaque">Cazaque</option>
+                                <option value="chadiana">Chadiana</option>
+                                <option value="chilena">Chilena</option>
+                                <option value="chinesa">Chinesa</option>
+                                <option value="cipriota">Cipriota</option>
+                                <option value="colombiana">Colombiana</option>
+                                <option value="comorense">Comorense</option>
+                                <option value="congolesa">Congolesa</option>
+                                <option value="norte-coreana">Norte-Coreana</option>
+                                <option value="sul-coreana">Sul-Coreana</option>
+                                <option value="marfinense">Marfinense</option>
+                                <option value="costarriquenha">Costarriquenha</option>
+                                <option value="croata">Croata</option>
+                                <option value="cubana">Cubana</option>
+                                <option value="dinamarquesa">Dinamarquesa</option>
+                                <option value="djiboutiana">Djiboutiana</option>
+                                <option value="dominicana">Dominicana</option>
+                                <option value="egipcia">Egípcia</option>
+                                <option value="salvadorenha">Salvadorenha</option>
+                                <option value="emiradense">Emiradense</option>
+                                <option value="equatoriana">Equatoriana</option>
+                                <option value="eritreia">Eritreia</option>
+                                <option value="eslovaca">Eslovaca</option>
+                                <option value="eslovena">Eslovena</option>
+                                <option value="espanhola">Espanhola</option>
+                                <option value="estadunidense">Estadunidense</option>
+                                <option value="estonia">Estônia</option>
+                                <option value="etiope">Etíope</option>
+                                <option value="fijiana">Fijiana</option>
+                                <option value="filipina">Filipina</option>
+                                <option value="finlandesa">Finlandesa</option>
+                                <option value="francesa">Francesa</option>
+                                <option value="gabonesa">Gabonesa</option>
+                                <option value="gambiana">Gambiana</option>
+                                <option value="ganesa">Ganesa</option>
+                                <option value="georgiana">Georgiana</option>
+                                <option value="granadina">Granadina</option>
+                                <option value="grega">Grega</option>
+                                <option value="guatemalteca">Guatemalteca</option>
+                                <option value="guianense">Guianense</option>
+                                <option value="guineense">Guineense</option>
+                                <option value="equatoguineana">Equatoguineana</option>
+                                <option value="guine-bissauense">Guiné-Bissauense</option>
+                                <option value="haitiana">Haitiana</option>
+                                <option value="hondurenha">Hondurenha</option>
+                                <option value="hungara">Húngara</option>
+                                <option value="iemenita">Iemenita</option>
+                                <option value="indiana">Indiana</option>
+                                <option value="indonesia">Indonésia</option>
+                                <option value="iraniana">Iraniana</option>
+                                <option value="iraquiana">Iraquiana</option>
+                                <option value="irlandesa">Irlandesa</option>
+                                <option value="islandesa">Islandesa</option>
+                                <option value="israelense">Israelense</option>
+                                <option value="italiana">Italiana</option>
+                                <option value="jamaicana">Jamaicana</option>
+                                <option value="japonesa">Japonesa</option>
+                                <option value="jordaniana">Jordaniana</option>
+                                <option value="quirguiz">Quirguiz</option>
+                                <option value="kiribatiana">Kiribatiana</option>
+                                <option value="kuwaitiana">Kuwaitiana</option>
+                                <option value="laosiana">Laosiana</option>
+                                <option value="lesota">Lesota</option>
+                                <option value="leta">Letã</option>
+                                <option value="libanesa">Libanesa</option>
+                                <option value="liberiana">Liberiana</option>
+                                <option value="libia">Líbia</option>
+                                <option value="liechtensteiniana">Liechtensteiniana</option>
+                                <option value="lituana">Lituana</option>
+                                <option value="luxemburguesa">Luxemburguesa</option>
+                                <option value="macedonia">Macedônia</option>
+                                <option value="madagascarense">Madagascarense</option>
+                                <option value="malaia">Malaia</option>
+                                <option value="malauiana">Malauiana</option>
+                                <option value="maldiva">Maldiva</option>
+                                <option value="malinesa">Malinesa</option>
+                                <option value="maltesa">Maltesa</option>
+                                <option value="marroquina">Marroquina</option>
+                                <option value="marshallina">Marshallina</option>
+                                <option value="mauriciana">Mauriciana</option>
+                                <option value="mauritana">Mauritana</option>
+                                <option value="mexicana">Mexicana</option>
+                                <option value="micronesia">Micronésia</option>
+                                <option value="mocambicana">Moçambicana</option>
+                                <option value="moldava">Moldava</option>
+                                <option value="monegasca">Monegasca</option>
+                                <option value="mongol">Mongol</option>
+                                <option value="montenegrina">Montenegrina</option>
+                                <option value="namibiana">Namibiana</option>
+                                <option value="nauruana">Nauruana</option>
+                                <option value="nepalesa">Nepalesa</option>
+                                <option value="nicaraguense">Nicaraguense</option>
+                                <option value="nigerina">Nigerina</option>
+                                <option value="nigeriana">Nigeriana</option>
+                                <option value="norueguesa">Norueguesa</option>
+                                <option value="neozelandesa">Neozelandesa</option>
+                                <option value="omanense">Omanense</option>
+                                <option value="neerlandesa">Neerlandesa</option>
+                                <option value="paquistanesa">Paquistanesa</option>
+                                <option value="palauense">Palauense</option>
+                                <option value="palestina">Palestina</option>
+                                <option value="panamenha">Panamenha</option>
+                                <option value="papua">Papua</option>
+                                <option value="paraguaia">Paraguaia</option>
+                                <option value="peruana">Peruana</option>
+                                <option value="polonesa">Polonesa</option>
+                                <option value="portuguesa">Portuguesa</option>
+                                <option value="queniana">Queniana</option>
+                                <option value="centro-africana">Centro-Africana</option>
+                                <option value="dominicana-rep">Dominicana (Rep.)</option>
+                                <option value="tcheca">Tcheca</option>
+                                <option value="romena">Romena</option>
+                                <option value="ruandesa">Ruandesa</option>
+                                <option value="russa">Russa</option>
+                                <option value="salomonense">Salomonense</option>
+                                <option value="samoana">Samoana</option>
+                                <option value="santa-lucense">Santa-Lucense</option>
+                                <option value="sao-cristovense">São-Cristovense</option>
+                                <option value="sao-marinense">São-Marinense</option>
+                                <option value="sao-tomense">São-Tomense</option>
+                                <option value="senegalesa">Senegalesa</option>
+                                <option value="serra-leonesa">Serra-Leonesa</option>
+                                <option value="servia">Sérvia</option>
+                                <option value="seichelense">Seichelense</option>
+                                <option value="singapuriana">Singapuriana</option>
+                                <option value="siria">Síria</option>
+                                <option value="somali">Somali</option>
+                                <option value="cingalesa">Cingalesa</option>
+                                <option value="suazi">Suazi</option>
+                                <option value="sudanesa">Sudanesa</option>
+                                <option value="sul-sudanesa">Sul-Sudanesa</option>
+                                <option value="sueca">Sueca</option>
+                                <option value="suica">Suíça</option>
+                                <option value="surinamesa">Surinamesa</option>
+                                <option value="tailandesa">Tailandesa</option>
+                                <option value="tanzaniana">Tanzaniana</option>
+                                <option value="tajique">Tajique</option>
+                                <option value="timorense">Timorense</option>
+                                <option value="togolesa">Togolesa</option>
+                                <option value="tonganesa">Tonganesa</option>
+                                <option value="trinitino-tobagense">Trinitino-Tobagense</option>
+                                <option value="tunisiana">Tunisiana</option>
+                                <option value="turcomena">Turcomena</option>
+                                <option value="turca">Turca</option>
+                                <option value="tuvaluana">Tuvaluana</option>
+                                <option value="ucraniana">Ucraniana</option>
+                                <option value="ugandense">Ugandense</option>
+                                <option value="uruguaia">Uruguaia</option>
+                                <option value="uzbeque">Uzbeque</option>
+                                <option value="vanuatuense">Vanuatuense</option>
+                                <option value="vaticana">Vaticana</option>
+                                <option value="venezuelana">Venezuelana</option>
+                                <option value="vietnamita">Vietnamita</option>
+                                <option value="zambiana">Zambiana</option>
+                                <option value="zimbabuana">Zimbabuana</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label required">Lotação (Órgão/Secretaria)</label>
+                            <select class="form-select" required id="lotacao">
+                                <option value="">Selecione...</option>
+                                <option value="SEDUC">SECRETARIA DE EDUCAÇÃO - SEDUC</option>
+                                <option value="SAS">SECRETARIA DE ASSISTÊNCIA SOCIAL E COMBATE À FOME - SAS</option>
+                                <option value="GAB_IMPRENSA">GABINETE DE IMPRENSA - GAB IMPRENSA</option>
+                                <option value="SESAU">SECRETARIA DE SAÚDE - SESAU</option>
+                                <option value="SRI">SECRETARIA DE RELACÕES INSTITUCIONAIS - SRI</option>
+                                <option value="SECTI">SECRETARIA DE TRANSFORMAÇÃO DIGITAL, CIÊNCIA E TECNOLOGIA DO
+                                    RECIFE - SECTI</option>
+                                <option value="STQP">SECRETARIA DE TRABALHO E QUALIFICAÇÃO PROFISSIONAL - STQP</option>
+                                <option value="SEOPS">SECRETARIA DE ORDEM PÚBLICA E SEGURANÇA - SEOPS</option>
+                                <option value="SECULT">SECRETARIA DE CULTURA - SECULT</option>
+                                <option value="SDEC">SECRETARIA DE DESENVOLVIMENTO ECONÔMICO - SDEC</option>
+                                <option value="SEAPS">SECRETARIA DE ARTICULAÇÃO POLÍTICA E SOCIAL - SEAPS</option>
+                                <option value="SAD">SECRETARIA DE ADMINISTRAÇÃO - SAD</option>
+                                <option value="RECENTRO">GABINETE DO CENTRO DO RECIFE - RECENTRO</option>
+                                <option value="SEDUL">SECRETARIA DE DESENVOLVIMENTO URBANO E LICENCIAMENTO - SEDUL
+                                </option>
+                                <option value="SEPLAG">SECRETÁRIO DE PLANEJAMENTO E GESTÃO - SEPLAG</option>
+                                <option value="SEPE">SECRETARIA DE PROJETOS ESPECIAIS - SEPE</option>
+                                <option value="SEINFRA">SECRETARIA DE INFRAESTRUTURA - SEINFRA</option>
+                                <option value="SEFIN">SECRETARIA DE FINANÇAS - SEFIN</option>
+                                <option value="SETURL">SECRETARIA DE TURISMO E Lazer - SETURL</option>
+                                <option value="SESP">SECRETARIA DE ESPORTES - SESP</option>
+                                <option value="SDHJ">SECRETARIA DE DIREITOS HUMANOS E JUVENTUDE - SDHJ</option>
+                                <option value="SEMUL">SECRETARIA DA MULHER - SEMUL</option>
+                                <option value="SEHAB">SECRETARIA DE HABITAÇÃO - SEHAB</option>
+                                <option value="SESAN">SECRETARIA DE SANEAMENTO - SESAN</option>
+                                <option value="SECPAZ">SECRETARIA DE CIDADANIA E CULTURA DE PAZ - SECPAZ</option>
+                                <option value="SMAS">SECRETARIA DE MEIO AMBIENTE - SMAS</option>
+                                <option value="CGM">CONTROLADORIA-GERAL DO MUNICÍPIO - CGM</option>
+                                <option value="PGM">PROCURADORIA-GERAL DO MUNICÍPIO - PGM</option>
+                                <option value="AESP">ASSESSORIA ESPECIAL DO PREFEITO DO RECIFE - AESP</option>
+                                <option value="GABCOM">GABINETE DE COMUNICAÇÃO - GABCOM</option>
+                                <option value="PROMORAR">PROMORAR - GABINETE DE GERENCIAMENTO DO PROGRAMA DE
+                                    REQUALIFICAÇÃO E RESILIÊNCIA URBANA</option>
+                                <option value="GIURB">GABINETE DE INOVAÇÃO URBANA - GIURB</option>
+                                <option value="SEDA">GABINETE DE PROTEÇÃO E DEFESA DOS ANIMAIS - SEDA</option>
+                                <option value="FCCR">FUNDAÇÃO DE CULTURA CIDADE DO RECIFE - FCCR</option>
+                                <option value="EMLURB">AUTARQUIA DE MANUTENÇÃO E LIMPEZA URBANA DO RECIFE - EMLURB
+                                </option>
+                                <option value="URB">AUTARQUIA DE URBANIZAÇÃO DO RECIFE - URB</option>
+                                <option value="CTTU">AUTARQUIA DE TRÂNSITO E TRANSPORTE URBANO DO RECIFE - CTTU</option>
+                                <option value="CONVIVA">CONVIVA MERCADOS E FEIRAS - CONVIVA</option>
+                                <option value="EMPREL">EMPRESA MUNICIPAL DE INFORMÁTICA - EMPREL</option>
+                                <option value="AMPASS">AUTARQUIA MUNICIPAL DE PREVIDÊNCIA E ASSISTÊNCIA À SAÚDE DOS
+                                    SERVIDORES - AMPASS</option>
+                                <option value="GPREF">GABINETE DO PREFEITO</option>
+                                <option value="GVP">GABINETE DO VICE PREFEITO</option>
+                                <option value="GREPREB">GABINETE DE REPRESENTAÇÃO DE BRASÍLIA</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label required">Pessoa com Deficiência (PcD)</label>
+                            <select class="form-select" required id="pcd">
+                                <option value="">Selecione...</option>
+                                <option value="sim">Sim</option>
+                                <option value="nao">Não</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label required">Gênero</label>
+                            <select class="form-select" required id="genero">
+                                <option value="">Selecione...</option>
+                                <option value="feminino">Feminino</option>
+                                <option value="masculino">Masculino</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label required">Raça/Cor</label>
+                            <select class="form-select" required id="racaCor">
+                                <option value="">Selecione...</option>
+                                <option value="branca">Branca</option>
+                                <option value="preta">Preta</option>
+                                <option value="parda">Parda</option>
+                                <option value="amarela">Amarela</option>
+                                <option value="indigena">Indígena</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">E-mail</label>
+                            <input type="email" class="form-control" required id="email">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Telefone</label>
+                            <input type="tel" class="form-control" required id="telefone">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Faixa de Remuneração</label>
+                            <select class="form-select" required id="faixaRemuneracao">
+                                <option value="">Selecione...</option>
+                                <option value="ate_8999">Até R$8.999,99</option>
+                                <option value="9000_12999">De R$9.000,00 a R$12.999,99</option>
+                                <option value="13000_14999">De R$13.000,00 a R$14.999,99</option>
+                                <option value="acima_14999">Acima de R$14.999,99</option>
+                            </select>
+                            <div class="form-text">Verifique item 4.4.2 do Edital.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Possui mais de um cargo público efetivo?</label>
+                            <select class="form-select" id="outroCargo" onchange="toggleOutroCargo()" required>
+                                <option value="nao">Não</option>
+                                <option value="sim">Sim</option>
+                            </select>
+                            <div class="form-text">Verifique item 8.11 do Edital.</div>
+                        </div>
+                        <div class="col-12 d-none" id="divOutroCargoDetalhes">
+                            <div class="card card-body bg-light border-dashed">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Matrícula (2º Cargo)</label>
+                                        <input type="text" class="form-control" id="matriculaSegundoCargo">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Unidade de Lotação (2º Cargo)</label>
+                                        <input type="text" class="form-control" id="lotacaoSegundoCargo">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requisitos Básicos -->
+                <div class="form-wrapper">
+                    <h4 class="mb-4 text-secondary border-bottom pb-2">3. Requisitos Básicos</h4>
+                    <p class="mb-3">Declaro, sob as penas da lei, que:</p>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" required id="req1">
+                        <label class="form-check-label" for="req1">Sou servidor público efetivo e estável do Poder
+                            Executivo do Município de Recife</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" required id="req2">
+                        <label class="form-check-label" for="req2">Possuo graduação completa até a data de publicação do
+                            Edital</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" required id="req3">
+                        <label class="form-check-label" for="req3">Possuo vínculo ativo com órgão ou entidade da
+                            administração pública direta ou indireta da Prefeitura da Cidade do Recife</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" required id="req4">
+                        <label class="form-check-label" for="req4">Não estou cedido, requisitado ou em exercício
+                            provisório em outros órgãos</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" required id="req5">
+                        <label class="form-check-label" for="req5">Não possuo requisitos para aposentadoria compulsória
+                            antes do término do período obrigatório de permanência</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" required id="req6">
+                        <label class="form-check-label" for="req6">Iniciei o processo de candidatura (“application”) ou
+                            obtive carta de aceite/admissão em programas de mestrado pleno presencial em universidades
+                            internacionais de excelência, nas áreas do conhecimento destacadas neste edital</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" required id="req7">
+                        <label class="form-check-label" for="req7">Mantenho compromisso de retorno e aplicação do
+                            conhecimento adquirido, de forma a contribuir para a melhoria da gestão pública e o
+                            fortalecimento institucional no município de Recife</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" required id="req8">
+                        <label class="form-check-label" for="req8">Não tenho vínculo de parentesco em até terceiro grau
+                            com membros da comissão organizadora, gestores com poder de decisão sobre o presente
+                            processo ou com membros do Instituto Trajetórias</label>
+                    </div>
+                </div>
+
+                <!-- Documentação -->
+                <div class="form-wrapper">
+                    <h4 class="mb-4 text-secondary border-bottom pb-2">4. Documentação Comprobatória</h4>
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i> Envie apenas arquivos PDF. O sistema bloqueará a
+                        submissão sem os documentos obrigatórios.
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="file-input-wrapper">
+                                <label class="form-label required">1. Currículo atualizado (Anexo I)</label>
+                                <input type="file" class="form-control" accept=".pdf" required id="fileCurriculo">
+                                <div class="form-text">Formato PDF.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="file-input-wrapper">
+                                <label class="form-label required">2. Comprovante de graduação</label>
+                                <input type="file" class="form-control" accept=".pdf" required id="fileGraduacao">
+                                <div class="form-text">Diploma ou declaração oficial.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="file-input-wrapper">
+                                <label class="form-label required">3. Carta de aceite/admissão</label>
+                                <input type="file" class="form-control" accept=".pdf" multiple required
+                                    id="fileCartaAceite">
+                                <div class="form-text">Ou comprovante de inscrição ("application").</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="file-input-wrapper">
+                                <label class="form-label required">4. Carta de Motivação (Anexo II)</label>
+                                <input type="file" class="form-control" accept=".pdf" multiple required
+                                    id="fileCartaMotivacao">
+                                <div class="form-text"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="file-input-wrapper">
+                                <label class="form-label required">5. Plano de Aplicação (Anexo III)</label>
+                                <input type="file" class="form-control" accept=".pdf" multiple required
+                                    id="filePlanoAplicacao">
+                                <div class="form-text"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="file-input-wrapper">
+                                <label class="form-label">6. Escolha definitiva da Universidade</label>
+                                <input type="file" class="form-control" accept=".pdf" id="fileEscolhaUniversidade">
+                                <div class="form-text">Opcional nesta etapa.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="file-input-wrapper">
+                                <label class="form-label">7. Carta de aceite (versão definitiva)</label>
+                                <input type="file" class="form-control" accept=".pdf" id="fileCartaAceiteDefinitiva">
+                                <div class="form-text">Opcional nesta etapa.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-wrapper position-relative">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                        <div>
+                            <h4 class="text-secondary m-0">5. Dados Acadêmicos e de Pesquisa</h4>
+                            <p class="mb-0 mt-1 small text-muted">O servidor poderá escolher mais de uma universidade
+                                (verifique item 1.4 do Edital).</p>
+                        </div>
+                    </div>
+
+                    <div id="universitiesContainer">
+                        <!-- Dynamic Content -->
+                    </div>
+
+                    <div class="university-actions">
+                        <button type="button" class="btn btn-floating" id="btnAddUni" onclick="addUniversity()">
+                            <i class="bi bi-plus-circle"></i> Adicionar Universidade
+                        </button>
+                    </div>
+
+                    <div id="maxUniAlert" class="alert alert-warning mt-3 d-none">
+                        <i class="bi bi-exclamation-triangle"></i> Limite máximo de universidades atingido.
+                    </div>
+                </div>
+
+                <!-- Declaração Final -->
+                <div class="form-wrapper">
+                    <div class="p-3 bg-light rounded border">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" required id="declaracaoFinal">
+                            <label class="form-check-label" for="declaracaoFinal" style="text-align: justify;">
+                                Declaro, sob as penas da Lei, que concordo com os termos que constam do Edital n°
+                                01/2026 de Abertura de Inscrições bem como declaro que aceito que os meus dados
+                                pessoais, sensíveis ou não, sejam tratados e processados, de forma a possibilitar a
+                                efetiva execução da seleção para obtenção de afastamento remunerado para realização de
+                                mestrado pleno presencial, com a aplicação dos critérios de avaliação e seleção,
+                                autorizando expressamente a divulgação dos meus nomes, números de inscrição, critérios
+                                de desempate e das minhas notas, em observância aos princípios da publicidade e da
+                                transparência que regem a Administração Pública e nos termos da Lei federal n° 13.709,
+                                de 14 de agosto de 2018; e que não serão fornecidas a terceiros informações e/ou dados
+                                pessoais, sensíveis ou não de candidatos.
+                                <br><br>
+                                Declaro, sob as penas da Lei, que os dados informados neste formulário são verdadeiros e
+                                que conheço e aceito todas as regras pertinentes ao concurso consignadas no Edital n°
+                                01/2026 de Abertura de Inscrições.
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-3 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5 py-2 shadow">Enviar Inscrição</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Recursos Section -->
+        <div id="recursos" class="content-section">
+            <h2 class="h3 fw-bold text-primary mb-4">Interposição de Recursos</h2>
+            <div id="recursos-fechado" class="form-wrapper text-center py-5">
+                <i class="bi bi-clock-history text-muted" style="font-size: 3rem;"></i>
+                <h4 class="mt-3">Período de Recursos Fechado</h4>
+                <p class="text-muted">O prazo para interposição de recursos administrativos não está vigente.</p>
+                <div class="alert alert-warning d-inline-block mt-2">
+                    <i class="bi bi-calendar-event me-2"></i> Consulte o cronograma para mais detalhes.
+                </div>
+            </div>
+
+            <div id="recursos-aberto" class="form-wrapper d-none">
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle-fill me-2"></i> Utilize o formulário abaixo para interpor recurso
+                    administrativo referente à etapa vigente.
+                </div>
+                <!-- Form for Recursos -->
+                <form id="formRecurso">
+                    <div class="mb-3">
+                        <label class="form-label">Selecione a Inscrição</label>
+                        <select id="recursoInscricao" class="form-select" required>
+                            <option value="">Carregando inscrições...</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Recurso</label>
+                        <select id="recursoTipo" class="form-select" required>
+                            <option value="Contra resultado preliminar">Contra resultado preliminar</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Justificativa</label>
+                        <textarea id="recursoJustificativa" class="form-control" rows="5" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Documentação Comprobatória (PDF)</label>
+                        <small class="text-muted mb-2 d-block">Máximo de 5 arquivos. Apenas formato .pdf.</small>
+                        <div id="recursoArquivosContainer">
+                            <!-- File inputs will be added here -->
+                        </div>
+                        <button type="button" id="btnAddArquivoRecurso" class="btn btn-outline-primary btn-sm mt-2">
+                            <i class="bi bi-plus-circle me-1"></i> Adicionar Arquivo
+                        </button>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary" id="btnEnviarRecurso">
+                            <span id="spinnerRecurso" class="spinner-border spinner-border-sm d-none" role="status"
+                                aria-hidden="true"></span>
+                            Enviar Recurso
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <i class="bi bi-calendar-event me-2"></i> Consulte o cronograma para mais detalhes.
+        </div>
+        </div>
+        </div>
+
+        <!-- Documentos Complementares Section -->
+        <div id="documentos" class="content-section">
+            <h2 class="h3 fw-bold text-primary mb-4">Documentos Complementares</h2>
+            <div class="form-wrapper">
+                <p class="mb-4">Utilize esta seção para enviar documentos adicionais solicitados pela comissão ou para
+                    formalização da escolha da universidade.</p>
+
+                <div class="card mb-3 border-dashed">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="fw-bold mb-1">Carta de Aceite Definitiva</h6>
+                            <small class="text-muted">Envio obrigatório após aprovação preliminar.</small>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm"><i class="bi bi-upload"></i> Enviar</button>
+                    </div>
+                </div>
+
+                <div class="card mb-3 border-dashed">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="fw-bold mb-1">Outros Documentos</h6>
+                            <small class="text-muted">Documentos solicitados para instrução processual.</small>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm"><i class="bi bi-upload"></i> Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Publicações Section -->
+        <div id="publicacoes" class="content-section">
+            <h2 class="h3 fw-bold text-primary mb-4">Publicações</h2>
+            <div class="form-wrapper p-0 overflow-hidden">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item p-4 d-flex align-items-center gap-3 hover-bg-light">
+                        <div class="bg-danger text-white rounded p-2 d-flex align-items-center justify-content-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-file-earmark-pdf fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1">Edital n° 01/2026 - Abertura de Inscrições</h6>
+                            <div class="text-muted small">Publicado em 10/02/2026 • 2.5 MB</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3">Baixar</button>
+                    </div>
+                    <div class="list-group-item p-4 d-flex align-items-center gap-3 hover-bg-light">
+                        <div class="bg-danger text-white rounded p-2 d-flex align-items-center justify-content-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-file-earmark-pdf fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1">Anexo I - Modelo de Currículo</h6>
+                            <div class="text-muted small">Publicado em 10/02/2026 • 500 KB</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3">Baixar</button>
+                    </div>
+                    <div class="list-group-item p-4 d-flex align-items-center gap-3 hover-bg-light">
+                        <div class="bg-danger text-white rounded p-2 d-flex align-items-center justify-content-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-file-earmark-pdf fs-4"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1">Anexo II - Carta de Motivação</h6>
+                            <div class="text-muted small">Publicado em 10/02/2026 • 450 KB</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3">Baixar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acompanhamento Section -->
+        <div id="acompanhamento" class="content-section">
+            <h2 class="h3 fw-bold text-primary mb-4">Acompanhamento</h2>
+            <div class="row g-4">
+                <div class="col-md-12">
+                    <div class="status-card">
+                        <h5 class="fw-bold mb-3">Status da Inscrição</h5>
+                        <div class="progress mb-3" style="height: 25px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                style="width: 25%">Inscrição Iniciada</div>
+                        </div>
+                        <p class="mb-0 text-muted">Sua inscrição está em fase de preenchimento. Complete todos os campos
+                            e envie antes do prazo final.</p>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-wrapper">
+                        <h5 class="fw-bold mb-4">Cronograma do Processo</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Atividade</th>
+                                        <th>Datas</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="row-edital">
+                                        <td>Lançamento do Edital</td>
+                                        <td class="data-fase">10/02/2026</td>
+                                        <td class="status-fase"><span
+                                                class="badge bg-success rounded-pill">Concluído</span></td>
+                                    </tr>
+                                    <tr id="row-inscricao">
+                                        <td class="fw-bold text-primary">Submissão de candidatura</td>
+                                        <td class="data-fase">10/02/2026 a 13/03/2026</td>
+                                        <td class="status-fase"><span class="badge bg-primary rounded-pill">Em
+                                                Andamento</span></td>
+                                    </tr>
+                                    <tr id="row-avaliacao-doc">
+                                        <td>Avaliação documental</td>
+                                        <td class="data-fase">16/03/2026 a 20/03/2026</td>
+                                        <td class="status-fase"><span
+                                                class="badge bg-secondary rounded-pill">Aguardando</span></td>
+                                    </tr>
+                                    <tr id="row-avaliacao-cand">
+                                        <td>Avaliação das candidaturas</td>
+                                        <td class="data-fase">23/03/2026 a 24/04/2026</td>
+                                        <td class="status-fase"><span
+                                                class="badge bg-secondary rounded-pill">Aguardando</span></td>
+                                    </tr>
+                                    <tr id="row-recursos">
+                                        <td>Interposição de Recursos</td>
+                                        <td class="data-fase">13/02/2026 a 28/02/2026</td>
+                                        <td class="status-fase"><span
+                                                class="badge bg-secondary rounded-pill">Aguardando</span></td>
+                                    </tr>
+                                    <tr id="row-resultado">
+                                        <td>Resultado Preliminar</td>
+                                        <td class="data-fase">Até 27/04/2026</td>
+                                        <td class="status-fase"><span
+                                                class="badge bg-secondary rounded-pill">Aguardando</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minhas Inscrições Section -->
+        <div id="minhas-inscricoes" class="content-section">
+            <h2 class="h3 fw-bold text-primary mb-4">Minhas Inscrições</h2>
+            <div id="loadingMinhasInscricoes" class="text-center py-5 d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2 text-muted">Buscando suas inscrições...</p>
+            </div>
+            <div id="listaMinhasInscricoes">
+                <!-- Cards will be injected here -->
+            </div>
+            <div id="semInscricoes" class="text-center py-5 d-none">
+                <i class="bi bi-folder-x text-muted" style="font-size: 3rem;"></i>
+                <h4 class="mt-3">Nenhuma inscrição encontrada</h4>
+                <p class="text-muted">Você ainda não realizou nenhuma inscrição.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Dados do Backend -->
+    <script>
+        // Função para carregar minhas inscrições
+        async function loadMinhasInscricoes() {
+            const container = document.getElementById('listaMinhasInscricoes');
+            const loading = document.getElementById('loadingMinhasInscricoes');
+            const empty = document.getElementById('semInscricoes');
+
+            // Avoid reloading if already populated (optional, but good for performance)
+            // if (container.children.length > 0) return; 
+
+            container.innerHTML = '';
+            loading.classList.remove('d-none');
+            empty.classList.add('d-none');
+
+            try {
+                // Get CPF from BIND object or DOM
+                // Assuming BIND.dadosComuns.cpf exists and format is 123.456.789-00 or 12345678900
+                // The API likely expects just numbers
+                const cpfRaw = String(BIND.dadosComuns.cpf).replace(/\D/g, '');
+
+                const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/dados-inscricao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cpf: cpfRaw })
+                });
+
+                if (!response.ok) throw new Error('Falha ao buscar inscrições');
+
+                const data = await response.json();
+
+                loading.classList.add('d-none');
+
+                if (!data || data.length === 0) {
+                    empty.classList.remove('d-none');
+                    return;
+                }
+
+                data.forEach((item, index) => {
+                    let universidades = [];
+                    try {
+                        universidades = typeof item.universidades === 'string'
+                            ? JSON.parse(item.universidades)
+                            : item.universidades;
+                    } catch (e) {
+                        console.error('Erro ao fazer parse das universidades', e);
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'form-wrapper mb-4';
+
+                    // Formatação de datas
+                    const formatData = (dateStr) => {
+                        if (!dateStr) return '-';
+                        if (dateStr.includes('/')) return dateStr; // Já formatada
+                        return dateStr.split('-').reverse().join('/');
+                    };
+
+                    card.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                            <div>
+                                <h5 class="text-primary fw-bold mb-0">Inscrição: ${item.inscricao || 'N/A'}</h5>
+                                <small class="text-muted">Realizada em: ${item.dataInscricao ? formatData(item.dataInscricao) : '-'}</small>
+                            </div>
+                            <span class="badge bg-success">Enviada</span>
+                        </div>
+                        
+                        <div class="row g-3 mb-4">
+                             <div class="col-12 border-bottom pb-3">
+                                <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-person-lines-fill me-2"></i>Dados Pessoais e Funcionais</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <small class="text-muted d-block">Nome Completo</small>
+                                        <div class="text-dark fw-bold">${item.nomecompleto || '-'}</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small class="text-muted d-block">CPF</small>
+                                        <div class="text-dark">${item.cpf || '-'}</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small class="text-muted d-block">Data de Nascimento</small>
+                                        <div class="text-dark">${formatData(item.datanascimento)}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted d-block">E-mail</small>
+                                        <div class="text-dark">${item.email || '-'}</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small class="text-muted d-block">Telefone</small>
+                                        <div class="text-dark">${item.telefone || '-'}</div>
+                                    </div>
+                                     <div class="col-md-3">
+                                        <small class="text-muted d-block">Matrícula</small>
+                                        <div class="text-dark fw-bold">${item.matricula || '-'}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-building me-2"></i>Dados do Vínculo</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Cargo</small>
+                                        <div class="text-dark">${item.cargo || '-'}</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Lotação</small>
+                                        <div class="text-dark">${item.lotacao || '-'}</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Data Admissão</small>
+                                        <div class="text-dark">${formatData(item.dataadmissao)}</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Vínculo</small>
+                                        <div class="text-dark">${item.vinculo || '-'}</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Remuneração</small>
+                                        <div class="text-dark">${item.remuneracao || '-'}</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted d-block">Mais de um cargo?</small>
+                                        <div class="text-dark">${item.maisumcargo || 'Não'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-secondary mb-2"><i class="bi bi-mortarboard me-2"></i>Universidades Selecionadas</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover small mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Universidade</th>
+                                        <th>País</th>
+                                        <th>Curso</th>
+                                        <th>Eixo</th>
+                                        <th>Subtema</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${universidades.map(uni => `
+                                        <tr>
+                                            <td>${uni.universidade || '-'}</td>
+                                            <td>${uni.pais || '-'}</td>
+                                            <td>${uni.curso || '-'}</td>
+                                            <td>${uni.eixo || '-'}</td>
+                                            <td>${uni.subtema || '-'}</td>
+                                        </tr>
+                                    `).join('')}
+                                    ${universidades.length === 0 ? '<tr><td colspan="5" class="text-center">Nenhuma universidade selecionada.</td></tr>' : ''}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                loading.classList.add('d-none');
+                container.innerHTML = `
+                    <div class="alert alert-danger text-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Não foi possível carregar suas inscrições. Tente novamente mais tarde ou faça a sua primeira inscrição.
+                    </div>
+                `;
+            }
+        }
+
+        // Objeto BIND com template variables do backend
+        const BIND = {
+            dadosComuns: {
+                cpf: `{{$json.cpf}}`,
+                nomeCompleto: `{{$json.nomeCompleto}}`,
+                // ... outros campos
+            },
+            vinculos: [
+                {
+                    matricula: `{{ $json.vinculos[0]?.matricula || "" }}`,
+                    cargo: `{{ $json.vinculos[0]?.cargo || "" }}`,
+                    vinculo: `{{ $json.vinculos[0]?.vinculo || "" }}`,
+                    dataAdmissao: `{{ $json.vinculos[0]?.dataAdmissao || "" }}`
+                },
+                {
+                    matricula: `{{ $json.vinculos[1]?.matricula || "" }}`,
+                    cargo: `{{ $json.vinculos[1]?.cargo || "" }}`,
+                    vinculo: `{{ $json.vinculos[1]?.vinculo || "" }}`,
+                    dataAdmissao: `{{ $json.vinculos[1]?.dataAdmissao || "" }}`
+                }
+            ]
+        };
+
+        // Função auxiliar para valores seguros
+        function safeValue(v) {
+            return v && v !== 'undefined' && v !== 'null' ? v : '';
+        }
+
+        // Function called when matricula changes
+        function onMatriculaChange() {
+            const selectMatricula = document.getElementById('matricula');
+            const val = selectMatricula.value; // Pega o "0" ou "1"
+
+            // Se não selecionou nada, limpa e sai
+            if (val === "" || val === null) {
+                document.getElementById('cargo').value = '';
+                document.getElementById('vinculo').value = '';
+                document.getElementById('dataAdmissao').value = '';
+                return;
+            }
+
+            const index = parseInt(val);
+            const vinculoData = BIND.vinculos[index];
+
+            const formatarParaBR = (data) => {
+                if (!data || data.includes('undefined') || data.trim() === "") return "";
+                const partes = data.split("-");
+                return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : data;
+            };
+
+            if (vinculoData) {
+                // Usamos console.log para você poder ver se os dados chegaram (aperte F12 no navegador)
+                console.log("Dados encontrados:", vinculoData);
+
+                document.getElementById('cargo').value = safeValue(vinculoData.cargo);
+                document.getElementById('vinculo').value = safeValue(vinculoData.vinculo);
+                document.getElementById('dataAdmissao').value = formatarParaBR(safeValue(vinculoData.dataAdmissao));
+
+                // Atualiza a matrícula no avatar da sidebar
+                const display = document.getElementById('exibicaoMatricula');
+                if (display) display.textContent = safeValue(vinculoData.matricula);
+            }
+        }
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Update sidebar active state
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // On mobile, close sidebar after selection
+            if (window.innerWidth < 992) {
+                document.querySelector('.sidebar').classList.remove('show');
+            }
+        }
+
+        function toggleOutroCargo() {
+            const select = document.getElementById('outroCargo');
+            const details = document.getElementById('divOutroCargoDetalhes');
+            if (select.value === 'sim') {
+                details.classList.remove('d-none');
+                // Add required attribute to inputs inside
+                details.querySelectorAll('input').forEach(input => input.required = true);
+            } else {
+                details.classList.add('d-none');
+                // Remove required attribute
+                details.querySelectorAll('input').forEach(input => input.required = false);
+            }
+        }
+
+        // University Management Logic
+        let uniCount = 0;
+        const maxUnis = 100;
+
+        const eixosData = [
+            {
+                id: '01',
+                title: 'SAÚDE PÚBLICA E SISTEMAS DE SAÚDE',
+                subtemas: [
+                    { id: '1.1', text: 'Redes de atenção à saúde' },
+                    { id: '1.2', text: 'Vigilância em saúde' },
+                    { id: '1.3', text: 'Determinantes sociais de saúde' }
+                ]
+            },
+            {
+                id: '02',
+                title: 'MOBILIDADE URBANA',
+                subtemas: [
+                    { id: '2.1', text: 'Planejamento da mobilidade' },
+                    { id: '2.2', text: 'Gestão de dados de tráfego' },
+                    { id: '2.3', text: 'Indicadores de mobilidade' }
+                ]
+            },
+            {
+                id: '03',
+                title: 'POLÍTICAS PÚBLICAS E GESTÃO GOVERNAMENTAL',
+                subtemas: [
+                    { id: '3.1', text: 'Gestão Orçamentária' },
+                    { id: '3.2', text: 'Políticas Públicas Locais: implementação e avaliação' },
+                    { id: '3.3', text: 'Planejamento Estratégico e Governança' }
+                ]
+            },
+            {
+                id: '04',
+                title: 'TECNOLOGIA E INOVAÇÃO',
+                subtemas: [
+                    { id: '4.1', text: 'Inteligência Artificial (IA)' },
+                    { id: '4.2', text: 'Análise de dados (Data Analytics)' },
+                    { id: '4.3', text: 'Experiência do cidadão (UX)' }
+                ]
+            },
+            {
+                id: '05',
+                title: 'SEGURANÇA E ORDEM PÚBLICA',
+                subtemas: [
+                    { id: '5.1', text: 'Prevenção à violência' },
+                    { id: '5.2', text: 'Tecnologia aplicada à segurança' },
+                    { id: '5.3', text: 'Gestão inteligente da defesa civil' }
+                ]
+            },
+            {
+                id: '06',
+                title: 'GESTÃO AMBIENTAL E URBANA',
+                subtemas: [
+                    { id: '6.1', text: 'Resiliência climática' },
+                    { id: '6.2', text: 'Preservação ambiental em áreas urbanas' },
+                    { id: '6.3', text: 'Sustentabilidade' }
+                ]
+            },
+            {
+                id: '07',
+                title: 'EDUCAÇÃO PÚBLICA',
+                subtemas: [
+                    { id: '7.1', text: 'Gestão da educação básica' },
+                    { id: '7.2', text: 'Políticas educacionais' }
+                ]
+            }
+        ];
+
+
+        let universitiesList = [];
+
+        async function loadUniversities() {
+            try {
+                console.log('Iniciando carregamento de universidades...');
+                // Tenta buscar do webhook
+                const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/top100-universidades', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (Array.isArray(data)) {
+                        console.log('Dados recebidos:', data);
+                        universitiesList = data
+                            .map(u => {
+                                const rank = u.rank || u.Rank || '0';
+                                const name = u.name || u.Name || '';
+                                const country = u.country || u.Country || '';
+                                return {
+                                    rank: rank,
+                                    name: name,
+                                    country: country,
+                                    label: `${rank} - ${name}`
+                                };
+                            })
+                            .filter(u => parseInt(u.rank) <= 100)
+                            .sort((a, b) => parseInt(a.rank) - parseInt(b.rank));
+
+                        console.log('Universidades filtradas:', universitiesList.length);
+
+                        // Atualiza selects já renderizados
+                        document.querySelectorAll('.uni-select').forEach(select => {
+                            populateUniSelect(select);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar universidades:', error);
+            }
+        }
+
+        function populateUniSelect(selectElement) {
+            // Limpa opções exceto a primeira
+            while (selectElement.options.length > 1) {
+                selectElement.remove(1);
+            }
+
+            if (universitiesList.length > 0) {
+                universitiesList.forEach(uni => {
+                    const option = document.createElement('option');
+                    option.value = uni.name; // Envia apenas o nome
+                    option.text = uni.label;
+                    option.dataset.country = uni.country;
+                    selectElement.add(option);
+                });
+            } else {
+                // Fallback ou retry? Deixar vazio por enquanto
+            }
+        }
+
+        function updateUniCountry(selectElement, countryInputId) {
+            const countryInput = document.getElementById(countryInputId);
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+            if (selectedOption && selectedOption.dataset.country) {
+                countryInput.value = selectedOption.dataset.country;
+            } else {
+                countryInput.value = '';
+            }
+        }
+
+        function addUniversity() {
+            if (uniCount >= maxUnis) return;
+
+            uniCount++;
+            const container = document.getElementById('universitiesContainer');
+            const uniId = `uni_${Date.now()}`;
+
+            const uniHtml = `
+                <div class="card mb-4 border-primary" id="${uniId}">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="m-0"><i class="bi bi-mortarboard-fill me-2"></i>Universidade ${uniCount}</h5>
+                        ${uniCount > 1 ? `<button type="button" class="btn btn-sm btn-light text-danger" onclick="removeUniversity('${uniId}')"><i class="bi bi-trash"></i> Remover</button>` : ''}
+                    </div>
+                    <div class="card-body bg-light">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label required">Nome da Universidade</label>
+                                <select class="form-select uni-select" required name="uni_name_${uniId}" onchange="updateUniCountry(this, 'uni_country_${uniId}')">
+                                    <option value="">Selecione...</option>
+                                    ${universitiesList.length > 0 ? '' : '<option value="" disabled>Carregando...</option>'}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label required">País</label>
+                                <input type="text" class="form-control" required name="uni_country_${uniId}" id="uni_country_${uniId}" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label required">Curso Pretendido</label>
+                                <input type="text" class="form-control" required name="uni_course_${uniId}">
+                            </div>
+                        </div>
+                        
+                        <label class="form-label required mb-2">Selecione o Eixo e Subtema de Interesse:</label>
+                        <div class="accordion" id="accordion_${uniId}">
+                            ${eixosData.map(eixo => `
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_${uniId}_${eixo.id}">
+                                            <span class="fw-bold me-2 text-primary">${eixo.id}</span> ${eixo.title}
+                                        </button>
+                                    </h2>
+                                    <div id="collapse_${uniId}_${eixo.id}" class="accordion-collapse collapse" data-bs-parent="#accordion_${uniId}">
+                                        <div class="accordion-body">
+                                            <div class="list-group">
+                                                ${eixo.subtemas.map(sub => `
+                                                    <label class="list-group-item list-group-item-action d-flex gap-3">
+                                                        <input class="form-check-input flex-shrink-0" type="radio" name="subtema_${uniId}" value="${eixo.id}|${sub.id}" required>
+                                                        <span>
+                                                            <strong class="d-block text-secondary">Subtema ${sub.id}</strong>
+                                                            ${sub.text}
+                                                        </span>
+                                                    </label>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', uniHtml);
+
+            // Populate the newly created select
+            const newSelect = container.lastElementChild.querySelector('.uni-select');
+            if (universitiesList.length > 0) {
+                populateUniSelect(newSelect);
+            }
+
+            updateButtons();
+        }
+
+        function removeUniversity(id) {
+            document.getElementById(id).remove();
+            uniCount--;
+            updateButtons();
+        }
+
+        function updateButtons() {
+            const btn = document.getElementById('btnAddUni');
+            const alertEl = document.getElementById('maxUniAlert');
+
+            if (uniCount >= maxUnis) {
+                btn.disabled = true;
+                alertEl.classList.remove('d-none');
+            } else {
+                btn.disabled = false;
+                alertEl.classList.add('d-none');
+            }
+        }
+
+        // --- Lógica de Recursos (Appeal) ---
+
+        // Carregar inscrições para o dropdown de recursos
+        async function loadInscricoesParaRecurso() {
+            const select = document.getElementById('recursoInscricao');
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Carregando...</option>';
+
+            try {
+                const cpfRaw = String(BIND.dadosComuns.cpf).replace(/\D/g, '');
+                const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/dados-inscricao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cpf: cpfRaw })
+                });
+
+                if (!response.ok) throw new Error('Falha ao buscar inscrições');
+                const data = await response.json();
+
+                if (!data || data.length === 0) {
+                    select.innerHTML = '<option value="">Nenhuma inscrição encontrada</option>';
+                    return;
+                }
+
+                select.innerHTML = '<option value="">Selecione a inscrição...</option>';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    // Usando ID da inscrição ou algum identificador único. 
+                    // O payload pede "inscrição", assumindo que é algo como o numero da inscrição ou ID.
+                    // Vou concatenar ID - Cargo para ficar claro.
+                    option.value = item.inscricao;
+                    option.textContent = `Inscrição ${item.inscricao} - ${item.matricula}`;
+                    select.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar inscrições para recurso:', error);
+                select.innerHTML = '<option value="">Não há inscrições para selecionar</option>';
+            }
+        }
+
+        // Gerenciamento de Arquivos de Recurso
+        const MAX_FILES = 5;
+        let recursoFilesCount = 0;
+
+        function addRecursoFile() {
+            if (recursoFilesCount >= MAX_FILES) return;
+
+            const container = document.getElementById('recursoArquivosContainer');
+            const btnAdd = document.getElementById('btnAddArquivoRecurso');
+
+            const fileRow = document.createElement('div');
+            fileRow.className = 'input-group mb-2';
+            fileRow.innerHTML = `
+                <input type="file" class="form-control" accept=".pdf" name="arquivosRecurso[]" required>
+                <button class="btn btn-outline-danger" type="button" onclick="removeRecursoFile(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+
+            container.appendChild(fileRow);
+            recursoFilesCount++;
+
+            if (recursoFilesCount >= MAX_FILES) {
+                btnAdd.classList.add('d-none');
+            }
+        }
+
+        window.removeRecursoFile = function (btn) {
+            btn.closest('.input-group').remove();
+            recursoFilesCount--;
+            document.getElementById('btnAddArquivoRecurso').classList.remove('d-none');
+        }
+
+        // Setup inicial dos recursos
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnAddFile = document.getElementById('btnAddArquivoRecurso');
+            if (btnAddFile) {
+                btnAddFile.addEventListener('click', addRecursoFile);
+                // Adiciona um campo de arquivo inicial
+                addRecursoFile();
+            }
+
+            // Handler do Formulário de Recurso
+            const formRecurso = document.getElementById('formRecurso');
+            if (formRecurso) {
+                formRecurso.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const btnSubmit = document.getElementById('btnEnviarRecurso');
+                    const spinner = document.getElementById('spinnerRecurso');
+
+                    // Validação básica
+                    const inscricao = document.getElementById('recursoInscricao').value;
+                    const tipo = document.getElementById('recursoTipo').value;
+                    const justificativa = document.getElementById('recursoJustificativa').value;
+
+                    if (!inscricao) {
+                        alert('Selecione uma inscrição.');
+                        return;
+                    }
+
+                    btnSubmit.disabled = true;
+                    spinner.classList.remove('d-none');
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('inscricao', inscricao);
+                        formData.append('tipo', tipo);
+                        formData.append('justificativa', justificativa);
+                        formData.append('cpf', BIND.dadosComuns.cpf); // Enviando CPF por garantia
+                        formData.append('nome', BIND.dadosComuns.nome); // Enviando Nome por garantia
+
+                        // Arquivos
+                        const fileInputs = document.querySelectorAll('input[name="arquivosRecurso[]"]');
+                        fileInputs.forEach((input, index) => {
+                            if (input.files[0]) {
+                                formData.append(`arquivo_${index + 1}`, input.files[0]);
+                            }
+                        });
+
+
+                        const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-recurso-tp', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) throw new Error('Erro no envio');
+
+                        // Sucesso
+                        const modal = new bootstrap.Modal(document.getElementById('confirmacaoModal'));
+                        // Reutilizando modal de confirmação ou criando um body ajustado
+                        document.querySelector('#confirmacaoModal .modal-body').innerHTML = `
+                             <div class="text-center">
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Recurso Enviado!</h4>
+                                <p>Seu recurso foi registrado com sucesso. Acompanhe o status pelo cronograma.</p>
+                            </div>
+                        `;
+                        modal.show();
+                        formRecurso.reset();
+                        document.getElementById('recursoArquivosContainer').innerHTML = '';
+                        recursoFilesCount = 0;
+                        addRecursoFile(); // Restaura 1 input
+
+                    } catch (error) {
+                        console.error(error);
+                        alert('Não foi possível enviar o recurso. Tente novamente.');
+                    } finally {
+                        btnSubmit.disabled = false;
+                        spinner.classList.add('d-none');
+                    }
+                });
+            }
+        });
+
+        // ── Controle Dinâmico do Cronograma ──
+        // processCronograma agora recebe limitReached para decidir tudo em um único passo
+        function processCronograma(cronograma, limitReached) {
+            const now = new Date();
+            const etapas = [
+                { id: 'row-edital', start: cronograma.edital, end: cronograma.edital, label: 'Lançamento do Edital' },
+                { id: 'row-inscricao', start: cronograma.inicio_subimissao, end: cronograma.termino_submissao, label: 'Submissão de candidatura', control: 'inscricao' },
+                { id: 'row-avaliacao-doc', start: cronograma.inicio_avaliacao_doc, end: cronograma.termino_avaliacao_doc, label: 'Avaliação documental' },
+                { id: 'row-avaliacao-cand', start: cronograma.iniciao_avaliacao_cand, end: cronograma.termino_avaliacao_cand, label: 'Avaliação das candidaturas' },
+                { id: 'row-recursos', start: cronograma.inicio_recursos, end: cronograma.termino_recursos, label: 'Interposição de Recursos', control: 'recursos' },
+                { id: 'row-resultado', start: cronograma.resultado, end: cronograma.resultado, label: 'Resultado Preliminar' }
+            ];
+
+            etapas.forEach(etapa => {
+                if (!etapa.start) return;
+                const startYMD = etapa.start.split('T')[0];
+                const endYMD = etapa.end ? etapa.end.split('T')[0] : startYMD;
+                const startDate = new Date(startYMD + 'T00:00:00');
+                const endDate = new Date(endYMD + 'T23:59:59');
+                const startFmt = startYMD.split('-').reverse().join('/');
+                const endFmt = endYMD.split('-').reverse().join('/');
+                const displayDate = (startYMD === endYMD) ? startFmt : `${startFmt} a ${endFmt}`;
+
+                let statusHtml = '';
+                let isActive = false;
+                if (now > endDate) {
+                    statusHtml = '<span class="badge bg-success rounded-pill">Concluído</span>';
+                } else if (now >= startDate && now <= endDate) {
+                    statusHtml = '<span class="badge bg-primary rounded-pill">Em Andamento</span>';
+                    isActive = true;
+                } else {
+                    statusHtml = '<span class="badge bg-secondary rounded-pill">Aguardando</span>';
+                }
+
+                const row = document.getElementById(etapa.id);
+                if (row) {
+                    const dataCell = row.querySelector('.data-fase');
+                    const statusCell = row.querySelector('.status-fase');
+                    if (dataCell) dataCell.textContent = displayDate;
+                    if (statusCell) statusCell.innerHTML = statusHtml;
+                    if (isActive) {
+                        row.classList.add('table-active', 'border-start', 'border-4', 'border-primary');
+                        row.querySelector('td:first-child')?.classList.add('fw-bold', 'text-primary');
+                    } else {
+                        row.classList.remove('table-active', 'border-start', 'border-4', 'border-primary');
+                        row.querySelector('td:first-child')?.classList.remove('fw-bold', 'text-primary');
+                    }
+                }
+
+                // ── Controle Inscrição (decisão única: cronograma + limite) ──
+                if (etapa.control === 'inscricao') {
+                    const form = document.getElementById('formInscricao');
+                    const msgFechada = document.getElementById('msgInscricaoFechada');
+                    const msgConcluida = document.getElementById('msgInscricaoConcluida');
+                    const badges = document.querySelectorAll('#inscricao .badge');
+
+                    // Garante tudo escondido antes de decidir
+                    form.classList.add('d-none');
+                    msgFechada.classList.add('d-none');
+                    if (msgConcluida) msgConcluida.classList.add('d-none');
+
+                    if (isActive && limitReached) {
+                        // Período aberto MAS limite atingido → mostra "Completas"
+                        if (msgConcluida) msgConcluida.classList.remove('d-none');
+                        if (badges[0]) {
+                            badges[0].className = 'badge bg-success text-white px-3 py-2 rounded-pill';
+                            badges[0].textContent = 'Inscrições Completas';
+                        }
+                    } else if (isActive && !limitReached) {
+                        // Período aberto E pode inscrever → mostra formulário
+                        form.classList.remove('d-none');
+                        if (badges[0]) {
+                            badges[0].className = 'badge bg-success text-white px-3 py-2 rounded-pill';
+                            badges[0].textContent = 'Inscrições Abertas';
+                        }
+                    } else if (!isActive && limitReached) {
+                        // Período encerrado E já completou → mostra "Completas"
+                        if (msgConcluida) msgConcluida.classList.remove('d-none');
+                        if (badges[0]) {
+                            badges[0].className = 'badge bg-success text-white px-3 py-2 rounded-pill';
+                            badges[0].textContent = 'Inscrições Completas';
+                        }
+                    } else {
+                        // Período encerrado → mostra "Encerradas"
+                        msgFechada.classList.remove('d-none');
+                        if (badges[0]) {
+                            badges[0].className = 'badge bg-danger text-white px-3 py-2 rounded-pill';
+                            badges[0].textContent = 'Inscrições Encerradas';
+                        }
+                    }
+                }
+
+                if (etapa.control === 'recursos') {
+                    const fechado = document.getElementById('recursos-fechado');
+                    const aberto = document.getElementById('recursos-aberto');
+                    if (isActive) {
+                        fechado.classList.add('d-none');
+                        aberto.classList.remove('d-none');
+                        loadInscricoesParaRecurso();
+                    } else {
+                        fechado.classList.remove('d-none');
+                        aberto.classList.add('d-none');
+                    }
+                }
+            });
+        }
+
+        // ── Verificar Limite (usado também após submit) ──
+        async function verifyApplicationLimit() {
+            try {
+                const validMatriculas = BIND.vinculos.filter(v => v.matricula && v.matricula.trim() !== '').length;
+                const cpfRaw = String(BIND.dadosComuns.cpf).replace(/\D/g, '');
+                const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/dados-inscricao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cpf: cpfRaw })
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                const inscricoesFeitas = Array.isArray(data) ? data.length : 0;
+                const matriculasUsadas = Array.isArray(data) ? data.map(item => item.matricula) : [];
+
+                // Remover matrículas já usadas do dropdown
+                const selectMatricula = document.getElementById('matricula');
+                if (selectMatricula) {
+                    Array.from(selectMatricula.options).slice().reverse().forEach(option => {
+                        if (option.value === '') return;
+                        const matIndex = parseInt(option.value);
+                        if (!isNaN(matIndex) && BIND.vinculos[matIndex]) {
+                            if (matriculasUsadas.includes(BIND.vinculos[matIndex].matricula)) {
+                                option.remove();
+                            }
+                        }
+                    });
+                }
+
+                // Bloquear se limite atingido (para uso pós-submit)
+                if (inscricoesFeitas >= validMatriculas && validMatriculas > 0) {
+                    const form = document.getElementById('formInscricao');
+                    const msgFechada = document.getElementById('msgInscricaoFechada');
+                    const msgConcluida = document.getElementById('msgInscricaoConcluida');
+                    if (form) form.classList.add('d-none');
+                    if (msgFechada) msgFechada.classList.add('d-none');
+                    if (msgConcluida) msgConcluida.classList.remove('d-none');
+                    const badges = document.querySelectorAll('#inscricao .badge');
+                    if (badges[0]) {
+                        badges[0].className = 'badge bg-success text-white px-3 py-2 rounded-pill';
+                        badges[0].textContent = 'Inscrições Completas';
+                    }
+                    updateAcompanhamentoStatus(true);
+                } else {
+                    updateAcompanhamentoStatus(false, inscricoesFeitas > 0);
+                }
+            } catch (error) {
+                console.error('Erro ao verificar limite de inscrições:', error);
+            }
+        }
+
+        // ── Inicialização Unificada ──
+        // Busca AMBOS os dados em paralelo ANTES de qualquer atualização visual.
+        // O formulário começa escondido (d-none) e só aparece se o período estiver
+        // aberto E o limite NÃO tiver sido atingido.
+        document.addEventListener('DOMContentLoaded', async () => {
+            loadUniversities(); // Fetch universities independent of cronograma
+            addUniversity();
+
+            let cronogramaData = null;
+            let limitReached = false;
+            let inscricoesFeitas = 0;
+            let matriculasUsadas = [];
+
+            try {
+                const cpfRaw = String(BIND.dadosComuns.cpf).replace(/\D/g, '');
+                const [cronResp, inscResp] = await Promise.all([
+                    fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-calendario-tp'),
+                    fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/dados-inscricao', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cpf: cpfRaw })
+                    })
+                ]);
+
+                if (cronResp.ok) {
+                    try {
+                        const data = await cronResp.json();
+                        if (Array.isArray(data) && data.length > 0) cronogramaData = data[0];
+                    } catch (e) { console.warn('JSON cronograma vazio ou inválido', e); }
+                }
+
+                if (inscResp.ok) {
+                    try {
+                        const data = await inscResp.json();
+                        inscricoesFeitas = Array.isArray(data) ? data.length : 0;
+                        matriculasUsadas = Array.isArray(data) ? data.map(i => i.matricula) : [];
+                    } catch (e) { console.warn('JSON inscrições vazio ou inválido', e); }
+                }
+            } catch (err) {
+                console.error('Erro na inicialização:', err);
+            }
+
+            // Calcular limite
+            const validMatriculas = BIND.vinculos.filter(v => v.matricula && v.matricula.trim() !== '').length;
+            limitReached = (inscricoesFeitas >= validMatriculas && validMatriculas > 0);
+            console.log(`Init: Matrículas=${validMatriculas}, Inscrições=${inscricoesFeitas}, Limite=${limitReached}`);
+
+            // Remover matrículas já usadas do dropdown
+            const selectMatricula = document.getElementById('matricula');
+            if (selectMatricula) {
+                Array.from(selectMatricula.options).slice().reverse().forEach(option => {
+                    if (option.value === '') return;
+                    const matIndex = parseInt(option.value);
+                    if (!isNaN(matIndex) && BIND.vinculos[matIndex]) {
+                        if (matriculasUsadas.includes(BIND.vinculos[matIndex].matricula)) {
+                            option.remove();
+                        }
+                    }
+                });
+            }
+
+            // Atualizar UI de uma só vez (sem flash)
+            if (cronogramaData) processCronograma(cronogramaData, limitReached);
+
+            // Acompanhamento
+            if (limitReached) {
+                updateAcompanhamentoStatus(true);
+            } else {
+                updateAcompanhamentoStatus(false, inscricoesFeitas > 0);
+            }
+        });
+
+        function updateAcompanhamentoStatus(isComplete, isPartial = false) {
+            const progressContainer = document.querySelector('#acompanhamento .progress-bar');
+            const statusTitle = document.querySelector('#acompanhamento .status-card h5');
+            const statusDesc = document.querySelector('#acompanhamento .status-card p');
+
+            if (!progressContainer) return;
+
+            if (isComplete) {
+                progressContainer.style.width = '100%';
+                progressContainer.className = 'progress-bar bg-success';
+                progressContainer.textContent = 'Inscrição Enviada';
+
+                if (statusTitle) statusTitle.textContent = 'Processo de Inscrição Concluído';
+                if (statusDesc) statusDesc.textContent = 'Você já realizou todas as inscrições possíveis. Acompanhe as próximas etapas pelo cronograma.';
+            } else if (isPartial) {
+                progressContainer.style.width = '50%';
+                progressContainer.className = 'progress-bar bg-warning text-dark';
+                progressContainer.textContent = 'Inscrição Parcial';
+
+                if (statusTitle) statusTitle.textContent = 'Inscrição em Andamento';
+                if (statusDesc) statusDesc.textContent = 'Você já realizou uma inscrição, mas ainda possui matrículas disponíveis. Complete o processo se desejar.';
+            } else {
+                // Default - iniciado (mantém o HTML original ou reseta)
+                progressContainer.style.width = '25%';
+                progressContainer.className = 'progress-bar progress-bar-striped progress-bar-animated';
+                progressContainer.textContent = 'Inscrição Iniciada';
+
+                if (statusTitle) statusTitle.textContent = 'Status da Inscrição';
+                if (statusDesc) statusDesc.textContent = 'Sua inscrição está em fase de preenchimento. Complete todos os campos e envie antes do prazo final.';
+            }
+        }
+
+        // Modal de feedback e submit handler
+        (() => {
+            'use strict';
+            const form = document.getElementById('formInscricao');
+
+            // CSS para animações
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `
+                @keyframes bounce {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-15px); }
+                }
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.2); }
+                }
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px) rotate(-5deg); }
+                    75% { transform: translateX(5px) rotate(5deg); }
+                }
+                .emoji-bounce { display: inline-block; animation: bounce 1s ease-in-out infinite; }
+                .emoji-pulse { display: inline-block; animation: pulse 1.5s ease-in-out infinite; }
+                .emoji-shake { display: inline-block; animation: shake 0.5s ease-in-out infinite; }
+                .emoji-rocket { display: inline-block; animation: bounce 0.8s ease-in-out infinite 0.2s; }
+            `;
+            document.head.appendChild(styleSheet);
+
+            document.getElementById('email').addEventListener('input', function () {
+                this.value = this.value.toLowerCase().trim();
+            });
+
+            document.getElementById('telefone').addEventListener('input', function () {
+                // Remove tudo que não for dígito
+                let v = this.value.replace(/\D/g, '');
+                // Limita a 11 dígitos
+                if (v.length > 11) v = v.slice(0, 11);
+                this.value = v;
+            });
+
+            document.getElementById('matriculaSegundoCargo').addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '');
+            });
+
+            document.getElementById('lotacaoSegundoCargo').addEventListener('input', function () {
+                this.value = this.value.toUpperCase();
+            });
+
+
+
+            // Cria modal de feedback
+            const modalHtml = `
+                <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg" id="feedbackModalContent">
+                            <div class="modal-header border-0 pb-0" id="feedbackModalHeader">
+                                <h4 class="modal-title w-100 text-center" id="feedbackModalTitle"></h4>
+                                <button type="button" class="btn-close d-none" id="feedbackModalCloseX" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body text-center py-4">
+                                <div id="feedbackModalIcon" style="font-size: 4rem;"></div>
+                                <div id="feedbackModalMessage" class="mt-3 fs-5"></div>
+                                <div class="mt-4 p-3 rounded" id="feedbackCountdown">
+                                    <i class="bi bi-clock-history me-2"></i>
+                                    <span>Redirecionando em <strong id="countdownTimer">10</strong> segundos...</span>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 justify-content-center d-none" id="feedbackModalFooter">
+                                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+
+            let countdownInterval = null;
+
+            function showFeedbackModal(isSuccess, responseData) {
+                const modalContent = document.getElementById('feedbackModalContent');
+                const modalHeader = document.getElementById('feedbackModalHeader');
+                const modalTitle = document.getElementById('feedbackModalTitle');
+                const modalIcon = document.getElementById('feedbackModalIcon');
+                const modalMessage = document.getElementById('feedbackModalMessage');
+                const countdownDiv = document.getElementById('feedbackCountdown');
+                const countdownTimer = document.getElementById('countdownTimer');
+                const closeXBtn = document.getElementById('feedbackModalCloseX');
+                const footerDiv = document.getElementById('feedbackModalFooter');
+
+                // Limpa intervalo anterior, se houver
+                if (countdownInterval) clearInterval(countdownInterval);
+
+                // Extrai mensagem do response se existir
+                let mensagem = '';
+                if (responseData && typeof responseData === 'object' && responseData.mensagem) {
+                    mensagem = responseData.mensagem;
+                } else if (typeof responseData === 'string') {
+                    mensagem = responseData;
+                }
+
+                if (isSuccess) {
+                    modalContent.style.background = 'linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%)';
+                    modalHeader.style.background = 'rgba(40, 167, 69, 0.1)';
+                    modalTitle.innerHTML = '<span class="emoji-bounce">🎉</span> Sucesso! <span class="emoji-bounce">🎉</span>';
+                    modalTitle.style.color = '#155724';
+                    modalIcon.innerHTML = '<span class="emoji-pulse">✅</span> <span class="emoji-rocket">🚀</span>';
+                    modalMessage.innerHTML = `<span class="text-success fw-bold">Sua inscrição foi enviada com sucesso!</span>${mensagem ? '<br><span class="text-muted mt-2 d-block">' + mensagem + '</span>' : ''}`;
+                    countdownDiv.style.background = 'rgba(40, 167, 69, 0.15)';
+                    countdownDiv.style.color = '#155724';
+                    countdownDiv.classList.remove('d-none');
+                    closeXBtn.classList.add('d-none');
+                    footerDiv.classList.add('d-none');
+
+                    // Countdown e redirecionamento para Minhas Inscrições apenas no sucesso
+                    let seconds = 10;
+                    countdownTimer.textContent = seconds;
+                    countdownInterval = setInterval(() => {
+                        seconds--;
+                        countdownTimer.textContent = seconds;
+                        if (seconds <= 0) {
+                            clearInterval(countdownInterval);
+                            feedbackModal.hide();
+                            showSection('minhas-inscricoes');
+                            loadMinhasInscricoes();
+                        }
+                    }, 1000);
+                } else {
+                    modalContent.style.background = 'linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%)';
+                    modalHeader.style.background = 'rgba(220, 53, 69, 0.1)';
+                    modalTitle.innerHTML = '<span class="emoji-shake">😔</span> Ops! Algo deu errado <span class="emoji-shake">😔</span>';
+                    modalTitle.style.color = '#721c24';
+                    modalIcon.innerHTML = '<span class="emoji-shake">❌</span> <span class="emoji-pulse">⚠️</span>';
+                    modalMessage.innerHTML = `<span class="text-danger fw-bold">Houve um problema ao enviar sua inscrição.</span>${mensagem ? '<br><span class="text-muted mt-2 d-block">' + mensagem + '</span>' : '<br><span class="text-muted mt-2 d-block">Por favor, tente novamente.</span>'}`;
+                    // Sem countdown nem redirecionamento no erro
+                    countdownDiv.classList.add('d-none');
+                    closeXBtn.classList.remove('d-none');
+                    footerDiv.classList.remove('d-none');
+                }
+
+                feedbackModal.show();
+            }
+
+            form.addEventListener('submit', async event => {
+                event.preventDefault();
+                if (!form.checkValidity()) {
+                    event.stopPropagation();
+                    const firstInvalid = form.querySelector(':invalid');
+                    if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    form.classList.add('was-validated');
+                    return;
+                }
+                const btn = form.querySelector('button[type="submit"]');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...';
+
+                try {
+                    // GARANTE QUE TUDO QUE TEM ID VAI PRO PAYLOAD
+                    // O FormData só pega elementos que tenham atributo 'name'
+                    form.querySelectorAll('input, select, textarea').forEach(element => {
+                        if (element.id && !element.name) {
+                            element.name = element.id;
+                        }
+                    });
+
+                    const formData = new FormData(form);
+
+                    // Torna todos os campos readonly/disabled APÓS capturar o FormData
+                    form.querySelectorAll('input, select, textarea').forEach(el => {
+                        el.readOnly = true;
+                        if (el.tagName === 'SELECT') el.disabled = true;
+                    });
+
+                    // CORREÇÃO: Enviar o valor real da matrícula, não o índice (0 ou 1)
+                    const matriculaSelect = document.getElementById('matricula');
+                    if (matriculaSelect && matriculaSelect.value !== "") {
+                        const matIndex = parseInt(matriculaSelect.value);
+                        if (!isNaN(matIndex) && BIND.vinculos[matIndex]) {
+                            formData.set('matricula', BIND.vinculos[matIndex].matricula);
+                        } else {
+                            // Fallback: tenta pegar o texto da opção selecionada
+                            formData.set('matricula', matriculaSelect.options[matriculaSelect.selectedIndex].text);
+                        }
+                    }
+
+                    // Remove todos os checkboxes
+                    formData.delete('declaracaoFinal');
+                    formData.delete('req1');
+                    formData.delete('req2');
+                    formData.delete('req3');
+                    formData.delete('req4');
+                    formData.delete('req5');
+                    formData.delete('req6');
+                    formData.delete('req7');
+                    formData.delete('req8');
+                    // Processa subtemas para incluir eixo e subtema com descrições
+                    const subtemaKeys = [];
+                    for (let [key, value] of formData.entries()) {
+                        if (key.startsWith('subtema_')) subtemaKeys.push({ key, value });
+                    }
+                    subtemaKeys.forEach(({ key, value }) => {
+                        const [eixoId, subtemaId] = value.split('|');
+                        const eixo = eixosData.find(e => e.id === eixoId);
+                        if (eixo) {
+                            const subtema = eixo.subtemas.find(s => s.id === subtemaId);
+                            const uniId = key.replace('subtema_', '');
+                            formData.set('eixo_id_' + uniId, eixoId);
+                            formData.set('eixo_descricao_' + uniId, eixo.title);
+                            formData.set('subtema_id_' + uniId, subtemaId);
+                            formData.set('subtema_descricao_' + uniId, subtema ? subtema.text : '');
+                        }
+                    });
+                    const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/c0d84e1a-talentos-publicos', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    let responseData;
+                    try { responseData = await response.json(); } catch { responseData = await response.text(); }
+                    showFeedbackModal(response.ok, responseData);
+                    if (response.ok) {
+                        form.dataset.submittedOk = 'true';
+                        verifyApplicationLimit();
+                    }
+                } catch (error) {
+                    console.error(error);
+                    showFeedbackModal(false, { mensagem: error.message || 'Erro de conexão. Por favor, tente novamente.' });
+                } finally {
+                    // Só reabilita campos se houve ERRO; no sucesso, ficam readonly
+                    if (!form.dataset.submittedOk) {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                        form.querySelectorAll('input, select, textarea').forEach(el => {
+                            el.readOnly = false;
+                            if (el.tagName === 'SELECT') el.disabled = false;
+                        });
+                    }
+                }
+            }, false);
+        })();
+
+    </script>
+</body>
+
+</html>

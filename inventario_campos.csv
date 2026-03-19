@@ -1,0 +1,52 @@
+Seção,Rótulo (Label),ID,Nome (name),Tipo,Observações,Conditicional
+Identificação do Candidato,CPF,cpf,cpf,Text,Somente leitura; máscara CPF,Sempre
+Identificação do Candidato,Nome completo,nomeCompleto,nomeCompleto,Text,Somente leitura,Sempre
+Identificação do Candidato,Nome social,nomeSocial,nomeSocial,Text,Opcional,Sempre
+Identificação do Candidato,Data de nascimento,dataNascimento,dataNascimento,Text,Somente leitura; máscara data,Sempre
+Identificação do Candidato,Idade,idade,idade,Text,Somente leitura; calculada,Sempre
+Identificação do Candidato,NIS/PIS,nis,nis,Text,Somente leitura,Sempre
+Identificação do Candidato,Data da atualização,dataAtualizacaoCadunico,dataAtualizacaoCadunico,Text,Somente leitura,Sempre
+Identificação do Candidato,Tempo desde a atualização,tempoAtualizacaoCadunico,tempoAtualizacaoCadunico,Text,Somente leitura; calculado,Sempre
+Identificação do Candidato,Identificação de gênero,genero,generoExibicao,Select,Desabilitado,Sempre
+Contatos e Residência,Telefone/WhatsApp,telefone,telefone,Text,Obrigatório; máscara telefone,Sempre
+Contatos e Residência,E-mail,email,email,Email,Obrigatório,Sempre
+Contatos e Residência,Confirme o e-mail,emailConfirm,emailConfirm,Email,Obrigatório; validação igualdade,Sempre
+Contatos e Residência,Canal de contato preferencial,preferenciaContato,preferenciaContato,Select,Obrigatório,Sempre
+Endereço Residencial,CEP,cep,cep,Text,Editável se enderecoAtualizado marcado,Depende
+Endereço Residencial,Logradouro,logradouro,logradouro,Text,Editável se enderecoAtualizado marcado,Depende
+Endereço Residencial,Número,numero,numero,Text,Editável se enderecoAtualizado marcado,Depende
+Endereço Residencial,Complemento,complemento,complemento,Text,Editável se enderecoAtualizado marcado,Depende
+Endereço Residencial,Bairro,bairro,bairro,Text,Editável se enderecoAtualizado marcado,Depende
+Endereço Residencial,Cidade,cidade,cidade,Text,Editável se enderecoAtualizado marcado,Depende
+Endereço Residencial,UF,uf,uf,Select,Editável se enderecoAtualizado marcado,Depende
+Endereço Residencial,Atualizar endereço,enderecoAtualizado,enderecoAtualizado,Checkbox,Habilita edição de endereço,Sempre
+Contexto Socioassistencial,Trabalhador de aplicativo?,trabalhadorAplicativo,trabalhadorAplicativo,Select,,Sempre
+Contexto Socioassistencial,Resido em acolhimento...,acolhimento,acolhimento,Checkbox,,Sempre
+Contexto Socioassistencial,Não tem trabalho formal,semTrabalhoFormal,semTrabalhoFormalValor,Checkbox,Desabilitado,Sempre
+Contexto Socioassistencial,Mulher chefe de família,mulherChefe,mulherChefe,Checkbox,Visível se gênero feminino,Depende
+Contexto Socioassistencial,Dependente em tratamento...,dependenteTratamento,dependenteTratamento,Checkbox,Habilita anexos específicos,Sempre
+Contexto Socioassistencial,Composição familiar,composicaoFamiliar,composicaoFamiliar,Number,Somente leitura,Sempre
+Contexto Socioassistencial,Renda per capita mensal,rendaFamiliar,rendaFamiliar,Text,Somente leitura; formato moeda,Sempre
+Contexto Socioassistencial,Participação em prog. sociais,programasSociais,programasSociais,Text,Somente leitura,Sempre
+Diversidade e Priorização,Autodeclaração de cor/raça,racaCor,racaCorExibicao,Select,Desabilitado,Sempre
+Condições Especiais e Anexos,Pessoa com deficiência (PCD),pcd,pcd,Select,Habilita anexo de laudo,Sempre
+Condições Especiais e Anexos,Mãe/Pai atípico,maeAtipica,maeAtipica,Select,Habilita anexos específicos,Sempre
+Condições Especiais e Anexos,Vítima violência doméstica,vitimaViolencia,vitimaViolencia,Select,,Sempre
+Condições Especiais e Anexos,Informações complementares,necessidadesEspeciais,necessidadesEspeciais,Textarea,Máximo 500 caracteres,Sempre
+Informações da CNH,Categoria desejada,categoria,categoria,Select,,Sempre
+Informações da CNH,Número da CNH,numeroCnh,numeroCnh,Text,Visível se categoria for adição,Depende
+Informações da CNH,Validade da CNH,validadeCnh,validadeCnh,Date,Visível se categoria for adição,Depende
+Declarações e Consentimentos,Consentimento LGPD,lgpd,lgpd,Checkbox,Obrigatório,Sempre
+Declarações e Consentimentos,Declaração de veracidade,veracidade,veracidade,Checkbox,Obrigatório,Sempre
+Declarações e Consentimentos,Uso de imagem,imagem,imagem,Checkbox,Obrigatório,Sempre
+Documentação,Foto — FRENTE,docIdentidadeFrente,docIdentidadeFrente,File,Sempre visível,Sempre
+Documentação,Foto — VERSO,docIdentidadeVerso,docIdentidadeVerso,File,Sempre visível,Sempre
+Documentação,Comprovante de residência,docResidencia,docResidencia,File,Se enderecoAtualizado é Sim,Depende
+Documentação,Comprovante aplicativo,comprovanteAplicativo,comprovanteAplicativo,File,Se trabalhadorAplicativo é Sim,Depende
+Documentação,Laudo médico PCD,laudoPcd,laudoPcd,File,Se pcd é Sim,Depende
+Documentação,Declaração tratamento,docDependente,docDependente,File,Se dependenteTratamento marcado,Depende
+Documentação,Comprovante vínculo,docDependenteVinculo,docDependenteVinculo,File,Se dependenteTratamento marcado,Depende
+Documentação,Laudo mãe atípica,docMaeAtipicaLaudo,docMaeAtipicaLaudo,File,Se maeAtipica é Sim,Depende
+Documentação,Declaração CRAS/CREAS,docMaeAtipicaCras,docMaeAtipicaCras,File,Se maeAtipica é Sim,Depende
+Documentação,Resp. legal,docResponsavel,docResponsavel,File,Se maeAtipica é Sim,Depende
+Documentação,Arquivo da CNH,cnhArquivo,cnhArquivo,File,Se categoria for adição,Depende
