@@ -55,7 +55,7 @@
         }
 
         .sidebar-logo {
-            max-width: 180px;
+            max-width: 140px;
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
         }
 
@@ -208,6 +208,26 @@
         .form-select:focus {
             border-color: var(--brand-highlight);
             box-shadow: 0 0 0 0.25rem rgba(0, 163, 255, 0.15);
+        }
+
+        .form-check-label {
+            font-weight: 600;
+            color: var(--brand-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .info-icon {
+            color: var(--brand-highlight);
+            cursor: pointer;
+            margin-left: 5px;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .info-icon:hover {
+            transform: scale(1.2);
+            color: var(--brand-primary);
         }
 
         /* Buttons */
@@ -432,6 +452,11 @@
                                 <label class="form-label">Tempo desde Atualização</label>
                                 <input type="text" class="form-control bg-light" value="14 meses" readonly>
                             </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Autodeclaração de cor/raça</label>
+                                <input type="text" class="form-control bg-light" id="corRaca" value="Parda" readonly>
+                                <div class="form-text small">Informação usada para ranqueamento e políticas afirmativas conforme edital.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -465,11 +490,16 @@
 
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <div><i class="fas fa-map-marker-alt me-2"></i>Endereço Residencial</div>
+                        <div>
+                            <i class="fas fa-map-marker-alt me-2"></i>Endereço Residencial
+                            <div class="small text-muted fw-normal mt-1">Confirme os dados residenciais. Caso tenha mudado, marque "Atualizar endereço" e informe o novo endereço. Um comprovante recente poderá ser solicitado.</div>
+                        </div>
                         <div class="form-check form-switch m-0">
-                            <input class="form-check-input" type="checkbox" id="chkUpdateAddress">
-                            <label class="form-check-label small fw-bold" for="chkUpdateAddress">Desejo atualizar meu
-                                endereço</label>
+                            <input class="form-check-input" type="checkbox" id="chkUpdateAddress" role="switch">
+                            <label class="form-check-label" for="chkUpdateAddress">
+                                Desejo atualizar meu endereço
+                                <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Se marcado, será obrigatório anexar comprovante atualizado (até 90 dias)."></i>
+                            </label>
                         </div>
                     </div>
                     <div class="card-body" id="addressBlock" style="opacity: 0.6; pointer-events: none;">
@@ -524,14 +554,20 @@
                                 <input type="date" class="form-control" id="dataInicioApp">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Pessoa com Deficiência (PCD)?</label>
+                                <label class="form-label">
+                                    Pessoa com Deficiência (PCD)?
+                                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Em caso afirmativo, apresente laudo médico conforme modelos do SUS."></i>
+                                </label>
                                 <select class="form-select" id="pcd">
                                     <option value="nao">Não</option>
                                     <option value="sim">Sim</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Mãe/Pai atípico?</label>
+                                <label class="form-label">
+                                    Mãe/Pai atípico?
+                                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Reserva de 10% (dez por cento) das vagas por convocação do Programa CNH Recife para mães e pais atípicos."></i>
+                                </label>
                                 <select class="form-select" id="maeAtipica">
                                     <option value="nao">Não</option>
                                     <option value="sim">Sim</option>
@@ -551,12 +587,50 @@
                                     <option value="sim">Sim</option>
                                 </select>
                             </div>
+                             <div class="col-md-4">
+                                 <label class="form-label">
+                                    Mulher vítima de violência doméstica?
+                                    <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="A identidade das candidatas será preservada conforme edital. Ao marcar esse campo, autorizo confirmação na base de dados da Secretaria da Mulher e da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife."></i>
+                                 </label>
+                                 <select class="form-select" id="vitimaViolencia">
+                                     <option value="nao">Não</option>
+                                     <option value="sim">Sim</option>
+                                 </select>
+                             </div>
+
                             <div class="col-md-4">
-                                <label class="form-label">Vítima de violência doméstica?</label>
-                                <select class="form-select" id="vitimaViolencia">
-                                    <option value="nao">Não</option>
-                                    <option value="sim">Sim</option>
+                                <label class="form-label">Composição familiar</label>
+                                <input type="number" class="form-control" id="composicaoFamiliar" placeholder="Nº de pessoas no domicílio">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Renda per capita mensal (R$)</label>
+                                <input type="number" class="form-control" id="rendaMensal" placeholder="0,00">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Participação em programas sociais</label>
+                                <select class="form-select" id="programaSocial">
+                                    <option value="">Selecione...</option>
+                                    <option value="bolsa_familia">Bolsa Família</option>
+                                    <option value="bpc">BPC</option>
+                                    <option value="ambos">Ambos</option>
+                                    <option value="nenhum">Nenhum</option>
                                 </select>
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="acolhimentoInstitucional" role="switch">
+                                    <label class="form-check-label" for="acolhimentoInstitucional">
+                                        Resido em serviço de acolhimento institucional
+                                        <i class="fas fa-info-circle info-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Essa informação será conferida na base de dados da Secretaria de Assistência Social e Combate à Fome da Prefeitura do Recife."></i>
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="semTrabalhoFormal" role="switch">
+                                    <label class="form-check-label" for="semTrabalhoFormal">
+                                        Não tenho trabalho formal
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -597,21 +671,21 @@
                 <div class="card mb-4">
                     <div class="card-header"><i class="fas fa-check-square me-2"></i>Declarações</div>
                     <div class="card-body">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="lgpd" required>
-                            <label class="form-check-label small" for="lgpd">Li e autorizo o tratamento dos meus dados
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="lgpd" required role="switch">
+                            <label class="form-check-label" for="lgpd">Li e autorizo o tratamento dos meus dados
                                 pessoais para execução do Programa CNH Recife, conforme a Lei Geral de Proteção de
                                 Dados.</label>
                         </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="veracidade" required>
-                            <label class="form-check-label small" for="veracidade">Declaro verdadeiras todas as
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="veracidade" required role="switch">
+                            <label class="form-check-label" for="veracidade">Declaro verdadeiras todas as
                                 informações prestadas e estou ciente de que a falsidade implicará desclassificação e
                                 sanções legais.</label>
                         </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="imagem" required>
-                            <label class="form-check-label small" for="imagem">Autorizo o uso da minha imagem para
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="imagem" required role="switch">
+                            <label class="form-check-label" for="imagem">Autorizo o uso da minha imagem para
                                 divulgação institucional do programa.</label>
                         </div>
                     </div>
@@ -657,7 +731,19 @@
             </div>
             <div class="row">
                 <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm">
+                    <!-- Mensagem Pendente -->
+                    <div id="scoring-pending-msg" class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <div class="alert alert-warning mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Pontuação não disponível:</strong> O cálculo de sua pontuação preliminar apenas
+                                será exibido após o efetivo envio de sua inscrição. Por favor, complete o formulário e
+                                anexe a documentação necessária. Qualquer pontuação só acontece após o envio.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm d-none" id="scoring-table-container">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
@@ -673,12 +759,13 @@
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Pessoa com Deficiência (PCD)</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3">0 /
-                                                15</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-pcd-badge">0 / 15</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Mulher Chefe de Família</td>
-                                        <td class="text-center"><span class="badge bg-success px-3">20 / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-success px-3"
+                                                id="score-mulher-badge">20 / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Renda per capita (Vulnerabilidade)</td>
@@ -690,14 +777,14 @@
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Trabalhador de Aplicativo</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3">0 /
-                                                10</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-app-badge">0 / 10</span></td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="bg-primary text-white">
                                     <tr>
                                         <td class="ps-4 fw-bold">TOTAL OBTIDO</td>
-                                        <td class="text-center fw-bold fs-5">65 / 100</td>
+                                        <td class="text-center fw-bold fs-5" id="score-total-display">65 / 100</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -796,21 +883,104 @@
             ]
         };
 
+        function updateScore() {
+            const num = document.getElementById('numInscricao').value;
+            const isPending = !num || num.trim() === "" || num.trim() === "Pendente";
+
+            const tableContainer = document.getElementById('scoring-table-container');
+            const pendingMsg = document.getElementById('scoring-pending-msg');
+
+            if (isPending) {
+                if (tableContainer) tableContainer.classList.add('d-none');
+                if (pendingMsg) pendingMsg.classList.remove('d-none');
+                return;
+            } else {
+                if (tableContainer) tableContainer.classList.remove('d-none');
+                if (pendingMsg) pendingMsg.classList.add('d-none');
+            }
+
+            const isPcd = document.getElementById('pcd').value === 'sim';
+            const isMulher = document.getElementById('mulherChefe').value === 'sim';
+            const isApp = document.getElementById('trabalhadorAplicativo').value === 'sim';
+
+            const scorePcd = isPcd ? 15 : 0;
+            const scoreMulher = isMulher ? 20 : 0;
+            const scoreApp = isApp ? 10 : 0;
+
+            // Static scores
+            const scoreRaca = 10;
+            const scoreRenda = 25;
+            const scoreFamilia = 10;
+
+            const total = scoreRaca + scorePcd + scoreMulher + scoreRenda + scoreFamilia + scoreApp;
+
+            const badgePcd = document.getElementById('score-pcd-badge');
+            badgePcd.innerText = `${scorePcd} / 15`;
+            updateBadgeColor(badgePcd, scorePcd);
+
+            const badgeMulher = document.getElementById('score-mulher-badge');
+            badgeMulher.innerText = `${scoreMulher} / 20`;
+            updateBadgeColor(badgeMulher, scoreMulher);
+
+            const badgeApp = document.getElementById('score-app-badge');
+            badgeApp.innerText = `${scoreApp} / 10`;
+            updateBadgeColor(badgeApp, scoreApp);
+
+            document.getElementById('score-total-display').innerText = `${total} / 100`;
+        }
+
+        function updateBadgeColor(el, val) {
+            el.classList.remove('bg-success', 'bg-light', 'text-dark');
+            if (val > 0) {
+                el.classList.add('bg-success');
+            } else {
+                el.classList.add('bg-light', 'text-dark');
+            }
+        }
+
+        function showTab(tabId) {
+            const link = document.querySelector(`[data-tab="${tabId}"]`);
+            if (!link) return;
+            
+            document.querySelectorAll('.nav-link, .tab-content').forEach(el => el.classList.remove('active'));
+            link.classList.add('active');
+            const target = document.getElementById(tabId);
+            if (target) {
+                target.classList.add('active');
+                if (tabId === 'documentacao') updateDocs();
+                if (tabId === 'informativos') renderNotifs();
+            }
+            if (window.innerWidth < 992) {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) sidebar.classList.remove('show');
+            }
+        }
+
         function init() {
+            // Inicializar SPA
+            const hash = window.location.hash || '#inscricao';
+            showTab(hash.substring(1));
+
+            // Tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
             // SPA Navigation
             document.querySelectorAll('[data-tab]').forEach(link => {
                 link.onclick = (e) => {
                     e.preventDefault();
-                    document.querySelectorAll('.nav-link, .tab-content').forEach(el => el.classList.remove('active'));
-                    link.classList.add('active');
-                    document.getElementById(link.dataset.tab).classList.add('active');
-                    if (link.dataset.tab === 'documentacao') updateDocs();
-                    if (link.dataset.tab === 'informativos') renderNotifs();
-                    if (window.innerWidth < 992) document.getElementById('sidebar').classList.remove('show');
+                    showTab(link.dataset.tab);
                 };
             });
 
             document.getElementById('mobile-toggle').onclick = () => document.getElementById('sidebar').classList.toggle('show');
+
+            // Listeners for scoring
+            document.getElementById('pcd').onchange = updateScore;
+            document.getElementById('mulherChefe').onchange = updateScore;
+
 
             // Form Logic
             document.getElementById('chkUpdateAddress').onchange = (e) => {
@@ -824,11 +994,13 @@
             updateProgress();
             checkRecurso();
             updateBadge();
+            updateScore();
         }
 
         function toggleAppWorkerDate() {
             const isApp = document.getElementById('trabalhadorAplicativo').value === 'sim';
             document.getElementById('appWorkerDateContainer').classList.toggle('d-none', !isApp);
+            updateScore();
         }
 
         function updateCategoriaTexto() {
@@ -886,6 +1058,7 @@
             } else {
                 document.getElementById('btnVisualizarInscricaoContainer').classList.remove('d-none');
             }
+            updateScore();
         }
 
         function updateDocs() {
