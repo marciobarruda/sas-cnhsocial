@@ -1,0 +1,12 @@
+﻿{
+    "issue":  {
+                  "done_ratio":  75,
+                  "description":  "Desenvolvimento do Portal do Candidato CNH Recife. Interface \u0027Single Page Application\u0027 (SPA) com Bootstrap 5 e Public Sans, permitindo:\n1. IdentificaÃ§Ã£o do candidato via CPF/NIS e integraÃ§Ã£o de dados do CadÃšnico.\n2. AtualizaÃ§Ã£o cadastral e de endereÃ§o com funcionalidade de busca via CEP.\n3. Coleta de informaÃ§Ãµes socioassistenciais detalhadas (PCD, Trabalhadores de app, MÃ£es atÃ­picas, etc.).\n4. Upload de documentaÃ§Ã£o em formatos digitais (PDF/JPG/PNG).\n5. VisualizaÃ§Ã£o de pontuaÃ§Ã£o preliminar baseada nos critÃ©rios de ranqueamento do edital.",
+                  "custom_fields":  [
+                                        {
+                                            "id":  30,
+                                            "value":  "1. ValidaÃ§Ã£o de campos de dados pessoais e contatos preferenciais. 2. IntegraÃ§Ã£o funcional com busca de CEP e preenchimento de endereÃ§o. 3. PersistÃªncia de seleÃ§Ãµes socioassistenciais e lÃ³gica condicional de exibiÃ§Ã£o. 4. Funcionalidade de upload de documentos operÃ¡vel. 5. CÃ¡lculo e exibiÃ§Ã£o correta da pontuaÃ§Ã£o baseada nos dados informados."
+                                        }
+                                    ]
+              }
+}
