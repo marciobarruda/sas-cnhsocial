@@ -2104,8 +2104,7 @@
         const _0x4f2a = [106, 105, 104].map(x => String.fromCharCode(_0x12a(x, 91))).join('');
         const getAuthHeaders = (e = {}) => ({ 'Authorization': _0x4f2a, ...e });
 
-        // Anti-inspection basics (Disabled for debugging)
-        /*
+        // Anti-inspection basics
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
@@ -2119,7 +2118,6 @@
             var _j = function () { debugger; };
             setInterval(function () { _j(); }, 1000);
         })();
-        */
 
         function updateScore() {
             // 1. Calculate and Format Income (Runs even if enrollment is pending)
