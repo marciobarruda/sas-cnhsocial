@@ -3030,7 +3030,9 @@
         let tempReusoData = null;
         async function buscarDadosAnteriores() {
             const cpfInput = document.getElementById('cpf');
-            const cpf = (cpfInput ? cpfInput.value : '').trim();
+            const cpfFieldVal = (cpfInput ? cpfInput.value : '').trim();
+            // Fallback para CPF injetado
+            const cpf = cpfFieldVal || '{{ $json.data.cpf || "" }}';
 
             if (!cpf) {
                 alert('CPF não identificado. Por favor, tente recarregar a página.');
@@ -3054,28 +3056,61 @@
 
                 if (!response.ok) throw new Error('Não foi possível recuperar os dados.');
 
-                const data = await response.json();
+                let dataRaw = await response.json();
+                // Garante objeto unico se vier array
+                let data = Array.isArray(dataRaw) ? dataRaw[0] : dataRaw;
+                if (!data) throw new Error('Nenhum dado encontrado para este CPF.');
+                
                 tempReusoData = data;
 
                 // Build Summary UI
                 const container = document.getElementById('reproveitamentoDadosCorpo');
                 let html = '<div class="row g-3">';
 
+                const getVal = (paths) => {
+                    for (const p of paths) { 
+                        if (data[p] !== undefined && data[p] !== null && data[p] !== '' && data[p].toString().toLowerCase() !== 'não') 
+                            return data[p]; 
+                    }
+                    return '';
+                };
+
                 const addRow = (label, val) => {
-                    if (!val || val === '-' || val === 'undefined' || val === 'null') return '';
+                    if (!val || val === '-' || val === 'undefined' || val === 'null' || val.toString().toLowerCase() === 'não') return '';
                     return `<div class="col-md-6"><strong>${label}:</strong> <span class="text-muted">${val}</span></div>`;
                 };
 
-                html += addRow('Categoria', data.categoria || data.slug_categoria);
+                html += addRow('Categoria', getVal(['categoria', 'slug_categoria']));
                 html += addRow('CEP', data.cep);
-                html += addRow('Endereço', `${data.logradouro}, ${data.numero}`);
-                html += addRow('Bairro', data.bairro);
+                const rua = getVal(['logradouro', 'logradouroUC']);
+                const nr = getVal(['numero', 'numerolimpo']);
+                if (rua) html += addRow('Endereço', nr ? `${rua}, ${nr}` : rua);
+                html += addRow('Bairro', getVal(['bairro', 'bairroUC']));
+                html += addRow('Raça/Cor', data.racaCor || data.racaCorUC);
+                html += addRow('WhatsApp', data.whatsapp);
+                html += addRow('E-mail', data.email);
+                
+                const isS = (v) => {
+                    const s = (v || '').toString().toLowerCase().trim();
+                    return s === 'sim' || s === 'true' || s === 's';
+                };
+                
+                const simNaoItem = (v, label) => isS(v) ? `<div class="col-md-4">${label}: <span class="badge bg-success">SIM</span></div>` : '';
+                
+                const socInfo = [
+                    simNaoItem(data.pcd, 'PCD'),
+                    simNaoItem(data.maepaiatipico, 'Mãe/Pai Atípico'),
+                    simNaoItem(data.mulherChefe, 'Chefe Família'),
+                    simNaoItem(data.trabalhadorapp, 'App'),
+                    simNaoItem(data.mulherviolencia, 'Vítima Violência'),
+                    simNaoItem(data.dependentetratamento, 'Dep. Tratamento'),
+                    simNaoItem(data.acolhimento, 'Acolhimento')
+                ].filter(Boolean);
 
-                const simNao = (v) => (v === 'sim' || v === true || v === 'true') ? '<span class="badge bg-success">SIM</span>' : '<span class="badge bg-light text-dark">NÃO</span>';
-                html += `<div class="col-12 border-top mt-3 pt-2"><strong>Critérios Socioeconômicos:</strong></div>`;
-                html += `<div class="col-md-4">PCD: ${simNao(data.pcd)}</div>`;
-                html += `<div class="col-md-4">Mãe Atípica: ${simNao(data.maepaiatipico)}</div>`;
-                html += `<div class="col-md-4">Chefe Família: ${simNao(data.mulherChefe)}</div>`;
+                if (socInfo.length > 0) {
+                    html += `<div class="col-12 border-top mt-3 pt-2"><strong>Critérios Socioeconômicos:</strong></div>`;
+                    html += socInfo.join('');
+                }
 
                 html += '</div>';
                 container.innerHTML = html;
@@ -3103,10 +3138,20 @@
         function aplicarDadosRecuperados(d) {
             if (!d) return;
 
-            const isS = (v) => (v === 'sim' || v === true || v === 'true');
+            const isS = (v) => {
+                const s = (v || '').toString().toLowerCase().trim();
+                return s === 'sim' || s === 'true' || s === 's';
+            };
+
+            const getV = (paths) => {
+                for (const p of paths) { 
+                    if (d[p] !== undefined && d[p] !== null && d[p] !== '') return d[p]; 
+                }
+                return '';
+            };
 
             // 1. Categoria
-            const cat = d.categoria || d.slug_categoria;
+            const cat = getV(['categoria', 'slug_categoria']);
             if (cat) {
                 const sel = document.getElementById('categoria');
                 sel.value = cat.toLowerCase();
@@ -3115,22 +3160,38 @@
 
             // 2. Endereço
             if (d.cep) document.getElementById('cep').value = d.cep;
-            if (d.logradouro) document.getElementById('logradouro').value = d.logradouro;
-            if (d.bairro) document.getElementById('bairro').value = d.bairro;
-            if (d.numero) document.getElementById('numero').value = d.numero;
+            const log = getV(['logradouro', 'logradouroUC']);
+            if (log) document.getElementById('logradouro').value = log;
+            const bai = getV(['bairro', 'bairroUC']);
+            if (bai) document.getElementById('bairro').value = bai;
+            const num = getV(['numero', 'numerolimpo']);
+            if (num) document.getElementById('numero').value = num;
             if (d.complemento) document.getElementById('complemento').value = d.complemento;
 
-            // 3. Switches
-            document.getElementById('pcd').checked = isS(d.pcd);
-            document.getElementById('maeAtipica').checked = isS(d.maepaiatipico);
-            document.getElementById('mulherChefe').checked = isS(d.mulherChefe);
-            document.getElementById('trabalhadorAplicativo').checked = isS(d.trabalhadorapp);
-            document.getElementById('dependenteTratamento').checked = isS(d.dependentetratamento);
-            document.getElementById('vitimaViolencia').checked = isS(d.mulherviolencia);
-            document.getElementById('programasSociais').checked = isS(d.programaBolsaFamilia);
-            document.getElementById('acolhimentoInstitucional').checked = isS(d.acolhimento);
+            // 3. Contatos
+            if (d.whatsapp) document.getElementById('telefone').value = d.whatsapp;
+            if (d.email) document.getElementById('email').value = d.email;
 
-            // 4. Update UI
+            // 4. Raça
+            const rc = getV(['racaCor', 'racaCorUC']);
+            if (rc) document.getElementById('racaCor').value = rc.toUpperCase();
+
+            // 5. Switches
+            const setCheck = (id, val) => {
+                const el = document.getElementById(id);
+                if (el && !el.disabled) el.checked = isS(val);
+            };
+
+            setCheck('pcd', d.pcd);
+            setCheck('maeAtipica', d.maepaiatipico);
+            setCheck('mulherChefe', d.mulherChefe);
+            setCheck('trabalhadorAplicativo', d.trabalhadorapp);
+            setCheck('dependenteTratamento', d.dependentetratamento);
+            setCheck('vitimaViolencia', d.mulherviolencia);
+            setCheck('programasSociais', d.programaBolsaFamilia);
+            setCheck('acolhimentoInstitucional', d.acolhimento);
+
+            // 6. Update UI
             toggleAppWorkerDate();
             updateScore();
             updateDocs();
