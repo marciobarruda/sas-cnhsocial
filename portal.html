@@ -2452,6 +2452,25 @@
                 document.getElementById('containerReaproveitamento').classList.add('d-none');
             }
 
+            // Bind manual listeners to break reuse link if data is changed
+            ['pcd', 'maeAtipica', 'trabalhadorAplicativo', 'dependenteTratamento'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('change', () => {
+                        if (!window.reusedFields) return;
+                        let gName = "";
+                        if (id === 'pcd') gName = "Pessoa com Deficiência";
+                        else if (id === 'maeAtipica') gName = "Mãe/Pai Atípico";
+                        else if (id === 'trabalhadorAplicativo') gName = "Trabalhador de Aplicativo";
+                        else if (id === 'dependenteTratamento') gName = "Dependente em Tratamento Contínuo";
+                        if (gName) {
+                            window.reusedFields = window.reusedFields.filter(g => g !== gName);
+                            updateDocs();
+                        }
+                    });
+                }
+            });
+
             // Enrollment-based pre-fill (if already enrolled)
             const numInsc = document.getElementById('numInscricao').value;
             const isPendente = !numInsc || numInsc.trim() === "" || numInsc.trim().toLowerCase() === "pendente";
@@ -2765,8 +2784,8 @@
             if (!btn) return;
 
             let allAttached = true;
-            // Se houver campos de upload, todos devem ser preenchidos.
-            // Se não houver (ex: tudo reaproveitado), allAttached continua true.
+            if (files.length === 0) allAttached = false;
+
             files.forEach(input => {
                 if (!input.files || !input.files[0]) {
                     allAttached = false;
@@ -3243,30 +3262,28 @@
                 }
             }
 
-            // 5. Switches e Marcadores de Reuso
-            window.reusedFields = ["Identificação Básica"];
-            
-            // Critérios que vieram do CadÚnico original também devem ser considerados reaproveitados se o usuário optou pelo reuso
-            const cadPcd = isSim('{{ $json.data.pcd || "" }}');
-            const cadMae = isSim('{{ $json.data.maepaiatipico || "" }}');
-            const cadDep = isSim('{{ $json.data.dependentetratamento || "" }}');
-            const cadApp = isSim('{{ $json.data.trabalhadorapp || "" }}');
-
-            const setCheck = (id, val, groupName, isCadunico) => {
+            // 6. Switches
+            window.reusedFields = [];
+            const setCheck = (id, val, groupName) => {
                 const el = document.getElementById(id);
                 if (el && !el.disabled) {
-                    const activeBefore = el.checked;
-                    const activeAfter = isS(val) || isCadunico;
+                    const activeAfter = isS(val);
                     el.checked = activeAfter;
-                    if (activeAfter && groupName) window.reusedFields.push(groupName);
+                    // Only mark as reused if the criteria is active in the previous registration
+                    if (activeAfter && groupName) {
+                        if (!window.reusedFields.includes(groupName)) window.reusedFields.push(groupName);
+                    }
                 }
             };
             
-            setCheck('pcd', d.pcd, "Pessoa com Deficiência", cadPcd);
-            setCheck('maeAtipica', d.maepaiatipico, "Mãe/Pai Atípico", cadMae);
-            setCheck('mulherChefe', d.mulherChefe); 
-            setCheck('trabalhadorAplicativo', d.trabalhadorapp, "Trabalhador de Aplicativo", cadApp);
-            setCheck('dependenteTratamento', d.dependentetratamento, "Dependente em Tratamento Contínuo", cadDep);
+            // Basic identification is always reused if we have previous data
+            window.reusedFields.push("Identificação Básica");
+
+            setCheck('pcd', d.pcd, "Pessoa com Deficiência");
+            setCheck('maeAtipica', d.maepaiatipico, "Mãe/Pai Atípico");
+            setCheck('mulherChefe', d.mulherChefe);
+            setCheck('trabalhadorAplicativo', d.trabalhadorapp, "Trabalhador de Aplicativo");
+            setCheck('dependenteTratamento', d.dependentetratamento, "Dependente em Tratamento Contínuo");
             setCheck('vitimaViolencia', d.mulherviolencia);
             setCheck('programasSociais', d.programaBolsaFamilia);
             setCheck('acolhimentoInstitucional', d.acolhimento);
