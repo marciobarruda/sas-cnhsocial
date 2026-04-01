@@ -2066,6 +2066,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Anti-inspection - Isolated Script Block
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        (function () {
+            var _j = function () { debugger; };
+            setInterval(function () { _j(); }, 1000);
+        })();
+    </script>
+
+    <script>
         const AppState = {
             currentDate: new Date("2026-03-22T10:00:00"),
             notifications: ( {{ $json.informativo || [] | dump }} ).map(n => ({
@@ -2104,20 +2119,6 @@
         const _0x4f2a = [106, 105, 104].map(x => String.fromCharCode(_0x12a(x, 91))).join('');
         const getAuthHeaders = (e = {}) => ({ 'Authorization': _0x4f2a, ...e });
 
-        // Anti-inspection basics
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
-        // Aggressive Anti-DevTools Debugger Loop
-        (function () {
-            var _j = function () { debugger; };
-            setInterval(function () { _j(); }, 1000);
-        })();
 
         function updateScore() {
             // 1. Calculate and Format Income (Runs even if enrollment is pending)
