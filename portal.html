@@ -3113,6 +3113,7 @@
                 html += addRow('Raça/Cor', data.racaCor || data.racaCorUC);
                 html += addRow('WhatsApp', data.whatsapp);
                 html += addRow('E-mail', data.email);
+                html += addRow('Data Início App', data.dataInicioApp);
 
                 const isS = (v) => {
                     const s = (v || '').toString().toLowerCase().trim();
@@ -3182,15 +3183,24 @@
                 updateCategoriaTexto();
             }
 
-            // 2. Endereço
-            if (d.cep) document.getElementById('cep').value = d.cep;
+            // 2. Endereço (com readonly se carregado)
+            const setValRO = (id, val) => {
+                const el = document.getElementById(id);
+                if (el && val) {
+                    el.value = val;
+                    el.readOnly = true;
+                    el.classList.add('bg-light');
+                }
+            };
+
+            if (d.cep) setValRO('cep', d.cep);
             const log = getV(['logradouro', 'logradouroUC']);
-            if (log) document.getElementById('logradouro').value = log;
+            if (log) setValRO('logradouro', log);
             const bai = getV(['bairro', 'bairroUC']);
-            if (bai) document.getElementById('bairro').value = bai;
+            if (bai) setValRO('bairro', bai);
             const num = getV(['numero', 'numerolimpo']);
-            if (num) document.getElementById('numero').value = num;
-            if (d.complemento) document.getElementById('complemento').value = d.complemento;
+            if (num) setValRO('numero', num);
+            if (d.complemento) setValRO('complemento', d.complemento);
 
             // 3. Contatos
             if (d.whatsapp) document.getElementById('telefone').value = d.whatsapp;
@@ -3200,7 +3210,16 @@
             const rc = getV(['racaCor', 'racaCorUC']);
             if (rc) document.getElementById('racaCor').value = rc.toUpperCase();
 
-            // 5. Switches
+            // 5. Data Inicio App
+            if (d.dataInicioApp) {
+                const dia = document.getElementById('dataInicioApp');
+                if (dia) {
+                    dia.value = d.dataInicioApp;
+                    dia.required = true;
+                }
+            }
+
+            // 6. Switches
             window.reusedFields = [];
             const setCheck = (id, val, groupName) => {
                 const el = document.getElementById(id);
