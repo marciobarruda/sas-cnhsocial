@@ -497,12 +497,11 @@
         <div class="sidebar-footer">
             <div class="user-info">
                 <div class="user-avatar">
-                    {{ ($json.data.nomeCompleto || '').split(' ').slice(0, 2).map(n => n?.[0]?.toUpperCase() ||
-                    '').join('') }}
+                    {{ $json.data.nomeIniciais }}
                 </div>
                 <div>
                     <div class="fw-bold small">
-                        {{ ($json.data.nomeCompleto || '').split(' ').slice(0, 2).join(' ').toUpperCase() }}
+                        {{ $json.data.nomeCurto }}
                     </div>
                     <div class="small opacity-75">CANDIDATO LOGADO</div>
                 </div>
@@ -528,9 +527,9 @@
                     style="border-color: var(--brand-highlight) !important; border-left: 4px solid var(--brand-highlight) !important;">
                     <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.5px;">Número da
                         Inscrição</div>
-                    <div class="fs-4 fw-bold text-primary" id="numInscricaoDisplay">{{ $json.data.inscricao ||
-                        'Pendente' }}</div>
-                    <input type="hidden" id="numInscricao" value="{{ $json.data.inscricao || 'Pendente' }}">
+                    <div class="fs-4 fw-bold text-primary" id="numInscricaoDisplay">{{ $json.data.inscricaoDisplay }}
+                    </div>
+                    <input type="hidden" id="numInscricao" value="{{ $json.data.inscricaoDisplay }}">
                 </div>
             </div>
 
@@ -540,7 +539,8 @@
 
             <form id="formInscricao" class="needs-validation" novalidate onsubmit="return false">
                 <!-- Registration Reuse Options -->
-                <div id="containerReaproveitamento" class="card mb-4 border-info shadow-sm d-none" style="border-left: 5px solid #0dcaf0 !important;">
+                <div id="containerReaproveitamento" class="card mb-4 border-info shadow-sm d-none"
+                    style="border-left: 5px solid #0dcaf0 !important;">
                     <div class="card-body bg-light-subtle">
                         <div class="row g-3 align-items-center">
                             <div class="col-md-7">
@@ -552,7 +552,8 @@
                                         <i class="fas fa-check-circle text-success ms-1"></i>
                                     </label>
                                 </div>
-                                <div class="small text-muted mt-1 ms-5">Identificamos que você possui uma inscrição válida e homologada no último processo seletivo.</div>
+                                <div class="small text-muted mt-1 ms-5">Identificamos que você possui uma inscrição
+                                    válida e homologada no último processo seletivo.</div>
                             </div>
                             <div class="col-md-5 border-start border-info-subtle">
                                 <div class="form-check form-switch p-0 d-flex align-items-center mb-0">
@@ -562,7 +563,8 @@
                                         Reaproveitar dados para este novo processo?
                                     </label>
                                 </div>
-                                <div class="small text-muted mt-1 ms-5">Ao marcar, seus dados e documentos anteriores serão reutilizados nesta nova inscrição.</div>
+                                <div class="small text-muted mt-1 ms-5">Ao marcar, seus dados e documentos anteriores
+                                    serão reutilizados nesta nova inscrição.</div>
                             </div>
                         </div>
                     </div>
@@ -574,13 +576,13 @@
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label">CPF</label>
-                                <input type="text" class="form-control" id="cpf" value="{{ $json.data.cpf || '' }}"
-                                    readonly required>
+                                <input type="text" class="form-control" id="cpf" value="{{ $json.data.cpf }}" readonly
+                                    required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Nome Completo</label>
                                 <input type="text" class="form-control" id="nomeCompleto"
-                                    value="{{ ($json.data.nomeCompleto || '').toUpperCase() }}" readonly required>
+                                    value="{{ $json.data.nomeCompletoUC }}" readonly required>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Nome Social</label>
@@ -589,29 +591,27 @@
                             <div class="col-md-3">
                                 <label class="form-label">Data de Nascimento</label>
                                 <input type="text" class="form-control" id="dataNascimento"
-                                    value="{{ ($json.data.dataNascimento || '').split('-').reverse().join('/') }}"
-                                    readonly required>
+                                    value="{{ $json.data.dataNascimentoBR }}" readonly required>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Idade</label>
                                 <input type="text" class="form-control bg-light" id="idade"
-                                    value="{{ $json.data.idade || '' }}" readonly required>
+                                    value="{{ $json.data.idade }}" readonly required>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">NIS</label>
-                                <input type="text" class="form-control bg-light" id="nis"
-                                    value="{{ $json.data.nis || '' }}" readonly required>
+                                <input type="text" class="form-control bg-light" id="nis" value="{{ $json.data.nis }}"
+                                    readonly required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Gênero (CadÚnico)</label>
-                                <input type="text" class="form-control" id="genero"
-                                    value="{{ ($json.data.genero || '').toUpperCase() }}" readonly required>
+                                <input type="text" class="form-control" id="genero" value="{{ $json.data.generoUC }}"
+                                    readonly required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Data Atualização CadÚnico</label>
                                 <input type="text" class="form-control" id="dataAtualizacaoCadunico"
-                                    value="{{ ($json.data.familiaDataAtualizacao || '').split('-').reverse().join('/') }}"
-                                    readonly required>
+                                    value="{{ $json.data.dataAtualizacaoBR }}" readonly required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Tempo desde Atualização</label>
@@ -620,8 +620,8 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Autodeclaração de cor/raça</label>
-                                <input type="text" class="form-control" id="racaCor"
-                                    value="{{ ($json.data.racaCor || '').toUpperCase() }}" readonly required>
+                                <input type="text" class="form-control" id="racaCor" value="{{ $json.data.racaCorUC }}"
+                                    readonly required>
                                 <div class="form-text small">Informação usada para ranqueamento e políticas afirmativas
                                     conforme edital.</div>
                             </div>
@@ -635,14 +635,13 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label">Telefone/WhatsApp</label>
-                                <input type="text" class="form-control" id="telefone"
-                                    value="{{ $json.data.whatsapp || '' }}" placeholder="Apenas números (11 dígitos)"
-                                    required pattern="\d{11}" minlength="11" maxlength="11"
-                                    oninput="this.value = this.value.replace(/\D/g, '')">
+                                <input type="text" class="form-control" id="telefone" value="{{ $json.data.whatsapp }}"
+                                    placeholder="Apenas números (11 dígitos)" required pattern="\d{11}" minlength="11"
+                                    maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">E-mail</label>
-                                <input type="email" class="form-control" id="email" value="{{ $json.data.email || '' }}"
+                                <input type="email" class="form-control" id="email" value="{{ $json.data.email }}"
                                     placeholder="exemplo@email.com" required>
                             </div>
                             <div class="col-md-4">
@@ -678,19 +677,18 @@
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label">CEP</label>
-                                <input type="text" class="form-control" value="{{ $json.data.cep || '' }}" id="cep"
+                                <input type="text" class="form-control" value="{{ $json.data.cep }}" id="cep"
                                     placeholder="Apenas números" required pattern="\d{8}" minlength="8" maxlength="8"
                                     oninput="this.value = this.value.replace(/\D/g, '')" onblur="buscarCEP(this.value)">
                             </div>
                             <div class="col-md-7">
                                 <label class="form-label">Logradouro</label>
-                                <input type="text" class="form-control"
-                                    value="{{ ($json.data.logradouro || '').toUpperCase() }}" id="logradouro" required>
+                                <input type="text" class="form-control" value="{{ $json.data.logradouroUC }}"
+                                    id="logradouro" required>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Número</label>
-                                <input type="text" class="form-control"
-                                    value="{{ ($json.data.numero || '').toString().replace(/^0+/, '') }}" id="numero"
+                                <input type="text" class="form-control" value="{{ $json.data.numeroLimpo }}" id="numero"
                                     required>
                             </div>
                             <div class="col-md-4">
@@ -700,8 +698,8 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Bairro</label>
-                                <input type="text" class="form-control"
-                                    value="{{ ($json.data.bairro || '').toUpperCase() }}" id="bairro" required>
+                                <input type="text" class="form-control" value="{{ $json.data.bairroUC }}" id="bairro"
+                                    required>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Cidade</label>
@@ -724,7 +722,7 @@
                                 <div class="row g-3">
                                     <!-- 1. Mulher chefe de família -->
                                     <div class="col-12"
-                                        style="display: {{ ($json.data.genero || '').toLowerCase() === 'feminino' ? 'block' : 'none' }}">
+                                        style="display: {{ $json.data.generoLC === 'feminino' ? 'block' : 'none' }}">
                                         <div class="form-check form-switch p-0 h-100 d-flex align-items-center">
                                             <input class="form-check-input ms-0 me-3 mt-0" type="checkbox"
                                                 id="mulherChefe" role="switch" disabled>
@@ -735,7 +733,7 @@
 
                                     <!-- 2. Vítima de violência doméstica -->
                                     <div class="col-12"
-                                        style="display: {{ ($json.data.genero || '').toLowerCase() === 'feminino' ? 'block' : 'none' }}">
+                                        style="display: {{ $json.data.generoLC === 'feminino' ? 'block' : 'none' }}">
                                         <div class="form-check form-switch p-0 h-100 d-flex align-items-center">
                                             <input class="form-check-input ms-0 me-3 mt-0" type="checkbox"
                                                 id="vitimaViolencia" role="switch">
@@ -844,22 +842,21 @@
                                                 <i class="fas fa-users me-1"></i>Composição familiar
                                             </label>
                                             <input type="number" class="form-control" id="composicaoFamiliar"
-                                                value="{{ $json.data.quantidadePessoaDomicilio || '' }}" readonly
-                                                required>
+                                                value="{{ $json.data.quantidadePessoaDomicilio }}" readonly required>
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label small fw-bold text-primary mb-1">
                                                 <i class="fas fa-coins me-1"></i>Renda Familiar (R$)
                                             </label>
                                             <input type="text" class="form-control" id="rendaFamiliar"
-                                                value="{{ $json.data.rendaTotal || '' }}" readonly required>
+                                                value="{{ $json.data.rendaTotal }}" readonly required>
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label small fw-bold text-primary mb-1">
                                                 <i class="fas fa-hand-holding-dollar me-1"></i>Renda per capita (R$)
                                             </label>
-                                            <input type="text" class="form-control" id="rendaPerCapita" readonly
-                                                required>
+                                            <input type="text" class="form-control" id="rendaPerCapita"
+                                                value="{{ $json.data.rendaPerCapita }}" readonly required>
                                             <div class="form-text x-small mt-2">Cálculo automático baseado na composição
                                                 familiar.</div>
                                         </div>
@@ -970,13 +967,9 @@
             <div class="section-header d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <h2 class="section-title">Minha Pontuação</h2>
                 <div class="status-container">
-                    <span
-                        class="status-badge {{ ($json.data.situacao || '').toLowerCase().includes('classificado') ? 'status-classified' : ($json.data.situacao === 'Inscrição homologada' ? 'bg-success text-white' : ($json.data.situacao === 'Inscrição não homologada' ? 'bg-danger text-white' : 'bg-warning text-dark')) }}">
-                        <i
-                            class="fas {{ ($json.data.situacao || '').toLowerCase().includes('classificado') ? 'fa-crown' : ($json.data.situacao === 'Inscrição homologada' ? 'fa-check-circle' : ($json.data.situacao === 'Inscrição não homologada' ? 'fa-times-circle' : ($json.data.situacao ? 'fa-clock' : 'fa-file-signature'))) }}"></i>
-                        {{ ($json.data.situacao || '').toLowerCase().includes('classificado') ?
-                        $json.data.situacao.toUpperCase() : ($json.data.situacao ? $json.data.situacao.toUpperCase() :
-                        'INSCRIÇÃO NÃO ENVIADA') }}
+                    <span class="status-badge {{ $json.data.statusClass }}">
+                        <i class="fas {{ $json.data.statusIcon }}"></i>
+                        {{ $json.data.statusInscricao }}
                     </span>
                 </div>
             </div>
@@ -1094,12 +1087,7 @@
                                     <tr>
                                         <td class="ps-4 fw-bold">TOTAL OBTIDO</td>
                                         <td class="text-center fw-bold fs-5" id="score-total-display">
-                                            {{ ($json.data.pts_raca || 0) + ($json.data.pts_pcd || 0) +
-                                            ($json.data.pts_mulher_chefe || 0) + ($json.data.pts_mulher_violencia || 0)
-                                            + ($json.data.pts_renda || 0) + ($json.data.pts_familia || 0) +
-                                            ($json.data.pts_dependente_tratamento || 0) + ($json.data.pts_acolhimento ||
-                                            0) + ($json.data.pts_trabalhador_app || 0) + ($json.data.pts_beneficio || 0)
-                                            + ($json.data.pts_sem_trabalho_formal || 0) }} / 215
+                                            {{ $json.data.totalPontos }} / 215
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -1645,6 +1633,33 @@
                         <p class="text-muted">Por favor, descreva sua justificativa antes de enviar o recurso.</p>
                         <button type="button" class="btn btn-warning w-100 py-2 fw-bold" data-bs-dismiss="modal">Vou
                             preencher</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Reaproveitar Dados -->
+        <div class="modal fade" id="modalReaproveitarDados" data-bs-backdrop="static" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-primary text-white border-0">
+                        <h5 class="modal-title fw-bold"><i class="fas fa-sync-alt me-2"></i>Dados Recuperados com
+                            Sucesso</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            onclick="resetReaproveitarSwitch()"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <p class="mb-4">Encontramos os seguintes dados da sua última inscrição homologada. Deseja
+                            aplicá-los ao formulário atual?</p>
+                        <div id="reproveitamentoDadosCorpo" class="bg-light p-3 rounded-3 small">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal"
+                            onclick="resetReaproveitarSwitch()">Desconsiderar</button>
+                        <button type="button" class="btn btn-primary px-4 fw-bold" id="btnAceitarDadosReuso">Aceitar e
+                            Aplicar Dados</button>
                     </div>
                 </div>
             </div>
@@ -2356,6 +2371,11 @@
             document.getElementById('btn-aula-sozinho').onclick = () => confirmarAula(false);
             document.getElementById('btn-aula-acompanhado').onclick = () => confirmarAula(true);
 
+            // Reaproveitar Dados Listener
+            document.getElementById('swReaproveitarDados').onchange = (e) => {
+                if (e.target.checked) buscarDadosAnteriores();
+            };
+
 
             // Form Logic
             document.getElementById('chkUpdateAddress').onchange = (e) => {
@@ -2405,10 +2425,15 @@
 
             // Enrollment reuse initialization
             const homologadoAnterior = isSim('{{ $json.data.inscricao_homologada_anterior || "" }}');
-            if (homologadoAnterior) {
+            const numInscVal = (document.getElementById('numInscricao').value || '').trim().toLowerCase();
+            const isPendenteInsc = numInscVal === "" || numInscVal === "pendente";
+
+            if (homologadoAnterior && isPendenteInsc) {
                 document.getElementById('containerReaproveitamento').classList.remove('d-none');
                 document.getElementById('swInscricaoAnterior').checked = true;
                 document.getElementById('swReaproveitarDados').checked = isSim('{{ $json.data.reaproveitar_dados_anterior || "" }}');
+            } else {
+                document.getElementById('containerReaproveitamento').classList.add('d-none');
             }
 
             // Enrollment-based pre-fill (if already enrolled)
@@ -2993,6 +3018,124 @@
             }
         }
 
+        // --- Logic for Data Reuse (New) ---
+        let tempReusoData = null;
+        async function buscarDadosAnteriores() {
+            const cpfInput = document.getElementById('cpf');
+            const cpf = (cpfInput ? cpfInput.value : '').trim();
+
+            if (!cpf) {
+                alert('CPF não identificado. Por favor, tente recarregar a página.');
+                document.getElementById('swReaproveitarDados').checked = false;
+                return;
+            }
+
+            const sw = document.getElementById('swReaproveitarDados');
+            sw.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('cpf', cpf);
+
+                const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/buscar-dados-inscricao-homologada', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    mode: 'cors',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Não foi possível recuperar os dados.');
+
+                const data = await response.json();
+                tempReusoData = data;
+
+                // Build Summary UI
+                const container = document.getElementById('reproveitamentoDadosCorpo');
+                let html = '<div class="row g-3">';
+
+                const addRow = (label, val) => {
+                    if (!val || val === '-') return '';
+                    return `<div class="col-md-6"><strong>${label}:</strong> <span class="text-muted">${val}</span></div>`;
+                };
+
+                html += addRow('Categoria', data.categoria || data.slug_categoria);
+                html += addRow('CEP', data.cep);
+                html += addRow('Endereço', `${data.logradouro}, ${data.numero}`);
+                html += addRow('Bairro', data.bairro);
+
+                const simNao = (v) => (v === 'sim' || v === true || v === 'true') ? '<span class="badge bg-success">SIM</span>' : '<span class="badge bg-light text-dark">NÃO</span>';
+                html += `<div class="col-12 border-top mt-3 pt-2"><strong>Critérios Socioeconômicos:</strong></div>`;
+                html += `<div class="col-md-4">PCD: ${simNao(data.pcd)}</div>`;
+                html += `<div class="col-md-4">Mãe Atípica: ${simNao(data.maepaiatipico)}</div>`;
+                html += `<div class="col-md-4">Chefe Família: ${simNao(data.mulherChefe)}</div>`;
+
+                html += '</div>';
+                container.innerHTML = html;
+
+                const modal = new bootstrap.Modal(document.getElementById('modalReaproveitarDados'));
+                document.getElementById('btnAceitarDadosReuso').onclick = () => {
+                    aplicarDadosRecuperados(tempReusoData);
+                    modal.hide();
+                };
+                modal.show();
+
+            } catch (err) {
+                console.error(err);
+                sw.checked = false;
+                alert(err.message || 'Erro ao buscar dados anteriores.');
+            } finally {
+                sw.disabled = false;
+            }
+        }
+
+        function resetReaproveitarSwitch() {
+            document.getElementById('swReaproveitarDados').checked = false;
+        }
+
+        function aplicarDadosRecuperados(d) {
+            if (!d) return;
+
+            const isS = (v) => (v === 'sim' || v === true || v === 'true');
+
+            // 1. Categoria
+            const cat = d.categoria || d.slug_categoria;
+            if (cat) {
+                const sel = document.getElementById('categoria');
+                sel.value = cat.toLowerCase();
+                updateCategoriaTexto();
+            }
+
+            // 2. Endereço
+            if (d.cep) document.getElementById('cep').value = d.cep;
+            if (d.logradouro) document.getElementById('logradouro').value = d.logradouro;
+            if (d.bairro) document.getElementById('bairro').value = d.bairro;
+            if (d.numero) document.getElementById('numero').value = d.numero;
+            if (d.complemento) document.getElementById('complemento').value = d.complemento;
+
+            // 3. Switches
+            document.getElementById('pcd').checked = isS(d.pcd);
+            document.getElementById('maeAtipica').checked = isS(d.maepaiatipico);
+            document.getElementById('mulherChefe').checked = isS(d.mulherChefe);
+            document.getElementById('trabalhadorAplicativo').checked = isS(d.trabalhadorapp);
+            document.getElementById('dependenteTratamento').checked = isS(d.dependentetratamento);
+            document.getElementById('vitimaViolencia').checked = isS(d.mulherviolencia);
+            document.getElementById('programasSociais').checked = isS(d.programaBolsaFamilia);
+            document.getElementById('acolhimentoInstitucional').checked = isS(d.acolhimento);
+
+            // 4. Update UI
+            toggleAppWorkerDate();
+            updateScore();
+            updateDocs();
+
+            // Notify user
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed bottom-0 end-0 p-3';
+            toast.style.zIndex = '1100';
+            toast.innerHTML = `<div class="toast show align-items-center text-white bg-success border-0" role="alert"><div class="d-flex"><div class="toast-body">Dados aplicados com sucesso!</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
         function adicionarAnexo() {
             for (let i = 2; i <= 5; i++) {
                 const group = document.getElementById(`recursoGroup${i}`);
@@ -3079,14 +3222,14 @@
 
             const filesHtml = docList.map(d => `<li class="small text-muted py-1 border-bottom border-light">${d}</li>`).join('');
 
-            const reaproveitamentoHtml = document.getElementById('swInscricaoAnterior')?.checked 
+            const reaproveitamentoHtml = document.getElementById('swInscricaoAnterior')?.checked
                 ? `<div class="col-12 mt-2"><div class="alert alert-info py-2 px-3 mb-0 border-0 shadow-sm d-flex align-items-center" style="background-color: #f0faff;">
                     <i class="fas fa-sync-alt text-info me-3 fs-5"></i>
                     <div>
                         <div class="small fw-bold text-info text-uppercase" style="font-size: 0.7rem;">Modo de Inscrição</div>
                         <div class="small fw-bold text-dark">Reutilizando dados e documentos do edital anterior</div>
                     </div>
-                   </div></div>` 
+                   </div></div>`
                 : '';
 
             document.getElementById('resumoContent').innerHTML = `
