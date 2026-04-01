@@ -2423,6 +2423,15 @@
             document.getElementById('programasSociais').checked = isSim(dataP.programaBolsaFamilia);
             document.getElementById('acolhimentoInstitucional').checked = isSim(dataP.acolhimento);
 
+            // Gender-based blocking
+            const genUC = '{{ $json.data.generoUC || "" }}'.toUpperCase();
+            if (genUC === 'MASCULINO') {
+                const mc = document.getElementById('mulherChefe');
+                const vvd = document.getElementById('vitimaViolencia');
+                if (mc) { mc.checked = false; mc.disabled = true; }
+                if (vvd) { vvd.checked = false; vvd.disabled = true; }
+            }
+
             // Enrollment reuse initialization
             const homologadoAnterior = isSim('{{ $json.data.inscricao_homologada_anterior || "" }}');
             const numInscVal = (document.getElementById('numInscricao').value || '').trim().toLowerCase();
@@ -3017,7 +3026,6 @@
                 btn.innerHTML = originalContent;
             }
         }
-
         // --- Logic for Data Reuse (New) ---
         let tempReusoData = null;
         async function buscarDadosAnteriores() {
@@ -3054,7 +3062,7 @@
                 let html = '<div class="row g-3">';
 
                 const addRow = (label, val) => {
-                    if (!val || val === '-') return '';
+                    if (!val || val === '-' || val === 'undefined' || val === 'null') return '';
                     return `<div class="col-md-6"><strong>${label}:</strong> <span class="text-muted">${val}</span></div>`;
                 };
 
