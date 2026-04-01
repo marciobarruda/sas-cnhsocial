@@ -3156,6 +3156,7 @@
                 html += addRow('Raça/Cor', data.racaCor || data.racaCorUC, 'fa-users');
                 html += addRow('WhatsApp', data.whatsapp, 'fa-whatsapp');
                 html += addRow('E-mail', data.email, 'fa-envelope');
+                html += addRow('PCD', isS(data.pcd) ? 'Sim' : '', 'fa-wheelchair');
                 html += addRow('Início no Aplicativo', formatDateBR(data.dataInicioApp), 'fa-calendar-alt');
 
                 const isS = (v) => {
