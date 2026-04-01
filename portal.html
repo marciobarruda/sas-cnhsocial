@@ -875,8 +875,8 @@
                                 <label class="form-label">Categoria</label>
                                 <select class="form-select" id="categoria" onchange="updateCategoriaTexto()" required>
                                     <option value="">Selecione...</option>
-                                    <option value="primeira_a">Primeira Habilitação A</option>
-                                    <option value="primeira_b">Primeira Habilitação B</option>
+                                    <option value="a_primeira">Primeira Habilitação A</option>
+                                    <option value="b_primeira">Primeira Habilitação B</option>
                                     <option value="adicao_a">Adição A</option>
                                     <option value="adicao_b">Adição B</option>
                                 </select>
@@ -2413,8 +2413,15 @@
                 return s === 'sim' || s === 'true';
             };
 
+            const initialDataApp = '{{ $json.data.dataInicioApp || $json.dataInicioApp || "" }}';
+            const diaField = document.getElementById('dataInicioApp');
+            if (diaField) {
+                diaField.value = initialDataApp;
+                diaField.required = !!initialDataApp;
+                diaField.oninput = () => { diaField.required = !!diaField.value; };
+            }
+
             document.getElementById('trabalhadorAplicativo').checked = isSim(dataP.trabalhadorapp);
-            document.getElementById('dataInicioApp').value = dataP.data_inicio_app || '';
             document.getElementById('pcd').checked = isSim(dataP.pcd);
             document.getElementById('maeAtipica').checked = isSim(dataP.maepaiatipico);
             document.getElementById('mulherChefe').checked = isSim(dataP.mulherChefe);
@@ -2557,8 +2564,8 @@
                 }
             }
 
-            if (val === 'primeira_a') { desc.innerText = 'Para quem não possui CNH e deseja obter a carteira para pilotar motocicleta, motoneta ou ciclomotor.'; desc.classList.remove('d-none'); }
-            else if (val === 'primeira_b') { desc.innerText = 'Para quem não possui CNH e deseja obter a carteira para dirigir automóvel de passeio.'; desc.classList.remove('d-none'); }
+            if (val === 'a_primeira') { desc.innerText = 'Para quem não possui CNH e deseja obter a carteira para pilotar motocicleta, motoneta ou ciclomotor.'; desc.classList.remove('d-none'); }
+            else if (val === 'b_primeira') { desc.innerText = 'Para quem não possui CNH e deseja obter a carteira para dirigir automóvel de passeio.'; desc.classList.remove('d-none'); }
             else if (val === 'adicao_a') { desc.innerText = 'Para quem já possui CNH de carro (Categoria B ou superior) e deseja incluir a permissão para pilotar motocicleta.'; desc.classList.remove('d-none'); }
             else if (val === 'adicao_b') { desc.innerText = 'Para quem já possui CNH de moto (Categoria A) e deseja incluir a permissão para dirigir automóvel de passeio.'; desc.classList.remove('d-none'); }
             else { desc.classList.add('d-none'); }
@@ -2711,6 +2718,11 @@
                 groups.push({ title: "Dados da CNH Atual", icon: "fa-id-badge", fields: ["Arquivo da CNH Atual"] });
             }
 
+            const shouldSkip = (field) => {
+                if (!window.reusedFields) return false;
+                return window.reusedFields.includes(field);
+            };
+
             groups.forEach(group => {
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'mb-4';
@@ -2720,12 +2732,24 @@
 
                 group.fields.forEach(f => {
                     const safeId = f.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                    html += `
+                    const isReused = shouldSkip(group.title);
+                    
+                    if (isReused) {
+                        html += `
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label mt-0 pt-0 fw-bold small text-muted">${f}</label>
+                            <div class="alert alert-light border-0 bg-info-subtle text-info-emphasis small py-2 mb-0 d-flex align-items-center">
+                                <i class="fas fa-check-circle me-2"></i> Documento reaproveitado da inscrição anterior
+                            </div>
+                        </div>`;
+                    } else {
+                        html += `
                         <div class="col-md-6 mb-3">
                             <label class="form-label mt-0 pt-0 fw-bold small text-muted">${f}</label>
                             <input type="file" class="form-control file-doc" accept=".pdf,.jpg,.jpeg,.png" data-label="${f}" onchange="handleFileChange(this)">
                             <div id="status-${safeId}" class="mt-2" style="min-height: 24px;"></div>
                         </div>`;
+                    }
                 });
 
                 html += `</div>`;
@@ -3060,7 +3084,7 @@
                 // Garante objeto unico se vier array
                 let data = Array.isArray(dataRaw) ? dataRaw[0] : dataRaw;
                 if (!data) throw new Error('Nenhum dado encontrado para este CPF.');
-                
+
                 tempReusoData = data;
 
                 // Build Summary UI
@@ -3068,9 +3092,9 @@
                 let html = '<div class="row g-3">';
 
                 const getVal = (paths) => {
-                    for (const p of paths) { 
-                        if (data[p] !== undefined && data[p] !== null && data[p] !== '' && data[p].toString().toLowerCase() !== 'não') 
-                            return data[p]; 
+                    for (const p of paths) {
+                        if (data[p] !== undefined && data[p] !== null && data[p] !== '' && data[p].toString().toLowerCase() !== 'não')
+                            return data[p];
                     }
                     return '';
                 };
@@ -3089,14 +3113,14 @@
                 html += addRow('Raça/Cor', data.racaCor || data.racaCorUC);
                 html += addRow('WhatsApp', data.whatsapp);
                 html += addRow('E-mail', data.email);
-                
+
                 const isS = (v) => {
                     const s = (v || '').toString().toLowerCase().trim();
                     return s === 'sim' || s === 'true' || s === 's';
                 };
-                
+
                 const simNaoItem = (v, label) => isS(v) ? `<div class="col-md-4">${label}: <span class="badge bg-success">SIM</span></div>` : '';
-                
+
                 const socInfo = [
                     simNaoItem(data.pcd, 'PCD'),
                     simNaoItem(data.maepaiatipico, 'Mãe/Pai Atípico'),
@@ -3144,8 +3168,8 @@
             };
 
             const getV = (paths) => {
-                for (const p of paths) { 
-                    if (d[p] !== undefined && d[p] !== null && d[p] !== '') return d[p]; 
+                for (const p of paths) {
+                    if (d[p] !== undefined && d[p] !== null && d[p] !== '') return d[p];
                 }
                 return '';
             };
@@ -3177,16 +3201,25 @@
             if (rc) document.getElementById('racaCor').value = rc.toUpperCase();
 
             // 5. Switches
-            const setCheck = (id, val) => {
+            window.reusedFields = [];
+            const setCheck = (id, val, groupName) => {
                 const el = document.getElementById(id);
-                if (el && !el.disabled) el.checked = isS(val);
+                if (el && !el.disabled) {
+                    const activeBefore = el.checked;
+                    const activeAfter = isS(val);
+                    el.checked = activeAfter;
+                    if (activeAfter && groupName) window.reusedFields.push(groupName);
+                }
             };
+            
+            // Mark identification as reused by default if we accepted any data
+            window.reusedFields.push("Identificação Básica");
 
-            setCheck('pcd', d.pcd);
-            setCheck('maeAtipica', d.maepaiatipico);
-            setCheck('mulherChefe', d.mulherChefe);
-            setCheck('trabalhadorAplicativo', d.trabalhadorapp);
-            setCheck('dependenteTratamento', d.dependentetratamento);
+            setCheck('pcd', d.pcd, "Pessoa com Deficiência");
+            setCheck('maeAtipica', d.maepaiatipico, "Mãe/Pai Atípico");
+            setCheck('mulherChefe', d.mulherChefe); // No docs for this
+            setCheck('trabalhadorAplicativo', d.trabalhadorapp, "Trabalhador de Aplicativo");
+            setCheck('dependenteTratamento', d.dependentetratamento, "Dependente em Tratamento Contínuo");
             setCheck('vitimaViolencia', d.mulherviolencia);
             setCheck('programasSociais', d.programaBolsaFamilia);
             setCheck('acolhimentoInstitucional', d.acolhimento);
