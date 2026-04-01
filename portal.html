@@ -2765,8 +2765,8 @@
             if (!btn) return;
 
             let allAttached = true;
-            if (files.length === 0) allAttached = false;
-
+            // Se houver campos de upload, todos devem ser preenchidos.
+            // Se não houver (ex: tudo reaproveitado), allAttached continua true.
             files.forEach(input => {
                 if (!input.files || !input.files[0]) {
                     allAttached = false;
@@ -3243,26 +3243,30 @@
                 }
             }
 
-            // 6. Switches
-            window.reusedFields = [];
-            const setCheck = (id, val, groupName) => {
+            // 5. Switches e Marcadores de Reuso
+            window.reusedFields = ["Identificação Básica"];
+            
+            // Critérios que vieram do CadÚnico original também devem ser considerados reaproveitados se o usuário optou pelo reuso
+            const cadPcd = isSim('{{ $json.data.pcd || "" }}');
+            const cadMae = isSim('{{ $json.data.maepaiatipico || "" }}');
+            const cadDep = isSim('{{ $json.data.dependentetratamento || "" }}');
+            const cadApp = isSim('{{ $json.data.trabalhadorapp || "" }}');
+
+            const setCheck = (id, val, groupName, isCadunico) => {
                 const el = document.getElementById(id);
                 if (el && !el.disabled) {
                     const activeBefore = el.checked;
-                    const activeAfter = isS(val);
+                    const activeAfter = isS(val) || isCadunico;
                     el.checked = activeAfter;
                     if (activeAfter && groupName) window.reusedFields.push(groupName);
                 }
             };
             
-            // Mark identification as reused by default if we accepted any data
-            window.reusedFields.push("Identificação Básica");
-
-            setCheck('pcd', d.pcd, "Pessoa com Deficiência");
-            setCheck('maeAtipica', d.maepaiatipico, "Mãe/Pai Atípico");
-            setCheck('mulherChefe', d.mulherChefe); // No docs for this
-            setCheck('trabalhadorAplicativo', d.trabalhadorapp, "Trabalhador de Aplicativo");
-            setCheck('dependenteTratamento', d.dependentetratamento, "Dependente em Tratamento Contínuo");
+            setCheck('pcd', d.pcd, "Pessoa com Deficiência", cadPcd);
+            setCheck('maeAtipica', d.maepaiatipico, "Mãe/Pai Atípico", cadMae);
+            setCheck('mulherChefe', d.mulherChefe); 
+            setCheck('trabalhadorAplicativo', d.trabalhadorapp, "Trabalhador de Aplicativo", cadApp);
+            setCheck('dependenteTratamento', d.dependentetratamento, "Dependente em Tratamento Contínuo", cadDep);
             setCheck('vitimaViolencia', d.mulherviolencia);
             setCheck('programasSociais', d.programaBolsaFamilia);
             setCheck('acolhimentoInstitucional', d.acolhimento);
