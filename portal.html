@@ -3099,21 +3099,45 @@
                     return '';
                 };
 
-                const addRow = (label, val) => {
-                    if (!val || val === '-' || val === 'undefined' || val === 'null' || val.toString().toLowerCase() === 'não') return '';
-                    return `<div class="col-md-6"><strong>${label}:</strong> <span class="text-muted">${val}</span></div>`;
+                const formatDateBR = (s) => {
+                    if (!s || !s.includes('-')) return s;
+                    const parts = s.split('-');
+                    if (parts.length !== 3) return s;
+                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
                 };
 
-                html += addRow('Categoria', getVal(['categoria', 'slug_categoria']));
-                html += addRow('CEP', data.cep);
+                const catMap = {
+                    'a_primeira': 'Primeira Habilitação A',
+                    'b_primeira': 'Primeira Habilitação B',
+                    'adicao_a': 'Adição A',
+                    'adicao_b': 'Adição B'
+                };
+
+                const addRow = (label, val, icon) => {
+                    if (!val || val === '-' || val === 'undefined' || val === 'null' || val.toString().toLowerCase() === 'não') return '';
+                    return `
+                        <div class="col-md-6 mb-2">
+                             <div class="d-flex align-items-center">
+                                <i class="fas ${icon || 'fa-info-circle'} me-2 text-primary opacity-50 small"></i>
+                                <div>
+                                    <div class="small fw-bold text-muted text-uppercase" style="font-size: 0.65rem;">${label}</div>
+                                    <div class="text-dark fw-medium">${val}</div>
+                                </div>
+                             </div>
+                        </div>`;
+                };
+
+                const catRaw = getVal(['categoria', 'slug_categoria']);
+                html += addRow('Categoria', catMap[catRaw] || catRaw, 'fa-id-card');
+                html += addRow('CEP', data.cep, 'fa-map-pin');
                 const rua = getVal(['logradouro', 'logradouroUC']);
                 const nr = getVal(['numero', 'numerolimpo']);
-                if (rua) html += addRow('Endereço', nr ? `${rua}, ${nr}` : rua);
-                html += addRow('Bairro', getVal(['bairro', 'bairroUC']));
-                html += addRow('Raça/Cor', data.racaCor || data.racaCorUC);
-                html += addRow('WhatsApp', data.whatsapp);
-                html += addRow('E-mail', data.email);
-                html += addRow('Data Início App', data.dataInicioApp);
+                if (rua) html += addRow('Endereço', nr ? `${rua}, ${nr}` : rua, 'fa-home');
+                html += addRow('Bairro', getVal(['bairro', 'bairroUC']), 'fa-map-marker-alt');
+                html += addRow('Raça/Cor', data.racaCor || data.racaCorUC, 'fa-users');
+                html += addRow('WhatsApp', data.whatsapp, 'fa-whatsapp');
+                html += addRow('E-mail', data.email, 'fa-envelope');
+                html += addRow('Início no Aplicativo', formatDateBR(data.dataInicioApp), 'fa-calendar-alt');
 
                 const isS = (v) => {
                     const s = (v || '').toString().toLowerCase().trim();
