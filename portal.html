@@ -534,77 +534,39 @@
                 </div>
             </div>
 
-            <div id="reaproveitamentoMsg" class="alert alert-info py-3 mb-4 d-none border-0 shadow-sm"
-                style="border-left: 5px solid #00a3ff !important; background-color: #e6f7ff;">
-                <div class="d-flex align-items-center">
-                    <div class="user-avatar bg-primary me-3" style="width: 45px; height: 45px; font-size: 1.2rem;">
-                        <i class="fas fa-sync-alt text-white"></i>
-                    </div>
-                    <div>
-                        <h6 class="fw-bold text-primary mb-1">Reaproveitamento de Dados Ativo</h6>
-                        <p class="mb-0 text-muted small">Você optou por utilizar seus dados do primeiro processo
-                            seletivo. <strong>O formulário está liberado para conferência e edições pontuais.</strong>
-                        </p>
-                        <p class="mb-0 text-muted smaller mt-1"><i class="fas fa-info-circle me-1"></i>Apenas os campos
-                            alterados exigirão o reenvio de documentação.</p>
-                    </div>
-                </div>
-            </div>
-
             <div id="inscricaoForaPrazoMsg" class="alert alert-warning py-2 mb-3 d-none fw-bold small">
                 <!-- Injected via JS -->
             </div>
 
             <form id="formInscricao" class="needs-validation" novalidate onsubmit="return false">
-                <div id="reuseContainer" class="card mb-4 overflow-hidden border-0 shadow-sm"
-                    style="background: linear-gradient(90deg, #f8f9fa 0%, #ffffff 100%); border-left: 4px solid var(--brand-primary) !important;">
-                    <div class="card-body p-3">
-                        <div class="d-flex flex-column gap-3">
-                            <div class="form-check form-switch d-flex align-items-center gap-3 ps-5">
-                                <input class="form-check-input" type="checkbox" id="homologadaSwitch" role="switch"
-                                    style="width: 2.5em; height: 1.2em;" disabled>
-                                <label class="form-check-label fw-bold text-muted mb-0" for="homologadaSwitch"
-                                    style="font-size: 0.9rem;">
-                                    <i class="fas fa-check-circle me-2 text-success"></i>Inscrição homologada no
-                                    primeiro processo seletivo identificada
-                                </label>
+                <!-- Registration Reuse Options -->
+                <div id="containerReaproveitamento" class="card mb-4 border-info shadow-sm d-none" style="border-left: 5px solid #0dcaf0 !important;">
+                    <div class="card-body bg-light-subtle">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-7">
+                                <div class="form-check form-switch p-0 d-flex align-items-center mb-0">
+                                    <input class="form-check-input ms-0 me-3 mt-0" type="checkbox"
+                                        id="swInscricaoAnterior" role="switch" disabled>
+                                    <label class="form-check-label fw-bold text-primary mb-0" for="swInscricaoAnterior">
+                                        Inscrição homologada em edital anterior detectada
+                                        <i class="fas fa-check-circle text-success ms-1"></i>
+                                    </label>
+                                </div>
+                                <div class="small text-muted mt-1 ms-5">Identificamos que você possui uma inscrição válida e homologada no último processo seletivo.</div>
                             </div>
-                            <div id="reaproveitarActionRow"
-                                class="form-check form-switch d-flex align-items-center gap-3 ps-5">
-                                <input class="form-check-input" type="checkbox" id="reaproveitarDadosSwitch"
-                                    role="switch" style="width: 3em; height: 1.5em; cursor: pointer;"
-                                    onchange="reaproveitarDadosHomologados(this.checked)">
-                                <label class="form-check-label fw-bold text-primary mb-0" for="reaproveitarDadosSwitch"
-                                    style="font-size: 1rem; cursor: pointer;">
-                                    <i class="fas fa-history me-2"></i>Desejo reaproveitar meus dados e dispensar
-                                    documentação não alterada
-                                </label>
+                            <div class="col-md-5 border-start border-info-subtle">
+                                <div class="form-check form-switch p-0 d-flex align-items-center mb-0">
+                                    <input class="form-check-input ms-0 me-3 mt-0" type="checkbox"
+                                        id="swReaproveitarDados" role="switch">
+                                    <label class="form-check-label fw-bold text-dark mb-0" for="swReaproveitarDados">
+                                        Reaproveitar dados para este novo processo?
+                                    </label>
+                                </div>
+                                <div class="small text-muted mt-1 ms-5">Ao marcar, seus dados e documentos anteriores serão reutilizados nesta nova inscrição.</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <script>
-                    (function() {
-                        try {
-                            const statusValue = "{{ $json.data.status || '' }}";
-                            console.log("SISTEMA INLINE: Verificando status:", statusValue);
-                            const isHomolog = /homologada|identificada/i.test(statusValue);
-                            const container = document.getElementById('reuseContainer');
-                            
-                            if (!isHomolog) {
-                                if (container) container.classList.add('d-none');
-                                console.log("SISTEMA INLINE: Painel ocultado.");
-                            } else {
-                                console.log("SISTEMA INLINE: Painel visível.");
-                                const sw = document.getElementById('homologadaSwitch');
-                                if (sw) sw.checked = true;
-                            }
-                        } catch (e) {
-                            console.error("SISTEMA INLINE: Erro crítico:", e);
-                        }
-                    })();
-                </script>
 
                 <div class="card mb-4">
                     <div class="card-header"><i class="fas fa-user me-2"></i>Identificação do Candidato</div>
@@ -2032,58 +1994,13 @@
             </div>
         </div>
 
-        <!-- Modal: Dados Resgatados -->
-        <div class="modal fade" id="modalDadosResgatados" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg">
-                    <div class="modal-header bg-primary text-white border-0">
-                        <h5 class="modal-title font-weight-bold"><i class="fas fa-database me-2"></i>Dados Anteriores Encontrados</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="resetReaproveitarSwitch()"></button>
-                    </div>
-                    <div class="modal-body p-4">
-                        <p class="text-muted fw-semi-bold">Identificamos os seguintes dados registrados na sua inscrição anterior de 2024. Deseja utilizá-los para preencher este novo formulário?</p>
-                        
-                        <div class="bg-light p-3 rounded-3 mb-3 border border-light">
-                            <div class="mb-2"><strong>Nome:</strong> <span id="resgate-nome" class="ms-1 text-primary"></span></div>
-                            <div class="mb-2"><strong>E-mail:</strong> <span id="resgate-email" class="ms-1 text-secondary"></span></div>
-                            <div class="mb-2"><strong>WhatsApp:</strong> <span id="resgate-whatsapp" class="ms-1"></span></div>
-                            <div class="mb-0"><strong>Endereço:</strong> <span id="resgate-endereco" class="ms-1 small"></span></div>
-                        </div>
-
-                        <div class="alert alert-info py-2 small mb-0">
-                            <i class="fas fa-info-circle me-1"></i> Após aceitar, você ainda poderá atualizar ou corrigir qualquer informação manualmente.
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0 p-3 bg-light rounded-bottom">
-                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" onclick="resetReaproveitarSwitch()">Cancelar</button>
-                        <button type="button" class="btn btn-success px-4 fw-bold shadow-sm" id="btnAceitarResgate" onclick="confirmarDadosResgatados()">Aceitar e Preencher</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Anti-inspection - Isolated Script Block
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
-                e.preventDefault();
-                return false;
-            }
-        });
-        (function () {
-            var _j = function () { debugger; };
-            setInterval(function () { _j(); }, 1000);
-        })();
-    </script>
-
-    <script>
         const AppState = {
-            currentDate: new Date("2026-03-22T10:00:00"),
-            notifications: ( {{ $json.informativo || [] | dump }} ).map(n => ({
+            currentDate: new Date("2026-03-22T10:00:00"), // Simulating requested time
+            notifications: {{ JSON.stringify($json.informativo) || '[]' }}.map(n => ({
                 id: n.id,
                 title: n.titulo,
                 text: n.mensagem,
@@ -2091,34 +2008,42 @@
                 lido_em: n.lido_em,
                 timestamp: n.timestamp
             })),
-            cronograma: [
-                { id: 1, etapa: 'Publicação do Edital', inicio: '2026-03-21', fim: '2026-03-21' },
-                { id: 2, etapa: 'Período de Inscrições', inicio: '2026-03-21', fim: '2026-04-20' },
-                { id: 3, etapa: 'Análise das Inscrições', inicio: '2026-04-22', fim: '2026-05-05' },
-                { id: 4, etapa: 'Resultado Preliminar Inscrições', inicio: '2026-05-09', fim: '2026-05-09' },
-                { id: 5, etapa: 'Recursos Inscrições', inicio: '2026-03-22', fim: '2026-05-12' },
-                { id: 6, etapa: 'Análise de Seleção', inicio: '2026-05-18', fim: '2026-06-01' },
-                { id: 7, etapa: 'Resultado Preliminar Seleção', inicio: '2026-06-02', fim: '2026-06-02' },
-                { id: 8, etapa: 'Recursos Seleção', inicio: '2026-06-02', fim: '2026-06-05' },
-                { id: 9, etapa: 'Resultado Final e Homologação', inicio: '2026-06-11', fim: '2026-06-11' }
-            ],
-            janelasRecurso: [
-                { inicio: '2026-03-22', fim: '2026-05-12' },
-                { inicio: '2026-06-02', fim: '2026-06-05' }
-            ],
-            reaproveitar_inscricao: {{ ($json.data.reaproveitar_inscricao == 'sim' || $json.data.reaproveitar_inscricao == true) ? true : false }},
-            ja_editada: {{ ($json.data.inscricao_editada == 'sim' || $json.data.inscricao_editada == true) ? true : false }},
-            status_homologacao: "{{ $json.data.status || '' }}",
-            originalData: {}
+                cronograma: [
+                    { id: 1, etapa: 'Publicação do Edital', inicio: '2026-03-21', fim: '2026-03-21' },
+                    { id: 2, etapa: 'Período de Inscrições', inicio: '2026-03-21', fim: '2026-04-20' },
+                    { id: 3, etapa: 'Análise das Inscrições', inicio: '2026-04-22', fim: '2026-05-05' },
+                    { id: 4, etapa: 'Resultado Preliminar Inscrições', inicio: '2026-05-09', fim: '2026-05-09' },
+                    { id: 5, etapa: 'Recursos Inscrições', inicio: '2026-03-22', fim: '2026-05-12' },
+                    { id: 6, etapa: 'Análise de Seleção', inicio: '2026-05-18', fim: '2026-06-01' },
+                    { id: 7, etapa: 'Resultado Preliminar Seleção', inicio: '2026-06-02', fim: '2026-06-02' },
+                    { id: 8, etapa: 'Recursos Seleção', inicio: '2026-06-02', fim: '2026-06-05' },
+                    { id: 9, etapa: 'Resultado Final e Homologação', inicio: '2026-06-11', fim: '2026-06-11' }
+                ],
+                    janelasRecurso: [
+                        { inicio: '2026-03-22', fim: '2026-05-12' },
+                        { inicio: '2026-06-02', fim: '2026-06-05' }
+                    ]
         };
-
-        console.log("SISTEMA: AppState inicializado com sucesso.");
 
 
         const _0x12a = (a, b) => a ^ b;
         const _0x4f2a = [106, 105, 104].map(x => String.fromCharCode(_0x12a(x, 91))).join('');
         const getAuthHeaders = (e = {}) => ({ 'Authorization': _0x4f2a, ...e });
 
+        // Anti-inspection basics
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Aggressive Anti-DevTools Debugger Loop
+        (function () {
+            var _j = function () { debugger; };
+            setInterval(function () { _j(); }, 1000);
+        })();
 
         function updateScore() {
             // 1. Calculate and Format Income (Runs even if enrollment is pending)
@@ -2148,6 +2073,7 @@
             const jaSaiu = dataInic && AppState.currentDate >= dataInic;
 
             if (!jaSaiu) {
+                // HIDE EVERYTHING but the date warning if before the date
                 if (tableContainer) tableContainer.classList.add('d-none');
                 if (pendingMsg) pendingMsg.classList.add('d-none');
                 if (dateWarn) {
@@ -2158,6 +2084,7 @@
                 }
                 return;
             } else {
+                // After the date, visibility depends on whether it's pending
                 if (dateWarn) dateWarn.classList.add('d-none');
                 if (isP) {
                     if (tableContainer) tableContainer.classList.add('d-none');
@@ -2169,64 +2096,90 @@
                 }
             }
 
+            // Fallback calculation helper
             const getScore = (val, fallbackFunc) => {
                 const numVal = parseFloat(val);
-                return (isNaN(numVal) || numVal === 0) ? fallbackFunc() : numVal;
+                if (isNaN(numVal) || numVal === 0) {
+                    return fallbackFunc();
+                }
+                return numVal;
             };
 
+            // Automatic criteria with local fallback if empty
             const scoreRaca = getScore({{ $json.data.pts_raca || 0 }}, () => {
                 const val = (document.getElementById('racaCor')?.value || '').toUpperCase();
                 return (val.includes('PRETA') || val.includes('PARDA') || val.includes('NEGRA')) ? 20 : 0;
             });
-            const scorePcd = getScore({{ $json.data.pts_pcd || 0 }}, () => !!document.getElementById('pcd')?.checked ? 20 : 0);
-            const scoreMulher = getScore({{ $json.data.pts_mulher_chefe || 0 }}, () => !!document.getElementById('mulherChefe')?.checked ? 15 : 0);
-            const scoreRenda = getScore({{ $json.data.pts_renda || 0 }}, () => {
-                if (perCapita <= 218) return 20;
-                if (perCapita <= 706) return 10;
-                return 5;
-            });
-            const scoreFamilia = getScore({{ $json.data.pts_familia || 0 }}, () => {
-                if (comp >= 7) return 20;
-                if (comp >= 4) return 10;
-                if (comp >= 3) return 5;
-                return 0;
-            });
-            const scoreBolsa = getScore({{ $json.data.pts_beneficio || 0 }}, () => !!document.getElementById('programasSociais')?.checked ? 15 : 0);
-            const scoreSemTrabalho = getScore({{ $json.data.pts_sem_trabalho_formal || 0 }}, () => !!document.getElementById('semTrabalhoFormal')?.checked ? 15 : 0);
+        const scorePcd = getScore({{ $json.data.pts_pcd || 0 }}, () => {
+            return !!document.getElementById('pcd')?.checked ? 20 : 0;
+        });
+        const scoreMulher = getScore({{ $json.data.pts_mulher_chefe || 0 }}, () => {
+            return !!document.getElementById('mulherChefe')?.checked ? 15 : 0;
+        });
+        const scoreRenda = getScore({{ $json.data.pts_renda || 0 }}, () => {
+            if (perCapita <= 218) return 20;
+            if (perCapita <= 706) return 10;
+            return 5;
+        });
+        const scoreFamilia = getScore({{ $json.data.pts_familia || 0 }}, () => {
+            const comp = parseInt(document.getElementById('composicaoFamiliar')?.value) || 0;
+            if (comp >= 7) return 20;
+            if (comp >= 4) return 10;
+            if (comp >= 3) return 5;
+            return 0;
+        });
+        const scoreBolsa = getScore({{ $json.data.pts_beneficio || 0 }}, () => {
+            return !!document.getElementById('programasSociais')?.checked ? 15 : 0;
+        });
+        const scoreSemTrabalho = getScore({{ $json.data.pts_sem_trabalho_formal || 0 }}, () => {
+            return !!document.getElementById('semTrabalhoFormal')?.checked ? 15 : 0;
+        });
 
-            const scoreMulherViolencia = {{ $json.data.pts_mulher_violencia || 0 }};
-            const scoreDependente = {{ $json.data.pts_dependente_tratamento || 0 }};
-            const scoreAcolhimento = {{ $json.data.pts_acolhimento || 0 }};
-            const scoreApp = {{ $json.data.pts_trabalhador_app || 0 }};
+        // Specific criteria (no fallback requested)
+        const scoreMulherViolencia = {{ $json.data.pts_mulher_violencia || 0 }};
+        const scoreDependente = {{ $json.data.pts_dependente_tratamento || 0 }};
+        const scoreAcolhimento = {{ $json.data.pts_acolhimento || 0 }};
+        const scoreApp = {{ $json.data.pts_trabalhador_app || 0 }};
 
-            const total = scoreRaca + scorePcd + scoreMulher + scoreMulherViolencia + scoreRenda + scoreFamilia + scoreDependente + scoreAcolhimento + scoreApp + scoreBolsa + scoreSemTrabalho;
+        const total = scoreRaca + scorePcd + scoreMulher + scoreMulherViolencia + scoreRenda + scoreFamilia + scoreDependente + scoreAcolhimento + scoreApp + scoreBolsa + scoreSemTrabalho;
 
-            const setBadge = (id, val, max) => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.innerText = `${val} / ${max}`;
-                    updateBadgeColor(el, val);
-                }
-            };
+        document.getElementById('score-raca-badge').innerText = `${scoreRaca} / 20`;
+        updateBadgeColor(document.getElementById('score-raca-badge'), scoreRaca);
 
-            setBadge('score-raca-badge', scoreRaca, 20);
-            setBadge('score-pcd-badge', scorePcd, 20);
-            setBadge('score-mulher-badge', scoreMulher, 15);
-            setBadge('score-mulher-violencia-badge', scoreMulherViolencia, 15);
-            setBadge('score-renda-badge', scoreRenda, 20);
-            setBadge('score-familia-badge', scoreFamilia, 20);
-            setBadge('score-dependente-tratamento-badge', scoreDependente, 10);
-            setBadge('score-acolhimento-badge', scoreAcolhimento, 20);
-            setBadge('score-app-badge', scoreApp, 45);
-            setBadge('score-bolsa-badge', scoreBolsa, 15);
-            setBadge('score-trabalho-badge', scoreSemTrabalho, 15);
-            
-            const elTotal = document.getElementById('score-total-display');
-            if (elTotal) elTotal.innerText = `${total} / 215`;
+        document.getElementById('score-pcd-badge').innerText = `${scorePcd} / 20`;
+        updateBadgeColor(document.getElementById('score-pcd-badge'), scorePcd);
+
+        document.getElementById('score-mulher-badge').innerText = `${scoreMulher} / 15`;
+        updateBadgeColor(document.getElementById('score-mulher-badge'), scoreMulher);
+
+        document.getElementById('score-mulher-violencia-badge').innerText = `${scoreMulherViolencia} / 15`;
+        updateBadgeColor(document.getElementById('score-mulher-violencia-badge'), scoreMulherViolencia);
+
+        document.getElementById('score-renda-badge').innerText = `${scoreRenda} / 20`;
+        updateBadgeColor(document.getElementById('score-renda-badge'), scoreRenda);
+
+        document.getElementById('score-familia-badge').innerText = `${scoreFamilia} / 20`;
+        updateBadgeColor(document.getElementById('score-familia-badge'), scoreFamilia);
+
+        document.getElementById('score-dependente-tratamento-badge').innerText = `${scoreDependente} / 10`;
+        updateBadgeColor(document.getElementById('score-dependente-tratamento-badge'), scoreDependente);
+
+        document.getElementById('score-acolhimento-badge').innerText = `${scoreAcolhimento} / 20`;
+        updateBadgeColor(document.getElementById('score-acolhimento-badge'), scoreAcolhimento);
+
+        document.getElementById('score-app-badge').innerText = `${scoreApp} / 45`;
+        updateBadgeColor(document.getElementById('score-app-badge'), scoreApp);
+
+        document.getElementById('score-bolsa-badge').innerText = `${scoreBolsa} / 15`;
+        updateBadgeColor(document.getElementById('score-bolsa-badge'), scoreBolsa);
+
+        document.getElementById('score-trabalho-badge').innerText = `${scoreSemTrabalho} / 15`;
+        updateBadgeColor(document.getElementById('score-trabalho-badge'), scoreSemTrabalho);
+
+        document.getElementById('score-total-display').innerText = `${total} / 215`;
         }
 
         function updateBadgeColor(el, val) {
-            if (!el) return;
             el.classList.remove('bg-success', 'bg-light', 'text-dark');
             if (val > 0) {
                 el.classList.add('bg-success');
@@ -2236,23 +2189,27 @@
         }
 
         async function checkMatriculaStatus() {
-            const cpf = document.getElementById('cpf')?.value;
-            if (!cpf) return;
+            const cpf = document.getElementById('cpf').value;
             const statusMsg = document.getElementById('matricula-status-msg');
             const ENDPOINT = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/letramento";
 
             try {
-                const resp = await fetch(`${ENDPOINT}?cpf=${encodeURIComponent(cpf)}`, { headers: getAuthHeaders() });
+                const resp = await fetch(`${ENDPOINT}?cpf=${encodeURIComponent(cpf)}`, {
+                    headers: getAuthHeaders()
+                });
                 const text = await resp.text();
                 const semConfirmacao = /ainda não existe confirma/i.test(text);
 
                 if (!semConfirmacao && text.trim() !== "") {
+                    // Já confirmado
                     document.getElementById('jaConfirmadoMsg').textContent = text;
                     new bootstrap.Modal(document.getElementById('modalJaConfirmado')).show();
+
+                    // Update UI to completed state
                     marcarMatriculaCompleta();
-                    if (statusMsg) statusMsg.innerHTML = "Sua matrícula já foi processada.";
+                    statusMsg.innerHTML = "Sua matrícula já foi processada.";
                 } else {
-                    if (statusMsg) statusMsg.innerHTML = "Aguardando confirmação da matrícula.";
+                    statusMsg.innerHTML = "Aguardando confirmação da matrícula.";
                 }
             } catch (err) {
                 console.warn("Erro ao verificar status da matrícula", err);
@@ -2260,654 +2217,634 @@
         }
 
         function marcarMatriculaCompleta() {
-            const s1Dot = document.getElementById('step1-dot');
-            const s1Text = document.getElementById('step1-text');
-            const btnMatricula = document.getElementById('btn-confirmar-matricula');
-            const s2Cont = document.getElementById('step2-container');
-            const s2Dot = document.getElementById('step2-dot');
-            const s2Text = document.getElementById('step2-text');
-            const areaAula = document.getElementById('area-confirmar-aula');
-            const successBanner = document.getElementById('matricula-success-banner');
-            const statusMsg = document.getElementById('matricula-status-msg');
+            // Step 1
+            document.getElementById('step1-dot').classList.replace('bg-secondary', 'bg-success');
+            document.getElementById('step1-text').classList.replace('text-muted', 'text-success');
+            document.getElementById('btn-confirmar-matricula').classList.add('d-none');
 
-            if (s1Dot) s1Dot.classList.replace('bg-secondary', 'bg-success');
-            if (s1Text) s1Text.classList.replace('text-muted', 'text-success');
-            if (btnMatricula) btnMatricula.classList.add('d-none');
-            if (s2Cont) s2Cont.classList.remove('opacity-50');
-            if (s2Dot) s2Dot.classList.replace('bg-secondary', 'bg-success');
-            if (s2Text) s2Text.classList.replace('text-muted', 'text-success');
-            if (areaAula) areaAula.classList.add('d-none');
-            if (successBanner) successBanner.classList.remove('d-none'); 
-            if (statusMsg) statusMsg.classList.add('d-none');
+            // Step 2
+            document.getElementById('step2-container').classList.remove('opacity-50');
+            document.getElementById('step2-dot').classList.replace('bg-secondary', 'bg-success');
+            document.getElementById('step2-text').classList.replace('text-muted', 'text-success');
+            document.getElementById('area-confirmar-aula').classList.add('d-none');
+
+            // Success banner
+            document.getElementById('matricula-success-banner').classList.remove('d-none');
+            document.getElementById('matricula-status-msg').classList.add('d-none');
         }
 
         function confirmarMatriculaUI() {
             const btn = document.getElementById('btn-confirmar-matricula');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Matrícula Confirmada';
-                btn.classList.replace('btn-primary', 'btn-success');
-            }
-            const s1Dot = document.getElementById('step1-dot');
-            const s1Text = document.getElementById('step1-text');
-            if (s1Dot) s1Dot.classList.replace('bg-secondary', 'bg-success');
-            if (s1Text) s1Text.classList.replace('text-muted', 'text-success');
-            const s2Cont = document.getElementById('step2-container');
-            if (s2Cont) s2Cont.classList.remove('opacity-50');
-            const areaAula = document.getElementById('area-confirmar-aula');
-            if (areaAula) areaAula.classList.remove('d-none');
-            const statusMsg = document.getElementById('matricula-status-msg');
-            if (statusMsg) statusMsg.innerHTML = "Matrícula confirmada! ✅<br>Agora confirme sua presença na aula inaugural.";
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Matrícula Confirmada';
+            btn.classList.replace('btn-primary', 'btn-success');
+
+            document.getElementById('step1-dot').classList.replace('bg-secondary', 'bg-success');
+            document.getElementById('step1-text').classList.replace('text-muted', 'text-success');
+
+            const step2Cont = document.getElementById('step2-container');
+            step2Cont.classList.remove('opacity-50');
+            document.getElementById('area-confirmar-aula').classList.remove('d-none');
+
+            document.getElementById('matricula-status-msg').innerHTML = "Matrícula confirmada! ✅<br>Agora confirme sua presença na aula inaugural.";
         }
 
         async function confirmarAula(acompanhado) {
             const ENDPOINT = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/letramento";
             const btnS = document.getElementById('btn-aula-sozinho');
             const btnA = document.getElementById('btn-aula-acompanhado');
-            if (!btnS || !btnA) return;
+
             btnS.disabled = true;
             btnA.disabled = true;
+
             const btnClicked = acompanhado ? btnA : btnS;
             const originalHtml = btnClicked.innerHTML;
             btnClicked.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+
             const payload = {
-                inscricao: document.getElementById('numInscricao')?.value,
-                cpf: document.getElementById('cpf')?.value,
-                nomecompleto: document.getElementById('nomeCompleto')?.value,
-                categoria: document.getElementById('categoria')?.value,
-                classificacao: 'Classificado',
+                inscricao: document.getElementById('numInscricao').value,
+                cpf: document.getElementById('cpf').value,
+                nomecompleto: document.getElementById('nomeCompleto').value,
+                categoria: document.getElementById('categoria').value,
+                classificacao: 'Classificado', // Or dynamic if available
                 etapa: "aula_inaugural",
                 acompanhado: acompanhado
             };
-                try {
-                    const resp = await fetch(ENDPOINT, {
-                        method: 'POST',
-                        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-                        body: JSON.stringify(payload)
-                    });
-                    if (resp.ok) {
-                        marcarMatriculaCompleta();
-                        const banner = document.getElementById('matricula-success-banner');
-                        if (banner) banner.innerHTML = `<i class="fas fa-check-double me-2"></i><strong>Confirmado!</strong><br>Sua presença ${acompanhado ? 'com acompanhante ' : ''}foi registrada.`;
-                    } else {
-                        throw new Error("Erro no servidor");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    btnS.disabled = false;
-                    btnA.disabled = false;
-                    btnClicked.innerHTML = originalHtml;
-                    const statusMsg = document.getElementById('matricula-status-msg');
-                    if (statusMsg) statusMsg.innerHTML = '<span class="text-danger">Erro ao confirmar. Tente novamente.</span>';
-                }
-            }
 
-        function hasFieldChanged(fieldId) {
-            const el = document.getElementById(fieldId);
-            if (!el) return false;
-            const currentVal = el.type === 'checkbox' ? (el.checked ? 'sim' : 'não') : el.value;
-            const originalVal = AppState.originalData[fieldId];
-            if (originalVal === undefined) return false;
-            return currentVal !== originalVal;
-        }
+            try {
+                const resp = await fetch(ENDPOINT, {
+                    method: 'POST',
+                    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify(payload)
+                });
 
-        function fillFormFromHomologated(data) {
-            if (!data) return;
-            const fieldMap = {
-                'nomeCompleto': data.nomeCompleto,
-                'nomeSocial': data.nomeSocial,
-                'telefone': data.whatsapp || data.telefone,
-                'email': data.email,
-                'cep': data.cep,
-                'logradouro': data.logradouro,
-                'numero': data.numero,
-                'complemento': data.complemento,
-                'bairro': data.bairro,
-                'rendaFamiliar': data.rendaFamiliar,
-                'composicaoFamiliar': data.composicaoFamiliar,
-                'dataInicioApp': data.data_inicio_app || data.inicioapp
-            };
-            Object.entries(fieldMap).forEach(([id, val]) => {
-                if (val !== undefined && val !== null && val !== '' && val !== 'undefined') {
-                    const el = document.getElementById(id);
-                    if (el) el.value = val;
-                }
-            });
-            const checkboxMap = {
-                'pcd': data.pcd,
-                'mulherChefe': data.mulherChefe,
-                'maeAtipica': data.maepaiatipico,
-                'dependenteTratamento': data.dependentetratamento,
-                'vitimaViolencia': data.mulherviolencia,
-                'programasSociais': data.programaBolsaFamilia,
-                'trabalhadorAplicativo': data.trabalhadorapp,
-                'acolhimentoInstitucional': data.acolhimento
-            };
-            const isSim = (v) => ['sim', 'true', true].includes(v);
-            Object.entries(checkboxMap).forEach(([id, val]) => {
-                if (val !== undefined && val !== null) {
-                    const el = document.getElementById(id);
-                    if (el) el.checked = isSim(val);
-                }
-            });
-            if (data.categoria) {
-                const sel = document.getElementById('categoria');
-                if (sel) {
-                    sel.value = data.categoria;
-                    if (sel.selectedIndex <= 0) {
-                        for (let i = 0; i < sel.options.length; i++) {
-                            if (sel.options[i].text.toLowerCase() === data.categoria.toLowerCase()) { sel.selectedIndex = i; break; }
-                        }
-                    }
-                    if (typeof updateCategoriaTexto === 'function') updateCategoriaTexto();
-                }
-            }
-            if (typeof toggleAppWorkerDate === 'function') toggleAppWorkerDate();
-            if (typeof updateScore === 'function') updateScore();
-            if (typeof updateDocs === 'function') updateDocs();
-        }
-
-            function showTab(tabId) {
-                const link = document.querySelector(`[data-tab="${tabId}"]`);
-                if (!link) return;
-
-                document.querySelectorAll('.nav-link, .tab-content').forEach(el => el.classList.remove('active'));
-                link.classList.add('active');
-                const target = document.getElementById(tabId);
-                if (target) {
-                    target.classList.add('active');
-                    if (tabId === 'documentacao') updateDocs();
-                    if (tabId === 'informativos') renderNotifs();
-                    if (tabId === 'matricula') checkMatriculaStatus();
-                }
-                if (window.innerWidth < 992) {
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar) sidebar.classList.remove('show');
-                }
-            }
-
-            function init() {
-                try {
-                    console.log("Portal iniciado. Verificando homologação...");
-                    checkHomologacao();
-
-                    // Tooltips & Navigation
-                    [].slice.call(document.querySelectorAll('[data-bs-toggle]')).map(el => new bootstrap.Tooltip(el));
-                    document.querySelectorAll('[data-tab]').forEach(link => {
-                        link.onclick = (e) => { e.preventDefault(); showTab(link.dataset.tab); };
-                    });
-                    const mobileToggle = document.getElementById('mobile-toggle');
-                    if (mobileToggle) mobileToggle.onclick = () => document.getElementById('sidebar').classList.toggle('show');
-
-                    // SPA Initial State
-                    const hash = window.location.hash || '#inscricao';
-                    showTab(hash.substring(1));
-
-                    // Scoring & Doc Listeners
-                    const scoringFields = ['pcd', 'mulherChefe', 'maeAtipica', 'dependenteTratamento', 'vitimaViolencia', 'categoria', 'semTrabalhoFormal', 'programasSociais', 'trabalhadorAplicativo', 'rendaFamiliar', 'composicaoFamiliar'];
-                    scoringFields.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) {
-                            el.onchange = () => {
-                                if (id === 'categoria') updateCategoriaTexto();
-                                if (id === 'trabalhadorAplicativo') toggleAppWorkerDate();
-                                updateScore();
-                                updateDocs();
-                            };
-                            if (['rendaFamiliar', 'composicaoFamiliar'].includes(id)) el.oninput = updateScore;
-                        }
-                    });
-
-                    // Address Toggle
-                    const chkAddr = document.getElementById('chkUpdateAddress');
-                    if (chkAddr) {
-                        chkAddr.onchange = (e) => {
-                            const block = document.getElementById('addressBlock');
-                            if (block) {
-                                block.style.opacity = e.target.checked ? "1" : "0.6";
-                                block.style.pointerEvents = e.target.checked ? "all" : "none";
-                            }
-                            updateDocs();
-                        };
-                    }
-
-                    // Enrollment Actions
-                    const btnMatricula = document.getElementById('btn-confirmar-matricula');
-                    if (btnMatricula) btnMatricula.onclick = confirmarMatriculaUI;
-                    const btnSozinho = document.getElementById('btn-aula-sozinho');
-                    if (btnSozinho) btnSozinho.onclick = () => confirmarAula(false);
-                    const btnAcompanhado = document.getElementById('btn-aula-acompanhado');
-                    if (btnAcompanhado) btnAcompanhado.onclick = () => confirmarAula(true);
-
-                    // Pre-fill Logic
-                    const sanitize = (v) => (v === 'undefined' || v === 'null' || !v) ? '' : v;
-                    const normalizeNao = (v) => { const s = sanitize(v).toLowerCase(); return s === 'nao' ? 'não' : s; };
-                    
-                    const dataP = {
-                        whatsapp: '{{ $json.data.whatsapp || "" }}',
-                        email: '{{ $json.data.email || "" }}',
-                        trabalhadorapp: normalizeNao('{{ $json.data.trabalhadorapp || "" }}'),
-                        maepaiatipico: normalizeNao('{{ $json.data.maepaiatipico || "" }}'),
-                        dependentetratamento: normalizeNao('{{ $json.data.dependentetratamento || "" }}'),
-                        mulherviolencia: normalizeNao('{{ $json.data.mulherviolencia || "" }}'),
-                        acolhimento: normalizeNao('{{ $json.data.acolhimento || "" }}'),
-                        pcd: normalizeNao('{{ $json.data.pcd || "" }}'),
-                        mulherChefe: normalizeNao('{{ $json.data.mulherChefe || "" }}'),
-                        programaBolsaFamilia: normalizeNao('{{ $json.data.programaBolsaFamilia || "" }}'),
-                        data_inicio_app: sanitize('{{ $json.data.data_inicio_app || "" }}'),
-                        teveEmprego: '{{ $json.data.teveEmpregoCarteiraAssinada || "" }}'.toLowerCase().trim(),
-                        categoria: '{{ $json.data.categoria || "" }}'.trim().toLowerCase()
-                    };
-
-                    const isSim = (v) => ['sim', 'true', true].includes(v);
-
-                    if (dataP.whatsapp && dataP.whatsapp !== 'undefined') document.getElementById('telefone').value = dataP.whatsapp;
-                    if (dataP.email && dataP.email !== 'undefined') document.getElementById('email').value = dataP.email;
-
-                    document.getElementById('trabalhadorAplicativo').checked = isSim(dataP.trabalhadorapp);
-                    document.getElementById('dataInicioApp').value = dataP.data_inicio_app || '';
-                    document.getElementById('pcd').checked = isSim(dataP.pcd);
-                    document.getElementById('maeAtipica').checked = isSim(dataP.maepaiatipico);
-                    document.getElementById('mulherChefe').checked = isSim(dataP.mulherChefe);
-                    document.getElementById('dependenteTratamento').checked = isSim(dataP.dependentetratamento);
-                    document.getElementById('vitimaViolencia').checked = isSim(dataP.mulherviolencia);
-                    document.getElementById('programasSociais').checked = isSim(dataP.programaBolsaFamilia);
-                    document.getElementById('acolhimentoInstitucional').checked = isSim(dataP.acolhimento);
-                    document.getElementById('semTrabalhoFormal').checked = dataP.teveEmprego !== 'sim';
-
-                    const numInsc = document.getElementById('numInscricao').value;
-                    const isPendente = !numInsc || numInsc.trim() === "" || numInsc.trim().toLowerCase() === "pendente";
-
-                    if (!isPendente) {
-                        ['lgpd', 'veracidade', 'imagem'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = true; });
-                        const inicioApp = '{{ $json.data.inicioapp || "" }}';
-                        if (inicioApp && inicioApp !== 'undefined') document.getElementById('dataInicioApp').value = inicioApp;
-                    }
-
-                    if (dataP.categoria && dataP.categoria !== 'undefined') {
-                        const sel = document.getElementById('categoria');
-                        sel.value = dataP.categoria;
-                        if (sel.selectedIndex <= 0) {
-                            for (let i = 0; i < sel.options.length; i++) {
-                                if (sel.options[i].text.toLowerCase() === dataP.categoria) { sel.selectedIndex = i; break; }
-                            }
-                        }
-                        updateCategoriaTexto();
-                    }
-
-                    toggleAppWorkerDate();
-                    checkPreenchimento(); 
-                    renderTimeline();
-                    updateProgress();
-                    updateBadge();
-                    checkRecurso();
-                    updateScore();
-                    updateDocs();
-
-                    if (!isPendente) {
-                        fetch(`https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-classificados?inscricao=${encodeURIComponent(numInsc)}`, { headers: getAuthHeaders() })
-                            .then(r => r.json())
-                            .then(d => {
-                                if (d && d.resultado === "Candidato(a) classificado(a)") {
-                                    const tabItem = document.getElementById('tab-matricula-item');
-                                    if (tabItem) tabItem.classList.remove('d-none');
-                                }
-                            }).catch(e => console.warn(e));
-                    }
-
-                    // Initial Data Capture
-                    const fields = ['chkUpdateAddress', 'pcd', 'trabalhadorAplicativo', 'maeAtipica', 'dependenteTratamento', 'vitimaViolencia', 'categoria', 'telefone', 'email', 'cep', 'logradouro', 'numero', 'complemento', 'bairro'];
-                    fields.forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) AppState.originalData[id] = el.type === 'checkbox' ? (el.checked ? 'sim' : 'não') : el.value;
-                    });
-
-                } catch (err) {
-                    console.error("ERRO CRÍTICO NA INICIALIZAÇÃO DO PORTAL:", err);
-                }
-            }
-
-            function checkHomologacao() {
-                const status = (AppState.status_homologacao || "").toString().trim();
-                const isHomologada = /homologada/i.test(status) || status.toLowerCase().includes("identificada");
-                const container = document.getElementById('reuseContainer');
-                if (isHomologada && container) {
-                    container.classList.remove('d-none');
-                    const sw = document.getElementById('homologadaSwitch');
-                    if (sw) sw.checked = true;
-                    const reuseSw = document.getElementById('reaproveitarDadosSwitch');
-                    if (reuseSw && AppState.reaproveitar_inscricao === true) {
-                        reuseSw.checked = true;
-                        document.getElementById('reaproveitamentoMsg').classList.remove('d-none');
-                    }
-                } else if (container) {
-                    container.classList.add('d-none');
-                }
-            }
-
-            function checkPreenchimento() {
-                const num = document.getElementById('numInscricao').value;
-                const isPending = !num || num.trim() === "" || num.trim().toLowerCase() === "pendente";
-                const etapa = AppState.cronograma.find(s => s.id === 2);
-                const now = AppState.currentDate;
-                const isOutOfPeriod = now < new Date(etapa.inicio + 'T00:00:00') || now > new Date(etapa.fim + 'T23:59:59');
-                const isReaproveitamento = AppState.reaproveitar_inscricao === true && AppState.ja_editada !== true;
-
-                if (isReaproveitamento) document.getElementById('reaproveitamentoMsg')?.classList.remove('d-none');
-
-                if (!isPending || (isOutOfPeriod && !isReaproveitamento)) {
-                    if (isOutOfPeriod && isPending) {
-                        const statusMsg = now < new Date(etapa.inicio) ? 'Inscrições em breve.' : 'Inscrições encerradas.';
-                        const elMsg = document.getElementById('prazoStatusMsg');
-                        if (elMsg) elMsg.innerText = statusMsg;
-                        document.getElementById('inscricaoForaPrazoMsg')?.classList.remove('d-none');
-                    }
-                    const elDisplay = document.getElementById('numInscricaoDisplay');
-                    if (elDisplay) elDisplay.innerText = isPending ? 'Encerrado' : num;
-
-                    if (isReaproveitamento) {
-                        // In reaproveitamento mode, we keep fields editable but show specific messages
-                        document.getElementById('formActionsContainer').classList.remove('d-none');
-                        document.getElementById('docsUploadContainer').classList.remove('d-none');
-                        document.getElementById('btnVisualizarInscricaoContainer').classList.remove('d-none');
-                        document.getElementById('docsAlreadySentMsg').classList.add('d-none');
-                    } else {
-                        // Default locking
-                        document.querySelectorAll('#formInscricao input, #formInscricao select, #formInscricao textarea, #formInscricao button').forEach(el => el.disabled = true);
-                        document.getElementById('formActionsContainer').classList.add('d-none');
-                        document.getElementById('docsUploadContainer').classList.add('d-none');
-                        document.getElementById('btnVisualizarInscricaoContainer').classList.remove('d-none');
-                        if (!isPending) document.getElementById('docsAlreadySentMsg').classList.remove('d-none');
-                    }
-
-                    // Hide null/empty fields in the main form (Inscrição Tab)
-                    if (!isReaproveitamento) {
-                        const fieldsToHide = ['nomeSocial', 'complemento'];
-                        fieldsToHide.forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) {
-                                const val = el.value || '';
-                                const cleanVal = val.trim().toUpperCase();
-                                if (cleanVal === '' || cleanVal === '-') {
-                                    el.closest('.col-md-3, .col-md-4, .col-md-6, .col-12')?.classList.add('d-none');
-                                }
-                            }
-                        });
-                    }
-
-                    // Also show cronograma modal if it's the first time and we are out of period
-                    if (isOutOfPeriod && !window._periodModalShown && !isReaproveitamento) {
-                        window._periodModalShown = true;
-                        new bootstrap.Modal(document.getElementById('modalPrazoInscricao')).show();
-                    }
-
+                if (resp.ok) {
+                    marcarMatriculaCompleta();
+                    // Custom adjustments for the success state after click
+                    document.getElementById('matricula-success-banner').innerHTML = `<i class="fas fa-check-double me-2"></i><strong>Confirmado!</strong><br>Sua presença ${acompanhado ? 'com acompanhante ' : ''}foi registrada.`;
                 } else {
-                    document.getElementById('btnVisualizarInscricaoContainer').classList.remove('d-none');
-                    document.getElementById('inscricaoForaPrazoMsg').classList.add('d-none');
+                    throw new Error("Erro no servidor");
                 }
-                updateScore();
+            } catch (err) {
+                console.error(err);
+                btnS.disabled = false;
+                btnA.disabled = false;
+                btnClicked.innerHTML = originalHtml;
+                document.getElementById('matricula-status-msg').innerHTML = '<span class="text-danger">Erro ao confirmar. Tente novamente.</span>';
+            }
+        }
+
+        function showTab(tabId) {
+            const link = document.querySelector(`[data-tab="${tabId}"]`);
+            if (!link) return;
+
+            document.querySelectorAll('.nav-link, .tab-content').forEach(el => el.classList.remove('active'));
+            link.classList.add('active');
+            const target = document.getElementById(tabId);
+            if (target) {
+                target.classList.add('active');
+                if (tabId === 'documentacao') updateDocs();
+                if (tabId === 'informativos') renderNotifs();
+                if (tabId === 'matricula') checkMatriculaStatus();
+            }
+            if (window.innerWidth < 992) {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) sidebar.classList.remove('show');
+            }
+        }
+
+        function init() {
+            // Show Edital Modal First
+            const modalEdital = new bootstrap.Modal(document.getElementById('modalEdital'));
+            modalEdital.show();
+
+            // Inicializar SPA
+            const hash = window.location.hash || '#inscricao';
+            showTab(hash.substring(1));
+
+            // Tooltips
+            // Clean URL and remove sensitive query parameters (code, state, etc.)
+            if (window.location.search) {
+                window.history.replaceState(null, "", "/areadocandidado");
             }
 
-            let lastDocsKey = '';
-            function updateDocs() {
-                const num = document.getElementById('numInscricao').value;
-                if (num && num.trim() !== "" && num.trim().toLowerCase() !== "pendente") return; // Hide dynamic fields if form is read-only
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
 
-                const chkAddress = !!document.getElementById('chkUpdateAddress')?.checked;
-                const pcdVal = !!document.getElementById('pcd')?.checked;
-                const appVal = !!document.getElementById('trabalhadorAplicativo')?.checked;
-                const maeVal = !!document.getElementById('maeAtipica')?.checked;
-                const depVal = !!document.getElementById('dependenteTratamento')?.checked;
-                const catVal = (document.getElementById('categoria')?.value || '').trim().toLowerCase();
+            // SPA Navigation
+            document.querySelectorAll('[data-tab]').forEach(link => {
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    showTab(link.dataset.tab);
+                };
+            });
 
-                const container = document.getElementById('dynamicUploads');
-                const isEmpty = !container || container.innerHTML.trim() === '';
+            document.getElementById('mobile-toggle').onclick = () => document.getElementById('sidebar').classList.toggle('show');
 
-                const currentKey = `${chkAddress}|${pcdVal}|${appVal}|${maeVal}|${depVal}|${catVal}`;
-                if (currentKey === lastDocsKey && !isEmpty) {
-                    checkDocsReady();
-                    return;
+            // Listeners for scoring and docs
+            document.getElementById('pcd').onchange = () => { updateScore(); updateDocs(); };
+            document.getElementById('mulherChefe').onchange = updateScore;
+            document.getElementById('maeAtipica').onchange = updateDocs;
+            document.getElementById('dependenteTratamento').onchange = updateDocs;
+            document.getElementById('vitimaViolencia').onchange = updateDocs;
+            document.getElementById('categoria').onchange = () => { updateCategoriaTexto(); updateDocs(); };
+
+            // Enrollment listeners
+            document.getElementById('btn-confirmar-matricula').onclick = confirmarMatriculaUI;
+            document.getElementById('btn-aula-sozinho').onclick = () => confirmarAula(false);
+            document.getElementById('btn-aula-acompanhado').onclick = () => confirmarAula(true);
+
+
+            // Form Logic
+            document.getElementById('chkUpdateAddress').onchange = (e) => {
+                document.getElementById('addressBlock').style.opacity = e.target.checked ? "1" : "0.6";
+                document.getElementById('addressBlock').style.pointerEvents = e.target.checked ? "all" : "none";
+            };
+
+            // Pre-fill WhatsApp and Email
+            const whatsapp = '{{ $json.data.whatsapp || "" }}';
+            const email = '{{ $json.data.email || "" }}';
+            if (whatsapp && whatsapp !== 'undefined') document.getElementById('telefone').value = whatsapp;
+            if (email && email !== 'undefined') document.getElementById('email').value = email;
+
+            // Robust pre-fill for problematic fields (with "nao" -> "não" normalization)
+            const sanitize = (v) => (v === 'undefined' || v === 'null' || !v) ? '' : v;
+            const normalizeNao = (v) => {
+                const s = sanitize(v).toLowerCase();
+                return s === 'nao' ? 'não' : s;
+            };
+
+            const dataP = {
+                trabalhadorapp: normalizeNao('{{ $json.data.trabalhadorapp || "" }}'),
+                maepaiatipico: normalizeNao('{{ $json.data.maepaiatipico || "" }}'),
+                dependentetratamento: normalizeNao('{{ $json.data.dependentetratamento || "" }}'),
+                mulherviolencia: normalizeNao('{{ $json.data.mulherviolencia || "" }}'),
+                acolhimento: normalizeNao('{{ $json.data.acolhimento || "" }}'),
+                pcd: normalizeNao('{{ $json.data.pcd || "" }}'),
+                mulherChefe: normalizeNao('{{ $json.data.mulherChefe || "" }}'),
+                programaBolsaFamilia: normalizeNao('{{ $json.data.programaBolsaFamilia || "" }}'),
+                data_inicio_app: sanitize('{{ $json.data.data_inicio_app || "" }}')
+            };
+
+            const isSim = (v) => {
+                const s = (v || '').toString().toLowerCase().trim();
+                return s === 'sim' || s === 'true';
+            };
+
+            document.getElementById('trabalhadorAplicativo').checked = isSim(dataP.trabalhadorapp);
+            document.getElementById('dataInicioApp').value = dataP.data_inicio_app || '';
+            document.getElementById('pcd').checked = isSim(dataP.pcd);
+            document.getElementById('maeAtipica').checked = isSim(dataP.maepaiatipico);
+            document.getElementById('mulherChefe').checked = isSim(dataP.mulherChefe);
+            document.getElementById('dependenteTratamento').checked = isSim(dataP.dependentetratamento);
+            document.getElementById('vitimaViolencia').checked = isSim(dataP.mulherviolencia);
+            document.getElementById('programasSociais').checked = isSim(dataP.programaBolsaFamilia);
+            document.getElementById('acolhimentoInstitucional').checked = isSim(dataP.acolhimento);
+
+            // Enrollment reuse initialization
+            const homologadoAnterior = isSim('{{ $json.data.inscricao_homologada_anterior || "" }}');
+            if (homologadoAnterior) {
+                document.getElementById('containerReaproveitamento').classList.remove('d-none');
+                document.getElementById('swInscricaoAnterior').checked = true;
+                document.getElementById('swReaproveitarDados').checked = isSim('{{ $json.data.reaproveitar_dados_anterior || "" }}');
+            }
+
+            // Enrollment-based pre-fill (if already enrolled)
+            const numInsc = document.getElementById('numInscricao').value;
+            const isPendente = !numInsc || numInsc.trim() === "" || numInsc.trim().toLowerCase() === "pendente";
+
+            if (!isPendente) {
+                // Pre-fill Declarations
+                const decLgpd = document.getElementById('lgpd');
+                const decVeracidade = document.getElementById('veracidade');
+                const decImagem = document.getElementById('imagem');
+                if (decLgpd) decLgpd.checked = true;
+                if (decVeracidade) decVeracidade.checked = true;
+                if (decImagem) decImagem.checked = true;
+
+                // Pre-fill App Worker Date if enrollment is active and variable exists
+                const inicioApp = '{{ $json.data.inicioapp || "" }}';
+                const fieldDataInicio = document.getElementById('dataInicioApp');
+                if (inicioApp && fieldDataInicio && inicioApp !== 'undefined') {
+                    fieldDataInicio.value = inicioApp;
                 }
-                lastDocsKey = currentKey;
+            }
 
-                if (container) container.innerHTML = '';
+            // Logic for "Não tenho trabalho formal" (checked if NOT "sim" in CadÚnico)
+            const teveEmprego = '{{ $json.data.teveEmpregoCarteiraAssinada || "" }}'.toLowerCase().trim();
+            document.getElementById('semTrabalhoFormal').checked = teveEmprego !== 'sim';
 
-                const isReaproveitamento = AppState.reaproveitar_inscricao === true && AppState.ja_editada !== true;
+            // Pre-fill Category
+            let categoria = '{{ $json.data.categoria || "" }}'.trim().toLowerCase();
+            if (categoria && categoria !== 'undefined') {
+                const select = document.getElementById('categoria');
+                // Try setting by value (slug)
+                select.value = categoria;
 
-                const groups = [];
-
-                // 1. Identificação Básica (Always required in normal flow, dispensed in Reaproveitamento unless changed - but identity fields are locked)
-                if (!isReaproveitamento) {
-                    groups.push({
-                        title: "Identificação Básica", icon: "fa-id-card",
-                        fields: ["Documento de identificação — FRENTE", "Documento de identificação — VERSO"]
-                    });
-                }
-
-                // 2. Endereço
-                if (document.getElementById('chkUpdateAddress').checked) {
-                    if (!isReaproveitamento || hasFieldChanged('chkUpdateAddress') || hasFieldChanged('cep') || hasFieldChanged('logradouro') || hasFieldChanged('numero') || hasFieldChanged('bairro')) {
-                        groups.push({ title: "Endereço Residencial", icon: "fa-map-marker-alt", fields: ["Comprovante de Residência Atualizado"] });
+                // If not matched by value, try matching by option text
+                if (select.selectedIndex <= 0) {
+                    for (let i = 0; i < select.options.length; i++) {
+                        if (select.options[i].text.toLowerCase() === categoria) {
+                            select.selectedIndex = i;
+                            break;
+                        }
                     }
                 }
+                // Explicitly trigger the text update
+                updateCategoriaTexto();
+            }
 
-                // 3. PCD
-                if (pcdVal) {
-                    if (!isReaproveitamento || hasFieldChanged('pcd')) {
-                        groups.push({ title: "Pessoa com Deficiência", icon: "fa-wheelchair", fields: ["Laudo Médico PCD"] });
-                    }
+            // Ensure app worker date visibility is correct
+            toggleAppWorkerDate();
+
+            // Sync UI state (text and docs)
+            checkPreenchimento(); // verify if loaded via Webhook
+            renderTimeline();
+            updateProgress();
+            renderNotifs();
+            updateBadge();
+            checkRecurso();
+            updateScore();
+            updateDocs();
+
+            // Check classification for Matrícula tab visibility
+            if (!isPendente) {
+                const ENDPOINT_CLASSIF = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-classificados";
+                fetch(`${ENDPOINT_CLASSIF}?inscricao=${encodeURIComponent(numInsc)}`, {
+                    headers: getAuthHeaders()
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.resultado === "Candidato(a) classificado(a)") {
+                            const tabItem = document.getElementById('tab-matricula-item');
+                            if (tabItem) tabItem.classList.remove('d-none');
+                        }
+                    })
+                    .catch(error => console.warn("Erro ao consultar classificação:", error));
+            }
+        }
+
+        function toggleAppWorkerDate() {
+            const isApp = document.getElementById('trabalhadorAplicativo').checked;
+            const container = document.getElementById('appWorkerDateContainer');
+            const input = document.getElementById('dataInicioApp');
+
+            container.classList.toggle('d-none', !isApp);
+            if (input) {
+                input.disabled = !isApp;
+                if (isApp) input.setAttribute('required', 'required');
+                else input.removeAttribute('required');
+            }
+            updateScore();
+            updateDocs();
+        }
+
+        function updateCategoriaTexto() {
+            const val = document.getElementById('categoria').value;
+            const desc = document.getElementById('categoriaDescricao');
+            const cnhInfo = document.getElementById('cnhInfo');
+            const isCnhNeeded = val.startsWith('adicao') || val.startsWith('mudanca');
+
+            cnhInfo.classList.toggle('d-none', !isCnhNeeded);
+
+            const numCnh = document.getElementById('numeroCnh');
+            const valCnh = document.getElementById('validadeCnh');
+            if (numCnh && valCnh) {
+                numCnh.disabled = !isCnhNeeded;
+                valCnh.disabled = !isCnhNeeded;
+                if (isCnhNeeded) {
+                    numCnh.setAttribute('required', 'required');
+                    valCnh.setAttribute('required', 'required');
+                } else {
+                    numCnh.removeAttribute('required');
+                    valCnh.removeAttribute('required');
+                }
+            }
+
+            if (val === 'primeira_a') { desc.innerText = 'Para quem não possui CNH e deseja obter a carteira para pilotar motocicleta, motoneta ou ciclomotor.'; desc.classList.remove('d-none'); }
+            else if (val === 'primeira_b') { desc.innerText = 'Para quem não possui CNH e deseja obter a carteira para dirigir automóvel de passeio.'; desc.classList.remove('d-none'); }
+            else if (val === 'adicao_a') { desc.innerText = 'Para quem já possui CNH de carro (Categoria B ou superior) e deseja incluir a permissão para pilotar motocicleta.'; desc.classList.remove('d-none'); }
+            else if (val === 'adicao_b') { desc.innerText = 'Para quem já possui CNH de moto (Categoria A) e deseja incluir a permissão para dirigir automóvel de passeio.'; desc.classList.remove('d-none'); }
+            else { desc.classList.add('d-none'); }
+        }
+
+        async function buscarCEP(cepVal) {
+            const cep = cepVal.replace(/\D/g, '');
+            if (cep.length !== 8) return;
+
+            try {
+                const res = await fetch(`https://brasilapi.com.br/api/cep/v1/${cep}`);
+                if (!res.ok) throw new Error('CEP não encontrado');
+                const data = await res.json();
+
+                document.getElementById('logradouro').value = data.street || '';
+                document.getElementById('bairro').value = data.neighborhood || '';
+                document.getElementById('cidade').value = data.city || '';
+                document.getElementById('uf').value = data.state || '';
+            } catch (err) {
+                console.warn(err);
+                new bootstrap.Modal(document.getElementById('modalErroCep')).show();
+            }
+        }
+
+        function avancarParaDocumentacao() {
+            const form = document.getElementById('formInscricao');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                new bootstrap.Modal(document.getElementById('modalAlertaCampos')).show();
+                return;
+            }
+            document.querySelector('[data-tab="documentacao"]').click();
+        }
+
+        function checkPreenchimento() {
+            const num = document.getElementById('numInscricao').value;
+            const isPending = !num || num.trim() === "" || num.trim().toLowerCase() === "pendente";
+
+            // Check enrollment period (ID 2 in cronograma)
+            const etapa = AppState.cronograma.find(s => s.id === 2);
+            const inicio = new Date(etapa.inicio + 'T00:00:00');
+            const fim = new Date(etapa.fim + 'T23:59:59');
+            const now = AppState.currentDate;
+            const isOutOfPeriod = now < inicio || now > fim;
+
+            if (!isPending || isOutOfPeriod) {
+                // If isOutOfPeriod and isPending, show specific warning
+                if (isOutOfPeriod && isPending) {
+                    const statusMsg = now < inicio ? 'As inscrições ainda não foram iniciadas.' : 'O período de inscrições já se encerrou.';
+                    document.getElementById('prazoStatusMsg').innerText = statusMsg;
+                    document.getElementById('inscricaoForaPrazoMsg').classList.remove('d-none');
+                    document.getElementById('inscricaoForaPrazoMsg').innerText = statusMsg + ' O formulário está disponível apenas para visualização.';
                 }
 
-                // 4. Trabalhador de Aplicativo
-                if (appVal) {
-                    if (!isReaproveitamento || hasFieldChanged('trabalhadorAplicativo')) {
-                        groups.push({ title: "Trabalhador de Aplicativo", icon: "fa-motorcycle", fields: ["Comprovante de Aplicativo"] });
+                document.getElementById('numInscricaoDisplay').innerText = isPending ? 'Período Encerrado' : num;
+                document.querySelectorAll('#formInscricao input, #formInscricao select, #formInscricao textarea, #formInscricao button').forEach(el => el.disabled = true);
+                document.getElementById('formActionsContainer').classList.add('d-none');
+                document.getElementById('docsUploadContainer').classList.add('d-none');
+                document.getElementById('btnVisualizarInscricaoContainer').classList.remove('d-none');
+                if (!isPending) document.getElementById('docsAlreadySentMsg').classList.remove('d-none');
+
+                // Hide null/empty fields in the main form (Inscrição Tab)
+                const fieldsToHide = ['nomeSocial', 'complemento'];
+                fieldsToHide.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const val = el.value || '';
+                        const cleanVal = val.trim().toUpperCase();
+                        if (cleanVal === '' || cleanVal === '-') {
+                            el.closest('.col-md-3, .col-md-4, .col-md-6, .col-12')?.classList.add('d-none');
+                        }
                     }
+                });
+
+                // Also show cronograma modal if it's the first time and we are out of period
+                if (isOutOfPeriod && !window._periodModalShown) {
+                    window._periodModalShown = true;
+                    new bootstrap.Modal(document.getElementById('modalPrazoInscricao')).show();
                 }
 
-                // 5. Mãe/Pai Atípico
-                if (maeVal) {
-                    if (!isReaproveitamento || hasFieldChanged('maeAtipica')) {
-                        groups.push({
-                            title: "Mãe/Pai Atípico", icon: "fa-child",
-                            fields: [
-                                "Laudo/relatório/prescrição emitido por profissional ou instituição registrada",
-                                "Declaração técnica do CRAS/CREAS ou certificação da Assistência Social",
-                                "Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal"
-                            ]
-                        });
-                    }
+            } else {
+                document.getElementById('btnVisualizarInscricaoContainer').classList.remove('d-none');
+                document.getElementById('inscricaoForaPrazoMsg').classList.add('d-none');
+            }
+            updateScore();
+        }
+
+        let lastDocsKey = '';
+        function updateDocs() {
+            const num = document.getElementById('numInscricao').value;
+            if (num && num.trim() !== "" && num.trim().toLowerCase() !== "pendente") return; // Hide dynamic fields if form is read-only
+
+            const chkAddress = !!document.getElementById('chkUpdateAddress')?.checked;
+            const pcdVal = !!document.getElementById('pcd')?.checked;
+            const appVal = !!document.getElementById('trabalhadorAplicativo')?.checked;
+            const maeVal = !!document.getElementById('maeAtipica')?.checked;
+            const depVal = !!document.getElementById('dependenteTratamento')?.checked;
+            const catVal = (document.getElementById('categoria')?.value || '').trim().toLowerCase();
+
+            const container = document.getElementById('dynamicUploads');
+            const isEmpty = !container || container.innerHTML.trim() === '';
+
+            const currentKey = `${chkAddress}|${pcdVal}|${appVal}|${maeVal}|${depVal}|${catVal}`;
+            if (currentKey === lastDocsKey && !isEmpty) {
+                checkDocsReady();
+                return;
+            }
+            lastDocsKey = currentKey;
+
+            if (container) container.innerHTML = '';
+
+            const groups = [
+                {
+                    title: "Identificação Básica", icon: "fa-id-card",
+                    fields: ["Documento de identificação — FRENTE", "Documento de identificação — VERSO"]
                 }
+            ];
 
-                // 6. Dependente em Tratamento
-                if (depVal) {
-                    if (!isReaproveitamento || hasFieldChanged('dependenteTratamento')) {
-                        groups.push({
-                            title: "Dependente em Tratamento Contínuo", icon: "fa-notes-medical",
-                            fields: [
-                                "Declaração de tratamento terapêutico contínuo emitida por profissional de saúde",
-                                "Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial"
-                            ]
-                        });
-                    }
-                }
+            if (document.getElementById('chkUpdateAddress').checked) {
+                groups.push({ title: "Endereço Residencial", icon: "fa-map-marker-alt", fields: ["Comprovante de Residência Atualizado"] });
+            }
+            if (pcdVal) {
+                groups.push({ title: "Pessoa com Deficiência", icon: "fa-wheelchair", fields: ["Laudo Médico PCD"] });
+            }
+            if (appVal) {
+                groups.push({ title: "Trabalhador de Aplicativo", icon: "fa-motorcycle", fields: ["Comprovante de Aplicativo"] });
+            }
+            if (maeVal) {
+                groups.push({
+                    title: "Mãe/Pai Atípico", icon: "fa-child",
+                    fields: [
+                        "Laudo/relatório/prescrição emitido por profissional ou instituição registrada",
+                        "Declaração técnica do CRAS/CREAS ou certificação da Assistência Social",
+                        "Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal"
+                    ]
+                });
+            }
+            if (depVal) {
+                groups.push({
+                    title: "Dependente em Tratamento Contínuo", icon: "fa-notes-medical",
+                    fields: [
+                        "Declaração de tratamento terapêutico contínuo emitida por profissional de saúde",
+                        "Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial"
+                    ]
+                });
+            }
 
-                // 7. CNH para Adição/Mudança
-                const cat = document.getElementById('categoria').value;
-                if (cat.startsWith('adicao') || cat.startsWith('mudanca')) {
-                    if (!isReaproveitamento || hasFieldChanged('categoria')) {
-                        groups.push({ title: "Dados da CNH Atual", icon: "fa-id-badge", fields: ["Arquivo da CNH Atual"] });
-                    }
-                }
+            const cat = document.getElementById('categoria').value;
+            if (cat.startsWith('adicao') || cat.startsWith('mudanca')) {
+                groups.push({ title: "Dados da CNH Atual", icon: "fa-id-badge", fields: ["Arquivo da CNH Atual"] });
+            }
 
-                groups.forEach(group => {
-                    const groupDiv = document.createElement('div');
-                    groupDiv.className = 'mb-4';
+            groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'mb-4';
 
-                    let html = `<h6 class="mb-3 text-primary border-bottom pb-2"><i class="fas ${group.icon} me-2 opacity-75"></i>${group.title}</h6>`;
-                    html += `<div class="row g-4">`;
+                let html = `<h6 class="mb-3 text-primary border-bottom pb-2"><i class="fas ${group.icon} me-2 opacity-75"></i>${group.title}</h6>`;
+                html += `<div class="row g-4">`;
 
-                    group.fields.forEach(f => {
-                        const safeId = f.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                        html += `
+                group.fields.forEach(f => {
+                    const safeId = f.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                    html += `
                         <div class="col-md-6 mb-3">
                             <label class="form-label mt-0 pt-0 fw-bold small text-muted">${f}</label>
                             <input type="file" class="form-control file-doc" accept=".pdf,.jpg,.jpeg,.png" data-label="${f}" onchange="handleFileChange(this)">
                             <div id="status-${safeId}" class="mt-2" style="min-height: 24px;"></div>
                         </div>`;
-                    });
-
-                    html += `</div>`;
-                    groupDiv.innerHTML = html;
-                    container.appendChild(groupDiv);
-                });
-                checkDocsReady();
-            }
-
-            function checkDocsReady() {
-                const files = document.querySelectorAll('.file-doc');
-                const btn = document.getElementById('btnFinalizarDocs');
-                if (!btn) return;
-
-                let allAttached = true;
-                if (files.length === 0) allAttached = false;
-
-                files.forEach(input => {
-                    if (!input.files || !input.files[0]) {
-                        allAttached = false;
-                    }
                 });
 
-                // Visually look disabled but remain clickable to show the validation modal
-                if (!allAttached) {
-                    btn.classList.add('btn-pending-docs');
-                } else {
-                    btn.classList.remove('btn-pending-docs');
+                html += `</div>`;
+                groupDiv.innerHTML = html;
+                container.appendChild(groupDiv);
+            });
+            checkDocsReady();
+        }
+
+        function checkDocsReady() {
+            const files = document.querySelectorAll('.file-doc');
+            const btn = document.getElementById('btnFinalizarDocs');
+            if (!btn) return;
+
+            let allAttached = true;
+            if (files.length === 0) allAttached = false;
+
+            files.forEach(input => {
+                if (!input.files || !input.files[0]) {
+                    allAttached = false;
                 }
-                btn.disabled = false;
+            });
+
+            // Visually look disabled but remain clickable to show the validation modal
+            if (!allAttached) {
+                btn.classList.add('btn-pending-docs');
+            } else {
+                btn.classList.remove('btn-pending-docs');
             }
+            btn.disabled = false;
+        }
 
-            function mostrarDocumentosPendentes() {
-                const files = document.querySelectorAll('.file-doc');
-                const lista = document.getElementById('listaDocsPendentes');
-                if (!lista) return;
+        function mostrarDocumentosPendentes() {
+            const files = document.querySelectorAll('.file-doc');
+            const lista = document.getElementById('listaDocsPendentes');
+            if (!lista) return;
 
-                lista.innerHTML = '';
-                files.forEach(input => {
-                    if (!input.files || !input.files[0]) {
-                        const label = input.getAttribute('data-label') || "Documento não identificado";
-                        const li = document.createElement('li');
-                        li.className = 'list-group-item d-flex align-items-center border-0 px-0 bg-transparent';
-                        li.innerHTML = `<i class="fas fa-times-circle text-danger me-3"></i><span class="small fw-medium">${label}</span>`;
-                        lista.appendChild(li);
-                    }
-                });
+            lista.innerHTML = '';
+            files.forEach(input => {
+                if (!input.files || !input.files[0]) {
+                    const label = input.getAttribute('data-label') || "Documento não identificado";
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex align-items-center border-0 px-0 bg-transparent';
+                    li.innerHTML = `<i class="fas fa-times-circle text-danger me-3"></i><span class="small fw-medium">${label}</span>`;
+                    lista.appendChild(li);
+                }
+            });
 
-                new bootstrap.Modal(document.getElementById('modalDocumentosPendentes')).show();
-            }
+            new bootstrap.Modal(document.getElementById('modalDocumentosPendentes')).show();
+        }
 
-            async function handleFileChange(input) {
-                checkDocsReady();
+        async function handleFileChange(input) {
+            checkDocsReady();
 
-                const label = input.getAttribute('data-label');
-                const safeId = label.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                const statusDiv = document.getElementById(`status-${safeId}`);
+            const label = input.getAttribute('data-label');
+            const safeId = label.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const statusDiv = document.getElementById(`status-${safeId}`);
 
-                if (!statusDiv) return;
+            if (!statusDiv) return;
 
-                if (label.includes('identificação — FRENTE') || label.includes('identificação — VERSO')) {
-                    if (input.files && input.files[0]) {
-                        statusDiv.innerHTML = '<span class="badge bg-secondary opacity-75 validation-loading"><i class="fas fa-spinner fa-spin me-2"></i>PROCESSANDO DOCUMENTO...</span>';
+            if (label.includes('identificação — FRENTE') || label.includes('identificação — VERSO')) {
+                if (input.files && input.files[0]) {
+                    statusDiv.innerHTML = '<span class="badge bg-secondary opacity-75 validation-loading"><i class="fas fa-spinner fa-spin me-2"></i>PROCESSANDO DOCUMENTO...</span>';
 
-                        const formData = new FormData();
-                        formData.append('file', input.files[0]);
-                        formData.append('documento', label);
-                        formData.append('cpf', '{{ $json.data.cpf || "" }}');
+                    const formData = new FormData();
+                    formData.append('file', input.files[0]);
+                    formData.append('documento', label);
+                    formData.append('cpf', '{{ $json.data.cpf || "" }}');
 
-                        try {
-                            const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/validadar-documento', {
-                                method: 'POST',
-                                headers: getAuthHeaders(),
-                                body: formData
-                            });
+                    try {
+                        const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/validadar-documento', {
+                            method: 'POST',
+                            headers: getAuthHeaders(),
+                            body: formData
+                        });
 
-                            if (response.ok) {
-                                const text = await response.text();
-                                let val = text || 'Processado';
-                                try {
-                                    const result = JSON.parse(text);
-                                    val = result.status || result.mensagem || text;
-                                } catch (e) {
-                                    // use text as is
-                                }
-                                const isError = val.toLowerCase().includes('inválido') || val.toLowerCase().includes('erro');
-                                if (isError) {
-                                    statusDiv.innerHTML = `<span class="badge bg-danger p-2"><i class="fas fa-exclamation-circle me-1"></i>${val.toUpperCase()} — TENTE OUTRO ARQUIVO</span>`;
-                                    statusDiv.classList.add('has-invalid-doc');
-                                } else {
-                                    statusDiv.innerHTML = `<span class="badge bg-success p-2"><i class="fas fa-check-circle me-1"></i>DOCUMENTO ANEXADO</span>`;
-                                    statusDiv.classList.remove('has-invalid-doc');
-                                }
+                        if (response.ok) {
+                            const text = await response.text();
+                            let val = text || 'Processado';
+                            try {
+                                const result = JSON.parse(text);
+                                val = result.status || result.mensagem || text;
+                            } catch (e) {
+                                // use text as is
+                            }
+                            const isError = val.toLowerCase().includes('inválido') || val.toLowerCase().includes('erro');
+                            if (isError) {
+                                statusDiv.innerHTML = `<span class="badge bg-danger p-2"><i class="fas fa-exclamation-circle me-1"></i>${val.toUpperCase()} — TENTE OUTRO ARQUIVO</span>`;
+                                statusDiv.classList.add('has-invalid-doc');
                             } else {
-                                statusDiv.innerHTML = '<span class="badge bg-light text-muted border text-uppercase">Validação Indisponível</span>';
+                                statusDiv.innerHTML = `<span class="badge bg-success p-2"><i class="fas fa-check-circle me-1"></i>DOCUMENTO ANEXADO</span>`;
                                 statusDiv.classList.remove('has-invalid-doc');
                             }
-                        } catch (e) {
-                            statusDiv.innerHTML = '<span class="badge bg-light text-muted border text-uppercase">Erro na Rede</span>';
+                        } else {
+                            statusDiv.innerHTML = '<span class="badge bg-light text-muted border text-uppercase">Validação Indisponível</span>';
                             statusDiv.classList.remove('has-invalid-doc');
                         }
-                    } else {
-                        statusDiv.innerHTML = '';
+                    } catch (e) {
+                        statusDiv.innerHTML = '<span class="badge bg-light text-muted border text-uppercase">Erro na Rede</span>';
                         statusDiv.classList.remove('has-invalid-doc');
                     }
-                } else if (input.files && input.files[0]) {
-                    statusDiv.innerHTML = '<span class="badge bg-info text-white text-uppercase">Arquivo Anexado</span>';
-                    statusDiv.classList.remove('has-invalid-doc');
                 } else {
                     statusDiv.innerHTML = '';
                     statusDiv.classList.remove('has-invalid-doc');
                 }
+            } else if (input.files && input.files[0]) {
+                statusDiv.innerHTML = '<span class="badge bg-info text-white text-uppercase">Arquivo Anexado</span>';
+                statusDiv.classList.remove('has-invalid-doc');
+            } else {
+                statusDiv.innerHTML = '';
+                statusDiv.classList.remove('has-invalid-doc');
             }
+        }
 
-            function renderNotifs() {
-                const container = document.getElementById('notif-container');
-                container.innerHTML = '';
+        function renderNotifs() {
+            const container = document.getElementById('notif-container');
+            container.innerHTML = '';
 
-                const sorted = [...AppState.notifications].sort((a, b) => {
-                    if (a.status_leitura === 'Não lida' && b.status_leitura !== 'Não lida') return -1;
-                    if (a.status_leitura !== 'Não lida' && b.status_leitura === 'Não lida') return 1;
-                    return b.id - a.id;
-                });
+            const sorted = [...AppState.notifications].sort((a, b) => {
+                if (a.status_leitura === 'Não lida' && b.status_leitura !== 'Não lida') return -1;
+                if (a.status_leitura !== 'Não lida' && b.status_leitura === 'Não lida') return 1;
+                return b.id - a.id;
+            });
 
-                sorted.forEach(n => {
-                    const card = document.createElement('div');
-                    const isUnread = n.status_leitura === 'Não lida';
-                    card.className = `card mb-3 border-start border-4 ${!isUnread ? 'border-light opacity-75' : 'border-primary shadow-sm'}`;
-                    card.style.cursor = 'pointer';
-                    card.style.transition = 'transform 0.2s';
-                    card.onmouseover = () => card.style.transform = 'translateY(-2px)';
-                    card.onmouseout = () => card.style.transform = 'translateY(0)';
+            sorted.forEach(n => {
+                const card = document.createElement('div');
+                const isUnread = n.status_leitura === 'Não lida';
+                card.className = `card mb-3 border-start border-4 ${!isUnread ? 'border-light opacity-75' : 'border-primary shadow-sm'}`;
+                card.style.cursor = 'pointer';
+                card.style.transition = 'transform 0.2s';
+                card.onmouseover = () => card.style.transform = 'translateY(-2px)';
+                card.onmouseout = () => card.style.transform = 'translateY(0)';
 
-                    const excerpt = n.text.length > 100 ? n.text.substring(0, 97) + '...' : n.text;
-                    const showMorePrompt = n.text.length > 100 ? '<span class="text-primary fw-bold ms-1">Ver mais <i class="fas fa-arrow-right small"></i></span>' : '';
+                const excerpt = n.text.length > 100 ? n.text.substring(0, 97) + '...' : n.text;
+                const showMorePrompt = n.text.length > 100 ? '<span class="text-primary fw-bold ms-1">Ver mais <i class="fas fa-arrow-right small"></i></span>' : '';
 
-                    let publicadoText = '';
-                    if (n.timestamp) {
-                        const d = new Date(n.timestamp);
-                        const dateStr = d.toLocaleDateString('pt-BR');
-                        const timeStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                        publicadoText = `<div class="text-muted smaller">Publicado em ${dateStr} às ${timeStr}</div>`;
-                    }
+                let publicadoText = '';
+                if (n.timestamp) {
+                    const d = new Date(n.timestamp);
+                    const dateStr = d.toLocaleDateString('pt-BR');
+                    const timeStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    publicadoText = `<div class="text-muted smaller">Publicado em ${dateStr} às ${timeStr}</div>`;
+                }
 
-                    let lidoText = '';
-                    if (n.lido_em) {
-                        const dl = new Date(n.lido_em);
-                        const dateStr = dl.toLocaleDateString('pt-BR');
-                        const timeStr = dl.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                        lidoText = `<div class="text-muted smaller"><i class="fas fa-check-double me-1" style="color: #34b7f1 !important;"></i>Lido em: ${dateStr} às ${timeStr}</div>`;
-                    }
+                let lidoText = '';
+                if (n.lido_em) {
+                    const dl = new Date(n.lido_em);
+                    const dateStr = dl.toLocaleDateString('pt-BR');
+                    const timeStr = dl.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    lidoText = `<div class="text-muted smaller"><i class="fas fa-check-double me-1" style="color: #34b7f1 !important;"></i>Lido em: ${dateStr} às ${timeStr}</div>`;
+                }
 
-                    card.innerHTML = `<div class="card-body">
+                card.innerHTML = `<div class="card-body">
                     <h6 class="mb-1 d-flex justify-content-between align-items-center fw-bold">
                         ${n.title}
                         ${isUnread ? '<span class="badge bg-primary rounded-pill pulsate-badge" style="font-size: 0.6rem">NOVA</span>' : ''}
@@ -2919,230 +2856,241 @@
                     </div>
                 </div>`;
 
-                    card.onclick = async () => {
-                        const modal = new bootstrap.Modal(document.getElementById('modalNotif'));
-                        const titleEl = document.getElementById('notifTitle');
-                        const bodyEl = document.getElementById('notifBody');
-                        const dateEl = document.getElementById('notifDate');
+                card.onclick = async () => {
+                    const modal = new bootstrap.Modal(document.getElementById('modalNotif'));
+                    const titleEl = document.getElementById('notifTitle');
+                    const bodyEl = document.getElementById('notifBody');
+                    const dateEl = document.getElementById('notifDate');
 
-                        titleEl.innerText = n.title;
+                    titleEl.innerText = n.title;
 
-                        let bodyHtml = `<p class="mb-3">${n.text}</p>`;
-                        if (n.timestamp) {
-                            const d = new Date(n.timestamp);
-                            const dateStr = d.toLocaleDateString('pt-BR');
-                            const timeStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                            bodyHtml += `<div class="mt-4 pt-3 border-top fst-italic text-muted small"><i class="fas fa-bullhorn me-2"></i>Publicado em ${dateStr} às ${timeStr}</div>`;
-                        }
-                        bodyEl.innerHTML = bodyHtml;
-
-                        if (n.lido_em) {
-                            dateEl.innerHTML = `<i class="fas fa-check-double me-1" style="color: #34b7f1 !important;"></i>Lido em: ${new Date(n.lido_em).toLocaleDateString('pt-BR')} ${new Date(n.lido_em).toLocaleTimeString('pt-BR')}`;
-                            dateEl.classList.remove('d-none');
-                        } else {
-                            dateEl.classList.add('d-none');
-                        }
-
-                        modal.show();
-
-                        if (isUnread) {
-                            try {
-                                await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/leitura-informativos', {
-                                    method: 'POST',
-                                    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-                                    body: JSON.stringify({
-                                        id: n.id,
-                                        cpf: '{{ $json.data.cpf || "" }}'
-                                    })
-                                });
-                                n.status_leitura = 'Lida';
-                                n.lido_em = new Date().toISOString();
-                                renderNotifs();
-                                updateBadge();
-                            } catch (e) {
-                                console.error('Erro ao marcar como lida:', e);
-                            }
-                        }
-                    };
-                    container.appendChild(card);
-                });
-            }
-
-            function updateBadge() {
-                const unread = AppState.notifications.filter(n => n.status_leitura === 'Não lida').length;
-                const badge = document.getElementById('notif-badge');
-                const icon = document.getElementById('notif-icon');
-
-                if (unread > 0) {
-                    badge.style.display = 'block';
-                    badge.innerText = unread;
-                    icon.className = 'fas fa-envelope text-warning fa-shake';
-                } else {
-                    badge.style.display = 'none';
-                    icon.className = 'fas fa-envelope-open';
-                }
-            }
-
-            function checkRecurso() {
-                const now = AppState.currentDate;
-                const isOpen = AppState.janelasRecurso.some(j => now >= new Date(j.inicio) && now <= new Date(j.fim + 'T23:59:59'));
-                const status = document.getElementById('resourceStatus');
-                const formContainer = document.getElementById('recursosFormContainer');
-
-                if (isOpen) {
-                    status.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Janela de recursos ativa! Você pode enviar sua justificativa abaixo.</div>';
-                    formContainer.classList.remove('d-none');
-                } else {
-                    status.innerHTML = `<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Fora do prazo de recursos (${now.toLocaleDateString('pt-BR')}). A submissão de novos recursos está desabilitada.</div>`;
-                    formContainer.classList.add('d-none');
-                }
-            }
-
-            async function enviarRecurso() {
-                const texto = document.getElementById('recursoTexto').value;
-                if (!texto.trim()) {
-                    new bootstrap.Modal(document.getElementById('modalAlertaRecurso')).show();
-                    return;
-                }
-
-                const btn = document.getElementById('btnEnviarRecurso');
-                if (btn.disabled) return;
-
-                const originalContent = btn.innerHTML;
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
-
-                // Technical fields for n8n (Separate fields as requested)
-                const formData = new FormData();
-                formData.append('cpf', document.getElementById('cpf')?.value || '{{ $json.data.cpf || "" }}');
-                formData.append('inscricao', document.getElementById('numInscricao')?.value || '{{ $json.data.numInscricao || "" }}');
-                formData.append('nome', document.getElementById('nomeCompleto')?.value || '{{ $json.data.nomeCompleto || "" }}');
-                formData.append('justificativa', texto);
-
-                // Files file1...file5
-                for (let i = 1; i <= 5; i++) {
-                    const input = document.getElementById(`recursoFile${i}`);
-                    if (input && input.files[0]) {
-                        formData.append(`file${i}`, input.files[0]);
+                    let bodyHtml = `<p class="mb-3">${n.text}</p>`;
+                    if (n.timestamp) {
+                        const d = new Date(n.timestamp);
+                        const dateStr = d.toLocaleDateString('pt-BR');
+                        const timeStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                        bodyHtml += `<div class="mt-4 pt-3 border-top fst-italic text-muted small"><i class="fas fa-bullhorn me-2"></i>Publicado em ${dateStr} às ${timeStr}</div>`;
                     }
-                }
+                    bodyEl.innerHTML = bodyHtml;
 
-                try {
-                    const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-recurso-cnh', {
-                        method: 'POST',
-                        headers: getAuthHeaders(),
-                        body: formData
-                    });
-
-                    if (response.ok || response.status === 200) {
-                        new bootstrap.Modal(document.getElementById('modalSucessoRecurso')).show();
-                        document.getElementById('recursoTexto').value = '';
-                        // Reset fields and visibility
-                        for (let i = 1; i <= 5; i++) {
-                            const input = document.getElementById(`recursoFile${i}`);
-                            if (input) input.value = '';
-                            if (i > 1) document.getElementById(`recursoGroup${i}`)?.classList.add('d-none');
-                        }
-                        document.getElementById('btnNovoAnexo')?.classList.remove('d-none');
+                    if (n.lido_em) {
+                        dateEl.innerHTML = `<i class="fas fa-check-double me-1" style="color: #34b7f1 !important;"></i>Lido em: ${new Date(n.lido_em).toLocaleDateString('pt-BR')} ${new Date(n.lido_em).toLocaleTimeString('pt-BR')}`;
+                        dateEl.classList.remove('d-none');
                     } else {
-                        new bootstrap.Modal(document.getElementById('modalErroRecurso')).show();
+                        dateEl.classList.add('d-none');
                     }
-                } catch (e) {
-                    console.error('Erro no POST de recurso:', e);
-                    new bootstrap.Modal(document.getElementById('modalErroRecurso')).show();
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = originalContent;
+
+                    modal.show();
+
+                    if (isUnread) {
+                        try {
+                            await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/leitura-informativos', {
+                                method: 'POST',
+                                headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+                                body: JSON.stringify({
+                                    id: n.id,
+                                    cpf: '{{ $json.data.cpf || "" }}'
+                                })
+                            });
+                            n.status_leitura = 'Lida';
+                            n.lido_em = new Date().toISOString();
+                            renderNotifs();
+                            updateBadge();
+                        } catch (e) {
+                            console.error('Erro ao marcar como lida:', e);
+                        }
+                    }
+                };
+                container.appendChild(card);
+            });
+        }
+
+        function updateBadge() {
+            const unread = AppState.notifications.filter(n => n.status_leitura === 'Não lida').length;
+            const badge = document.getElementById('notif-badge');
+            const icon = document.getElementById('notif-icon');
+
+            if (unread > 0) {
+                badge.style.display = 'block';
+                badge.innerText = unread;
+                icon.className = 'fas fa-envelope text-warning fa-shake';
+            } else {
+                badge.style.display = 'none';
+                icon.className = 'fas fa-envelope-open';
+            }
+        }
+
+        function checkRecurso() {
+            const now = AppState.currentDate;
+            const isOpen = AppState.janelasRecurso.some(j => now >= new Date(j.inicio) && now <= new Date(j.fim + 'T23:59:59'));
+            const status = document.getElementById('resourceStatus');
+            const formContainer = document.getElementById('recursosFormContainer');
+
+            if (isOpen) {
+                status.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Janela de recursos ativa! Você pode enviar sua justificativa abaixo.</div>';
+                formContainer.classList.remove('d-none');
+            } else {
+                status.innerHTML = `<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Fora do prazo de recursos (${now.toLocaleDateString('pt-BR')}). A submissão de novos recursos está desabilitada.</div>`;
+                formContainer.classList.add('d-none');
+            }
+        }
+
+        async function enviarRecurso() {
+            const texto = document.getElementById('recursoTexto').value;
+            if (!texto.trim()) {
+                new bootstrap.Modal(document.getElementById('modalAlertaRecurso')).show();
+                return;
+            }
+
+            const btn = document.getElementById('btnEnviarRecurso');
+            if (btn.disabled) return;
+
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+
+            // Technical fields for n8n (Separate fields as requested)
+            const formData = new FormData();
+            formData.append('cpf', document.getElementById('cpf')?.value || '{{ $json.data.cpf || "" }}');
+            formData.append('inscricao', document.getElementById('numInscricao')?.value || '{{ $json.data.numInscricao || "" }}');
+            formData.append('nome', document.getElementById('nomeCompleto')?.value || '{{ $json.data.nomeCompleto || "" }}');
+            formData.append('justificativa', texto);
+
+            // Files file1...file5
+            for (let i = 1; i <= 5; i++) {
+                const input = document.getElementById(`recursoFile${i}`);
+                if (input && input.files[0]) {
+                    formData.append(`file${i}`, input.files[0]);
                 }
             }
 
-            function adicionarAnexo() {
-                for (let i = 2; i <= 5; i++) {
-                    const group = document.getElementById(`recursoGroup${i}`);
-                    if (group && group.classList.contains('d-none')) {
-                        group.classList.remove('d-none');
-                        if (i === 5) document.getElementById('btnNovoAnexo').classList.add('d-none');
-                        break;
-                    }
-                }
-            }
-
-            function formatDate(dateString) {
-                const [y, m, d] = dateString.split('-');
-                return `${d}/${m}/${y}`;
-            }
-
-            function renderTimeline() {
-                const list = document.getElementById('timelineList');
-                AppState.cronograma.forEach(s => {
-                    const isPast = AppState.currentDate > new Date(s.fim + 'T23:59:59');
-                    const div = document.createElement('div');
-                    div.className = `timeline-item ${isPast ? 'completed' : ''}`;
-                    const dataFormatada = formatDate(s.inicio) + (s.inicio !== s.fim ? ` a ${formatDate(s.fim)}` : '');
-                    div.innerHTML = `<div class="timeline-marker">${isPast ? '✓' : ''}</div><div class="timeline-content"><h5>${s.etapa}</h5><div class="timeline-date">${dataFormatada}</div></div>`;
-                    list.appendChild(div);
+            try {
+                const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-recurso-cnh', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: formData
                 });
+
+                if (response.ok || response.status === 200) {
+                    new bootstrap.Modal(document.getElementById('modalSucessoRecurso')).show();
+                    document.getElementById('recursoTexto').value = '';
+                    // Reset fields and visibility
+                    for (let i = 1; i <= 5; i++) {
+                        const input = document.getElementById(`recursoFile${i}`);
+                        if (input) input.value = '';
+                        if (i > 1) document.getElementById(`recursoGroup${i}`)?.classList.add('d-none');
+                    }
+                    document.getElementById('btnNovoAnexo')?.classList.remove('d-none');
+                } else {
+                    new bootstrap.Modal(document.getElementById('modalErroRecurso')).show();
+                }
+            } catch (e) {
+                console.error('Erro no POST de recurso:', e);
+                new bootstrap.Modal(document.getElementById('modalErroRecurso')).show();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        }
+
+        function adicionarAnexo() {
+            for (let i = 2; i <= 5; i++) {
+                const group = document.getElementById(`recursoGroup${i}`);
+                if (group && group.classList.contains('d-none')) {
+                    group.classList.remove('d-none');
+                    if (i === 5) document.getElementById('btnNovoAnexo').classList.add('d-none');
+                    break;
+                }
+            }
+        }
+
+        function formatDate(dateString) {
+            const [y, m, d] = dateString.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        function renderTimeline() {
+            const list = document.getElementById('timelineList');
+            AppState.cronograma.forEach(s => {
+                const isPast = AppState.currentDate > new Date(s.fim + 'T23:59:59');
+                const div = document.createElement('div');
+                div.className = `timeline-item ${isPast ? 'completed' : ''}`;
+                const dataFormatada = formatDate(s.inicio) + (s.inicio !== s.fim ? ` a ${formatDate(s.fim)}` : '');
+                div.innerHTML = `<div class="timeline-marker">${isPast ? '✓' : ''}</div><div class="timeline-content"><h5>${s.etapa}</h5><div class="timeline-date">${dataFormatada}</div></div>`;
+                list.appendChild(div);
+            });
+        }
+
+        function updateProgress() {
+            const first = new Date(AppState.cronograma[0].inicio).getTime();
+            const last = new Date(AppState.cronograma[AppState.cronograma.length - 1].fim).getTime();
+            const now = AppState.currentDate.getTime();
+            const p = Math.min(100, Math.max(0, Math.round(((now - first) / (last - first)) * 100)));
+            document.getElementById('main-progress').style.width = p + '%';
+            document.getElementById('progress-percent').innerText = p + '%';
+        }
+
+        function abrirResumoInscricao() {
+            const form = document.getElementById('formInscricao');
+            if (!form.checkValidity() && (!document.getElementById('numInscricao').value)) {
+                form.classList.add('was-validated');
+                document.querySelector('[data-tab="inscricao"]').click();
+                alert("Por favor, preencha todos os campos obrigatórios da inscrição antes de visualizar/enviar.");
+                return;
             }
 
-            function updateProgress() {
-                const first = new Date(AppState.cronograma[0].inicio).getTime();
-                const last = new Date(AppState.cronograma[AppState.cronograma.length - 1].fim).getTime();
-                const now = AppState.currentDate.getTime();
-                const p = Math.min(100, Math.max(0, Math.round(((now - first) / (last - first)) * 100)));
-                document.getElementById('main-progress').style.width = p + '%';
-                document.getElementById('progress-percent').innerText = p + '%';
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                if (!el) return '-';
+                if (el.type === 'checkbox') return el.checked ? 'SIM' : 'NÃO';
+                if (el.tagName === 'SELECT') return el.value === '' ? '-' : el.options[el.selectedIndex].text;
+                return el.value || '-';
+            };
+
+            const renderRow = (label, val, colClass = 'col-sm-6', force = false) => {
+                if (!force && (!val || val === '-' || val === '')) return '';
+                return `<div class="${colClass}"><strong>${label}:</strong> ${val}</div>`;
+            };
+
+            const num = document.getElementById('numInscricao').value;
+            const statusResumo = num && num.toLowerCase() !== 'pendente'
+                ? `<div class="alert alert-success py-2 mb-3"><strong>Inscrição #${num}</strong> já enviada.</div>`
+                : `<div class="alert alert-warning py-2 mb-3">Inscrição pendente de envio.</div>`;
+
+            // Document mapping logic
+            const docList = [
+                "Documento de identificação — FRENTE",
+                "Documento de identificação — VERSO"
+            ];
+            if (document.getElementById('chkUpdateAddress').checked) docList.push("Comprovante de Residência Atualizado");
+            if (getVal('pcd') === 'SIM') docList.push("Laudo Médico PCD");
+            if (getVal('trabalhadorAplicativo') === 'SIM') docList.push("Comprovante de Aplicativo");
+            if (getVal('maeAtipica') === 'SIM') {
+                docList.push("Laudo/relatório/prescrição emitido por profissional ou instituição registrada");
+                docList.push("Declaração técnica do CRAS/CREAS ou certificação da Assistência Social");
+                docList.push("Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal");
             }
+            if (getVal('dependenteTratamento') === 'SIM') {
+                docList.push("Declaração de tratamento terapêutico contínuo emitida por profissional de saúde");
+                docList.push("Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial");
+            }
+            const cat = document.getElementById('categoria').value;
+            if (cat.startsWith('adicao') || cat.startsWith('mudanca')) docList.push("Arquivo da CNH Atual");
 
-            function abrirResumoInscricao() {
-                const form = document.getElementById('formInscricao');
-                if (!form.checkValidity() && (!document.getElementById('numInscricao').value)) {
-                    form.classList.add('was-validated');
-                    document.querySelector('[data-tab="inscricao"]').click();
-                    alert("Por favor, preencha todos os campos obrigatórios da inscrição antes de visualizar/enviar.");
-                    return;
-                }
+            const filesHtml = docList.map(d => `<li class="small text-muted py-1 border-bottom border-light">${d}</li>`).join('');
 
-                const getVal = (id) => {
-                    const el = document.getElementById(id);
-                    if (!el) return '-';
-                    if (el.type === 'checkbox') return el.checked ? 'SIM' : 'NÃO';
-                    if (el.tagName === 'SELECT') return el.value === '' ? '-' : el.options[el.selectedIndex].text;
-                    return el.value || '-';
-                };
+            const reaproveitamentoHtml = document.getElementById('swInscricaoAnterior')?.checked 
+                ? `<div class="col-12 mt-2"><div class="alert alert-info py-2 px-3 mb-0 border-0 shadow-sm d-flex align-items-center" style="background-color: #f0faff;">
+                    <i class="fas fa-sync-alt text-info me-3 fs-5"></i>
+                    <div>
+                        <div class="small fw-bold text-info text-uppercase" style="font-size: 0.7rem;">Modo de Inscrição</div>
+                        <div class="small fw-bold text-dark">Reutilizando dados e documentos do edital anterior</div>
+                    </div>
+                   </div></div>` 
+                : '';
 
-                const renderRow = (label, val, colClass = 'col-sm-6', force = false) => {
-                    if (!force && (!val || val === '-' || val === '')) return '';
-                    return `<div class="${colClass}"><strong>${label}:</strong> ${val}</div>`;
-                };
-
-                const num = document.getElementById('numInscricao').value;
-                const statusResumo = num && num.toLowerCase() !== 'pendente'
-                    ? `<div class="alert alert-success py-2 mb-3"><strong>Inscrição #${num}</strong> já enviada.</div>`
-                    : `<div class="alert alert-warning py-2 mb-3">Inscrição pendente de envio.</div>`;
-
-                // Document mapping logic
-                const docList = [
-                    "Documento de identificação — FRENTE",
-                    "Documento de identificação — VERSO"
-                ];
-                if (document.getElementById('chkUpdateAddress').checked) docList.push("Comprovante de Residência Atualizado");
-                if (getVal('pcd') === 'SIM') docList.push("Laudo Médico PCD");
-                if (getVal('trabalhadorAplicativo') === 'SIM') docList.push("Comprovante de Aplicativo");
-                if (getVal('maeAtipica') === 'SIM') {
-                    docList.push("Laudo/relatório/prescrição emitido por profissional ou instituição registrada");
-                    docList.push("Declaração técnica do CRAS/CREAS ou certificação da Assistência Social");
-                    docList.push("Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal");
-                }
-                if (getVal('dependenteTratamento') === 'SIM') {
-                    docList.push("Declaração de tratamento terapêutico contínuo emitida por profissional de saúde");
-                    docList.push("Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial");
-                }
-                const cat = document.getElementById('categoria').value;
-                if (cat.startsWith('adicao') || cat.startsWith('mudanca')) docList.push("Arquivo da CNH Atual");
-
-                const filesHtml = docList.map(d => `<li class="small text-muted py-1 border-bottom border-light">${d}</li>`).join('');
-
-                document.getElementById('resumoContent').innerHTML = `
+            document.getElementById('resumoContent').innerHTML = `
+                ${reaproveitamentoHtml}
                 ${statusResumo}
                 <div class="row g-3">
                     <div class="col-12"><h6 class="border-bottom pb-1 text-primary"><i class="fas fa-user me-2"></i>Identificação do Candidato</h6></div>
@@ -3186,248 +3134,140 @@
                 </div>
             `;
 
-                document.getElementById('btnEnviarWebhook').style.display = num && num.toLowerCase() !== 'pendente' ? 'none' : 'block';
-                new bootstrap.Modal(document.getElementById('modalResumo')).show();
+            document.getElementById('btnEnviarWebhook').style.display = num && num.toLowerCase() !== 'pendente' ? 'none' : 'block';
+            new bootstrap.Modal(document.getElementById('modalResumo')).show();
+        }
+
+        function confirmarEEnviar() {
+            const btn = document.getElementById('btnFinalizarDocs');
+            if (btn && btn.classList.contains('btn-pending-docs')) {
+                mostrarDocumentosPendentes();
+                return;
             }
 
-            function confirmarEEnviar() {
-                const btn = document.getElementById('btnFinalizarDocs');
-                if (btn && btn.classList.contains('btn-pending-docs')) {
-                    mostrarDocumentosPendentes();
-                    return;
-                }
+            const hasInvalid = document.querySelector('.has-invalid-doc');
+            if (hasInvalid) {
+                new bootstrap.Modal(document.getElementById('modalConfirmacaoInvalido')).show();
+            } else {
+                enviarViaWebhook();
+            }
+        }
 
-                const hasInvalid = document.querySelector('.has-invalid-doc');
-                if (hasInvalid) {
-                    new bootstrap.Modal(document.getElementById('modalConfirmacaoInvalido')).show();
-                } else {
-                    enviarViaWebhook();
-                }
+        async function enviarViaWebhook(force = false) {
+            // Check form validity before proceeding
+            const form = document.getElementById('formInscricao');
+            const num = document.getElementById('numInscricao').value;
+            const isPending = !num || num.trim() === "" || num.trim().toLowerCase() === "pendente";
+
+            if (isPending && !form.checkValidity()) {
+                form.classList.add('was-validated');
+                const modalAlerta = new bootstrap.Modal(document.getElementById('modalAlertaCampos'));
+                modalAlerta.show();
+
+                // Close other modals if open
+                const modalResumo = bootstrap.Modal.getInstance(document.getElementById('modalResumo'));
+                if (modalResumo) modalResumo.hide();
+                const modalInvalido = bootstrap.Modal.getInstance(document.getElementById('modalConfirmacaoInvalido'));
+                if (modalInvalido) modalInvalido.hide();
+
+                // Go back to registration tab
+                showTab('inscricao');
+                return;
             }
 
-            async function enviarViaWebhook(force = false) {
-                // Check form validity before proceeding
-                const form = document.getElementById('formInscricao');
-                const num = document.getElementById('numInscricao').value;
-                const isPending = !num || num.trim() === "" || num.trim().toLowerCase() === "pendente";
+            if (force) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalConfirmacaoInvalido'));
+                if (modal) modal.hide();
+            }
 
-                if (isPending && !form.checkValidity()) {
-                    form.classList.add('was-validated');
-                    const modalAlerta = new bootstrap.Modal(document.getElementById('modalAlertaCampos'));
-                    modalAlerta.show();
+            const btn = document.getElementById('btnEnviarWebhook');
+            const btnFinal = document.getElementById('btnFinalizarDocs');
 
-                    // Close other modals if open
+            const setLoading = (loading) => {
+                const text = loading ? '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...' : '<i class="fas fa-paper-plane me-2"></i>Enviar Inscrição Confirmada';
+                if (btn) btn.innerHTML = text;
+                if (btnFinal) btnFinal.innerHTML = loading ? '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...' : '<i class="fas fa-paper-plane me-2"></i>Enviar Inscrição e Documentos';
+                if (btn) btn.disabled = loading;
+                if (btnFinal) btnFinal.disabled = loading;
+            };
+
+            setLoading(true);
+
+            const formData = new FormData();
+            document.querySelectorAll('#formInscricao input, #formInscricao select').forEach(el => {
+                if (!el.id) return;
+
+                let val = el.value;
+                let key = el.id;
+
+                if (el.type === 'checkbox') {
+                    val = el.checked ? 'sim' : 'não';
+                    // Apply specific renames for checkboxes if needed (already handled below or by IDs)
+                    if (key === 'semTrabalhoFormal') key = 'semTrabalhoFormalValor';
+                    if (key === 'acolhimentoInstitucional') key = 'acolhimento';
+                }
+
+                formData.append(key, val);
+            });
+
+            const fileMapping = {
+                "Documento de identificação — FRENTE": "docIdentidadeFrente",
+                "Documento de identificação — VERSO": "docIdentidadeVerso",
+                "Comprovante de Residência Atualizado": "docResidencia",
+                "Laudo Médico PCD": "laudoPcd",
+                "Comprovante de Aplicativo": "docTrabalhoAplicativo",
+                "Laudo/relatório/prescrição emitido por profissional ou instituição registrada": "docMaeAtipicaLaudo",
+                "Declaração técnica do CRAS/CREAS ou certificação da Assistência Social": "docMaeAtipicaCras",
+                "Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal": "docResponsavel",
+                "Declaração de tratamento terapêutico contínuo emitida por profissional de saúde": "docDependente",
+                "Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial": "docDependenteVinculo",
+                "Arquivo da CNH Atual": "cnhArquivo"
+            };
+
+            document.querySelectorAll('.file-doc').forEach((el, i) => {
+                if (el.files && el.files[0]) {
+                    const labelText = el.getAttribute('data-label') || (el.previousElementSibling ? el.previousElementSibling.innerText : `Arquivo_${i}`);
+                    const fieldName = fileMapping[labelText] || 'documento_' + i;
+                    formData.append(fieldName, el.files[0]);
+                }
+            });
+
+            try {
+                const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/6cb0dfd2-7c35-recebimentocnhsocial', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: formData
+                });
+                if (response.ok || response.status === 200 || response.type === 'opaque') {
+                    const modalS = new bootstrap.Modal(document.getElementById('modalSucessoInscricao'));
+                    modalS.show();
+
+                    let seconds = 15;
+                    const timerEl = document.getElementById('countdownTimer');
+                    const interval = setInterval(() => {
+                        seconds--;
+                        if (timerEl) timerEl.innerText = seconds;
+                        if (seconds <= 0) {
+                            clearInterval(interval);
+                            window.location.hash = '#inscricao';
+                            window.location.reload();
+                        }
+                    }, 1000);
+
                     const modalResumo = bootstrap.Modal.getInstance(document.getElementById('modalResumo'));
                     if (modalResumo) modalResumo.hide();
-                    const modalInvalido = bootstrap.Modal.getInstance(document.getElementById('modalConfirmacaoInvalido'));
-                    if (modalInvalido) modalInvalido.hide();
-
-                    // Go back to registration tab
-                    showTab('inscricao');
-                    return;
-                }
-
-                if (force) {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalConfirmacaoInvalido'));
-                    if (modal) modal.hide();
-                }
-
-                // Strategy 2.0: Sync registration reuse status if active
-                if (AppState.reaproveitar_inscricao === true) {
-                    try {
-                        const cpf = document.getElementById('cpf').value;
-                        fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/inscricao-reaproveitada', {
-                            method: 'POST',
-                            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-                            body: JSON.stringify({ cpf: cpf })
-                        });
-                        console.log("Status de reaproveitamento enviado para sincronização.");
-                    } catch (e) {
-                        console.warn("Falha ao sincronizar status de reaproveitamento:", e);
-                    }
-                }
-
-                const btn = document.getElementById('btnEnviarWebhook');
-                const btnFinal = document.getElementById('btnFinalizarDocs');
-
-                const setLoading = (loading) => {
-                    const text = loading ? '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...' : '<i class="fas fa-paper-plane me-2"></i>Enviar Inscrição Confirmada';
-                    if (btn) btn.innerHTML = text;
-                    if (btnFinal) btnFinal.innerHTML = loading ? '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...' : '<i class="fas fa-paper-plane me-2"></i>Enviar Inscrição e Documentos';
-                    if (btn) btn.disabled = loading;
-                    if (btnFinal) btnFinal.disabled = loading;
-                };
-
-                setLoading(true);
-
-                const formData = new FormData();
-                document.querySelectorAll('#formInscricao input, #formInscricao select').forEach(el => {
-                    if (!el.id) return;
-
-                    let val = el.value;
-                    let key = el.id;
-
-                    if (el.type === 'checkbox') {
-                        val = el.checked ? 'sim' : 'não';
-                        // Apply specific renames for checkboxes if needed (already handled below or by IDs)
-                        if (key === 'semTrabalhoFormal') key = 'semTrabalhoFormalValor';
-                        if (key === 'acolhimentoInstitucional') key = 'acolhimento';
-                    }
-
-                    formData.append(key, val);
-                });
-
-                // Flag for registration reuse sync
-                if (AppState.reaproveitar_inscricao === true) {
-                    formData.append('inscricao_editada', 'true');
-                }
-
-                const fileMapping = {
-                    "Documento de identificação — FRENTE": "docIdentidadeFrente",
-                    "Documento de identificação — VERSO": "docIdentidadeVerso",
-                    "Comprovante de Residência Atualizado": "docResidencia",
-                    "Laudo Médico PCD": "laudoPcd",
-                    "Comprovante de Aplicativo": "docTrabalhoAplicativo",
-                    "Laudo/relatório/prescrição emitido por profissional ou instituição registrada": "docMaeAtipicaLaudo",
-                    "Declaração técnica do CRAS/CREAS ou certificação da Assistência Social": "docMaeAtipicaCras",
-                    "Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal": "docResponsavel",
-                    "Declaração de tratamento terapêutico contínuo emitida por profissional de saúde": "docDependente",
-                    "Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial": "docDependenteVinculo",
-                    "Arquivo da CNH Atual": "cnhArquivo"
-                };
-
-                document.querySelectorAll('.file-doc').forEach((el, i) => {
-                    if (el.files && el.files[0]) {
-                        const labelText = el.getAttribute('data-label') || (el.previousElementSibling ? el.previousElementSibling.innerText : `Arquivo_${i}`);
-                        const fieldName = fileMapping[labelText] || 'documento_' + i;
-                        formData.append(fieldName, el.files[0]);
-                    }
-                });
-
-                try {
-                    const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/6cb0dfd2-7c35-recebimentocnhsocial', {
-                        method: 'POST',
-                        headers: getAuthHeaders(),
-                        body: formData
-                    });
-                    if (response.ok || response.status === 200 || response.type === 'opaque') {
-                        const modalS = new bootstrap.Modal(document.getElementById('modalSucessoInscricao'));
-                        modalS.show();
-
-                        let seconds = 15;
-                        const timerEl = document.getElementById('countdownTimer');
-                        const interval = setInterval(() => {
-                            seconds--;
-                            if (timerEl) timerEl.innerText = seconds;
-                            if (seconds <= 0) {
-                                clearInterval(interval);
-                                window.location.hash = '#inscricao';
-                                window.location.reload();
-                            }
-                        }, 1000);
-
-                        const modalResumo = bootstrap.Modal.getInstance(document.getElementById('modalResumo'));
-                        if (modalResumo) modalResumo.hide();
-                    } else {
-                        alert("Erro " + response.status + " no envio. Verifique com a central do programa.");
-                    }
-                } catch (e) {
-                    console.error(e);
-                    alert("Sua inscrição parece ter sido registrada remotamente, mas houve problemas de verificação (Erro de CORS/Rede). Confira mais tarde.");
-                } finally {
-                    setLoading(false);
-                }
-            }
-
-            window.addEventListener('load', init);
-    </script>
-    <script>
-        // Bloco Isolado para Funções de Reaproveitamento de Dados
-        (function() {
-            window.reaproveitarDadosHomologados = async function(active) {
-                console.log("REAPROVEITAMENTO: Switch alterado. Estado:", active);
-                console.log("LOG DIAGNÓSTICO: Função reaproveitarDadosHomologados chamada. Estado:", active);
-                
-                if (active) {
-                    const cpfInput = document.getElementById('cpf');
-                    const cpf = cpfInput ? cpfInput.value : "";
-                    
-                    if (!cpf) {
-                        console.error("ERRO DIAGNÓSTICO: CPF vazio.");
-                        alert("Por favor, o campo CPF precisa estar preenchido.");
-                        resetReaproveitarSwitch();
-                        return;
-                    }
-
-                    const ENDPOINT = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/buscar-dados-inscricao-homologada";
-                    const targetUrl = `${ENDPOINT}?cpf=${encodeURIComponent(cpf)}`;
-                    
-                    console.log("LOG DIAGNÓSTICO: Iniciando Fetch para " + targetUrl);
-                    
-                    try {
-                        const response = await fetch(targetUrl, {
-                            method: 'GET',
-                            headers: typeof getAuthHeaders === 'function' ? getAuthHeaders() : {}
-                        });
-                        
-                        console.log("LOG DIAGNÓSTICO: Resposta recebida:", response.status);
-                        
-                        if (!response.ok) throw new Error("Erro no servidor: " + response.status);
-                        
-                        const data = await response.json();
-                        console.log("LOG DIAGNÓSTICO: Dados recebidos:", data);
-
-                        if (data && data.nomeCompleto) {
-                            window.dadosResgatadosTmp = data;
-                            document.getElementById('resgate-nome').innerText = data.nomeCompleto;
-                            document.getElementById('resgate-email').innerText = data.email || "-";
-                            document.getElementById('resgate-whatsapp').innerText = data.whatsapp || data.telefone || "-";
-                            document.getElementById('resgate-endereco').innerText = `${data.logradouro || ""}, ${data.numero || ""} - ${data.bairro || ""}`;
-                            
-                            const modalEl = document.getElementById('modalDadosResgatados');
-                            if (modalEl) {
-                                new bootstrap.Modal(modalEl).show();
-                            }
-                        } else {
-                            throw new Error("Dados não encontrados para este CPF.");
-                        }
-                    } catch (error) {
-                        console.error("ERRO NO FETCH:", error);
-                        alert("Ocorreu um erro ao buscar seus dados: " + error.message);
-                        resetReaproveitarSwitch();
-                    }
                 } else {
-                    document.getElementById('reaproveitamentoMsg').classList.add('d-none');
+                    alert("Erro " + response.status + " no envio. Verifique com a central do programa.");
                 }
-            };
+            } catch (e) {
+                console.error(e);
+                alert("Sua inscrição parece ter sido registrada remotamente, mas houve problemas de verificação (Erro de CORS/Rede). Confira mais tarde.");
+            } finally {
+                setLoading(false);
+            }
+        }
 
-            window.resetReaproveitarSwitch = function() {
-                const sw = document.getElementById('reaproveitarDadosSwitch');
-                if (sw) sw.checked = false;
-                if (typeof AppState !== 'undefined') AppState.reaproveitar_inscricao = false;
-                const msg = document.getElementById('reaproveitamentoMsg');
-                if (msg) msg.classList.add('d-none');
-            };
-
-            window.confirmarDadosResgatados = function() {
-                if (window.dadosResgatadosTmp) {
-                    if (typeof fillFormFromHomologated === 'function') {
-                        fillFormFromHomologated(window.dadosResgatadosTmp);
-                    }
-                    if (typeof AppState !== 'undefined') AppState.reaproveitar_inscricao = true;
-                    const msg = document.getElementById('reaproveitamentoMsg');
-                    if (msg) msg.classList.remove('d-none');
-                    
-                    const modalEl = document.getElementById('modalDadosResgatados');
-                    const modal = bootstrap.Modal.getInstance(modalEl);
-                    if (modal) modal.hide();
-                    
-                    if (typeof checkPreenchimento === 'function') checkPreenchimento();
-                    if (typeof updateScore === 'function') updateScore();
-                    if (typeof updateDocs === 'function') updateDocs();
-                }
-            };
-        })();
+        window.onload = init;
     </script>
 </body>
 
