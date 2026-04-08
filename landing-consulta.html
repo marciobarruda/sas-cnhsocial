@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SAS • CNH Social</title>
+    <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      :root {
+        --brand-primary: #0053a4;
+        --brand-secondary: #003a73;
+        --brand-highlight: #00a3ff;
+        --surface: #ffedd4;
+        --surface-strong: #ffffff;
+        --border-color: #d0d7e2;
+        --text-strong: #1b263b;
+        --text-muted: #5b6c8c;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      .visually-hidden {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--text-strong);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: radial-gradient(circle at 20% 20%, rgba(0, 163, 255, 0.1), transparent 35%),
+          radial-gradient(circle at 80% 0%, rgba(0, 83, 164, 0.12), transparent 30%),
+          linear-gradient(135deg, #eef3f9, #f8fbff);
+      }
+
+      .modal-lg {
+        --bs-modal-width: min(980px, 96vw);
+      }
+
+      .modal-content {
+        min-height: 70vh;
+        border: none;
+        border-radius: 18px;
+        background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+        box-shadow: 0 18px 60px rgba(0, 45, 98, 0.15);
+      }
+
+      @media (min-width: 768px) {
+        .modal-content {
+          min-height: 76vh;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .modal-content {
+          min-height: 82vh;
+        }
+      }
+
+      .modal-header {
+        border: none;
+        padding: 1.25rem 1.5rem 0.75rem;
+      }
+
+      .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-weight: 700;
+        color: var(--brand-secondary);
+      }
+
+      .badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: rgba(0, 83, 164, 0.1);
+        color: var(--brand-primary);
+        border-radius: 999px;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0.5rem 1.5rem 1.5rem;
+      }
+
+      .card-surface {
+        background: #ffffff;
+        border: 1px solid rgba(0, 83, 164, 0.08);
+        border-radius: 14px;
+        padding: 1rem 1.1rem;
+        box-shadow: 0 12px 30px rgba(0, 45, 98, 0.06);
+      }
+
+      .input-group-text img {
+        height: 28px;
+      }
+
+      .helper-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      .actions-row {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+      }
+
+      .result-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0 0.25rem;
+      }
+
+      .result-message {
+        border-radius: 12px;
+        padding: 0.35rem 0.25rem 0.25rem;
+        color: var(--text-strong);
+      }
+
+      .result-status {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.65rem;
+        font-weight: 700;
+        color: var(--brand-secondary);
+      }
+
+      .result-list {
+        margin: 0.35rem 0 0;
+        padding-left: 1.2rem;
+        color: var(--text-muted);
+        line-height: 1.55;
+      }
+
+      .result-list li + li {
+        margin-top: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div aria-hidden="true"></div>
+
+    <div class="modal fade" id="consultaModal" tabindex="-1" aria-labelledby="consultaModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="consultaModalLabel">
+              <span class="badge-pill">
+                <i class="bi bi-lightning-charge-fill"></i>
+                Consulta rápida
+              </span>
+              Consultar inscrição
+            </h5>
+          </div>
+          <div class="modal-body">
+            <div class="card-surface">
+              <form id="consultaForm" novalidate>
+                <label class="form-label fw-semibold" for="cpfInput">CPF do candidato</label>
+                <div class="input-group mb-2 shadow-sm">
+                  <span class="input-group-text bg-white" id="inscricaoPrefix">
+                    <img
+                      src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png"
+                      alt="Prefeitura do Recife - CNH Social"
+                    />
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="cpfInput"
+                    name="cpf"
+                    inputmode="numeric"
+                    minlength="11"
+                    maxlength="11"
+                    pattern="[0-9]{11}"
+                    placeholder="00000000000"
+                    aria-describedby="inscricaoPrefix cpfHelp"
+                    required
+                  />
+                </div>
+                <div class="mb-3 helper-text" id="cpfHelp">
+                  Informe os 11 dígitos do CPF (apenas números). Exemplo: 12345678901.
+                </div>
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                  <small class="text-muted" id="statusMessage">Informe o CPF para consultar.</small>
+                  <div class="actions-row">
+                    <button class="btn btn-outline-secondary" type="button" id="backButton">
+                      <i class="bi bi-arrow-left"></i>
+                      Voltar
+                    </button>
+                    <button class="btn btn-primary px-4" type="submit" id="submitButton">
+                      <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                      Consultar
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="result-section" id="resultadoWrapper" hidden>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-journal-text text-primary"></i>
+                <span class="fw-semibold">Resultado da consulta</span>
+              </div>
+              <div class="result-message" id="resultado">
+                <div class="result-status" id="resultadoStatusRow">
+                  <span class="fs-5" aria-hidden="true">⏳</span>
+                  <div id="resultadoStatus"></div>
+                </div>
+                <ul class="result-list" id="resultadoLista"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const consultaModalElement = document.getElementById("consultaModal");
+      const consultaModal = new bootstrap.Modal(consultaModalElement);
+      const form = document.getElementById("consultaForm");
+      const cpfInput = document.getElementById("cpfInput");
+      const statusMessage = document.getElementById("statusMessage");
+      const submitButton = document.getElementById("submitButton");
+      const spinner = submitButton.querySelector(".spinner-border");
+      const resultadoWrapper = document.getElementById("resultadoWrapper");
+      const resultadoStatus = document.getElementById("resultadoStatus");
+      const resultadoLista = document.getElementById("resultadoLista");
+      const backButton = document.getElementById("backButton");
+
+      const redirectHome = () => {
+        window.location.href = "https://cnhsocial.recife.pe.gov.br/";
+      };
+
+      const parseMensagem = (mensagem, fallback) => {
+        const cleaned = (mensagem || "").replace(/\r/g, "");
+        const parts = cleaned
+          .split(/\n+/)
+          .map((line) => line.trim())
+          .filter(Boolean);
+
+        const statusLine = parts.shift() || fallback;
+        const bulletLines = parts
+          .map((line) => line.replace(/^[-–•]\s*/, ""))
+          .filter(Boolean);
+
+        return {
+          statusLine: statusLine || fallback,
+          bulletLines: bulletLines.length ? bulletLines : [statusLine || fallback],
+        };
+      };
+
+      const formatPayload = (inscricao, payloadText) => {
+        const fallbackStatus = `A inscrição ${inscricao} está em processamento.`;
+
+        try {
+          const parsed = JSON.parse(payloadText);
+          if (Array.isArray(parsed) && parsed.length) {
+            const item = parsed[0] || {};
+            const parsedMensagem = parseMensagem(item.mensagem, fallbackStatus);
+            const statusFromPayload =
+              parsedMensagem.statusLine ||
+              (item.status ? `${item.status}${item.inscricao ? ` • ${item.inscricao}` : ""}` : "");
+
+            return {
+              statusLine: statusFromPayload || fallbackStatus,
+              bulletLines: parsedMensagem.bulletLines,
+            };
+          }
+        } catch (error) {
+          // caso não seja JSON, trata pelo texto bruto
+        }
+
+        return payloadText
+          ? parseMensagem(payloadText, fallbackStatus)
+          : {
+              statusLine: fallbackStatus,
+              bulletLines: ["Nenhum detalhe foi retornado para esta inscrição."],
+            };
+      };
+
+      const renderResultado = ({ statusLine, bulletLines }) => {
+        resultadoStatus.textContent = statusLine;
+        resultadoLista.innerHTML = "";
+
+        bulletLines.forEach((line) => {
+          const li = document.createElement("li");
+          li.textContent = line;
+          resultadoLista.appendChild(li);
+        });
+
+        resultadoWrapper.hidden = false;
+      };
+
+      const postJson = async (url, payload) => {
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+            cache: "no-store",
+          });
+
+          const text = await response.text();
+          return { ok: response.ok, status: response.status, text };
+        } catch (error) {
+          return { ok: false, status: 0, text: "", error };
+        }
+      };
+
+      document.addEventListener("DOMContentLoaded", () => {
+        consultaModal.show();
+        consultaModalElement.addEventListener("shown.bs.modal", () => cpfInput.focus());
+        consultaModalElement.addEventListener("click", (event) => {
+          if (event.target === consultaModalElement) {
+            redirectHome();
+          }
+        });
+        backButton?.addEventListener("click", redirectHome);
+
+        const sanitizeCpf = () => {
+          const digits = cpfInput.value.replace(/\D/g, "").slice(0, 11);
+          cpfInput.value = digits;
+        };
+
+        cpfInput.addEventListener("input", sanitizeCpf);
+
+        cpfInput.addEventListener("keydown", (event) => {
+          const allowedKeys = [
+            "Backspace",
+            "Delete",
+            "Tab",
+            "ArrowLeft",
+            "ArrowRight",
+            "Home",
+            "End",
+          ];
+
+          if (allowedKeys.includes(event.key)) return;
+
+          if (!/^[0-9]$/.test(event.key) || cpfInput.value.length >= 11) {
+            event.preventDefault();
+          }
+        });
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const cpfDigits = cpfInput.value.replace(/\D/g, "").slice(0, 11);
+
+        if (cpfDigits.length !== 11) {
+          statusMessage.textContent = "CPF inválido. Informe os 11 dígitos.";
+          statusMessage.classList.add("text-danger");
+          cpfInput.focus();
+          cpfInput.value = cpfDigits;
+          return;
+        }
+
+        cpfInput.value = cpfDigits;
+        resultadoWrapper.hidden = true;
+        resultadoLista.innerHTML = "";
+        resultadoStatus.textContent = "";
+        statusMessage.classList.remove("text-danger");
+        statusMessage.textContent = "Consultando inscrição pelo CPF...";
+        submitButton.disabled = true;
+        spinner.classList.remove("d-none");
+
+        try {
+          const responseInscricao = await postJson(
+            "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-inscricao-por-cpf",
+            { cpf: cpfDigits }
+          );
+
+          if (!responseInscricao.ok && responseInscricao.status !== 0) {
+            statusMessage.textContent = "Falha ao consultar o CPF.";
+            statusMessage.classList.add("text-danger");
+            renderResultado({
+              statusLine: "Não foi possível obter a inscrição.",
+              bulletLines: [
+                responseInscricao.text || "Resposta vazia ao consultar CPF.",
+                "Tente novamente em instantes.",
+              ],
+            });
+            return;
+          }
+
+          if (!responseInscricao.ok && responseInscricao.status === 0) {
+            statusMessage.textContent = "Serviço indisponível. Verifique sua conexão.";
+            statusMessage.classList.add("text-danger");
+            renderResultado({
+              statusLine: "Erro de conexão ao consultar CPF.",
+              bulletLines: [
+                "Não foi possível conectar ao serviço de consulta.",
+                "Confirme sua rede e tente novamente.",
+              ],
+            });
+            return;
+          }
+
+          const inscricaoText = responseInscricao.text || "";
+          let inscricao = "";
+
+          try {
+            const parsedInscricao = JSON.parse(inscricaoText);
+            if (Array.isArray(parsedInscricao) && parsedInscricao[0]?.inscricao) {
+              inscricao = String(parsedInscricao[0].inscricao).trim();
+            }
+          } catch (error) {
+            inscricao = inscricaoText.trim();
+          }
+
+          if (!inscricao) {
+            statusMessage.textContent = "Não foi possível obter a inscrição para consulta.";
+            statusMessage.classList.add("text-danger");
+            renderResultado({
+              statusLine: "Falha ao consultar a inscrição pelo CPF.",
+              bulletLines: [inscricaoText || "Resposta vazia ao consultar CPF."],
+            });
+            return;
+          }
+
+          statusMessage.textContent = `Consultando inscrição ${inscricao}...`;
+
+          const responseConsulta = await postJson(
+            "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-cnh-sesuite",
+            { inscricao }
+          );
+
+          if (!responseConsulta.ok && responseConsulta.status === 0) {
+            statusMessage.textContent = "Serviço indisponível. Verifique sua conexão.";
+            statusMessage.classList.add("text-danger");
+            renderResultado({
+              statusLine: "Erro de conexão ao consultar a inscrição.",
+              bulletLines: [
+                "Não foi possível conectar ao serviço de consulta.",
+                "Tente novamente em alguns instantes.",
+              ],
+            });
+            return;
+          }
+
+          const payload = responseConsulta.text || "";
+          if (!responseConsulta.ok) {
+            statusMessage.textContent = "Consulta concluída com retorno de erro.";
+            statusMessage.classList.add("text-danger");
+          } else {
+            statusMessage.textContent = "Consulta concluída.";
+            statusMessage.classList.remove("text-danger");
+          }
+
+          const formatted = formatPayload(inscricao, payload);
+          renderResultado(formatted);
+        } catch (error) {
+          statusMessage.textContent = "Não foi possível consultar. Verifique a conexão.";
+          statusMessage.classList.add("text-danger");
+          renderResultado({
+            statusLine: "Erro ao consultar.",
+            bulletLines: ["O serviço não pôde ser acessado agora. Tente novamente."],
+          });
+        } finally {
+          submitButton.disabled = false;
+          spinner.classList.add("d-none");
+        }
+      });
+    </script>
+  </body>
+</html>
