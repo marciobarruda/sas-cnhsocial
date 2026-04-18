@@ -2976,7 +2976,7 @@
                 if (tabId === 'documentacao') updateDocs();
                 if (tabId === 'informativos') renderNotifs();
                 if (tabId === 'matricula') checkMatriculaStatus();
-                if (tabId === 'situacao') updateStatusTab();
+                if (tabId === 'situacao') { updateStatusTab(); fetchWorkflowStatus(); }
             }
             if (window.innerWidth < 992) {
                 const sidebar = document.getElementById('sidebar');
@@ -3079,6 +3079,29 @@
                     </div>
                 </div>
             `;
+        }
+ 
+        async function fetchWorkflowStatus() {
+            const numInsc = document.getElementById('numInscricao')?.value;
+            if (!numInsc || numInsc.trim() === "" || numInsc.toLowerCase() === "pendente") return;
+ 
+            try {
+                const resp = await fetch(`https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/buscar-workflowStatus?inscricao=${encodeURIComponent(numInsc)}`, {
+                    headers: getAuthHeaders()
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data && data.workflowStatus) {
+                        const input = document.getElementById('workflowStatus');
+                        if (input) {
+                            input.value = data.workflowStatus;
+                            updateStatusTab(); // Atualiza a UI com o novo valor
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Erro ao buscar workflowStatus em tempo real:", err);
+            }
         }
 
         async function init() {
@@ -3327,6 +3350,7 @@
             updateBadge();
             checkRecurso();
             updateStatusTab();
+            fetchWorkflowStatus();
             toggleAppWorkerDate(); // Ensure app worker fields are visible if re-activated
             updateScore();
             updateDocs();
