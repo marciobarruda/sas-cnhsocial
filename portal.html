@@ -468,6 +468,10 @@
                         class="fas fa-file-upload"></i><span>Documentação</span></a>
             </div>
             <div class="nav-item">
+                <a href="#" class="nav-link" data-tab="situacao"><i
+                        class="fas fa-info-circle"></i><span>Situação da Inscrição</span></a>
+            </div>
+            <div class="nav-item">
                 <a href="#" class="nav-link" data-tab="acompanhamento"><i class="fas fa-chart-line"></i><span>Minha
                         Pontuação</span></a>
             </div>
@@ -956,6 +960,35 @@
                         onclick="confirmarEEnviar()" disabled>
                         <i class="fas fa-paper-plane me-2"></i>Enviar Inscrição e Documentos
                     </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Situação da Inscrição -->
+        <section id="situacao" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">Situação da Inscrição</h2>
+                <p class="text-muted mb-0">Confira o estágio atual do seu processo seletivo através das mensagens oficiais.</p>
+            </div>
+            <div class="card border-0 shadow-sm overflow-hidden mb-4">
+                <div class="card-body p-0">
+                    <div id="statusFriendlyArea" class="p-4">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <span class="text-muted">Processando situação da base de dados...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-bold">
+                    <i class="fas fa-history me-2 text-primary"></i>Histórico e Detalhes Técnicos
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted mb-2">Código técnico original (referência):</p>
+                    <code class="px-2 py-1 bg-light rounded text-dark border" id="rawStatusDisplay">---</code>
+                    <p class="mt-3 small text-muted">A situação exibida reflete o último processamento realizado pela equipe técnica da Prefeitura do Recife. Em caso de dúvidas, utilize o canal de suporte oficial.</p>
                 </div>
             </div>
         </section>
@@ -2952,7 +2985,104 @@
             }
         }
 
-        function init() {
+        /**
+         * Traduz o workflowStatus técnico para uma linguagem simples e amigável.
+         */
+        function updateStatusTab() {
+            const rawStatus = document.getElementById('workflowStatus')?.value || "";
+            const area = document.getElementById('statusFriendlyArea');
+            const rawDisplay = document.getElementById('rawStatusDisplay');
+            
+            if (rawDisplay) rawDisplay.innerText = rawStatus || 'Não informado';
+            if (!area) return;
+
+            const status = rawStatus.toLowerCase();
+            let info = {
+                text: "Sua inscrição está em processamento.",
+                color: "info",
+                icon: "fa-clock",
+                desc: "Aguarde a próxima atualização do sistema conforme o cronograma."
+            };
+
+            if (status.includes('homologado')) {
+                info = {
+                    text: "Inscrição Homologada com Sucesso!",
+                    color: "success",
+                    icon: "fa-check-double",
+                    desc: "Parabéns! Sua documentação e critérios foram validados. Você está apto para as próximas etapas de classificação."
+                };
+            } else if (status.includes('177')) {
+                info = {
+                    text: "Aguardando envio de recurso (Inscrição Rejeitada).",
+                    color: "warning",
+                    icon: "fa-exclamation-circle",
+                    desc: "Sua inscrição inicial não foi aceita. Você possui um prazo para enviar um recurso na aba 'Recursos' contestando este resultado."
+                };
+            } else if (status.includes('199')) {
+                info = {
+                    text: "Inscrição não homologada definitivamente.",
+                    color: "danger",
+                    icon: "fa-times-circle",
+                    desc: "O processo de análise foi concluído e sua inscrição não preencheu os requisitos obrigatórios do edital."
+                };
+            } else if (status.includes('179')) {
+                info = {
+                    text: "Seu recurso de inscrição está em avaliação.",
+                    color: "warning",
+                    icon: "fa-hourglass-half",
+                    desc: "Recebemos sua contestação. Nossa equipe técnica está reavaliando seus dados e documentos."
+                };
+            } else if (status.includes('176')) {
+                info = {
+                    text: "Seus critérios socioeconômicos estão em análise.",
+                    color: "info",
+                    icon: "fa-user-shield",
+                    desc: "A equipe de assistência social está validando suas informações de vulnerabilidade e composição familiar."
+                };
+            } else if (status.includes('180')) {
+                info = {
+                    text: "Aguardando envio de recurso de pontuação.",
+                    color: "warning",
+                    icon: "fa-exclamation-triangle",
+                    desc: "O resultado preliminar da pontuação foi divulgado. Caso discorde de alguma nota, você pode interpor recurso agora."
+                };
+            } else if (status.includes('181')) {
+                info = {
+                    text: "Seu recurso de pontuação está em avaliação.",
+                    color: "warning",
+                    icon: "fa-gavel",
+                    desc: "A comissão está analisando sua contestação sobre a pontuação obtida."
+                };
+            } else if (status.includes('12')) {
+                info = {
+                    text: "Processo Encerrado.",
+                    color: "secondary",
+                    icon: "fa-folder-closed",
+                    desc: "O ciclo deste processo seletivo foi finalizado."
+                };
+            } else if (status.includes('86')) {
+                info = {
+                    text: "Sua inscrição está sendo analisada.",
+                    color: "info",
+                    icon: "fa-search",
+                    desc: "Estamos verificando a integridade dos seus dados iniciais na base do CadÚnico."
+                };
+            }
+
+            area.innerHTML = `
+                <div class="d-flex align-items-center gap-4">
+                    <div class="bg-${info.color} bg-opacity-10 p-4 rounded-circle">
+                        <i class="fas ${info.icon} fs-1 text-${info.color}"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold text-${info.color} mb-1">${info.text}</h3>
+                        <p class="text-muted mb-0">${info.desc}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function init() {
             // Show Edital Modal only for new enrollments
             const numInsc = (document.getElementById('numInscricao')?.value || '').trim().toLowerCase();
             const isPendente = !numInsc || numInsc === "" || numInsc === "pendente";
