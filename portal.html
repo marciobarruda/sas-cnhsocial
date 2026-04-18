@@ -527,9 +527,31 @@
                     style="border-color: var(--brand-highlight) !important; border-left: 4px solid var(--brand-highlight) !important;">
                     <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.5px;">Número da
                         Inscrição</div>
-                    <div class="fs-4 fw-bold text-primary" id="numInscricaoDisplay">{{ $json.data.inscricaoDisplay }}
-                    </div>
+                    <div class="fs-4 fw-bold text-primary" id="numInscricaoDisplay">{{ $json.data.inscricaoDisplay }}</div>
                     <input type="hidden" id="numInscricao" value="{{ $json.data.inscricaoDisplay }}">
+                    <input type="hidden" id="workflowStatus" value="{{ $json.data.workflowStatus }}">
+                    <input type="hidden" id="possuirecursoinscricao" value="{{ $json.data.possuirecursoinscricao }}">
+                    <input type="hidden" id="possuirecursopontuacao" value="{{ $json.data.possuirecursopontuacao }}">
+                    <input type="hidden" id="juinscricao" value="{{ $json.data.juinscricao }}">
+                    <input type="hidden" id="recinscricao" value="{{ $json.data.recinscricao }}">
+                    <input type="hidden" id="julredeprotecao" value="{{ $json.data.julredeprotecao }}">
+                    <input type="hidden" id="julsociofamiliar" value="{{ $json.data.julsociofamiliar }}">
+                    <input type="hidden" id="julsocioassistencial" value="{{ $json.data.julsocioassistencial }}">
+                    <input type="hidden" id="julsocioocupacional" value="{{ $json.data.julsocioocupacional }}">
+                    <input type="hidden" id="juldepterapeutica" value="{{ $json.data.juldepterapeutica }}">
+                    <input type="hidden" id="analiseredeprotecao" value="{{ $json.data.analiseredeprote }}">
+                    <input type="hidden" id="analisesociofamiliar" value="{{ $json.data.analisesociofami }}">
+                    <input type="hidden" id="analisesocioassistencial" value="{{ $json.data.analisesocioassi }}">
+                    <input type="hidden" id="analisesocioocupacional" value="{{ $json.data.analisesocioocup }}">
+                    <input type="hidden" id="analisedepterapeutica" value="{{ $json.data.analisedepterape }}">
+                    <input type="hidden" id="justrecredpro" value="{{ $json.data.justredprotecao }}">
+                    <input type="hidden" id="justrecsociofami" value="{{ $json.data.justsociofamili }}">
+                    <input type="hidden" id="justrecsocioassi" value="{{ $json.data.justsocioassis }}">
+                    <input type="hidden" id="justrecsocioocup" value="{{ $json.data.justsocioocup }}">
+                    <input type="hidden" id="justrecdepterap" value="{{ $json.data.justdepterap }}">
+                    <input type="hidden" id="justinscricao" value="{{ $json.data.justinscricao }}">
+                    <input type="hidden" id="jupontuacao" value="{{ $json.data.jupontuacao }}">
+                    <input type="hidden" id="recpontuacao" value="{{ $json.data.recpontuacao }}">
                 </div>
             </div>
 
@@ -539,35 +561,10 @@
 
             <form id="formInscricao" class="needs-validation" novalidate onsubmit="return false">
                 <!-- Registration Reuse Options -->
-                <div id="containerReaproveitamento" class="card mb-4 border-info shadow-sm d-none"
-                    style="border-left: 5px solid #0dcaf0 !important;">
-                    <div class="card-body bg-light-subtle">
-                        <div class="row g-3 align-items-center">
-                            <div class="col-md-7">
-                                <div class="form-check form-switch p-0 d-flex align-items-center mb-0">
-                                    <input class="form-check-input ms-0 me-3 mt-0" type="checkbox"
-                                        id="swInscricaoAnterior" role="switch" disabled>
-                                    <label class="form-check-label fw-bold text-primary mb-0" for="swInscricaoAnterior">
-                                        Inscrição homologada em edital anterior detectada
-                                        <i class="fas fa-check-circle text-success ms-1"></i>
-                                    </label>
-                                </div>
-                                <div class="small text-muted mt-1 ms-5">Identificamos que você possui uma inscrição
-                                    válida e homologada no último processo seletivo.</div>
-                            </div>
-                            <div class="col-md-5 border-start border-info-subtle">
-                                <div class="form-check form-switch p-0 d-flex align-items-center mb-0">
-                                    <input class="form-check-input ms-0 me-3 mt-0" type="checkbox"
-                                        id="swReaproveitarDados" role="switch">
-                                    <label class="form-check-label fw-bold text-dark mb-0" for="swReaproveitarDados">
-                                        Reaproveitar dados para este novo processo?
-                                    </label>
-                                </div>
-                                <div class="small text-muted mt-1 ms-5">Ao marcar, seus dados e documentos anteriores
-                                    serão reutilizados nesta nova inscrição.</div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Switch oculto para controle interno de reaproveitamento -->
+                <div id="containerReaproveitamento" class="d-none" aria-hidden="true">
+                    <input class="form-check-input" type="checkbox" id="swInscricaoAnterior" role="switch" disabled>
+                    <input class="form-check-input" type="checkbox" id="swReaproveitarDados" role="switch">
                 </div>
 
                 <div class="card mb-4">
@@ -615,8 +612,8 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Tempo desde Atualização</label>
-                                <input type="text" class="form-control" id="tempoAtualizacaoCadunico" value="14 meses"
-                                    readonly required>
+                                <input type="text" class="form-control" id="tempoAtualizacaoCadunico" value=""
+                                    placeholder="Calculando..." readonly required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Autodeclaração de cor/raça</label>
@@ -776,7 +773,8 @@
                                             <input class="form-check-input ms-0 me-3 mt-0" type="checkbox"
                                                 id="dependenteTratamento" role="switch">
                                             <label class="form-check-label fw-bold mb-0"
-                                                for="dependenteTratamento">Possui dependente em tratamento?</label>
+                                                for="dependenteTratamento">Pessoa cujos dependentes legais necessitem
+                                                comprovadamente de tratamento terapêutico contínuo</label>
                                         </div>
                                     </div>
 
@@ -1032,7 +1030,7 @@
                                         <td class="text-center"><span
                                                 class="badge {{ ($json.data.pts_mulher_violencia || 0) > 0 ? 'bg-success' : 'bg-light text-dark' }} px-3"
                                                 id="score-mulher-violencia-badge">{{ $json.data.pts_mulher_violencia ||
-                                                0 }} / 15</span></td>
+                                                0 }} / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Renda per capita (Vulnerabilidade)</td>
@@ -1052,7 +1050,7 @@
                                         <td class="text-center"><span
                                                 class="badge {{ ($json.data.pts_dependente_tratamento || 0) > 0 ? 'bg-success' : 'bg-light text-dark' }} px-3"
                                                 id="score-dependente-tratamento-badge">{{
-                                                $json.data.pts_dependente_tratamento || 0 }} / 10</span></td>
+                                                $json.data.pts_dependente_tratamento || 0 }} / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Resido em serviço de acolhimento institucional</td>
@@ -1062,11 +1060,19 @@
                                                 20</span></td>
                                     </tr>
                                     <tr>
-                                        <td class="ps-4">Trabalhador de Aplicativo</td>
+                                        <td class="ps-4">Trabalhador de Aplicativo (Base)</td>
                                         <td class="text-center"><span
-                                                class="badge {{ ($json.data.pts_trabalhador_app || 0) > 0 ? 'bg-success' : 'bg-light text-dark' }} px-3"
-                                                id="score-app-badge">{{ $json.data.pts_trabalhador_app || 0 }} /
-                                                45</span></td>
+                                                class="badge {{ ($json.data.pts_trabalhador_app_base || 0) > 0 ? 'bg-success' : 'bg-light text-dark' }} px-3"
+                                                id="score-app-badge">{{ $json.data.pts_trabalhador_app_base || 0 }} /
+                                                20</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="ps-4">Tempo de Atividade no Aplicativo</td>
+                                        <td class="text-center"><span
+                                                class="badge {{ ($json.data.pts_trabalhador_app_tempo || 0) > 0 ? 'bg-success' : 'bg-light text-dark' }} px-3"
+                                                id="score-app-tempo-badge">{{ $json.data.pts_trabalhador_app_tempo || 0
+                                                }} /
+                                                20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Benefícios Sociais</td>
@@ -1087,7 +1093,7 @@
                                     <tr>
                                         <td class="ps-4 fw-bold">TOTAL OBTIDO</td>
                                         <td class="text-center fw-bold fs-5" id="score-total-display">
-                                            {{ $json.data.totalPontos }} / 215
+                                            {{ $json.data.totalPontos }} / 225
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -1101,9 +1107,16 @@
         <!-- Tab: Recursos -->
         <section id="recursos" class="tab-content">
             <div class="section-header">
-                <h2 class="section-title">Recursos</h2>
+                <h2 class="section-title" id="recursosTitulo">Recursos</h2>
             </div>
+
+            <!-- Status / resultado exibido pelo checkRecurso() -->
             <div id="resourceStatus" class="mb-4"></div>
+
+            <!-- Painel de resultado de recurso (pós-janela) -->
+            <div id="recursosResultadoContainer" class="d-none mb-4"></div>
+
+            <!-- Formulário Janela 1: texto livre -->
             <div class="card d-none" id="recursosFormContainer">
                 <div class="card-body">
                     <div class="mb-3">
@@ -1113,46 +1126,191 @@
                         <textarea class="form-control" id="recursoTexto" rows="6"
                             placeholder="Descreva aqui os motivos do seu recurso..." required></textarea>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-primary"><i class="fas fa-paperclip me-2"></i>Anexos
                             (até 5 arquivos - PDF, JPG, PNG)</label>
                         <div id="recursoArquivosList">
-                            <div class="mb-2" id="recursoGroup1">
-                                <input type="file" class="form-control form-control-sm" id="recursoFile1"
-                                    accept=".pdf,.jpg,.jpeg,.png">
-                            </div>
-                            <div class="mb-2 d-none" id="recursoGroup2">
-                                <label class="form-label x-small fw-bold text-muted mb-1">Anexo 2</label>
-                                <input type="file" class="form-control form-control-sm" id="recursoFile2"
-                                    accept=".pdf,.jpg,.jpeg,.png">
-                            </div>
-                            <div class="mb-2 d-none" id="recursoGroup3">
-                                <label class="form-label x-small fw-bold text-muted mb-1">Anexo 3</label>
-                                <input type="file" class="form-control form-control-sm" id="recursoFile3"
-                                    accept=".pdf,.jpg,.jpeg,.png">
-                            </div>
-                            <div class="mb-2 d-none" id="recursoGroup4">
-                                <label class="form-label x-small fw-bold text-muted mb-1">Anexo 4</label>
-                                <input type="file" class="form-control form-control-sm" id="recursoFile4"
-                                    accept=".pdf,.jpg,.jpeg,.png">
-                            </div>
-                            <div class="mb-2 d-none" id="recursoGroup5">
-                                <label class="form-label x-small fw-bold text-muted mb-1">Anexo 5</label>
-                                <input type="file" class="form-control form-control-sm" id="recursoFile5"
-                                    accept=".pdf,.jpg,.jpeg,.png">
-                            </div>
+                            <div class="mb-2" id="recursoGroup1"><input type="file" class="form-control form-control-sm"
+                                    id="recursoFile1" accept=".pdf,.jpg,.jpeg,.png"></div>
+                            <div class="mb-2 d-none" id="recursoGroup2"><label
+                                    class="form-label x-small fw-bold text-muted mb-1">Anexo 2</label><input type="file"
+                                    class="form-control form-control-sm" id="recursoFile2"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
+                            <div class="mb-2 d-none" id="recursoGroup3"><label
+                                    class="form-label x-small fw-bold text-muted mb-1">Anexo 3</label><input type="file"
+                                    class="form-control form-control-sm" id="recursoFile3"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
+                            <div class="mb-2 d-none" id="recursoGroup4"><label
+                                    class="form-label x-small fw-bold text-muted mb-1">Anexo 4</label><input type="file"
+                                    class="form-control form-control-sm" id="recursoFile4"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
+                            <div class="mb-2 d-none" id="recursoGroup5"><label
+                                    class="form-label x-small fw-bold text-muted mb-1">Anexo 5</label><input type="file"
+                                    class="form-control form-control-sm" id="recursoFile5"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
                         </div>
                         <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none fw-bold mt-1"
-                            id="btnNovoAnexo" onclick="adicionarAnexo()">
-                            <i class="fas fa-plus-circle me-1"></i>Adicionar outro anexo
+                            id="btnNovoAnexo" onclick="adicionarAnexo()"><i
+                                class="fas fa-plus-circle me-1"></i>Adicionar outro anexo</button>
+                        <div class="form-text x-small mt-2">Utilize os anexos para comprovar sua fundamentação.</div>
+                    </div>
+                    <div class="text-end">
+                        <button class="btn btn-primary fw-bold" id="btnEnviarRecurso" onclick="enviarRecurso()">
+                            <i class="fas fa-paper-plane me-2"></i>Enviar Recurso
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulário Janela 2: 5 switches de categoria -->
+            <div class="card d-none" id="recursosFormContainerJ2">
+                <div class="card-body">
+                    <p class="text-muted small mb-4">Selecione o(s) critério(s) de pontuação que deseja contestar. Para
+                        cada opção selecionada, preencha a justificativa correspondente.</p>
+
+                    <!-- Switch 1: Rede de Proteção -->
+                    <div class="border rounded-3 p-3 mb-3 d-none" id="wrapRecRedeProt">
+                        <div class="form-check form-switch d-flex align-items-start">
+                            <input class="form-check-input me-3 mt-1" type="checkbox" id="swRecRedeProt"
+                                onchange="toggleRecursoSwitch('redeprot')">
+                            <div>
+                                <label class="form-check-label fw-bold" for="swRecRedeProt">Rede de Proteção Social</label>
+                                <p class="text-muted small mb-0 mt-1">Destina-se a mulheres em situação de violência atendidas pelos órgãos e serviços especializados do município do Recife.</p>
+                            </div>
+                        </div>
+                        <div id="justAnalise_redeprot" class="alert alert-danger border-0 shadow-sm mt-3 d-none">
+                            <h6 class="fw-bold mb-2 small"><i class="fas fa-exclamation-circle me-2"></i>Motivo da Rejeição:</h6>
+                            <p class="mb-0 small" id="textJust_redeprot"></p>
+                        </div>
+                        <div class="mt-3 d-none" id="recursoTexto_redeprot_wrap">
+                            <label class="form-label small fw-bold text-primary">Justificativa do Recurso <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="recursoTexto_redeprot" rows="4"
+                                placeholder="Descreva por que discorda da avaliação deste critério..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Switch 2: Sociofamiliar -->
+                    <div class="border rounded-3 p-3 mb-3 d-none" id="wrapRecSocioFami">
+                        <div class="form-check form-switch d-flex align-items-start">
+                            <input class="form-check-input me-3 mt-1" type="checkbox" id="swRecSocioFami"
+                                onchange="toggleRecursoSwitch('sociofami')">
+                            <div>
+                                <label class="form-check-label fw-bold" for="swRecSocioFami">Sociofamiliar</label>
+                                <p class="text-muted small mb-0 mt-1">Destina-se a mães e pais atípicos, residentes no Município do Recife.</p>
+                            </div>
+                        </div>
+                        <div id="justAnalise_sociofami" class="alert alert-danger border-0 shadow-sm mt-3 d-none">
+                            <h6 class="fw-bold mb-2 small"><i class="fas fa-exclamation-circle me-2"></i>Motivo da Rejeição:</h6>
+                            <p class="mb-0 small" id="textJust_sociofami"></p>
+                        </div>
+                        <div class="mt-3 d-none" id="recursoTexto_sociofami_wrap">
+                            <label class="form-label small fw-bold text-primary">Justificativa do Recurso <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="recursoTexto_sociofami" rows="4"
+                                placeholder="Descreva por que discorda da avaliação deste critério..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Switch 3: Socioassistencial -->
+                    <div class="border rounded-3 p-3 mb-3 d-none" id="wrapRecSocioAssi">
+                        <div class="form-check form-switch d-flex align-items-start">
+                            <input class="form-check-input me-3 mt-1" type="checkbox" id="swRecSocioAssi"
+                                onchange="toggleRecursoSwitch('socioassi')">
+                            <div>
+                                <label class="form-check-label fw-bold" for="swRecSocioAssi">Socioassistencial</label>
+                                <p class="text-muted small mb-0 mt-1">Destina-se a pessoas em unidades de acolhimento da Prefeitura do Recife.</p>
+                            </div>
+                        </div>
+                        <div id="justAnalise_socioassi" class="alert alert-danger border-0 shadow-sm mt-3 d-none">
+                            <h6 class="fw-bold mb-2 small"><i class="fas fa-exclamation-circle me-2"></i>Motivo da Rejeição:</h6>
+                            <p class="mb-0 small" id="textJust_socioassi"></p>
+                        </div>
+                        <div class="mt-3 d-none" id="recursoTexto_socioassi_wrap">
+                            <label class="form-label small fw-bold text-primary">Justificativa do Recurso <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="recursoTexto_socioassi" rows="4"
+                                placeholder="Descreva por que discorda da avaliação deste critério..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Switch 4: Sócio-Ocupacional -->
+                    <div class="border rounded-3 p-3 mb-3 d-none" id="wrapRecSocioOcup">
+                        <div class="form-check form-switch d-flex align-items-start">
+                            <input class="form-check-input me-3 mt-1" type="checkbox" id="swRecSocioOcup"
+                                onchange="toggleRecursoSwitch('socioocup')">
+                            <div>
+                                <label class="form-check-label fw-bold" for="swRecSocioOcup">Sócio-Ocupacional</label>
+                                <p class="text-muted small mb-0 mt-1">Destina-se a trabalhador de aplicativo (motorista, mototaxista, entregador).</p>
+                            </div>
+                        </div>
+                        <div id="justAnalise_socioocup" class="alert alert-danger border-0 shadow-sm mt-3 d-none">
+                            <h6 class="fw-bold mb-2 small"><i class="fas fa-exclamation-circle me-2"></i>Motivo da Rejeição:</h6>
+                            <p class="mb-0 small" id="textJust_socioocup"></p>
+                        </div>
+                        <div class="mt-3 d-none" id="recursoTexto_socioocup_wrap">
+                            <label class="form-label small fw-bold text-primary">Justificativa do Recurso <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="recursoTexto_socioocup" rows="4"
+                                placeholder="Descreva por que discorda da avaliação deste critério..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Switch 5: Dependência Terapêutica -->
+                    <div class="border rounded-3 p-3 mb-3 d-none" id="wrapRecDepTerap">
+                        <div class="form-check form-switch d-flex align-items-start">
+                            <input class="form-check-input me-3 mt-1" type="checkbox" id="swRecDepTerap"
+                                onchange="toggleRecursoSwitch('depterap')">
+                            <div>
+                                <label class="form-check-label fw-bold" for="swRecDepTerap">Dependência Terapêutica</label>
+                                <p class="text-muted small mb-0 mt-1">Destina-se a pessoas cujos dependentes legais necessitem comprovadamente de tratamento terapêutico contínuo.</p>
+                            </div>
+                        </div>
+                        <div id="justAnalise_depterap" class="alert alert-danger border-0 shadow-sm mt-3 d-none">
+                            <h6 class="fw-bold mb-2 small"><i class="fas fa-exclamation-circle me-2"></i>Motivo da Rejeição:</h6>
+                            <p class="mb-0 small" id="textJust_depterap"></p>
+                        </div>
+                        <div class="mt-3 d-none" id="recursoTexto_depterap_wrap">
+                            <label class="form-label small fw-bold text-primary">Justificativa do Recurso <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="recursoTexto_depterap" rows="4"
+                                placeholder="Descreva por que discorda da avaliação deste critério..."></textarea>
+                        </div>
+                    </div>
+
+                    <div id="noCriteriaMsg" class="alert alert-light text-center border d-none">
+                        <i class="fas fa-info-circle me-2"></i>Não foram encontrados critérios elegíveis para recurso com base na sua inscrição e avaliação.
+                    </div>
+
+                    <!-- Anexos Janela 2 -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-primary"><i class="fas fa-paperclip me-2"></i>Anexos
+                            de Suporte (até 5 arquivos - PDF, JPG, PNG)</label>
+                        <div id="recursoArquivosListJ2">
+                            <div class="mb-2" id="recursoGroupJ2_1"><input type="file"
+                                    class="form-control form-control-sm" id="recursoFileJ2_1"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
+                            <div class="mb-2 d-none" id="recursoGroupJ2_2"><label
+                                    class="form-label x-small fw-bold text-muted mb-1">Anexo 2</label><input type="file"
+                                    class="form-control form-control-sm" id="recursoFileJ2_2"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
+                            <div class="mb-2 d-none" id="recursoGroupJ2_3"><label
+                                    class="form-label x-small fw-bold text-muted mb-1">Anexo 3</label><input type="file"
+                                    class="form-control form-control-sm" id="recursoFileJ2_3"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
+                            <div class="mb-2 d-none" id="recursoGroupJ2_4"><label
+                                    class="form-label x-small fw-bold text-muted mb-1">Anexo 4</label><input type="file"
+                                    class="form-control form-control-sm" id="recursoFileJ2_4"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
+                            <div class="mb-2 d-none" id="recursoGroupJ2_5"><label
+                                    class="form-label x-small fw-bold text-muted mb-1">Anexo 5</label><input type="file"
+                                    class="form-control form-control-sm" id="recursoFileJ2_5"
+                                    accept=".pdf,.jpg,.jpeg,.png"></div>
+                        </div>
+                        <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none fw-bold mt-1"
+                            id="btnNovoAnexoJ2" onclick="adicionarAnexoJ2()"><i
+                                class="fas fa-plus-circle me-1"></i>Adicionar outro anexo</button>
                         <div class="form-text x-small mt-2">Utilize os anexos para comprovar sua fundamentação.</div>
                     </div>
 
                     <div class="text-end">
-                        <button class="btn btn-primary fw-bold" id="btnEnviarRecurso" onclick="enviarRecurso()">
-                            <i class="fas fa-paper-plane me-2"></i>Enviar Recurso
+                        <button class="btn btn-primary fw-bold" id="btnEnviarRecursoJ2" onclick="enviarRecursoJ2()">
+                            <i class="fas fa-paper-plane me-2"></i>Enviar Recurso de Pontuação
                         </button>
                     </div>
                 </div>
@@ -1363,10 +1521,22 @@
                     </h2>
                     <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body text-muted">
-                            A seleção é feita via sistema de pontuação por critérios de vulnerabilidade social
-                            (Raça/Cor, PCD, Renda Familiar, Composição Familiar, Mulher Chefe de Família, Pessoas
-                            sem trabalho formal, Trabalhadores de Aplicativo, entre outros). Você pode conferir o
-                            detalhamento dos seus pontos na aba "Minha Pontuação" deste portal.
+                            <p class="mb-2">A seleção é processada automaticamente através de um sistema de
+                                <strong>score (pontuação)</strong>.
+                                O algoritmo analisa as informações da sua base do CadÚnico (como renda e composição
+                                familiar)
+                                e as declarações prestadas no formulário (como tempo de aplicativo ou ser mãe atípica).
+                            </p>
+
+                            <p class="mb-2"><strong>Critérios de Desempate:</strong> Caso dois candidatos possuam a
+                                mesma pontuação, a prioridade seguirá a ordem abaixo:</p>
+                            <ol class="small mb-0">
+                                <li>Mães e pais atípicos;</li>
+                                <li>Menor renda per capita;</li>
+                                <li>Maior idade;</li>
+                                <li>Pessoa com Deficiência (PCD);</li>
+                                <li>Ordem cronológica de inscrição.</li>
+                            </ol>
                         </div>
                     </div>
                 </div>
@@ -1375,14 +1545,116 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq5">
-                            5. Quais documentos devo anexar?
+                            5. Qual a pontuação máxima e quais os critérios detalhados?
                         </button>
                     </h2>
                     <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body text-muted">
-                            Você precisará anexar o RG (ou CNH atual) emitido há no máximo 10 anos, CPF e comprovante de
-                            residência atualizado (últimos 90 dias). Dependendo dos critérios marcados (como PCD ou Mãe
-                            Atípica), campos adicionais para laudos e declarações aparecerão na aba "Documentação".
+                            <p class="mb-2">A pontuação máxima permitida é de <strong>225 pontos</strong>. A composição
+                                detalhada é:</p>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-borderless small mb-0">
+                                    <thead>
+                                        <tr class="border-bottom">
+                                            <th>Critério</th>
+                                            <th class="text-end">Pontos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Pessoas Negras ou Indígenas</td>
+                                            <td class="text-end">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pessoa com Deficiência (PCD)</td>
+                                            <td class="text-end">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mulher em situação de Violência</td>
+                                            <td class="text-end">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dependentes em Tratamento Contínuo</td>
+                                            <td class="text-end">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Residente em Unidade de Acolhimento</td>
+                                            <td class="text-end">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Renda Familiar per capita</td>
+                                            <td class="text-end">Até 20</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ps-3 text-muted" colspan="2">
+                                                <div
+                                                    class="d-flex justify-content-between border-start border-2 ps-2 my-1">
+                                                    <span>• Até R$ 218,00</span>
+                                                    <span>20 pts</span>
+                                                </div>
+                                                <div
+                                                    class="d-flex justify-content-between border-start border-2 ps-2 my-1">
+                                                    <span>• Entre R$ 218,01 e R$ 810,50 (Meio Salário Mínimo)</span>
+                                                    <span>10 pts</span>
+                                                </div>
+                                                <div
+                                                    class="d-flex justify-content-between border-start border-2 ps-2 my-1">
+                                                    <span>• Acima de R$ 810,50</span>
+                                                    <span>5 pts</span>
+                                                </div>
+                                                <div class="x-small text-info mt-1 italic"><i
+                                                        class="fas fa-exclamation-circle me-1"></i>As pontuações por
+                                                    faixa de renda não são cumulativas.</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Composição Familiar (7 ou mais pessoas)</td>
+                                            <td class="text-end">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Trabalhador de Aplicativo (Base)</td>
+                                            <td class="text-end">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="ps-3 text-muted" colspan="2">
+                                                <div
+                                                    class="d-flex justify-content-between border-start border-2 ps-2 my-1">
+                                                    <span>• De 1 até 2 anos de atividade</span>
+                                                    <span>+10 pts</span>
+                                                </div>
+                                                <div
+                                                    class="d-flex justify-content-between border-start border-2 ps-2 my-1">
+                                                    <span>• De 2 até 3 anos de atividade</span>
+                                                    <span>+15 pts</span>
+                                                </div>
+                                                <div
+                                                    class="d-flex justify-content-between border-start border-2 ps-2 my-1">
+                                                    <span>• Mais de 3 anos de atividade</span>
+                                                    <span>+20 pts</span>
+                                                </div>
+                                                <div class="x-small text-info mt-1 italic"><i
+                                                        class="fas fa-exclamation-circle me-1"></i>Os bônus por tempo de
+                                                    atividade não são cumulativos.</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Bolsa Família / Programas Sociais</td>
+                                            <td class="text-end">15</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mulher Chefe de Família</td>
+                                            <td class="text-end">15</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sem Trabalho Formal</td>
+                                            <td class="text-end">15</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="mt-2 mb-0 extra-small text-info small"><i class="fas fa-info-circle me-1"></i>A
+                                pontuação de renda e composição familiar varia conforme as faixas definidas no edital.
+                                Consulte a aba <strong>Minha Pontuação</strong> para uma estimativa personalizada.</p>
                         </div>
                     </div>
                 </div>
@@ -1391,10 +1663,38 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq6">
-                            6. Posso mudar a categoria escolhida após a inscrição?
+                            6. Quais documentos devo anexar?
                         </button>
                     </h2>
                     <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">
+                            <p class="mb-2">O candidato deverá anexar os seguintes documentos digitalizados (PDF, JPG ou
+                                PNG):</p>
+                            <ul class="small mb-2">
+                                <li><strong>Identificação:</strong> RG ou CNH (com foto, emitido há no máximo 10 anos),
+                                    frente e verso;</li>
+                                <li><strong>CPF:</strong> Caso não conste no documento de identificação;</li>
+                                <li><strong>Residência:</strong> Comprovante emitido há no máximo 90 dias.
+                                    <em>Importante: Este documento só é obrigatório caso o seu endereço atual seja
+                                        diferente do cadastrado no CadÚnico.</em>;</li>
+
+                                <li><strong>Trabalhador App:</strong> Comprovante de cadastro/vínculo com a plataforma
+                                    (se aplicável);</li>
+                                <li><strong>Mãe/Pai Atípico ou Dep. Tratamento:</strong> Laudos e declarações técnicas
+                                    conforme detalhado no Edital (se aplicável).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-bottom">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faq7">
+                            7. Posso mudar a categoria escolhida após a inscrição?
+                        </button>
+                    </h2>
+                    <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body text-muted">
                             Não. De acordo com o Edital, a opção de categoria (Primeira habilitação ou adição, A ou B)
                             indicada no ato da inscrição é definitiva e não pode ser alterada em nenhuma fase do
@@ -1406,11 +1706,11 @@
                 <div class="accordion-item border-bottom">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#faq7">
-                            7. O que acontece se eu for reprovado no exame do DETRAN?
+                            data-bs-target="#faq8">
+                            8. O que acontece se eu for reprovado no exame do DETRAN?
                         </button>
                     </h2>
-                    <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body text-muted">
                             O programa prevê a concessão de 1 (um) reteste totalmente gratuito caso você não seja
                             aprovado em sua primeira tentativa. Caso reprove novamente, os custos de novos testes
@@ -1422,11 +1722,11 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#faq8">
-                            8. Como faço para interpor um recurso?
+                            data-bs-target="#faq9">
+                            9. Como faço para interpor um recurso?
                         </button>
                     </h2>
-                    <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body text-muted">
                             Caso discorde de algum resultado preliminar, você deve acessar a aba "Recursos" dentro do
                             prazo estabelecido no Cronograma oficial e descrever sua justificativa, podendo anexar até 5
@@ -1530,7 +1830,7 @@
                             segundos...
                         </div>
                         <button type="button" class="btn btn-primary w-100 mt-2"
-                            onclick="window.location.reload();">Voltar ao
+                            onclick="window.location.hash = '#inscricao'; window.location.reload();">Voltar ao
                             Início</button>
                     </div>
                 </div>
@@ -1573,8 +1873,8 @@
                         <p class="fs-5 mb-2 fw-bold" id="prazoStatusMsg">As inscrições não estão abertas no momento.</p>
                         <p class="text-muted mb-0">De acordo com o cronograma oficial:</p>
                         <div class="alert alert-light mt-3 py-2 border">
-                            <strong>Início:</strong> 21/03/2026 às 00:00:00<br>
-                            <strong>Fim:</strong> 20/04/2026 às 23:59:59
+                            <strong>Início:</strong> 16/04/2026 às 00:00:00<br>
+                            <strong>Fim:</strong> 06/05/2026 às 23:59:59
                         </div>
                     </div>
                     <div class="modal-footer border-0">
@@ -1597,7 +1897,7 @@
                         <p class="text-muted">Sua justificativa e anexos foram recebidos com sucesso e serão analisados
                             pela comissão.</p>
                         <button type="button" class="btn btn-primary w-100 py-2 fw-bold"
-                            data-bs-dismiss="modal">Entendido</button>
+                            data-bs-dismiss="modal" onclick="window.location.hash = '#recursos'; window.location.reload();">Entendido</button>
                     </div>
                 </div>
             </div>
@@ -1638,7 +1938,41 @@
             </div>
         </div>
 
-        <!-- Modal: Reaproveitar Dados -->
+        <!-- Modal: Confirmar Reaproveitamento de Dados (novo) -->
+        <div class="modal fade" id="modalConfirmarReuso" data-bs-backdrop="static" data-bs-keyboard="false"
+            tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #1a5276, #2980b9);">
+                        <h5 class="modal-title fw-bold text-white"><i class="fas fa-history me-2"></i>Inscrição Anterior
+                            Encontrada</h5>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-file-alt text-primary" style="font-size: 3rem; opacity: 0.7;"></i>
+                        </div>
+                        <p class="text-center mb-1 fw-bold">Identificamos uma inscrição homologada no processo seletivo
+                            anterior.</p>
+                        <p class="text-center text-muted small mb-4">Deseja reaproveitar os seus dados cadastrais para
+                            agilizar o preenchimento?</p>
+                        <div class="alert alert-warning py-2 mb-0 border-0 small">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Todos os <strong>documentos precisam ser
+                                enviados novamente</strong>, independente desta escolha.
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 gap-2">
+                        <button type="button" class="btn btn-outline-secondary flex-fill" id="btnRecusarReuso">
+                            <i class="fas fa-edit me-2"></i>Não, prefiro preencher
+                        </button>
+                        <button type="button" class="btn btn-primary flex-fill fw-bold" id="btnConfirmarReuso">
+                            <i class="fas fa-check me-2"></i>Sim, reaproveitar dados
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Reaproveitar Dados (preview dos dados encontrados) -->
         <div class="modal fade" id="modalReaproveitarDados" data-bs-backdrop="static" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content border-0 shadow-lg">
@@ -1649,8 +1983,13 @@
                             onclick="resetReaproveitarSwitch()"></button>
                     </div>
                     <div class="modal-body p-4">
-                        <p class="mb-4">Encontramos os seguintes dados da sua última inscrição homologada. Deseja
+                        <p class="mb-3">Encontramos os seguintes dados da sua última inscrição homologada. Deseja
                             aplicá-los ao formulário atual?</p>
+                        <div class="alert alert-warning py-2 mb-4 fs-7 border-0 shadow-sm">
+                            <i class="fas fa-exclamation-triangle me-2"></i><strong>Atenção:</strong> Por segurança e
+                            atualização de dados, <strong>todos os documentos devem ser anexados novamente</strong>
+                            neste novo processo.
+                        </div>
                         <div id="reproveitamentoDadosCorpo" class="bg-light p-3 rounded-3 small">
                             <!-- Injected via JS -->
                         </div>
@@ -1683,6 +2022,26 @@
             </div>
         </div>
 
+        <!-- Modal: Genérico para Alertas e Erros -->
+        <div class="modal fade" id="modalGenerico" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-warning text-dark border-0">
+                        <h5 class="modal-title fw-bold" id="modalGenericoTitulo"><i
+                                class="fas fa-exclamation-circle me-2"></i>Aviso</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <p class="fs-6 mb-0" id="modalGenericoMensagem"></p>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-warning w-100 fw-bold"
+                            data-bs-dismiss="modal">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal: Edital de Seleção -->
         <div class="modal fade" id="modalEdital" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
@@ -1702,7 +2061,7 @@
                             </div>
 
                             <p>A Secretaria de Assistência Social e Combate à Fome do Recife (SAS/PCR), no uso de suas
-                                atribuições legais, e considerando o disposto na Lei Municipal nº 19.428, de 15 de
+                                atribuições legais, e considerando o disposto na Lei Municipal nº 19.428, de 14 de
                                 outubro de 2025, e no Código de Trânsito Brasileiro (Lei nº 9.503/1997), torna público o
                                 presente Edital de Seleção para o Programa CNH Social Recife, conforme as condições e
                                 exigências a seguir.</p>
@@ -1781,8 +2140,8 @@
 
                             <h6 class="fw-bold mt-4 mb-2">5. DAS INSCRIÇÕES</h6>
                             <p>5.1. As inscrições serão realizadas exclusivamente pela Plataforma Conecta Recife, no
-                                período de 21 de março de 2026 a 20 de abril de 2026, de acordo com cronograma contido
-                                no Anexo I.</p>
+                                período de 16 de abril de 2026 a 06 de maio de 2026, de acordo com cronograma contido no
+                                Anexo I.</p>
                             <p>5.2. O candidato deverá preencher o formulário eletrônico e anexar os seguintes
                                 documentos digitalizados (PDF, JPG ou PNG legível):</p>
                             <p class="ms-3 mb-1">I. Documento de identificação oficial com foto (RG ou CNH), emitido há,
@@ -1791,8 +2150,8 @@
                             <p class="ms-3 mb-1">III. Comprovante de residência (emitido há no máximo 90 dias);</p>
                             <p class="ms-3 mb-1">IV. Documentos comprobatórios conforme o Anexo II;</p>
                             <p class="ms-3 mb-3">V. Documentos comprobatórios, quando for o caso, que atestem a condição
-                                de mãe ou pai atípico, para fins de participação na cota reservada prevista no Capítulo
-                                8 deste Edital.</p>
+                                de mãe ou pai atípico, para fins de participação na cota reservada prevista no item 8
+                                deste Edital.</p>
                             <p>5.3. As informações prestadas serão de inteira responsabilidade do candidato, e a
                                 falsidade implicará desclassificação imediata e possíveis sanções legais.</p>
                             <p>5.4. No momento da inscrição, o candidato deverá optar por uma das seguintes modalidades
@@ -1813,16 +2172,16 @@
                                 pessoas com deficiência (PCD); mulheres em situação de violência atendidas pelos órgãos
                                 e serviços especializados do município do Recife; pessoas cujos dependentes legais
                                 necessitem comprovadamente de tratamento terapêutico contínuo; mulher chefe de família;
-                                pessoas sem trabalho formal; trabalhadores informais/autônomos e trabalhadores de
-                                aplicativo (motorista, mototaxista, entregador).</p>
+                                desempregados; trabalhadores informais/autônomos e trabalhadores de aplicativo
+                                (motorista, mototaxista, entregador).</p>
                             <p>6.3. Também haverá pontuação de acordo com renda familiar per capita e composição
                                 familiar.</p>
                             <p>6.4. A pontuação é cumulativa e a classificação seguirá a ordem decrescente de pontos.
                             </p>
                             <p>6.5. Em caso de empate, serão adotados os seguintes critérios de desempate, nesta ordem:
                             </p>
-                            <p class="ms-3 mb-1">I- Mães e pais atípicos, de acordo com art. 7º da Lei Municipal 19.428;
-                            </p>
+                            <p class="ms-3 mb-1">I - Mães e pais atípicos, de acordo com art. 7º da Lei Municipal
+                                19.428;</p>
                             <p class="ms-3 mb-1">II - Menor renda per capita;</p>
                             <p class="ms-3 mb-1">III - Maior idade;</p>
                             <p class="ms-3 mb-1">IV - Pessoa com deficiência;</p>
@@ -1872,13 +2231,13 @@
                                 apresentação de, no mínimo:</p>
                             <p class="ms-3 mb-1">I – laudo, relatório ou prescrição emitido por profissional de saúde ou
                                 por instituição devidamente registrada no respectivo conselho profissional, que comprove
-                                a condição da pessoa sob seus cuidados;</p>
+                                a condition da pessoa sob seus cuidados;</p>
                             <p class="ms-3 mb-1">II - declaração técnica do CRAS/CREAS ou certificação/atestado da
                                 Secretaria de Assistência Social atestando a condição de vulnerabilidade social;</p>
                             <p class="ms-3 mb-3">III – declaração técnica emitida por unidade de saúde ou unidade
                                 socioassistencial da Prefeitura do Recife, atestando que o(a) candidato(a) é o
                                 responsável legal pela pessoa com deficiência, Transtorno do Espectro Autista (TEA),
-                                Síndrome de Down ou outra condição congêneres que exija cuidados permanentes.</p>
+                                Síndrome de Down ou outra condição congênere que exija cuidados permanentes.</p>
                             <p>8.4. Os candidatos enquadrados na categoria de mães e pais atípicos deverão,
                                 obrigatoriamente, indicar essa condição no ato da inscrição, anexando os documentos
                                 comprobatórios.</p>
@@ -1947,7 +2306,7 @@
                                 edital.</p>
                             <p>10.4. Este edital e seus anexos estarão disponíveis para consulta pública na Plataforma
                                 Conecta Recife e no site da Prefeitura do Recife.</p>
-                            <p>10.5. A pontuação é cumulativa e poderá ser somada por different criteria.</p>
+                            <p>10.5. A pontuação é cumulativa e poderá ser somada por diferentes critérios.</p>
                             <p>10.6. Os critérios de desempate seguem o disposto no item 6.5 deste edital.</p>
                             <p>10.7. A comprovação de cada critério será realizada mediante apresentação da documentação
                                 exigida, podendo a Prefeitura realizar diligências para confirmar a veracidade.</p>
@@ -1965,10 +2324,226 @@
                                 imediata e aplicação das sanções legais cabíveis.</p>
 
                             <div class="mt-5 pt-3 border-top text-end">
-                                <p class="mb-0 fw-bold">Recife, 21 de março de 2026.</p>
-                                <p class="mb-0 mt-3 fw-bold">EDIVÂNIA ARCANJO DO NASCIMENTO BARROS</p>
+                                <p class="mb-0 fw-bold">Recife, 16 de abril de 2026.</p>
+                                <p class="mb-0 mt-3 fw-bold">MÁRCIA VIRGÍNIA BEZERRA RIBEIRO</p>
                                 <p class="small text-muted">Secretária de Assistência Social e Combate à Fome em
                                     exercício</p>
+                            </div>
+
+                            <h6 class="fw-bold mt-5 mb-3 border-bottom pb-2 text-primary text-center">ANEXO I –
+                                CRONOGRAMA</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm small align-middle">
+                                    <thead class="bg-light text-dark">
+                                        <tr>
+                                            <th>ETAPA</th>
+                                            <th>DATA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Publicação do Edital</td>
+                                            <td>16/04/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Período de Inscrições</td>
+                                            <td>16/04/2026 a 06/05/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Análise das Inscrições</td>
+                                            <td>07/05/2026 a 19/05/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Publicação das inscrições</td>
+                                            <td>até 21/05/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Período para Interposição de Recursos às inscrições</td>
+                                            <td>23/05/2026 a 26/05/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Análise de recursos às inscrições</td>
+                                            <td>27/05/2026 a 29/05/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Homologação das inscrições</td>
+                                            <td>30/05/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Análise dos critérios e seleção dos candidatos</td>
+                                            <td>01/06/2026 a 15/06/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Divulgação do Resultado Preliminar</td>
+                                            <td>16/06/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Período para Interposição de Recursos quanto ao resultado</td>
+                                            <td>16/06/2026 a 19/06/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Análise dos recursos</td>
+                                            <td>22/06/2026 a 25/06/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Divulgação do Resultado Final e Homologação</td>
+                                            <td>27/06/2026</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Convocação para matrículas dos Selecionados</td>
+                                            <td>27/06/2026</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h6 class="fw-bold mt-5 mb-3 border-bottom pb-2 text-primary text-center">ANEXO II –
+                                CRITÉRIOS DE PONTUAÇÃO E DOCUMENTAÇÃO COMPROBATÓRIA</h6>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm small align-middle">
+                                    <thead class="bg-light text-dark">
+                                        <tr>
+                                            <th style="width: 25%">Critério</th>
+                                            <th style="width: 25%">Descrição</th>
+                                            <th style="width: 40%">Forma de Comprovação</th>
+                                            <th class="text-center">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="table-secondary fw-bold small">
+                                            <td colspan="4">Grupos prioritários definidos por lei</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pessoas Negras</td>
+                                            <td>Pretos e pardos</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pessoas Indígenas</td>
+                                            <td>-</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pessoas com Deficiência (PCD)</td>
+                                            <td>-</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mulheres em situação de violência atendidas pelos órgãos e serviços
+                                                especializados do município do Recife;</td>
+                                            <td>-</td>
+                                            <td>Declarar na inscrição + confirmação da Secretaria da Mulher ou
+                                                Secretaria de Assistência Social</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pessoas cujos dependentes legais necessitem comprovadamente de
+                                                tratamento terapêutico contínuo;</td>
+                                            <td>-</td>
+                                            <td>Declaração de tratamento terapêutico contínuo emitido por profissional
+                                                de saúde + declaração técnica do CRAS/CREAS ou certificação/atestado da
+                                                Secretaria de Assistência Social atestando a condição de vulnerabilidade
+                                                social + comprovação de vínculo através de documentação ou declaração da
+                                                saúde ou de serviços socioassistenciais</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+
+                                        <tr class="table-secondary fw-bold small">
+                                            <td colspan="4">Outros perfis de vulnerabilidade social</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pessoas em unidades de acolhimento da Prefeitura do Recife</td>
+                                            <td>-</td>
+                                            <td>Declarar na inscrição + Confirmação com base de dados da SAS</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Renda familiar per capita</td>
+                                            <td>Até R$218 reais</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Renda familiar per capita</td>
+                                            <td>De R$218 até meio salário mínimo</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">10</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Renda familiar per capita</td>
+                                            <td>Acima de meio salário mínimo</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Composição familiar</td>
+                                            <td>7 ou mais componentes</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Composição familiar</td>
+                                            <td>4 a 6 componentes</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">10</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Composição familiar</td>
+                                            <td>3 componentes</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mulher chefe de família</td>
+                                            <td>-</td>
+                                            <td>Declarar na inscrição + Confirmação na Base do CadÚnico se consta como
+                                                Responsável Familiar</td>
+                                            <td class="text-center">15</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Não tem trabalho formal</td>
+                                            <td>-</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">15</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Trabalhador de aplicativo (motorista, mototaxista, entregador)</td>
+                                            <td>-</td>
+                                            <td>Comprovação via app/cadastro</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tempo como trabalhador de aplicativo (motorista, mototaxista,
+                                                entregador)</td>
+                                            <td>de 1 ano até 2 anos</td>
+                                            <td>Comprovação via app/cadastro</td>
+                                            <td class="text-center">10</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tempo como trabalhador de aplicativo (motorista, mototaxista,
+                                                entregador)</td>
+                                            <td>de 2 ano até 3 anos</td>
+                                            <td>Comprovação via app/cadastro</td>
+                                            <td class="text-center">15</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tempo como trabalhador de aplicativo (motorista, mototaxista,
+                                                entregador)</td>
+                                            <td>de 3 anos ou mais</td>
+                                            <td>Comprovação via app/cadastro</td>
+                                            <td class="text-center">20</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Integra família beneficiária do Programa Bolsa Família</td>
+                                            <td>-</td>
+                                            <td>Base de dados do CadÚnico</td>
+                                            <td class="text-center">15</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -2013,8 +2588,26 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Função utilitária para substituir alert por modal
+        function mostrarAlerta(msg, titulo = 'Aviso', tipo = 'warning') {
+            const m = document.getElementById('modalGenerico');
+            const t = document.getElementById('modalGenericoTitulo');
+            const c = document.getElementById('modalGenericoMensagem');
+            const h = m.querySelector('.modal-header');
+            const b = m.querySelector('.btn-warning');
+
+            if (t) t.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>${titulo}`;
+            if (c) c.innerText = msg;
+
+            // Ajustar cores conforme o tipo
+            h.className = `modal-header border-0 text-white ${tipo === 'danger' ? 'bg-danger' : 'bg-warning text-dark'}`;
+            b.className = `btn w-100 fw-bold ${tipo === 'danger' ? 'btn-danger' : 'btn-warning'}`;
+
+            new bootstrap.Modal(m).show();
+        }
+
         const AppState = {
-            currentDate: new Date("2026-03-22T10:00:00"), // Simulating requested time
+            currentDate: new Date(),
             notifications: {{ JSON.stringify($json.informativo) || '[]' }}.map(n => ({
                 id: n.id,
                 title: n.titulo,
@@ -2024,21 +2617,22 @@
                 timestamp: n.timestamp
             })),
                 cronograma: [
-                    { id: 1, etapa: 'Publicação do Edital', inicio: '2026-03-21', fim: '2026-03-21' },
-                    { id: 2, etapa: 'Período de Inscrições', inicio: '2026-03-21', fim: '2026-04-20' },
-                    { id: 3, etapa: 'Análise das Inscrições', inicio: '2026-04-22', fim: '2026-05-05' },
-                    { id: 4, etapa: 'Resultado Preliminar Inscrições', inicio: '2026-05-09', fim: '2026-05-09' },
-                    { id: 5, etapa: 'Recursos Inscrições', inicio: '2026-03-22', fim: '2026-05-12' },
-                    { id: 6, etapa: 'Análise de Seleção', inicio: '2026-05-18', fim: '2026-06-01' },
-                    { id: 7, etapa: 'Resultado Preliminar Seleção', inicio: '2026-06-02', fim: '2026-06-02' },
-                    { id: 8, etapa: 'Recursos Seleção', inicio: '2026-06-02', fim: '2026-06-05' },
-                    { id: 9, etapa: 'Resultado Final e Homologação', inicio: '2026-06-11', fim: '2026-06-11' }
+                    { id: 1, etapa: 'Publicação do Edital', inicio: '2026-04-17', fim: '2026-04-16' },
+                    { id: 2, etapa: 'Período de Inscrições', inicio: '2026-04-17', fim: '2026-05-06' },
+                    { id: 3, etapa: 'Análise das Inscrições', inicio: '2026-04-17', fim: '2026-05-19' },
+                    { id: 4, etapa: 'Publicação das Inscrições', inicio: '2026-04-17', fim: '2026-05-21' },
+                    { id: 5, etapa: 'Recursos às Inscrições', inicio: '2026-04-17', fim: '2026-05-26' },
+                    { id: 6, etapa: 'Análise de Seleção e Critérios', inicio: '2026-04-17', fim: '2026-06-15' },
+                    { id: 7, etapa: 'Resultado Preliminar Seleção', inicio: '2026-04-17', fim: '2026-06-16' },
+                    { id: 8, etapa: 'Recursos à Seleção', inicio: '2026-04-17', fim: '2026-06-19' },
+                    { id: 9, etapa: 'Resultado Final e Homologação', inicio: '2026-04-17', fim: '2026-06-27' }
                 ],
-                    janelasRecurso: [
-                        { inicio: '2026-03-22', fim: '2026-05-12' },
-                        { inicio: '2026-06-02', fim: '2026-06-05' }
-                    ]
         };
+        // Deriva as janelas de recurso automaticamente a partir do cronograma
+        AppState.janelasRecurso = [
+            AppState.cronograma.find(e => e.etapa === 'Recursos às Inscrições'),
+            AppState.cronograma.find(e => e.etapa === 'Recursos à Seleção')
+        ].filter(Boolean);
 
 
         const _0x12a = (a, b) => a ^ b;
@@ -2123,7 +2717,7 @@
             // Automatic criteria with local fallback if empty
             const scoreRaca = getScore({{ $json.data.pts_raca || 0 }}, () => {
                 const val = (document.getElementById('racaCor')?.value || '').toUpperCase();
-                return (val.includes('PRETA') || val.includes('PARDA') || val.includes('NEGRA')) ? 20 : 0;
+                return (val.includes('PRETA') || val.includes('PARDA') || val.includes('NEGRA') || val.includes('INDIGENA')) ? 20 : 0;
             });
         const scorePcd = getScore({{ $json.data.pts_pcd || 0 }}, () => {
             return !!document.getElementById('pcd')?.checked ? 20 : 0;
@@ -2133,7 +2727,7 @@
         });
         const scoreRenda = getScore({{ $json.data.pts_renda || 0 }}, () => {
             if (perCapita <= 218) return 20;
-            if (perCapita <= 706) return 10;
+            if (perCapita <= 810.50) return 10;
             return 5;
         });
         const scoreFamilia = getScore({{ $json.data.pts_familia || 0 }}, () => {
@@ -2150,11 +2744,36 @@
             return !!document.getElementById('semTrabalhoFormal')?.checked ? 15 : 0;
         });
 
-        // Specific criteria (no fallback requested)
-        const scoreMulherViolencia = {{ $json.data.pts_mulher_violencia || 0 }};
-        const scoreDependente = {{ $json.data.pts_dependente_tratamento || 0 }};
-        const scoreAcolhimento = {{ $json.data.pts_acolhimento || 0 }};
-        const scoreApp = {{ $json.data.pts_trabalhador_app || 0 }};
+        // Specific criteria (dynamic fallback for appeals)
+        const scoreMulherViolencia = getScore({{ $json.data.pts_mulher_violencia || 0 }}, () => {
+            return !!document.getElementById('vitimaViolencia')?.checked ? 20 : 0;
+        });
+        const scoreDependente = getScore({{ $json.data.pts_dependente_tratamento || 0 }}, () => {
+            return !!document.getElementById('dependenteTratamento')?.checked ? 20 : 0;
+        });
+        const scoreAcolhimento = getScore({{ $json.data.pts_acolhimento || 0 }}, () => {
+            return !!document.getElementById('acolhimentoInstitucional')?.checked ? 20 : 0;
+        });
+
+        // App Score Breakdown logic
+        const scoreAppBase = getScore({{ $json.data.pts_trabalhador_app_base || 0 }}, () => {
+            return !!document.getElementById('trabalhadorAplicativo')?.checked ? 20 : 0;
+        });
+        const scoreAppTempo = getScore({{ $json.data.pts_trabalhador_app_tempo || 0 }}, () => {
+            if (!document.getElementById('trabalhadorAplicativo')?.checked) return 0;
+            const dataVal = document.getElementById('dataInicioApp')?.value;
+            if (!dataVal) return 0;
+            const start = new Date(dataVal + 'T00:00:00');
+            const now = AppState.currentDate;
+            const diffMs = now - start;
+            const diffDays = diffMs / (1000 * 60 * 60 * 24);
+            const diffYears = diffDays / 365.25;
+            if (diffYears > 3) return 20;
+            if (diffYears >= 2) return 15;
+            if (diffYears >= 1) return 10;
+            return 0;
+        });
+        const scoreApp = scoreAppBase + scoreAppTempo;
 
         const total = scoreRaca + scorePcd + scoreMulher + scoreMulherViolencia + scoreRenda + scoreFamilia + scoreDependente + scoreAcolhimento + scoreApp + scoreBolsa + scoreSemTrabalho;
 
@@ -2167,7 +2786,7 @@
         document.getElementById('score-mulher-badge').innerText = `${scoreMulher} / 15`;
         updateBadgeColor(document.getElementById('score-mulher-badge'), scoreMulher);
 
-        document.getElementById('score-mulher-violencia-badge').innerText = `${scoreMulherViolencia} / 15`;
+        document.getElementById('score-mulher-violencia-badge').innerText = `${scoreMulherViolencia} / 20`;
         updateBadgeColor(document.getElementById('score-mulher-violencia-badge'), scoreMulherViolencia);
 
         document.getElementById('score-renda-badge').innerText = `${scoreRenda} / 20`;
@@ -2176,14 +2795,19 @@
         document.getElementById('score-familia-badge').innerText = `${scoreFamilia} / 20`;
         updateBadgeColor(document.getElementById('score-familia-badge'), scoreFamilia);
 
-        document.getElementById('score-dependente-tratamento-badge').innerText = `${scoreDependente} / 10`;
+        document.getElementById('score-dependente-tratamento-badge').innerText = `${scoreDependente} / 20`;
         updateBadgeColor(document.getElementById('score-dependente-tratamento-badge'), scoreDependente);
 
         document.getElementById('score-acolhimento-badge').innerText = `${scoreAcolhimento} / 20`;
         updateBadgeColor(document.getElementById('score-acolhimento-badge'), scoreAcolhimento);
 
-        document.getElementById('score-app-badge').innerText = `${scoreApp} / 45`;
-        updateBadgeColor(document.getElementById('score-app-badge'), scoreApp);
+
+
+        document.getElementById('score-app-badge').innerText = `${scoreAppBase} / 20`;
+        updateBadgeColor(document.getElementById('score-app-badge'), scoreAppBase);
+
+        document.getElementById('score-app-tempo-badge').innerText = `${scoreAppTempo} / 20`;
+        updateBadgeColor(document.getElementById('score-app-tempo-badge'), scoreAppTempo);
 
         document.getElementById('score-bolsa-badge').innerText = `${scoreBolsa} / 15`;
         updateBadgeColor(document.getElementById('score-bolsa-badge'), scoreBolsa);
@@ -2191,7 +2815,7 @@
         document.getElementById('score-trabalho-badge').innerText = `${scoreSemTrabalho} / 15`;
         updateBadgeColor(document.getElementById('score-trabalho-badge'), scoreSemTrabalho);
 
-        document.getElementById('score-total-display').innerText = `${total} / 215`;
+        document.getElementById('score-total-display').innerText = `${total} / 225`;
         }
 
         function updateBadgeColor(el, val) {
@@ -2329,9 +2953,14 @@
         }
 
         function init() {
-            // Show Edital Modal First
-            const modalEdital = new bootstrap.Modal(document.getElementById('modalEdital'));
-            modalEdital.show();
+            // Show Edital Modal only for new enrollments
+            const numInsc = (document.getElementById('numInscricao')?.value || '').trim().toLowerCase();
+            const isPendente = !numInsc || numInsc === "" || numInsc === "pendente";
+
+            if (isPendente) {
+                const modalEdital = new bootstrap.Modal(document.getElementById('modalEdital'));
+                modalEdital.show();
+            }
 
             // Inicializar SPA
             const hash = window.location.hash || '#inscricao';
@@ -2371,10 +3000,36 @@
             document.getElementById('btn-aula-sozinho').onclick = () => confirmarAula(false);
             document.getElementById('btn-aula-acompanhado').onclick = () => confirmarAula(true);
 
-            // Reaproveitar Dados Listener
+            // Reaproveitar Dados: listener do switch (interno, sem UI visível)
             document.getElementById('swReaproveitarDados').onchange = (e) => {
                 if (e.target.checked) buscarDadosAnteriores();
             };
+
+            // Listener do modalEdital: ao fechar, verifica se deve exibir modal de reaproveitamento
+            const elModalEdital = document.getElementById('modalEdital');
+            if (elModalEdital) {
+                elModalEdital.addEventListener('hidden.bs.modal', () => {
+                    const hAnterior = isSim('{{ $json.data.inscricao_homologada_anterior || "" }}');
+                    const numV = (document.getElementById('numInscricao').value || '').trim().toLowerCase();
+                    const isPend = numV === "" || numV === "pendente";
+                    if (hAnterior && isPend) {
+                        const modalReuso = new bootstrap.Modal(document.getElementById('modalConfirmarReuso'));
+                        modalReuso.show();
+                    }
+                });
+            }
+
+            // Botão Confirmar Reuso
+            document.getElementById('btnConfirmarReuso')?.addEventListener('click', () => {
+                bootstrap.Modal.getInstance(document.getElementById('modalConfirmarReuso'))?.hide();
+                document.getElementById('swReaproveitarDados').checked = true;
+                buscarDadosAnteriores();
+            });
+
+            // Botão Recusar Reuso
+            document.getElementById('btnRecusarReuso')?.addEventListener('click', () => {
+                bootstrap.Modal.getInstance(document.getElementById('modalConfirmarReuso'))?.hide();
+            });
 
 
             // Form Logic
@@ -2430,6 +3085,13 @@
             document.getElementById('programasSociais').checked = isSim(dataP.programaBolsaFamilia);
             document.getElementById('acolhimentoInstitucional').checked = isSim(dataP.acolhimento);
 
+            // Retomada automática: se o julgamento do recurso for positivo, força o switch a ligar novamente
+            if (isSim(document.getElementById('julsocioocupacional')?.value)) document.getElementById('trabalhadorAplicativo').checked = true;
+            if (isSim(document.getElementById('julsociofamiliar')?.value)) document.getElementById('maeAtipica').checked = true;
+            if (isSim(document.getElementById('julredeprotecao')?.value)) document.getElementById('vitimaViolencia').checked = true;
+            if (isSim(document.getElementById('julsocioassistencial')?.value)) document.getElementById('acolhimentoInstitucional').checked = true;
+            if (isSim(document.getElementById('juldepterapeutica')?.value)) document.getElementById('dependenteTratamento').checked = true;
+
             // Gender-based blocking
             const genUC = '{{ $json.data.generoUC || "" }}'.toUpperCase();
             if (genUC === 'MASCULINO') {
@@ -2439,42 +3101,18 @@
                 if (vvd) { vvd.checked = false; vvd.disabled = true; }
             }
 
-            // Enrollment reuse initialization
+            // Enrollment reuse initialization — modal-based (oculto, sem exibir o bloco em tela)
             const homologadoAnterior = isSim('{{ $json.data.inscricao_homologada_anterior || "" }}');
             const numInscVal = (document.getElementById('numInscricao').value || '').trim().toLowerCase();
             const isPendenteInsc = numInscVal === "" || numInscVal === "pendente";
 
             if (homologadoAnterior && isPendenteInsc) {
-                document.getElementById('containerReaproveitamento').classList.remove('d-none');
                 document.getElementById('swInscricaoAnterior').checked = true;
-                document.getElementById('swReaproveitarDados').checked = isSim('{{ $json.data.reaproveitar_dados_anterior || "" }}');
-            } else {
-                document.getElementById('containerReaproveitamento').classList.add('d-none');
+                // O modal de reuso será disparado após fechar o modalEdital (ver listener abaixo)
             }
 
-            // Bind manual listeners to break reuse link if data is changed
-            ['pcd', 'maeAtipica', 'trabalhadorAplicativo', 'dependenteTratamento'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('change', () => {
-                        if (!window.reusedFields) return;
-                        let gName = "";
-                        if (id === 'pcd') gName = "Pessoa com Deficiência";
-                        else if (id === 'maeAtipica') gName = "Mãe/Pai Atípico";
-                        else if (id === 'trabalhadorAplicativo') gName = "Trabalhador de Aplicativo";
-                        else if (id === 'dependenteTratamento') gName = "Dependente em Tratamento Contínuo";
-                        if (gName) {
-                            window.reusedFields = window.reusedFields.filter(g => g !== gName);
-                            updateDocs();
-                        }
-                    });
-                }
-            });
 
             // Enrollment-based pre-fill (if already enrolled)
-            const numInsc = document.getElementById('numInscricao').value;
-            const isPendente = !numInsc || numInsc.trim() === "" || numInsc.trim().toLowerCase() === "pendente";
-
             if (!isPendente) {
                 // Pre-fill Declarations
                 const decLgpd = document.getElementById('lgpd');
@@ -2519,6 +3157,39 @@
             // Ensure app worker date visibility is correct
             toggleAppWorkerDate();
 
+            // Calculate "Tempo desde Atualização" (CadÚnico)
+            const fieldCadunicoData = document.getElementById('dataAtualizacaoCadunico');
+            const fieldCadunicoTempo = document.getElementById('tempoAtualizacaoCadunico');
+            if (fieldCadunicoData && fieldCadunicoTempo && fieldCadunicoData.value) {
+                const dateString = fieldCadunicoData.value.split(' ')[0]; // Handle possible time parts
+                const parts = dateString.split('/');
+                if (parts.length === 3) {
+                    const dataAtualizacao = new Date(parts[2], parts[1] - 1, parts[0]);
+                    const currentDate = AppState.currentDate;
+
+                    let months = (currentDate.getFullYear() - dataAtualizacao.getFullYear()) * 12;
+                    months -= dataAtualizacao.getMonth();
+                    months += currentDate.getMonth();
+
+                    if (currentDate.getDate() < dataAtualizacao.getDate()) {
+                        months--;
+                    }
+
+                    if (months < 0) months = 0;
+
+                    fieldCadunicoTempo.value = `${months} meses`;
+                } else {
+                    fieldCadunicoTempo.value = "N/A";
+                }
+            }
+
+            // Retomada automática: se o julgamento do recurso for positivo, força o switch a ligar novamente
+            if (isSim(document.getElementById('julsocioocupacional')?.value)) document.getElementById('trabalhadorAplicativo').checked = true;
+            if (isSim(document.getElementById('julsociofamiliar')?.value)) document.getElementById('maeAtipica').checked = true;
+            if (isSim(document.getElementById('julredeprotecao')?.value)) document.getElementById('vitimaViolencia').checked = true;
+            if (isSim(document.getElementById('julsocioassistencial')?.value)) document.getElementById('acolhimentoInstitucional').checked = true;
+            if (isSim(document.getElementById('juldepterapeutica')?.value)) document.getElementById('dependenteTratamento').checked = true;
+
             // Sync UI state (text and docs)
             checkPreenchimento(); // verify if loaded via Webhook
             renderTimeline();
@@ -2526,6 +3197,7 @@
             renderNotifs();
             updateBadge();
             checkRecurso();
+            toggleAppWorkerDate(); // Ensure app worker fields are visible if re-activated
             updateScore();
             updateDocs();
 
@@ -2706,9 +3378,7 @@
             if (document.getElementById('chkUpdateAddress').checked) {
                 groups.push({ title: "Endereço Residencial", icon: "fa-map-marker-alt", fields: ["Comprovante de Residência Atualizado"] });
             }
-            if (pcdVal) {
-                groups.push({ title: "Pessoa com Deficiência", icon: "fa-wheelchair", fields: ["Laudo Médico PCD"] });
-            }
+
             if (appVal) {
                 groups.push({ title: "Trabalhador de Aplicativo", icon: "fa-motorcycle", fields: ["Comprovante de Aplicativo"] });
             }
@@ -2737,11 +3407,6 @@
                 groups.push({ title: "Dados da CNH Atual", icon: "fa-id-badge", fields: ["Arquivo da CNH Atual"] });
             }
 
-            const shouldSkip = (field) => {
-                if (!window.reusedFields) return false;
-                return window.reusedFields.includes(field);
-            };
-
             groups.forEach(group => {
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'mb-4';
@@ -2751,24 +3416,12 @@
 
                 group.fields.forEach(f => {
                     const safeId = f.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                    const isReused = shouldSkip(group.title);
-                    
-                    if (isReused) {
-                        html += `
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label mt-0 pt-0 fw-bold small text-muted">${f}</label>
-                            <div class="alert alert-light border-0 bg-info-subtle text-info-emphasis small py-2 mb-0 d-flex align-items-center">
-                                <i class="fas fa-check-circle me-2"></i> Documento reaproveitado da inscrição anterior
-                            </div>
-                        </div>`;
-                    } else {
-                        html += `
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label mt-0 pt-0 fw-bold small text-muted">${f}</label>
-                            <input type="file" class="form-control file-doc" accept=".pdf,.jpg,.jpeg,.png" data-label="${f}" onchange="handleFileChange(this)">
-                            <div id="status-${safeId}" class="mt-2" style="min-height: 24px;"></div>
-                        </div>`;
-                    }
+                    html += `
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label mt-0 pt-0 fw-bold small text-muted">${f}</label>
+                        <input type="file" class="form-control file-doc" accept=".pdf,.jpg,.jpeg,.png" data-label="${f}" onchange="handleFileChange(this)">
+                        <div id="status-${safeId}" class="mt-2" style="min-height: 24px;"></div>
+                    </div>`;
                 });
 
                 html += `</div>`;
@@ -2999,16 +3652,280 @@
 
         function checkRecurso() {
             const now = AppState.currentDate;
-            const isOpen = AppState.janelasRecurso.some(j => now >= new Date(j.inicio) && now <= new Date(j.fim + 'T23:59:59'));
-            const status = document.getElementById('resourceStatus');
-            const formContainer = document.getElementById('recursosFormContainer');
+            const workflowStatus = document.getElementById('workflowStatus')?.value || "";
+            const statusEl = document.getElementById('resourceStatus');
+            const formJ1 = document.getElementById('recursosFormContainer');
+            const formJ2 = document.getElementById('recursosFormContainerJ2');
+            const resultadoEl = document.getElementById('recursosResultadoContainer');
 
-            if (isOpen) {
-                status.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Janela de recursos ativa! Você pode enviar sua justificativa abaixo.</div>';
-                formContainer.classList.remove('d-none');
-            } else {
-                status.innerHTML = `<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Fora do prazo de recursos (${now.toLocaleDateString('pt-BR')}). A submissão de novos recursos está desabilitada.</div>`;
-                formContainer.classList.add('d-none');
+            // Garante que todos os formulários estejam ocultos inicialmente
+            formJ1.classList.add('d-none');
+            formJ2.classList.add('d-none');
+            resultadoEl.classList.add('d-none');
+            resultadoEl.innerHTML = '';
+
+            // --- Guarda: sem status = sem inscrição válida ---
+            const statusValido = workflowStatus !== '' && workflowStatus !== 'undefined';
+            if (!statusValido) {
+                statusEl.innerHTML = '<div class="alert alert-secondary border-0 shadow-sm"><i class="fas fa-lock me-2"></i>A função de recurso está indisponível pois não foi encontrado nenhum processo ativo vinculado ao seu CPF.</div>';
+                return;
+            }
+
+            const isNao = (v) => {
+                const s = (v || '').toLowerCase().trim();
+                return s === 'nao' || s === 'não';
+            };
+
+            // --- Janela 1: Recurso de Inscrição ---
+            const j1 = AppState.janelasRecurso[0];
+            const isDate1 = j1 && now >= new Date(j1.inicio) && now <= new Date(j1.fim + 'T23:59:59');
+            const isStatus1 = workflowStatus.includes("177") || workflowStatus.includes("179");
+            const possuiRecJ1Raw = (document.getElementById('possuirecursoinscricao')?.value || '').trim();
+            const possuiRecJ1 = !possuiRecJ1Raw || possuiRecJ1Raw === 'null' || possuiRecJ1Raw === 'undefined';
+            const juinscVal = (document.getElementById('juinscricao')?.value || '').trim();
+            const juinscIsNao = isNao(juinscVal);
+            const juinscIsSim = juinscVal.toLowerCase() === 'sim';
+
+            // --- Janela 2: Recurso de Pontuação ---
+            const j2 = AppState.janelasRecurso[1];
+            const isDate2 = j2 && now >= new Date(j2.inicio) && now <= new Date(j2.fim + 'T23:59:59');
+            const isStatus2 = workflowStatus.includes("180") || workflowStatus.includes("181");
+            const possuiRecJ2Raw = (document.getElementById('possuirecursopontuacao')?.value || '').trim();
+            const possuiRecJ2 = !possuiRecJ2Raw || possuiRecJ2Raw === 'null' || possuiRecJ2Raw === 'undefined';
+
+            // --- Pós-Janela 1: resultado ---
+            const j1Encerrada = j1 && now > new Date(j1.fim + 'T23:59:59');
+            // --- Pós-Janela 2: resultado ---
+            const j2Encerrada = j2 && now > new Date(j2.fim + 'T23:59:59');
+
+            // Statuses transitórios (inscrição ainda em análise — não libera nem nega recurso)
+            const statusTransitorios = ['86 -', '85 -', '176 -', '181 -'];
+            const isTransitorio = statusTransitorios.some(s => workflowStatus.includes(s));
+
+            // ---- Atualiza título da seção ----
+            // Título específico só aparece quando o candidato tem acesso ao formulário de recurso
+            const tituloEl = document.getElementById('recursosTitulo');
+            if (tituloEl) {
+                if (isDate1 && isStatus1) tituloEl.textContent = 'Recurso quanto ao resultado da Análise da Inscrição';
+                else if (isDate2 && isStatus2) tituloEl.textContent = 'Recurso quanto ao Resultado de Pontuação';
+                else tituloEl.textContent = 'Recursos';
+            }
+
+
+            // ---- PRIORIZAÇÃO DA JANELA ----
+            // Se as datas das janelas se sobrepuserem (comum em testes), o status do candidato determina qual bloco exibir.
+            
+            // PRIORIDADE 1: Janela 2 Ativa e Candidato em status de Pontuação
+            if (isDate2 && isStatus2) {
+                if (!possuiRecJ2) {
+                    // Já enviou recurso - Verifica resultado
+                    const jupont = (document.getElementById('jupontuacao')?.value || '').toLowerCase().trim();
+                    const recpont = document.getElementById('recpontuacao')?.value || '';
+
+                    if (jupont === 'sim') {
+                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua interposição de recurso por pontuação aplicada foi <strong>acatada</strong>. Por favor, acompanhe o cronograma para as próximas etapas.</div>';
+                    } else if (jupont === 'não') {
+                        statusEl.innerHTML = `<div class="alert alert-danger border-0 shadow-sm">
+                            <h6 class="fw-bold mb-2"><i class="fas fa-times-circle me-2"></i>Sua interposição de recurso por pontuação aplicada foi <strong>rejeitada</strong>.</h6>
+                            <p class="mb-0 small"><strong>Justificativa:</strong> ${recpont}</p>
+                        </div>`;
+                    } else {
+                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i><strong>Recurso de pontuação já enviado!</strong> Seu pedido foi registrado e está sendo analisado. Acompanhe o resultado nesta aba.</div>';
+                    }
+                } else {
+                    // Janela aberta, status correto, sem recurso prévio
+                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i><strong>Janela de recursos de pontuação ativa!</strong> Confira abaixo os critérios passíveis de recurso.</div>';
+                    
+                    // Lógica granular de exibição dos switches da Janela 2
+                    let hasAnyCriteria = false;
+                    const gender = (document.getElementById('genero')?.value || '').toUpperCase();
+                    
+                    // Normalização simples para tratar "nao" e "não"
+                    const isNao = (v) => {
+                        const s = (v || '').toLowerCase().trim();
+                        return s === 'nao' || s === 'não';
+                    };
+
+                    const listCriteria = [
+                        { 
+                            id: 'redeprot', 
+                            wrap: 'wrapRecRedeProt', 
+                            analise: (document.getElementById('analiseredeprotecao')?.value || '').trim(), 
+                            just: document.getElementById('justrecredpro')?.value || '', 
+                            genderLock: gender === 'MASCULINO'
+                        },
+                        { 
+                            id: 'sociofami', 
+                            wrap: 'wrapRecSocioFami', 
+                            analise: (document.getElementById('analisesociofamiliar')?.value || '').trim(), 
+                            just: document.getElementById('justrecsociofami')?.value || '', 
+                        },
+                        { 
+                            id: 'socioassi', 
+                            wrap: 'wrapRecSocioAssi', 
+                            analise: (document.getElementById('analisesocioassistencial')?.value || '').trim(), 
+                            just: document.getElementById('justrecsocioassi')?.value || '', 
+                        },
+                        { 
+                            id: 'socioocup', 
+                            wrap: 'wrapRecSocioOcup', 
+                            analise: (document.getElementById('analisesocioocupacional')?.value || '').trim(), 
+                            just: document.getElementById('justrecsocioocup')?.value || '', 
+                        },
+                        { 
+                            id: 'depterap', 
+                            wrap: 'wrapRecDepTerap', 
+                            analise: (document.getElementById('analisedepterapeutica')?.value || '').trim(), 
+                            just: document.getElementById('justrecdepterap')?.value || '', 
+                        }
+                    ];
+
+                    listCriteria.forEach(c => {
+                        const elWrap = document.getElementById(c.wrap);
+                        const elJustWrap = document.getElementById(`justAnalise_${c.id}`);
+                        const elJustText = document.getElementById(`textJust_${c.id}`);
+                        
+                        // Show if: analyst said 'não' / 'nao' (AND not gender locked)
+                        const shouldShow = isNao(c.analise) && !c.genderLock;
+
+                        if (shouldShow) {
+                            elWrap.classList.remove('d-none');
+                            hasAnyCriteria = true;
+                            // Inject analyst justification if present
+                            if (c.just && c.just !== 'undefined') {
+                                if (elJustWrap) elJustWrap.classList.remove('d-none');
+                                if (elJustText) elJustText.textContent = c.just;
+                            }
+                        } else {
+                            elWrap.classList.add('d-none');
+                        }
+                    });
+
+                    if (hasAnyCriteria) {
+                        formJ2.classList.remove('d-none');
+                    } else {
+                        formJ2.classList.add('d-none');
+                        statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-info-circle me-2"></i>Todos os seus critérios de pontuação foram <strong>acatados</strong> pela análise comercial. Não há critérios passíveis de recurso nesta etapa.</div>';
+                    }
+                }
+            }
+            // PRIORIDADE 2: Janela 1 Ativa e Candidato em status de Inscrição
+            else if (isDate1 && isStatus1) {
+                if (!possuiRecJ1) {
+                    // Já enviou recurso - Verifica resultado
+                    const recjust = document.getElementById('recinscricao')?.value || '';
+
+                    if (juinscIsSim) {
+                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua interposição de recurso por inscrição negada foi <strong>acatada</strong>. Por favor, acompanhe o cronograma para as próximas etapas.</div>';
+                    } else if (juinscIsNao) {
+                        statusEl.innerHTML = `<div class="alert alert-danger border-0 shadow-sm">
+                            <h6 class="fw-bold mb-2"><i class="fas fa-times-circle me-2"></i>Sua interposição de recurso por inscrição negada foi <strong>rejeitada</strong>.</h6>
+                            <p class="mb-0 small"><strong>Justificativa:</strong> ${recjust}</p>
+                        </div>`;
+                    } else {
+                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i><strong>Recurso de inscrição já enviado!</strong> Seu pedido foi registrado e está sendo analisado. Acompanhe o resultado nesta aba.</div>';
+                    }
+                } else {
+                    // Janela aberta, status correto, sem recurso prévio
+                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i><strong>Janela de recursos ativa!</strong> Você pode enviar sua justificativa abaixo.</div>';
+                    
+                    // Se for status 177 - exibe a justificativa da rejeição
+                    if (workflowStatus.includes("177")) {
+                        const justInsc = document.getElementById('justinscricao')?.value;
+                        if (justInsc && justInsc !== 'undefined' && justInsc.trim() !== "") {
+                            statusEl.innerHTML += `<div class="alert alert-danger border-0 shadow-sm mt-3">
+                                <h6 class="fw-bold mb-2"><i class="fas fa-exclamation-circle me-2"></i>Motivo da Rejeição:</h6>
+                                <p class="mb-0 small">${justInsc}</p>
+                            </div>`;
+                        }
+                    }
+                    
+                    formJ1.classList.remove('d-none');
+                }
+            }
+            // PRIORIDADE 3: Demais condições da Janela 1 (Transitórios ou Inscrição Acatada)
+            else if (isDate1) {
+                if (isTransitorio) {
+                    statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-hourglass-half me-2"></i>Sua inscrição ainda está sendo processada. Assim que a análise for concluída, esta área será atualizada. Por favor, aguarde.</div>';
+                } else {
+                    // Status definitivo (Acatada ou Rejeitada após recurso)
+                    if (!possuiRecJ1) {
+                        if (juinscIsSim) {
+                            statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong> após análise de recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
+                        } else if (juinscIsNao) {
+                            statusEl.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-times-circle me-2"></i>O seu recurso de inscrição foi <strong>rejeitada</strong>. Confira os detalhes no painel abaixo.</div>';
+                        } else {
+                            statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-hourglass-half me-2"></i>Seu recurso de inscrição está em fase final de processamento. Por favor, aguarde.</div>';
+                        }
+                    } else {
+                        statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong>. Não é necessário interpor recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
+                    }
+                }
+            }
+            // PRIORIDADE 4: Janela 2 aberta mas sem status de recurso habilitado para o candidato
+            else if (isDate2) {
+                statusEl.innerHTML = '<div class="alert alert-warning border-0 shadow-sm"><i class="fas fa-exclamation-triangle me-2"></i>A submissão de recursos de pontuação está indisponível no momento. Consulte o <strong>Cronograma</strong> para os prazos oficiais.</div>';
+            }
+            // FORA DE QUALQUER PRAZO
+            else {
+                statusEl.innerHTML = '<div class="alert alert-warning border-0 shadow-sm"><i class="fas fa-exclamation-triangle me-2"></i>A submissão de recursos está desabilitada no momento. Consulte o <strong>Cronograma</strong> para verificar os prazos oficiais definidos no edital.</div>';
+            }
+
+            // ---- RESULTADO PÓS-JANELA 1 ----
+            if (j1Encerrada && !possuiRecJ1) {
+                const recjust = document.getElementById('recinscricao')?.value || '';
+                if (juinscVal && juinscVal !== 'undefined' && juinscVal !== '{{ $json.data.juinscricao }}') {
+                    const acatado = juinsc === 'sim';
+                    let html = `<div class="card border-0 shadow-sm mb-3">
+                        <div class="card-header fw-bold"><i class="fas fa-gavel me-2"></i>Resultado do Recurso de Inscrição</div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <span class="badge ${acatado ? 'bg-success' : 'bg-danger'} fs-6 px-3 py-2">${acatado ? '✅ Acatado' : '❌ Rejeitado'}</span>
+                            </div>`;
+                    if (!acatado && recjust && recjust !== 'undefined') {
+                        html += `<div class="alert alert-light border mt-2 mb-0 small"><strong>Justificativa:</strong> ${recjust}</div>`;
+                    }
+                    html += `</div></div>`;
+                    resultadoEl.innerHTML = html;
+                    resultadoEl.classList.remove('d-none');
+                }
+            }
+
+            // ---- RESULTADO PÓS-JANELA 2 ----
+            if (j2Encerrada && !possuiRecJ2) {
+                const criterios = [
+                    { id: 'julredeprotecao', nome: 'Rede de Proteção Social', justId: 'justrecredpro' },
+                    { id: 'julsociofamiliar', nome: 'Sociofamiliar', justId: 'justrecsociofami' },
+                    { id: 'julsocioassistencial', nome: 'Socioassistencial', justId: 'justrecsocioassi' },
+                    { id: 'julsocioocupacional', nome: 'Sócio-Ocupacional', justId: 'justrecsocioocup' },
+                    { id: 'juldepterapeutica', nome: 'Dependência Terapêutica', justId: 'justrecdepterap' },
+                ];
+                const linhas = criterios.map(c => {
+                    const val = (document.getElementById(c.id)?.value || '').toLowerCase().trim();
+                    if (!val || val === 'undefined' || val.startsWith('{{')) return '';
+                    const acatado = val === 'sim';
+                    const just = document.getElementById(c.justId)?.value || '';
+                    let linha = `<tr>
+                        <td class="fw-bold">${c.nome}</td>
+                        <td><span class="badge ${acatado ? 'bg-success' : 'bg-danger'}">${acatado ? '✅ Acatado' : '❌ Rejeitado'}</span></td>
+                        <td class="small text-muted">${(!acatado && just && just !== 'undefined') ? just : '—'}</td>
+                    </tr>`;
+                    return linha;
+                }).filter(Boolean).join('');
+
+                if (linhas) {
+                    const html = `<div class="card border-0 shadow-sm">
+                        <div class="card-header fw-bold"><i class="fas fa-gavel me-2"></i>Resultado do Recurso de Pontuação</div>
+                        <div class="card-body p-0">
+                            <table class="table table-hover table-sm mb-0">
+                                <thead class="table-light"><tr><th>Critério</th><th>Resultado</th><th>Justificativa</th></tr></thead>
+                                <tbody>${linhas}</tbody>
+                            </table>
+                        </div>
+                    </div>`;
+                    resultadoEl.innerHTML += html;
+                    resultadoEl.classList.remove('d-none');
+                }
             }
         }
 
@@ -3031,6 +3948,17 @@
             formData.append('cpf', document.getElementById('cpf')?.value || '{{ $json.data.cpf || "" }}');
             formData.append('inscricao', document.getElementById('numInscricao')?.value || '{{ $json.data.numInscricao || "" }}');
             formData.append('nome', document.getElementById('nomeCompleto')?.value || '{{ $json.data.nomeCompleto || "" }}');
+            formData.append('tipoJanela', '1');
+            
+            // Padroniza com a Janela 2 enviando como array de objetos
+            const recursosArray = [{
+                tipo: 'inscricao',
+                descricao: 'Recurso quanto ao Resultado de Inscrição',
+                justificativa: texto
+            }];
+            formData.append('recursos', JSON.stringify(recursosArray));
+            
+            // Mantém o campo original para compatibilidade
             formData.append('justificativa', texto);
 
             // Files file1...file5
@@ -3069,6 +3997,113 @@
                 btn.innerHTML = originalContent;
             }
         }
+
+        // --- Helpers Janela 2 ---
+        function toggleRecursoSwitch(tipo) {
+            const wrap = document.getElementById(`recursoTexto_${tipo}_wrap`);
+            const sw = document.getElementById(`swRec${tipo.charAt(0).toUpperCase() + tipo.slice(1).replace('redeprot', 'RedeProt').replace('sociofami', 'SocioFami').replace('socioassi', 'SocioAssi').replace('socioocup', 'SocioOcup').replace('depterap', 'DepTerap')}`);
+            // Mapeamento direto por tipo
+            const swMap = { redeprot: 'swRecRedeProt', sociofami: 'swRecSocioFami', socioassi: 'swRecSocioAssi', socioocup: 'swRecSocioOcup', depterap: 'swRecDepTerap' };
+            const checked = document.getElementById(swMap[tipo])?.checked;
+            if (wrap) {
+                if (checked) wrap.classList.remove('d-none');
+                else wrap.classList.add('d-none');
+            }
+        }
+
+        let _anexoCountJ2 = 1;
+        function adicionarAnexoJ2() {
+            if (_anexoCountJ2 >= 5) return;
+            _anexoCountJ2++;
+            const group = document.getElementById(`recursoGroupJ2_${_anexoCountJ2}`);
+            if (group) group.classList.remove('d-none');
+            if (_anexoCountJ2 >= 5) document.getElementById('btnNovoAnexoJ2')?.classList.add('d-none');
+        }
+
+        async function enviarRecursoJ2() {
+            const tipos = ['redeprot', 'sociofami', 'socioassi', 'socioocup', 'depterap'];
+            const swMap = { redeprot: 'swRecRedeProt', sociofami: 'swRecSocioFami', socioassi: 'swRecSocioAssi', socioocup: 'swRecSocioOcup', depterap: 'swRecDepTerap' };
+            const nomeMap = { redeprot: 'Rede de Proteção Social', sociofami: 'Sociofamiliar', socioassi: 'Socioassistencial', socioocup: 'Sócio-Ocupacional', depterap: 'Dependência Terapêutica' };
+
+            const selecionados = tipos.filter(t => document.getElementById(swMap[t])?.checked);
+            if (selecionados.length === 0) {
+                mostrarAlerta('Selecione ao menos um critério de pontuação antes de enviar o recurso.', 'Atenção', 'warning');
+                return;
+            }
+
+            // Verifica se todos os switches ativos têm justificativa
+            for (const t of selecionados) {
+                const txt = document.getElementById(`recursoTexto_${t}`)?.value?.trim();
+                if (!txt) {
+                    mostrarAlerta(`Por favor, preencha a justificativa para o critério: ${nomeMap[t]}`, 'Justificativa Obrigatória', 'warning');
+                    return;
+                }
+            }
+
+            const btn = document.getElementById('btnEnviarRecursoJ2');
+            if (btn.disabled) return;
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+
+            const formData = new FormData();
+            formData.append('cpf', document.getElementById('cpf')?.value || '{{ $json.data.cpf || "" }}');
+            formData.append('inscricao', document.getElementById('numInscricao')?.value || '{{ $json.data.numInscricao || "" }}');
+            formData.append('nome', document.getElementById('nomeCompleto')?.value || '{{ $json.data.nomeCompleto || "" }}');
+            formData.append('tipoJanela', '2');
+            
+            // Cria um array de objetos das justificativas para facilitar o processamento no n8n
+            const recursosArray = selecionados.map(t => ({
+                tipo: t,
+                descricao: nomeMap[t],
+                justificativa: document.getElementById(`recursoTexto_${t}`)?.value || ''
+            }));
+            formData.append('recursos', JSON.stringify(recursosArray));
+            
+            // Mantém os campos simplificados caso necessário
+            formData.append('tiposRecurso', selecionados.join(','));
+
+            for (let i = 1; i <= 5; i++) {
+                const input = document.getElementById(`recursoFileJ2_${i}`);
+                if (input && input.files[0]) formData.append(`file${i}`, input.files[0]);
+            }
+
+            try {
+                const response = await fetch('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-recurso-cnh', {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: formData
+                });
+                if (response.ok || response.status === 200) {
+                    new bootstrap.Modal(document.getElementById('modalSucessoRecurso')).show();
+                    // Reset
+                    tipos.forEach(t => {
+                        const sw = document.getElementById(swMap[t]);
+                        if (sw) sw.checked = false;
+                        const wrap = document.getElementById(`recursoTexto_${t}_wrap`);
+                        if (wrap) wrap.classList.add('d-none');
+                        const ta = document.getElementById(`recursoTexto_${t}`);
+                        if (ta) ta.value = '';
+                    });
+                    for (let i = 1; i <= 5; i++) {
+                        const input = document.getElementById(`recursoFileJ2_${i}`);
+                        if (input) input.value = '';
+                        if (i > 1) document.getElementById(`recursoGroupJ2_${i}`)?.classList.add('d-none');
+                    }
+                    _anexoCountJ2 = 1;
+                    document.getElementById('btnNovoAnexoJ2')?.classList.remove('d-none');
+                } else {
+                    new bootstrap.Modal(document.getElementById('modalErroRecurso')).show();
+                }
+            } catch (e) {
+                console.error('Erro no POST de recurso J2:', e);
+                new bootstrap.Modal(document.getElementById('modalErroRecurso')).show();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        }
+
         // --- Logic for Data Reuse (New) ---
         let tempReusoData = null;
         async function buscarDadosAnteriores() {
@@ -3078,7 +4113,7 @@
             const cpf = cpfFieldVal || '{{ $json.data.cpf || "" }}';
 
             if (!cpf) {
-                alert('CPF não identificado. Por favor, tente recarregar a página.');
+                mostrarAlerta('CPF não identificado. Por favor, tente recarregar a página.', 'Erro de Identificação', 'danger');
                 document.getElementById('swReaproveitarDados').checked = false;
                 return;
             }
@@ -3116,6 +4151,11 @@
                             return data[p];
                     }
                     return '';
+                };
+
+                const isS = (v) => {
+                    const s = (v || '').toString().toLowerCase().trim();
+                    return s === 'sim' || s === 'true' || s === 's';
                 };
 
                 const formatDateBR = (s) => {
@@ -3159,11 +4199,6 @@
                 html += addRow('PCD', isS(data.pcd) ? 'Sim' : '', 'fa-wheelchair');
                 html += addRow('Início no Aplicativo', formatDateBR(data.dataInicioApp), 'fa-calendar-alt');
 
-                const isS = (v) => {
-                    const s = (v || '').toString().toLowerCase().trim();
-                    return s === 'sim' || s === 'true' || s === 's';
-                };
-
                 const simNaoItem = (v, label) => isS(v) ? `<div class="col-md-4">${label}: <span class="badge bg-success">SIM</span></div>` : '';
 
                 const socInfo = [
@@ -3194,7 +4229,7 @@
             } catch (err) {
                 console.error(err);
                 sw.checked = false;
-                alert(err.message || 'Erro ao buscar dados anteriores.');
+                mostrarAlerta(err.message || 'Erro ao buscar dados anteriores.', 'Falha na Recuperação', 'danger');
             } finally {
                 sw.disabled = false;
             }
@@ -3264,27 +4299,18 @@
             }
 
             // 6. Switches
-            window.reusedFields = [];
-            const setCheck = (id, val, groupName) => {
+            const setCheck = (id, val) => {
                 const el = document.getElementById(id);
                 if (el && !el.disabled) {
-                    const activeAfter = isS(val);
-                    el.checked = activeAfter;
-                    // Only mark as reused if the criteria is active in the previous registration
-                    if (activeAfter && groupName) {
-                        if (!window.reusedFields.includes(groupName)) window.reusedFields.push(groupName);
-                    }
+                    el.checked = isS(val);
                 }
             };
-            
-            // Basic identification is always reused if we have previous data
-            window.reusedFields.push("Identificação Básica");
 
-            setCheck('pcd', d.pcd, "Pessoa com Deficiência");
-            setCheck('maeAtipica', d.maepaiatipico, "Mãe/Pai Atípico");
+            setCheck('pcd', d.pcd);
+            setCheck('maeAtipica', d.maepaiatipico);
             setCheck('mulherChefe', d.mulherChefe);
-            setCheck('trabalhadorAplicativo', d.trabalhadorapp, "Trabalhador de Aplicativo");
-            setCheck('dependenteTratamento', d.dependentetratamento, "Dependente em Tratamento Contínuo");
+            setCheck('trabalhadorAplicativo', d.trabalhadorapp);
+            setCheck('dependenteTratamento', d.dependentetratamento);
             setCheck('vitimaViolencia', d.mulherviolencia);
             setCheck('programasSociais', d.programaBolsaFamilia);
             setCheck('acolhimentoInstitucional', d.acolhimento);
@@ -3321,23 +4347,51 @@
 
         function renderTimeline() {
             const list = document.getElementById('timelineList');
+            if (!list) return;
+            list.innerHTML = '';
+
             AppState.cronograma.forEach(s => {
-                const isPast = AppState.currentDate > new Date(s.fim + 'T23:59:59');
+                const endTimestamp = new Date(s.fim + 'T23:59:59').getTime();
+                const nowTimestamp = AppState.currentDate.getTime();
+                const isPast = nowTimestamp > endTimestamp;
+
                 const div = document.createElement('div');
                 div.className = `timeline-item ${isPast ? 'completed' : ''}`;
                 const dataFormatada = formatDate(s.inicio) + (s.inicio !== s.fim ? ` a ${formatDate(s.fim)}` : '');
-                div.innerHTML = `<div class="timeline-marker">${isPast ? '✓' : ''}</div><div class="timeline-content"><h5>${s.etapa}</h5><div class="timeline-date">${dataFormatada}</div></div>`;
+                div.innerHTML = `
+                    <div class="timeline-marker">${isPast ? '<i class="fas fa-check"></i>' : ''}</div>
+                    <div class="timeline-content">
+                        <h5>${s.etapa}</h5>
+                        <div class="timeline-date">${dataFormatada}</div>
+                    </div>`;
                 list.appendChild(div);
             });
         }
 
         function updateProgress() {
-            const first = new Date(AppState.cronograma[0].inicio).getTime();
-            const last = new Date(AppState.cronograma[AppState.cronograma.length - 1].fim).getTime();
+            const list = AppState.cronograma;
+            const progBar = document.getElementById('main-progress');
+            const progPct = document.getElementById('progress-percent');
+            if (!progBar || !progPct || !list.length) return;
+
+            const first = new Date(list[0].inicio + 'T00:00:00').getTime();
+            const last = new Date(list[list.length - 1].fim + 'T23:59:59').getTime();
             const now = AppState.currentDate.getTime();
-            const p = Math.min(100, Math.max(0, Math.round(((now - first) / (last - first)) * 100)));
-            document.getElementById('main-progress').style.width = p + '%';
-            document.getElementById('progress-percent').innerText = p + '%';
+
+            if (now < first) {
+                progBar.style.width = '0%';
+                progPct.innerText = '0%';
+                return;
+            }
+            if (now > last) {
+                progBar.style.width = '100%';
+                progPct.innerText = '100%';
+                return;
+            }
+
+            const p = Math.round(((now - first) / (last - first)) * 100);
+            progBar.style.width = p + '%';
+            progPct.innerText = p + '%';
         }
 
         function abrirResumoInscricao() {
@@ -3345,7 +4399,7 @@
             if (!form.checkValidity() && (!document.getElementById('numInscricao').value)) {
                 form.classList.add('was-validated');
                 document.querySelector('[data-tab="inscricao"]').click();
-                alert("Por favor, preencha todos os campos obrigatórios da inscrição antes de visualizar/enviar.");
+                mostrarAlerta("Por favor, preencha todos os campos obrigatórios da inscrição antes de visualizar/enviar.", "Campos Obrigatórios");
                 return;
             }
 
@@ -3373,7 +4427,6 @@
                 "Documento de identificação — VERSO"
             ];
             if (document.getElementById('chkUpdateAddress').checked) docList.push("Comprovante de Residência Atualizado");
-            if (getVal('pcd') === 'SIM') docList.push("Laudo Médico PCD");
             if (getVal('trabalhadorAplicativo') === 'SIM') docList.push("Comprovante de Aplicativo");
             if (getVal('maeAtipica') === 'SIM') {
                 docList.push("Laudo/relatório/prescrição emitido por profissional ou instituição registrada");
@@ -3394,7 +4447,7 @@
                     <i class="fas fa-sync-alt text-info me-3 fs-5"></i>
                     <div>
                         <div class="small fw-bold text-info text-uppercase" style="font-size: 0.7rem;">Modo de Inscrição</div>
-                        <div class="small fw-bold text-dark">Reutilizando dados e documentos do edital anterior</div>
+                        <div class="small fw-bold text-dark">Reutilizando dados cadastrais (exige novos documentos)</div>
                     </div>
                    </div></div>`
                 : '';
@@ -3524,7 +4577,6 @@
                 "Documento de identificação — FRENTE": "docIdentidadeFrente",
                 "Documento de identificação — VERSO": "docIdentidadeVerso",
                 "Comprovante de Residência Atualizado": "docResidencia",
-                "Laudo Médico PCD": "laudoPcd",
                 "Comprovante de Aplicativo": "docTrabalhoAplicativo",
                 "Laudo/relatório/prescrição emitido por profissional ou instituição registrada": "docMaeAtipicaLaudo",
                 "Declaração técnica do CRAS/CREAS ou certificação da Assistência Social": "docMaeAtipicaCras",
@@ -3567,11 +4619,11 @@
                     const modalResumo = bootstrap.Modal.getInstance(document.getElementById('modalResumo'));
                     if (modalResumo) modalResumo.hide();
                 } else {
-                    alert("Erro " + response.status + " no envio. Verifique com a central do programa.");
+                    mostrarAlerta("Erro " + response.status + " no envio. Verifique com a central do programa.", "Falha no Envio", "danger");
                 }
             } catch (e) {
                 console.error(e);
-                alert("Sua inscrição parece ter sido registrada remotamente, mas houve problemas de verificação (Erro de CORS/Rede). Confira mais tarde.");
+                mostrarAlerta("Sua inscrição parece ter sido registrada remotamente, mas houve problemas de verificação (Erro de CORS/Rede). Confira mais tarde.", "Aviso de Conectividade");
             } finally {
                 setLoading(false);
             }
