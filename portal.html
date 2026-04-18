@@ -3055,6 +3055,8 @@
                 desc: "Aguarde a próxima atualização do sistema conforme o cronograma."
             };
 
+            let matched = false;
+
             // 1. Caso Específico: Inscrição ainda não realizada (Pendente)
             if (status.includes('parâmetro [workflowid] vazio') || status.includes('não foi possível recuperar')) {
                 info = {
@@ -3063,8 +3065,9 @@
                     icon: "fa-clipboard-list",
                     desc: "Ainda não identificamos uma inscrição finalizada para o seu CPF. Complete o preenchimento dos seus dados e envie os documentos na aba 'Inscrição'."
                 };
+                matched = true;
             } 
-            // 2. Status de Fluxo (Sucesso e Workflow)
+            // 2. Status de Fluxo Mapeados (Somente os conhecidos)
             else if (status.includes('homologado')) {
                 info = {
                     text: "Inscrição Homologada com Sucesso!",
@@ -3072,6 +3075,7 @@
                     icon: "fa-check-double",
                     desc: "Parabéns! Sua documentação e critérios foram validados. Você está apto para as próximas etapas de classificação."
                 };
+                matched = true;
             } else if (status.includes('177')) {
                 info = {
                     text: "Aguardando envio de recurso (Inscrição Rejeitada).",
@@ -3079,6 +3083,7 @@
                     icon: "fa-exclamation-circle",
                     desc: "Sua inscrição inicial não foi aceita. Você possui um prazo para enviar um recurso na aba 'Recursos' contestando este resultado."
                 };
+                matched = true;
             } else if (status.includes('199')) {
                 info = {
                     text: "Inscrição não homologada definitivamente.",
@@ -3086,6 +3091,7 @@
                     icon: "fa-times-circle",
                     desc: "O processo de análise foi concluído e sua inscrição não preencheu os requisitos obrigatórios do edital."
                 };
+                matched = true;
             } else if (status.includes('179')) {
                 info = {
                     text: "Seu recurso de inscrição está em avaliação.",
@@ -3093,6 +3099,7 @@
                     icon: "fa-hourglass-half",
                     desc: "Recebemos sua contestação. Nossa equipe técnica está reavaliando seus dados e documentos."
                 };
+                matched = true;
             } else if (status.includes('176')) {
                 info = {
                     text: "Seus critérios socioeconômicos estão em análise.",
@@ -3100,6 +3107,7 @@
                     icon: "fa-user-shield",
                     desc: "A equipe de assistência social está validando suas informações de vulnerabilidade e composição familiar."
                 };
+                matched = true;
             } else if (status.includes('180')) {
                 info = {
                     text: "Aguardando envio de recurso de pontuação.",
@@ -3107,6 +3115,7 @@
                     icon: "fa-exclamation-triangle",
                     desc: "O resultado preliminar da pontuação foi divulgado. Caso discorde de alguma nota, você pode interpor recurso agora."
                 };
+                matched = true;
             } else if (status.includes('181')) {
                 info = {
                     text: "Seu recurso de pontuação está em avaliação.",
@@ -3114,6 +3123,7 @@
                     icon: "fa-gavel",
                     desc: "A comissão está analisando sua contestação sobre a pontuação obtida."
                 };
+                matched = true;
             } else if (status.includes('12')) {
                 info = {
                     text: "Processo Encerrado.",
@@ -3121,6 +3131,7 @@
                     icon: "fa-folder-closed",
                     desc: "O ciclo deste processo seletivo foi finalizado."
                 };
+                matched = true;
             } else if (status.includes('86')) {
                 info = {
                     text: "Sua inscrição está sendo analisada.",
@@ -3128,14 +3139,16 @@
                     icon: "fa-search",
                     desc: "Estamos verificando a integridade dos seus dados iniciais na base do CadÚnico."
                 };
+                matched = true;
             } 
-            // 3. Catch-all: Outros Erros/Failures (Instabilidade)
-            else if (status.includes('erro') || status.includes('failure')) {
+            
+            // 3. Fallback: Qualquer outro retorno (inclusive SUCCESS desconhecido ou Erros) que não combine com nada acima
+            if (!matched && rawStatus !== "") {
                 info = {
                     text: "Sincronização Temporariamente Indisponível",
                     color: "warning",
                     icon: "fa-sync-alt",
-                    desc: "Tivemos uma instabilidade momentânea na comunicação com o servidor. Suas informações estão seguras. Por favor, tente novamente em alguns instantes."
+                    desc: "Tivemos uma instabilidade na comunicação com a base de dados central. Por favor, tente atualizar a página em alguns instantes."
                 };
             }
 
