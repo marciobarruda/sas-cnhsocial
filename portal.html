@@ -440,6 +440,49 @@
             opacity: 0.65;
             cursor: pointer !important;
         }
+
+        /* Skeleton Loading Animation */
+        .skeleton {
+            background: #eee;
+            background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+            border-radius: 0.75rem;
+            background-size: 200% 100%;
+            animation: 1.5s shine-skeleton linear infinite;
+        }
+
+        @keyframes shine-skeleton {
+            to {
+                background-position-x: -200%;
+            }
+        }
+
+        .skeleton-circle {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .skeleton-title {
+            height: 28px;
+            width: 60%;
+            margin-bottom: 0.75rem;
+        }
+
+        .skeleton-text {
+            height: 18px;
+            width: 90%;
+        }
+
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-subtle {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
     </style>
 </head>
 
@@ -3084,7 +3127,20 @@
         async function fetchWorkflowStatus() {
             const numInsc = document.getElementById('numInscricao')?.value;
             if (!numInsc || numInsc.trim() === "" || numInsc.toLowerCase() === "pendente") return;
- 
+
+            const area = document.getElementById('statusFriendlyArea');
+            if (area) {
+                area.innerHTML = `
+                    <div class="d-flex align-items-center gap-4 animate-pulse-subtle">
+                        <div class="skeleton skeleton-circle"></div>
+                        <div class="flex-grow-1">
+                            <div class="skeleton skeleton-title"></div>
+                            <div class="skeleton skeleton-text"></div>
+                        </div>
+                    </div>
+                `;
+            }
+
             try {
                 const resp = await fetch(`https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/buscar-workflowStatus?inscricao=${encodeURIComponent(numInsc)}`, {
                     headers: getAuthHeaders()
