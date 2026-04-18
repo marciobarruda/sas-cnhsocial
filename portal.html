@@ -483,6 +483,15 @@
             50% { opacity: 1; }
             100% { opacity: 0.6; }
         }
+
+        .spin-slow {
+            animation: spin-slow 3s linear infinite;
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
@@ -3130,9 +3139,12 @@
 
             const area = document.getElementById('statusFriendlyArea');
             if (area) {
+                // Injetar Skeleton Loader com Ampulheta Animada
                 area.innerHTML = `
                     <div class="d-flex align-items-center gap-4 animate-pulse-subtle">
-                        <div class="skeleton skeleton-circle"></div>
+                        <div class="skeleton skeleton-circle d-flex align-items-center justify-content-center shadow-sm">
+                            <i class="fas fa-hourglass-half text-muted opacity-50 spin-slow fs-4"></i>
+                        </div>
                         <div class="flex-grow-1">
                             <div class="skeleton skeleton-title"></div>
                             <div class="skeleton skeleton-text"></div>
