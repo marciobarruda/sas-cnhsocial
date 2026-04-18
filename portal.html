@@ -3055,7 +3055,17 @@
                 desc: "Aguarde a próxima atualização do sistema conforme o cronograma."
             };
 
-            if (status.includes('homologado')) {
+            // 1. Caso Específico: Inscrição ainda não realizada (Pendente)
+            if (status.includes('parâmetro [workflowid] vazio') || status.includes('não foi possível recuperar')) {
+                info = {
+                    text: "Aguardando Realização da Inscrição",
+                    color: "info",
+                    icon: "fa-clipboard-list",
+                    desc: "Ainda não identificamos uma inscrição finalizada para o seu CPF. Complete o preenchimento dos seus dados e envie os documentos na aba 'Inscrição'."
+                };
+            } 
+            // 2. Status de Fluxo (Sucesso e Workflow)
+            else if (status.includes('homologado')) {
                 info = {
                     text: "Inscrição Homologada com Sucesso!",
                     color: "success",
@@ -3118,19 +3128,14 @@
                     icon: "fa-search",
                     desc: "Estamos verificando a integridade dos seus dados iniciais na base do CadÚnico."
                 };
-            } else if (status.includes('parâmetro [workflowid] vazio')) {
-                info = {
-                    text: "Aguardando Realização da Inscrição",
-                    color: "info",
-                    icon: "fa-clipboard-list",
-                    desc: "Ainda não identificamos uma inscrição finalizada e processada para o seu CPF. Certifique-se de preencher todos os dados e enviar os documentos na aba 'Inscrição'."
-                };
-            } else if (status.includes('erro') || status.includes('failure') || status.includes('não foi possível recuperar')) {
+            } 
+            // 3. Catch-all: Outros Erros/Failures (Instabilidade)
+            else if (status.includes('erro') || status.includes('failure')) {
                 info = {
                     text: "Sincronização Temporariamente Indisponível",
                     color: "warning",
-                    icon: "fa-exclamation-triangle",
-                    desc: "Estamos com uma instabilidade momentânea na comunicação com a base de dados. Suas informações estão seguras, mas não podem ser exibidas agora. Por favor, tente atualizar a página em alguns instantes."
+                    icon: "fa-sync-alt",
+                    desc: "Tivemos uma instabilidade momentânea na comunicação com o servidor. Suas informações estão seguras. Por favor, tente novamente em alguns instantes."
                 };
             }
 
