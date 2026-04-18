@@ -3048,6 +3048,9 @@
             if (!area) return;
 
             const status = rawStatus.toLowerCase();
+            const numInscVal = (document.getElementById('numInscricao')?.value || '').trim().toLowerCase();
+            const isPendenteInsc = !numInscVal || numInscVal === "" || numInscVal === "pendente";
+
             let info = {
                 text: "Sua inscrição está em processamento.",
                 color: "info",
@@ -3057,8 +3060,18 @@
 
             let matched = false;
 
-            // 1. Caso Específico: Inscrição ainda não realizada (Pendente)
-            if (status.includes('parâmetro [workflowid] vazio') || status.includes('não foi possível recuperar')) {
+            // 0. Caso Inicial: Inscrição em Preenchimento (Verde)
+            if (isPendenteInsc) {
+                info = {
+                    text: "Inscrição em Preenchimento",
+                    color: "success",
+                    icon: "fa-pen-to-square",
+                    desc: "Você iniciou seu processo! Agora continue preenchendo os dados e enviando os documentos na aba 'Inscrição' para concluir sua participação."
+                };
+                matched = true;
+            }
+            // 1. Caso Específico: Inscrição enviada mas ainda não processada no workflow
+            else if (status.includes('parâmetro [workflowid] vazio') || status.includes('não foi possível recuperar')) {
                 info = {
                     text: "Aguardando Realização da Inscrição",
                     color: "info",
