@@ -3118,6 +3118,13 @@
                     icon: "fa-search",
                     desc: "Estamos verificando a integridade dos seus dados iniciais na base do CadÚnico."
                 };
+            } else if (status.includes('erro') || status.includes('não foi possível recuperar')) {
+                info = {
+                    text: "Sincronização Temporariamente Indisponível",
+                    color: "warning",
+                    icon: "fa-exclamation-triangle",
+                    desc: "Estamos com uma instabilidade momentânea na comunicação com a base de dados. Suas informações estão seguras, mas não podem ser exibidas agora. Por favor, tente atualizar a página em alguns instantes."
+                };
             }
 
             area.innerHTML = `
