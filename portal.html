@@ -2978,6 +2978,7 @@
                 if (tabId === 'documentacao') updateDocs();
                 if (tabId === 'informativos') renderNotifs();
                 if (tabId === 'matricula') checkMatriculaStatus();
+                if (tabId === 'situacao') updateStatusTab();
             }
             if (window.innerWidth < 992) {
                 const sidebar = document.getElementById('sidebar');
@@ -3327,6 +3328,7 @@
             renderNotifs();
             updateBadge();
             checkRecurso();
+            updateStatusTab();
             toggleAppWorkerDate(); // Ensure app worker fields are visible if re-activated
             updateScore();
             updateDocs();
