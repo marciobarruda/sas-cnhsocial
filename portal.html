@@ -1463,6 +1463,126 @@
                         </div>
                     </div>
 
+                    <!-- Novo Bloco: Recurso de Pontuação Geral (Exibido se não houver critérios humanos rejeitados) -->
+                    <div class="border rounded-3 p-4 mb-3 d-none shadow-sm bg-light" id="wrapRecScoreGeral">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Recurso de Pontuação</h6>
+                                <p class="text-muted small mb-0">Utilize esta opção para contestar pontuações de critérios automáticos ou declaratórios.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-check form-switch d-flex flex-column align-items-start p-3 bg-white rounded-3 border mb-3">
+                            <div class="d-flex align-items-center w-100">
+                                <input class="form-check-input ms-0 me-3" type="checkbox" id="swMasterRecScore" onchange="toggleMasterRecScore()">
+                                <label class="form-check-label fw-bold text-primary" for="swMasterRecScore">Desejo interpor recurso quanto à minha pontuação preliminar aplicada</label>
+                            </div>
+                            <div id="summaryRecScore" class="mt-2 p-2 bg-light rounded w-100 d-none animate__animated animate__fadeIn">
+                                <div class="d-flex justify-content-between align-items-center small">
+                                    <span class="text-muted"><i class="fas fa-chart-pie me-1"></i>Resumo da pontuação nestes critérios:</span>
+                                    <span class="fw-bold text-primary"><span id="ptsTotalCurScore">0</span> / <span id="ptsTotalMaxScore">85</span></span>
+                                </div>
+                                <div id="msgMaxReachedGlobal" class="alert alert-info py-1 px-2 mt-2 mb-0 extra-small d-none">
+                                    <i class="fas fa-check-circle me-1"></i>Você já atingiu a <strong>pontuação máxima</strong> permitida para estes critérios. O recurso pode ser indeferido.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="subRecScoreContainer" class="d-none animate__animated animate__fadeIn">
+                            <p class="small text-muted mb-3"><i class="fas fa-info-circle me-1"></i>Selecione abaixo os critérios que deseja que sejam revisados pela comissão:</p>
+                            
+                            <div class="row g-3">
+                                <!-- Critério: Mulher Chefe de Família -->
+                                <div class="col-12">
+                                    <div class="p-3 border rounded-3 bg-white" id="itemRecMulherChefe">
+                                        <div class="form-check form-switch d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <input class="form-check-input me-3" type="checkbox" id="swRecMulherChefe">
+                                                <div>
+                                                    <label class="form-check-label fw-bold small" for="swRecMulherChefe">Mulher Chefe de Família</label>
+                                                    <div class="text-muted extra-small" id="msgRecMulherChefe">Pontuação atual: <span id="ptsCurMulherChefe">0</span> / 15</div>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-light text-primary border" id="badgeMaxMulherChefe" style="display:none;">Pontuação Máxima</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Critério: Programas Sociais -->
+                                <div class="col-12">
+                                    <div class="p-3 border rounded-3 bg-white" id="itemRecProgSociais">
+                                        <div class="form-check form-switch d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <input class="form-check-input me-3" type="checkbox" id="swRecProgSociais">
+                                                <div>
+                                                    <label class="form-check-label fw-bold small" for="swRecProgSociais">Participação em Programas Sociais (Bolsa Família, etc.)</label>
+                                                    <div class="text-muted extra-small" id="msgRecProgSociais">Pontuação atual: <span id="ptsCurProgSociais">0</span> / 15</div>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-light text-primary border" id="badgeMaxProgSociais" style="display:none;">Pontuação Máxima</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Critério: Sem Trabalho Formal -->
+                                <div class="col-12">
+                                    <div class="p-3 border rounded-3 bg-white" id="itemRecSemTrab">
+                                        <div class="form-check form-switch d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <input class="form-check-input me-3" type="checkbox" id="swRecSemTrab">
+                                                <div>
+                                                    <label class="form-check-label fw-bold small" for="swRecSemTrab">Não possuo trabalho formal (CTPS assinada)</label>
+                                                    <div class="text-muted extra-small" id="msgRecSemTrab">Pontuação atual: <span id="ptsCurSemTrab">0</span> / 15</div>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-light text-primary border" id="badgeMaxSemTrab" style="display:none;">Pontuação Máxima</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Critério: Renda Familiar -->
+                                <div class="col-12">
+                                    <div class="p-3 border rounded-3 bg-white" id="itemRecRenda">
+                                        <div class="form-check form-switch d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <input class="form-check-input me-3" type="checkbox" id="swRecRenda">
+                                                <div>
+                                                    <label class="form-check-label fw-bold small" for="swRecRenda">Renda Familiar / Per Capita</label>
+                                                    <div class="text-muted extra-small" id="msgRecRenda">Pontuação atual: <span id="ptsCurRenda">0</span> / 20</div>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-light text-primary border" id="badgeMaxRenda" style="display:none;">Pontuação Máxima</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Critério: Cor/Raça -->
+                                <div class="col-12">
+                                    <div class="p-3 border rounded-3 bg-white" id="itemRecCorRaca">
+                                        <div class="form-check form-switch d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <input class="form-check-input me-3" type="checkbox" id="swRecCorRaca">
+                                                <div>
+                                                    <label class="form-check-label fw-bold small" for="swRecCorRaca">Autodeclaração de Cor/Raça (Negro/Pardo/Indígena)</label>
+                                                    <div class="text-muted extra-small" id="msgRecCorRaca">Pontuação atual: <span id="ptsCurCorRaca">0</span> / 20</div>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-light text-primary border" id="badgeMaxCorRaca" style="display:none;">Pontuação Máxima</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4" id="recursoTexto_score_wrap">
+                                <label class="form-label small fw-bold text-primary">Justificativa do Recurso de Pontuação <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="recursoTexto_score" rows="4" placeholder="Descreva detalhadamente os motivos pelos quais você acredita que sua pontuação deve ser revisada..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="noCriteriaMsg" class="alert alert-light text-center border d-none">
                         <i class="fas fa-info-circle me-2"></i>Não foram encontrados critérios elegíveis para recurso
                         com base na sua inscrição e avaliação.
@@ -4119,6 +4239,8 @@
             // Garante que todos os formulários estejam ocultos inicialmente
             formJ1.classList.add('d-none');
             formJ2.classList.add('d-none');
+            const wrapScore = document.getElementById('wrapRecScoreGeral');
+            if (wrapScore) wrapScore.classList.add('d-none');
             resultadoEl.classList.add('d-none');
             resultadoEl.innerHTML = '';
 
@@ -4259,9 +4381,18 @@
                         }
                     });
 
+                    // Exibe critérios humanos se houver
                     if (hasAnyCriteria) {
                         formJ2.classList.remove('d-none');
-                    } else {
+                    }
+
+                    // Exibe Recurso de Pontuação Geral SEMPRE na Janela 2 (se o elemento existir)
+                    if (wrapScore) {
+                        wrapScore.classList.remove('d-none');
+                        formJ2.classList.remove('d-none');
+                        updateRecScoreInfo();
+                    } else if (!hasAnyCriteria) {
+                        // Backup caso o elemento não exista e não tenha critérios humanos
                         formJ2.classList.add('d-none');
                         statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-info-circle me-2"></i>Todos os seus critérios de pontuação foram <strong>acatados</strong> pela análise comercial. Não há critérios passíveis de recurso nesta etapa.</div>';
                     }
@@ -4469,6 +4600,100 @@
             }
         }
 
+        function toggleMasterRecScore() {
+            const master = document.getElementById('swMasterRecScore');
+            const subContainer = document.getElementById('subRecScoreContainer');
+            const summary = document.getElementById('summaryRecScore');
+            if (master && subContainer) {
+                if (master.checked) {
+                    subContainer.classList.remove('d-none');
+                    summary.classList.remove('d-none');
+                    updateRecScoreInfo();
+                } else {
+                    subContainer.classList.add('d-none');
+                    summary.classList.add('d-none');
+                }
+            }
+        }
+
+        function updateRecScoreInfo() {
+            // Helper function to get current points - robust check
+            const getPoints = (baseId, fallbackId, maxVal, type) => {
+                const baseInput = document.getElementById(baseId);
+                let val = parseFloat(baseInput?.value);
+                
+                // If base input from n8n is empty/NaN/0, try manual recalculation or current switch
+                if (isNaN(val) || val === 0) {
+                    if (type === 'switch') {
+                        const sw = document.getElementById(fallbackId);
+                        val = sw?.checked ? maxVal : 0;
+                    } else if (type === 'renda') {
+                        // For renda, we try to get the perCapita calculation
+                        const fieldRf = document.getElementById('rendaFamiliar');
+                        const fieldComp = document.getElementById('composicaoFamiliar');
+                        const totalIncome = parseFloat(fieldRf?.value) || 0;
+                        const comp = parseInt(fieldComp?.value) || 1;
+                        const perCapita = comp > 0 ? totalIncome / comp : totalIncome;
+                        if (perCapita <= 218) val = 20;
+                        else if (perCapita <= 810.50) val = 10;
+                        else val = 5;
+                    } else if (type === 'raca') {
+                        const racaVal = (document.getElementById('racaCor')?.value || '').toUpperCase();
+                        val = (racaVal.includes('PRETA') || racaVal.includes('PARDA') || racaVal.includes('NEGRA') || racaVal.includes('INDIGENA')) ? 20 : 0;
+                    }
+                }
+                return val || 0;
+            };
+
+            const criteria = [
+                { id: 'MulherChefe', pts: getPoints('base_pts_mulher_chefe', 'mulherChefe', 15, 'switch'), max: 15 },
+                { id: 'ProgSociais', pts: getPoints('base_pts_beneficio', 'programasSociais', 15, 'switch'), max: 15 },
+                { id: 'SemTrab', pts: getPoints('base_pts_sem_trabalho_formal', 'semTrabalhoFormal', 15, 'switch'), max: 15 },
+                { id: 'Renda', pts: getPoints('base_pts_renda', 'rendaPerCapita', 20, 'renda'), max: 20 },
+                { id: 'CorRaca', pts: getPoints('base_pts_raca', 'racaCor', 20, 'raca'), max: 20 }
+            ];
+
+            let totalCur = 0;
+            let totalMax = 0;
+
+            criteria.forEach(c => {
+                const ptsEl = document.getElementById(`ptsCur${c.id}`);
+                const sw = document.getElementById(`swRec${c.id}`);
+                const badge = document.getElementById(`badgeMax${c.id}`);
+                const item = document.getElementById(`itemRec${c.id}`);
+
+                if (ptsEl) ptsEl.textContent = c.pts;
+                totalCur += c.pts;
+                totalMax += c.max;
+                
+                if (c.pts >= c.max) {
+                    if (sw) {
+                        sw.checked = false;
+                        sw.disabled = true;
+                    }
+                    if (badge) badge.style.display = 'block';
+                    if (item) item.style.opacity = '0.7';
+                } else {
+                    if (sw) sw.disabled = false;
+                    if (badge) badge.style.display = 'none';
+                    if (item) item.style.opacity = '1';
+                }
+            });
+
+            const totalCurEl = document.getElementById('ptsTotalCurScore');
+            const totalMaxEl = document.getElementById('ptsTotalMaxScore');
+            const msgMaxGlobal = document.getElementById('msgMaxReachedGlobal');
+
+            if (totalCurEl) totalCurEl.textContent = totalCur;
+            if (totalMaxEl) totalMaxEl.textContent = totalMax;
+
+            if (totalCur >= totalMax && msgMaxGlobal) {
+                msgMaxGlobal.classList.remove('d-none');
+            } else if (msgMaxGlobal) {
+                msgMaxGlobal.classList.add('d-none');
+            }
+        }
+
         let _anexoCountJ2 = 1;
         function adicionarAnexoJ2() {
             if (_anexoCountJ2 >= 5) return;
@@ -4483,17 +4708,41 @@
             const swMap = { redeprot: 'swRecRedeProt', sociofami: 'swRecSocioFami', socioassi: 'swRecSocioAssi', socioocup: 'swRecSocioOcup', depterap: 'swRecDepTerap' };
             const nomeMap = { redeprot: 'Rede de Proteção Social', sociofami: 'Sociofamiliar', socioassi: 'Socioassistencial', socioocup: 'Sócio-Ocupacional', depterap: 'Dependência Terapêutica' };
 
-            const selecionados = tipos.filter(t => document.getElementById(swMap[t])?.checked);
-            if (selecionados.length === 0) {
-                mostrarAlerta('Selecione ao menos um critério de pontuação antes de enviar o recurso.', 'Atenção', 'warning');
+            let selecionados = tipos.filter(t => document.getElementById(swMap[t])?.checked);
+            
+            // Novos tipos de pontuação geral
+            const tiposScore = ['MulherChefe', 'ProgSociais', 'SemTrab', 'Renda', 'CorRaca'];
+            const nomeScoreMap = { 
+                MulherChefe: 'Pontuação: Mulher Chefe de Família', 
+                ProgSociais: 'Pontuação: Programas Sociais', 
+                SemTrab: 'Pontuação: Sem Trabalho Formal', 
+                Renda: 'Pontuação: Renda Familiar', 
+                CorRaca: 'Pontuação: Cor/Raça' 
+            };
+            
+            const isMasterScore = document.getElementById('swMasterRecScore')?.checked;
+            const selecionadosScore = isMasterScore ? tiposScore.filter(t => document.getElementById(`swRec${t}`)?.checked) : [];
+
+            if (selecionados.length === 0 && selecionadosScore.length === 0) {
+                mostrarAlerta('Selecione ao menos um critério ou habilite o recurso de pontuação antes de enviar.', 'Atenção', 'warning');
                 return;
             }
 
-            // Verifica se todos os switches ativos têm justificativa
+            // Verifica justificativas critérios humanos
             for (const t of selecionados) {
                 const txt = document.getElementById(`recursoTexto_${t}`)?.value?.trim();
                 if (!txt) {
                     mostrarAlerta(`Por favor, preencha a justificativa para o critério: ${nomeMap[t]}`, 'Justificativa Obrigatória', 'warning');
+                    return;
+                }
+            }
+            
+            // Verifica justificativa critério pontuação geral
+            let justificativaScore = "";
+            if (isMasterScore && selecionadosScore.length > 0) {
+                justificativaScore = document.getElementById('recursoTexto_score')?.value?.trim();
+                if (!justificativaScore) {
+                    mostrarAlerta('Por favor, preencha a justificativa para o recurso de pontuação geral.', 'Justificativa Obrigatória', 'warning');
                     return;
                 }
             }
@@ -4510,16 +4759,33 @@
             formData.append('nome', document.getElementById('nomeCompleto')?.value || '{{ $json.data.nomeCompleto || "" }}');
             formData.append('tipoJanela', '2');
 
-            // Cria um array de objetos das justificativas para facilitar o processamento no n8n
-            const recursosArray = selecionados.map(t => ({
-                tipo: t,
-                descricao: nomeMap[t],
-                justificativa: document.getElementById(`recursoTexto_${t}`)?.value || ''
-            }));
-            formData.append('recursos', JSON.stringify(recursosArray));
+            // Cria um array de objetos das justificativas consolidando humanos e pontuação
+            const recursosArray = [];
+            
+            // Adiciona critérios humanos selecionados
+            selecionados.forEach(t => {
+                recursosArray.push({
+                    tipo: t,
+                    descricao: nomeMap[t],
+                    justificativa: document.getElementById(`recursoTexto_${t}`)?.value || ''
+                });
+            });
 
-            // Mantém os campos simplificados caso necessário
-            formData.append('tiposRecurso', selecionados.join(','));
+            // Adiciona bloco de pontuação geral se ativo
+            if (isMasterScore && selecionadosScore.length > 0) {
+                recursosArray.push({
+                    tipo: 'score_geral',
+                    subtipos: selecionadosScore,
+                    descricao: 'Recurso de Pontuação Geral: ' + selecionadosScore.map(s => nomeScoreMap[s]).join(', '),
+                    justificativa: justificativaScore
+                });
+            }
+
+            formData.append('recursos', JSON.stringify(recursosArray));
+            
+            // Gera string de tipos consolidada (ex: "redeprot,score_geral")
+            const todosTipos = recursosArray.map(r => r.tipo);
+            formData.append('tiposRecurso', todosTipos.join(','));
 
             for (let i = 1; i <= 5; i++) {
                 const input = document.getElementById(`recursoFileJ2_${i}`);
@@ -4543,6 +4809,20 @@
                         const ta = document.getElementById(`recursoTexto_${t}`);
                         if (ta) ta.value = '';
                     });
+                    // Reset Score Geral
+                    const swMaster = document.getElementById('swMasterRecScore');
+                    if (swMaster) swMaster.checked = false;
+                    const subScore = document.getElementById('subRecScoreContainer');
+                    if (subScore) subScore.classList.add('d-none');
+                    const summary = document.getElementById('summaryRecScore');
+                    if (summary) summary.classList.add('d-none');
+                    const taScore = document.getElementById('recursoTexto_score');
+                    if (taScore) taScore.value = '';
+                    tiposScore.forEach(t => {
+                        const sw = document.getElementById(`swRec${t}`);
+                        if (sw && !sw.disabled) sw.checked = false;
+                    });
+
                     for (let i = 1; i <= 5; i++) {
                         const input = document.getElementById(`recursoFileJ2_${i}`);
                         if (input) input.value = '';
