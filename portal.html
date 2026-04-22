@@ -646,6 +646,7 @@
                     <input type="hidden" id="justrecdepterap" value="{{ $json.data.justdepterap }}">
                     <input type="hidden" id="justtempo" value="{{ $json.data.justtempo }}">
                     <input type="hidden" id="julrectempo" value="{{ $json.data.julrectempo }}">
+                    <input type="hidden" id="justrectempo" value="{{ $json.data.justrectempo }}">
                     <input type="hidden" id="justinscricao" value="{{ $json.data.justinscricao }}">
                     <input type="hidden" id="jupontuacao" value="{{ $json.data.jupontuacao }}">
                     <input type="hidden" id="recpontuacao" value="{{ $json.data.recpontuacao }}">
@@ -4559,20 +4560,45 @@
                 ];
                 const cardsHtml = criterios.map(c => {
                     const val = (document.getElementById(c.id)?.value || '').toLowerCase().trim();
-                    if (!val || val === 'undefined' || val.startsWith('{{')) return '';
-                    const acatado = val === 'sim';
-                    const just = document.getElementById(c.justId)?.value || '';
+                    let valT = '';
+                    if (c.id === 'julsocioocupacional') {
+                        valT = (document.getElementById('julrectempo')?.value || '').toLowerCase().trim();
+                    }
+
+                    const hasVal = val && val !== 'undefined' && !val.startsWith('{{');
+                    const hasValT = valT && valT !== 'undefined' && !valT.startsWith('{{');
+
+                    if (!hasVal && !hasValT) return '';
+                    
+                    // Acatado apenas se todas as partes julgadas forem 'sim'
+                    const finalAcatado = (hasVal ? val === 'sim' : true) && (hasValT ? valT === 'sim' : true);
+                    
+                    let just = document.getElementById(c.justId)?.value || '';
+
+                    // Especial Sócio-Ocupacional: pode ter rejeição específica de tempo
+                    if (c.id === 'julsocioocupacional') {
+                        const valT_raw = (document.getElementById('julrectempo')?.value || '').toLowerCase().trim();
+                        const justT = document.getElementById('justrectempo')?.value || '';
+                        if (valT_raw === 'nao' || valT_raw === 'não') {
+                            const prefix = (just && just !== 'undefined' && just.trim() !== '') ? "Base: " : "";
+                            const baseJust = (just && just !== 'undefined' && just.trim() !== '') ? just : "";
+                            just = (prefix + baseJust + (baseJust ? " | " : "") + "Tempo: " + justT).trim();
+                        } else if (valT_raw === 'sim' && hasVal && val === 'nao') {
+                            // Se tempo foi acatado mas base não, garantir que apareça que tempo foi OK
+                            just = (just ? "Base: " + just + " | " : "") + "Tempo: Acatado.";
+                        }
+                    }
                     
                     return `
                         <div class="col-12">
-                            <div class="p-3 rounded-3 border-start border-4 ${acatado ? 'border-success bg-success bg-opacity-10' : 'border-danger bg-danger bg-opacity-10'} h-100">
+                            <div class="p-3 rounded-3 border-start border-4 ${finalAcatado ? 'border-success bg-success bg-opacity-10' : 'border-danger bg-danger bg-opacity-10'} h-100">
                                 <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-                                    <span class="fw-bold text-dark"><i class="fas fa-check-circle me-2 ${acatado ? 'text-success' : 'text-danger'}"></i>${c.nome}</span>
-                                    <span class="badge ${acatado ? 'bg-success' : 'bg-danger'} px-3 py-2">${acatado ? '✅ Acatado' : '❌ Rejeitado'}</span>
+                                    <span class="fw-bold text-dark"><i class="fas fa-check-circle me-2 ${finalAcatado ? 'text-success' : 'text-danger'}"></i>${c.nome}</span>
+                                    <span class="badge ${finalAcatado ? 'bg-success' : 'bg-danger'} px-3 py-2">${finalAcatado ? '✅ Acatado' : '❌ Rejeitado'}</span>
                                 </div>
                                 <div class="small text-muted bg-white p-2 rounded border-light shadow-sm">
                                     <strong class="text-secondary"><i class="fas fa-comment-dots me-1"></i>Justificativa da Comissão:</strong> 
-                                    <div class="mt-1">${(!acatado && just && just !== 'undefined') ? just : (acatado ? 'Critério validado conforme documentação/análise.' : '—')}</div>
+                                    <div class="mt-1">${(just && just !== 'undefined' && just.trim() !== '') ? just : (finalAcatado ? 'Critério validado conforme documentação/análise.' : '—')}</div>
                                 </div>
                             </div>
                         </div>`;
