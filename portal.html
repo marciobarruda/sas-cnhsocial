@@ -4146,6 +4146,24 @@
                 icon.className = 'fas fa-envelope-open';
             }
         }
+        
+        function renderStatusMessage(title, desc, color, icon) {
+            return `
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center gap-4 animate__animated animate__fadeIn">
+                            <div class="bg-${color} bg-opacity-10 p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; min-width: 70px;">
+                                <i class="fas ${icon} fs-2 text-${color}"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-${color} mb-1">${title}</h5>
+                                <p class="text-muted mb-0 small">${desc}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
         function checkRecurso() {
             const now = AppState.currentDate;
@@ -4212,27 +4230,54 @@
             // ---- PRIORIZAÇÃO POR STATUS DEFINITIVO (Sobrescreve datas) ----
             if (workflowStatus.includes("12")) {
                 if (possuiRecJ1) {
-                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong>. Não é necessário interpor recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
+                    statusEl.innerHTML = renderStatusMessage(
+                        "Inscrição Acatada",
+                        "Sua inscrição foi acatada com sucesso. Não é necessário interpor recurso. Por favor, aguarde as próximas etapas do processo seletivo.",
+                        "success", "fa-check-double"
+                    );
                 } else {
-                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Processo Encerrado. Sua inscrição foi <strong>acatada</strong> após análise de recurso.</div>';
+                    statusEl.innerHTML = renderStatusMessage(
+                        "Processo Encerrado",
+                        "Sua inscrição foi <strong>acatada</strong> após análise de recurso.",
+                        "success", "fa-check-double"
+                    );
                 }
             }
             else if (workflowStatus.includes("300")) {
-                statusEl.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-folder-closed me-2"></i>Processo Encerrado. O seu recurso de inscrição <strong>não foi acatado</strong> e o processo foi finalizado.</div>';
+                statusEl.innerHTML = renderStatusMessage(
+                    "Processo Encerrado",
+                    "O seu recurso de inscrição <strong>não foi acatado</strong> e o processo foi finalizado.",
+                    "danger", "fa-folder-closed"
+                );
             }
             else if (workflowStatus.includes("301")) {
-                statusEl.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-folder-closed me-2"></i>Processo Encerrado. O seu recurso de pontuação <strong>não foi acatado</strong> e o processo foi finalizado.</div>';
+                statusEl.innerHTML = renderStatusMessage(
+                    "Processo Encerrado",
+                    "O seu recurso de pontuação <strong>não foi acatado</strong> e o processo foi finalizado.",
+                    "danger", "fa-folder-closed"
+                );
             }
             else if (workflowStatus.includes("302")) {
-                statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Processo Encerrado. O seu recurso de pontuação foi <strong>acatado</strong> e o processo foi finalizado.</div>';
+                statusEl.innerHTML = renderStatusMessage(
+                    "Processo Encerrado",
+                    "O seu recurso de pontuação foi <strong>acatado</strong> e o processo foi finalizado.",
+                    "success", "fa-check-double"
+                );
             }
             else if (workflowStatus.includes("200")) {
                 if (!possuiRecJ2) {
-                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>A análise dos recursos de pontuação foi <strong>concluída</strong>. Você pode conferir o resultado final detalhado logo abaixo.</div>';
+                    statusEl.innerHTML = renderStatusMessage(
+                        "Análise Concluída",
+                        "A análise dos recursos de pontuação foi encerrada. Você pode conferir o resultado final detalhado logo abaixo.",
+                        "success", "fa-file-circle-check"
+                    );
                 } else {
-                    statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>A análise dos recursos de pontuação foi <strong>concluída</strong>. Como você não interpôs recurso, sua pontuação preliminar foi mantida como definitiva.</div>';
+                    statusEl.innerHTML = renderStatusMessage(
+                        "Análise Concluída",
+                        "A análise dos recursos de pontuação foi encerrada. Como você não interpôs recurso, sua pontuação preliminar foi mantida como definitiva.",
+                        "info", "fa-file-circle-check"
+                    );
                 }
-                // O bloco de resultado será exibido pela lógica PÓS-JANELA 2 no final da função
             }
             // PRIORIDADE 1: Janela 2 Ativa e Candidato em status de Pontuação
             else if (isDate2 && isStatus2) {
@@ -4242,18 +4287,31 @@
                     const recpont = document.getElementById('recpontuacao')?.value || '';
 
                     if (jupont === 'sim') {
-                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua interposição de recurso por pontuação aplicada foi <strong>acatada</strong>. Por favor, acompanhe o cronograma para as próximas etapas.</div>';
+                        statusEl.innerHTML = renderStatusMessage(
+                            "Recurso Acatado",
+                            "Sua interposição de recurso por pontuação aplicada foi <strong>acatada</strong>. Por favor, acompanhe o cronograma para as próximas etapas.",
+                            "success", "fa-check-double"
+                        );
                     } else if (jupont === 'não') {
-                        statusEl.innerHTML = `<div class="alert alert-danger border-0 shadow-sm">
-                            <h6 class="fw-bold mb-2"><i class="fas fa-times-circle me-2"></i>Sua interposição de recurso por pontuação aplicada foi <strong>rejeitada</strong>.</h6>
-                            <p class="mb-0 small"><strong>Justificativa:</strong> ${recpont}</p>
-                        </div>`;
+                        statusEl.innerHTML = renderStatusMessage(
+                            "Recurso Rejeitado",
+                            `Sua interposição de recurso por pontuação aplicada foi <strong>rejeitada</strong>.<br><br><strong>Justificativa:</strong> ${recpont}`,
+                            "danger", "fa-times-circle"
+                        );
                     } else {
-                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i><strong>Recurso de pontuação já enviado!</strong> Seu pedido foi registrado e está sendo analisado. Acompanhe o resultado nesta aba.</div>';
+                        statusEl.innerHTML = renderStatusMessage(
+                            "Recurso em Análise",
+                            "Seu pedido de recurso de pontuação foi registrado e está sendo analisado pela comissão. Acompanhe o resultado nesta aba.",
+                            "success", "fa-check-circle"
+                        );
                     }
                 } else {
                     // Janela aberta, status correto, sem recurso prévio
-                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i><strong>Janela de recursos ativa!</strong> Confira abaixo os critérios passíveis de recurso.</div>';
+                    statusEl.innerHTML = renderStatusMessage(
+                        "Janela de Recursos Ativa",
+                        "O resultado preliminar da pontuação foi divulgado. Confira abaixo os critérios passíveis de recurso.",
+                        "success", "fa-check-circle"
+                    );
 
                     // Lógica granular de exibição dos switches da Janela 2
                     let hasAnyCriteria = false;
@@ -4325,7 +4383,11 @@
                         formJ2.classList.remove('d-none');
                     } else {
                         formJ2.classList.add('d-none');
-                        statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-info-circle me-2"></i>Todos os seus critérios de pontuação foram <strong>acatados</strong> pela análise comercial. Não há critérios passíveis de recurso nesta etapa.</div>';
+                        statusEl.innerHTML = renderStatusMessage(
+                            "Critérios Acatados",
+                            "Todos os seus critérios de pontuação foram <strong>acatados</strong> pela análise comercial. Não há critérios passíveis de recurso nesta etapa.",
+                            "info", "fa-info-circle"
+                        );
                     }
                 }
             }
@@ -4336,27 +4398,41 @@
                     const recjust = document.getElementById('recinscricao')?.value || '';
 
                     if (juinscIsSim) {
-                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua interposição de recurso por inscrição negada foi <strong>acatada</strong>. Por favor, acompanhe o cronograma para as próximas etapas.</div>';
+                        statusEl.innerHTML = renderStatusMessage(
+                            "Inscrição Acatada",
+                            "Sua interposição de recurso por inscrição negada foi <strong>acatada</strong>. Por favor, acompanhe o cronograma para as próximas etapas.",
+                            "success", "fa-check-double"
+                        );
                     } else if (juinscIsNao) {
-                        statusEl.innerHTML = `<div class="alert alert-danger border-0 shadow-sm">
-                            <h6 class="fw-bold mb-2"><i class="fas fa-times-circle me-2"></i>Sua interposição de recurso por inscrição negada foi <strong>rejeitada</strong>.</h6>
-                            <p class="mb-0 small"><strong>Justificativa:</strong> ${recjust}</p>
-                        </div>`;
+                        statusEl.innerHTML = renderStatusMessage(
+                            "Inscrição Rejeitada",
+                            `Sua interposição de recurso por inscrição negada foi <strong>rejeitada</strong>.<br><br><strong>Justificativa:</strong> ${recjust}`,
+                            "danger", "fa-times-circle"
+                        );
                     } else {
-                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i><strong>Recurso de inscrição já enviado!</strong> Seu pedido foi registrado e está sendo analisado. Acompanhe o resultado nesta aba.</div>';
+                        statusEl.innerHTML = renderStatusMessage(
+                            "Recurso em Análise",
+                            "Seu pedido de recurso de inscrição foi registrado e está sendo analisado. Acompanhe o resultado nesta aba.",
+                            "success", "fa-check-circle"
+                        );
                     }
                 } else {
                     // Janela aberta, status correto, sem recurso prévio
-                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i><strong>Janela de recursos ativa!</strong> Você pode enviar sua justificativa abaixo.</div>';
+                    statusEl.innerHTML = renderStatusMessage(
+                        "Janela de Recursos Ativa",
+                        "A fase de contestação do resultado da inscrição está aberta. Você pode enviar sua justificativa abaixo.",
+                        "success", "fa-check-circle"
+                    );
 
-                    // Se for status 177 - exibe a justificativa da rejeição
+                    // Se for status 177 - exibe a justificativa da rejeição integrada no card se possível, ou como alerta extra
                     if (workflowStatus.includes("177")) {
                         const justInsc = document.getElementById('justinscricao')?.value;
                         if (justInsc && justInsc !== 'undefined' && justInsc.trim() !== "") {
-                            statusEl.innerHTML += `<div class="alert alert-danger border-0 shadow-sm mt-3">
-                                <h6 class="fw-bold mb-2"><i class="fas fa-exclamation-circle me-2"></i>Motivo da Rejeição:</h6>
-                                <p class="mb-0 small">${justInsc}</p>
-                            </div>`;
+                             statusEl.innerHTML = renderStatusMessage(
+                                "Inscrição Rejeitada",
+                                `Sua inscrição inicial não foi aceita. Você pode interpor recurso abaixo.<br><br><strong>Motivo da Rejeição:</strong> ${justInsc}`,
+                                "warning", "fa-exclamation-circle"
+                            );
                         }
                     }
 
@@ -4366,29 +4442,57 @@
             // PRIORIDADE 3: Demais condições da Janela 1 (Transitórios ou Inscrição Acatada)
             else if (isDate1) {
                 if (isTransitorio) {
-                    statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-hourglass-half me-2"></i>Sua inscrição ainda está sendo processada. Assim que a análise for concluída, esta área será atualizada. Por favor, aguarde.</div>';
+                    statusEl.innerHTML = renderStatusMessage(
+                        "Inscrição em Processamento",
+                        "Sua inscrição ainda está sendo processada. Assim que a análise for concluída, esta área será atualizada. Por favor, aguarde.",
+                        "info", "fa-hourglass-half"
+                    );
                 } else {
                     // Status definitivo (Acatada ou Rejeitada após recurso)
                     if (!possuiRecJ1) {
                         if (juinscIsSim) {
-                            statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong> após análise de recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
+                            statusEl.innerHTML = renderStatusMessage(
+                                "Inscrição Acatada",
+                                "Sua inscrição foi <strong>acatada</strong> após análise de recurso. Por favor, aguarde as próximas etapas do processo seletivo.",
+                                "success", "fa-check-double"
+                            );
                         } else if (juinscIsNao) {
-                            statusEl.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-times-circle me-2"></i>O seu recurso de inscrição foi <strong>rejeitado</strong>. Confira os detalhes no painel abaixo.</div>';
+                            statusEl.innerHTML = renderStatusMessage(
+                                "Inscrição Rejeitada",
+                                "O seu recurso de inscrição foi <strong>rejeitado</strong>. Confira os detalhes no painel abaixo.",
+                                "danger", "fa-times-circle"
+                            );
                         } else {
-                            statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-hourglass-half me-2"></i>Seu recurso de inscrição está em fase final de processamento. Por favor, aguarde.</div>';
+                            statusEl.innerHTML = renderStatusMessage(
+                                "Recurso em Processamento",
+                                "Seu recurso de inscrição está em fase final de processamento. Por favor, aguarde.",
+                                "info", "fa-hourglass-half"
+                            );
                         }
                     } else {
-                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong>. Não é necessário interpor recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
+                        statusEl.innerHTML = renderStatusMessage(
+                            "Inscrição Acatada",
+                            "Sua inscrição foi <strong>acatada</strong>. Não é necessário interpor recurso. Por favor, aguarde as próximas etapas do processo seletivo.",
+                            "success", "fa-check-double"
+                        );
                     }
                 }
             }
             // PRIORIDADE 4: Janela 2 aberta mas sem status de recurso habilitado para o candidato
             else if (isDate2) {
-                statusEl.innerHTML = '<div class="alert alert-warning border-0 shadow-sm"><i class="fas fa-exclamation-triangle me-2"></i>A submissão de recursos de pontuação está indisponível no momento. Consulte o <strong>Cronograma</strong> para os prazos oficiais.</div>';
+                statusEl.innerHTML = renderStatusMessage(
+                    "Prazos Encerrados",
+                    "A submissão de recursos de pontuação está indisponível no momento. Consulte o <strong>Cronograma</strong> para os prazos oficiais.",
+                    "warning", "fa-exclamation-triangle"
+                );
             }
             // FORA DE QUALQUER PRAZO
             else {
-                statusEl.innerHTML = '<div class="alert alert-warning border-0 shadow-sm"><i class="fas fa-exclamation-triangle me-2"></i>A submissão de recursos está desabilitada no momento. Consulte o <strong>Cronograma</strong> para verificar os prazos oficiais definidos no edital.</div>';
+                statusEl.innerHTML = renderStatusMessage(
+                    "Prazos Encerrados",
+                    "A submissão de recursos está desabilitada no momento. Consulte o <strong>Cronograma</strong> para verificar os prazos oficiais definidos no edital.",
+                    "warning", "fa-exclamation-triangle"
+                );
             }
 
             // ---- RESULTADO PÓS-JANELA 1 ----
