@@ -651,7 +651,7 @@
                     <input type="hidden" id="jupontuacao" value="{{ $json.data.jupontuacao }}">
                     <input type="hidden" id="recpontuacao" value="{{ $json.data.recpontuacao }}">
                     <input type="hidden" id="pcdBase" value="{{ $json.data.pcd }}">
-                    
+
                     <!-- Scoring Data Layer (Base results from backend) -->
                     <input type="hidden" id="base_pts_raca" value="{{ $json.data.pts_raca || 0 }}">
                     <input type="hidden" id="base_pts_pcd" value="{{ $json.data.pts_pcd || 0 }}">
@@ -659,12 +659,17 @@
                     <input type="hidden" id="base_pts_renda" value="{{ $json.data.pts_renda || 0 }}">
                     <input type="hidden" id="base_pts_familia" value="{{ $json.data.pts_familia || 0 }}">
                     <input type="hidden" id="base_pts_beneficio" value="{{ $json.data.pts_beneficio || 0 }}">
-                    <input type="hidden" id="base_pts_sem_trabalho_formal" value="{{ $json.data.pts_sem_trabalho_formal || 0 }}">
-                    <input type="hidden" id="base_pts_mulher_violencia" value="{{ $json.data.pts_mulher_violencia || 0 }}">
-                    <input type="hidden" id="base_pts_dependente_tratamento" value="{{ $json.data.pts_dependente_tratamento || 0 }}">
+                    <input type="hidden" id="base_pts_sem_trabalho_formal"
+                        value="{{ $json.data.pts_sem_trabalho_formal || 0 }}">
+                    <input type="hidden" id="base_pts_mulher_violencia"
+                        value="{{ $json.data.pts_mulher_violencia || 0 }}">
+                    <input type="hidden" id="base_pts_dependente_tratamento"
+                        value="{{ $json.data.pts_dependente_tratamento || 0 }}">
                     <input type="hidden" id="base_pts_acolhimento" value="{{ $json.data.pts_acolhimento || 0 }}">
-                    <input type="hidden" id="base_pts_trabalhador_app_base" value="{{ $json.data.pts_trabalhador_app_base || 0 }}">
-                    <input type="hidden" id="base_pts_trabalhador_app_tempo" value="{{ $json.data.pts_trabalhador_app_tempo || 0 }}">
+                    <input type="hidden" id="base_pts_trabalhador_app_base"
+                        value="{{ $json.data.pts_trabalhador_app_base || 0 }}">
+                    <input type="hidden" id="base_pts_trabalhador_app_tempo"
+                        value="{{ $json.data.pts_trabalhador_app_tempo || 0 }}">
                     <input type="hidden" id="base_total_pontos" value="{{ $json.data.totalPontos || 0 }}">
 
                     <!-- n8n Identity & Profile Data -->
@@ -672,19 +677,24 @@
                     <input type="hidden" id="data_email" value="{{ $json.data.email || '' }}">
                     <input type="hidden" id="data_trabalhadorapp" value="{{ $json.data.trabalhadorapp || '' }}">
                     <input type="hidden" id="data_maepaiatipico" value="{{ $json.data.maepaiatipico || '' }}">
-                    <input type="hidden" id="data_dependentetratamento" value="{{ $json.data.dependentetratamento || '' }}">
+                    <input type="hidden" id="data_dependentetratamento"
+                        value="{{ $json.data.dependentetratamento || '' }}">
                     <input type="hidden" id="data_mulherviolencia" value="{{ $json.data.mulherviolencia || '' }}">
                     <input type="hidden" id="data_acolhimento" value="{{ $json.data.acolhimento || '' }}">
                     <input type="hidden" id="data_mulherChefe" value="{{ $json.data.mulherChefe || '' }}">
-                    <input type="hidden" id="data_programaBolsaFamilia" value="{{ $json.data.programaBolsaFamilia || '' }}">
+                    <input type="hidden" id="data_programaBolsaFamilia"
+                        value="{{ $json.data.programaBolsaFamilia || '' }}">
                     <input type="hidden" id="data_data_inicio_app" value="{{ $json.data.data_inicio_app || '' }}">
                     <input type="hidden" id="data_generoUC" value="{{ $json.data.generoUC || '' }}">
-                    <input type="hidden" id="data_inscricao_homologada_anterior" value="{{ $json.data.inscricao_homologada_anterior || '' }}">
+                    <input type="hidden" id="data_inscricao_homologada_anterior"
+                        value="{{ $json.data.inscricao_homologada_anterior || '' }}">
                     <input type="hidden" id="data_situacao_anterior" value="{{ $json.data.situacao || '' }}">
-                    <input type="hidden" id="data_teveEmprego" value="{{ $json.data.teveEmpregoCarteiraAssinada || '' }}">
+                    <input type="hidden" id="data_teveEmprego"
+                        value="{{ $json.data.teveEmpregoCarteiraAssinada || '' }}">
                     <input type="hidden" id="data_categoria_base" value="{{ $json.data.categoria || '' }}">
                     <input type="hidden" id="data_inicioapp_raw" value="{{ $json.data.inicioapp || '' }}">
-                    <input type="hidden" id="data_notifications" value='{{ JSON.stringify($json.informativo) || "[]" }}'>
+                    <input type="hidden" id="data_notifications"
+                        value='{{ JSON.stringify($json.informativo) || "[]" }}'>
                     <input type="hidden" id="data_pcd" value="{{ $json.data.pcd || '' }}">
                 </div>
             </div>
@@ -982,7 +992,7 @@
                                             <i class="fas fa-sync-alt me-1"></i>Sincronizado via CadÚnico
                                         </span>
                                         <i class="fas fa-info-circle info-icon text-secondary" data-bs-toggle="tooltip"
-                                           title="Valores oficiais da base do CadÚnico (bloqueados para edição)."></i>
+                                            title="Valores oficiais da base do CadÚnico (bloqueados para edição)."></i>
                                     </div>
                                     <div class="row g-4">
                                         <div class="col-12">
@@ -1186,51 +1196,63 @@
                                 <tbody>
                                     <tr>
                                         <td class="ps-4">Pessoas Negras (Critério de Raça)</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-raca-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-raca-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Pessoa com Deficiência (PCD)</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-pcd-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-pcd-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Mulher Chefe de Família</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-mulher-badge">-- / 15</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-mulher-badge">-- / 15</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Mulher vítima de violência doméstica</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-mulher-violencia-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-mulher-violencia-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Renda per capita (Vulnerabilidade)</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-renda-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-renda-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Composição Familiar</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-familia-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-familia-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Possui dependente em tratamento</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-dependente-tratamento-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-dependente-tratamento-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Resido em serviço de acolhimento institucional</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-acolhimento-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-acolhimento-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Trabalhador de Aplicativo (Base)</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-app-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-app-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Tempo de Atividade no Aplicativo</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-app-tempo-badge">-- / 20</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-app-tempo-badge">-- / 20</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Benefícios Sociais</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-bolsa-badge">-- / 15</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-bolsa-badge">-- / 15</span></td>
                                     </tr>
                                     <tr>
                                         <td class="ps-4">Sem Trabalho Formal</td>
-                                        <td class="text-center"><span class="badge bg-light text-dark px-3" id="score-trabalho-badge">-- / 15</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark px-3"
+                                                id="score-trabalho-badge">-- / 15</span></td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="bg-primary text-white">
@@ -1255,12 +1277,14 @@
                             </h5>
                         </div>
                         <div class="card-body p-3">
-                            <p class="x-small text-muted mb-3 opacity-75">Critérios de reserva legal de 10% das vagas para cada categoria.</p>
-                            
+                            <p class="x-small text-muted mb-3 opacity-75">Critérios de reserva legal de 10% das vagas
+                                para cada categoria.</p>
+
                             <!-- Mãe/Pai Atípico -->
                             <div class="quota-item mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <div class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.5px; font-size: 0.65rem;">Mãe/Pai Atípico</div>
+                                    <div class="small fw-bold text-muted text-uppercase"
+                                        style="letter-spacing: 0.5px; font-size: 0.65rem;">Mãe/Pai Atípico</div>
                                     <span id="quota-atipico-status">
                                         <!-- Injetado via JS -->
                                     </span>
@@ -1271,9 +1295,12 @@
 
 
                             <!-- Info Box -->
-                            <div class="p-3 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-10 mt-auto">
-                                <h6 class="fw-bold text-primary mb-2 small"><i class="fas fa-info-circle me-2"></i>Ampla Concorrência</h6>
-                                <p class="smaller text-dark mb-0 opacity-75">Candidatos em vagas reservadas também disputam na ampla concorrência caso possuam nota suficiente.</p>
+                            <div
+                                class="p-3 rounded-3 bg-primary bg-opacity-10 border border-primary border-opacity-10 mt-auto">
+                                <h6 class="fw-bold text-primary mb-2 small"><i class="fas fa-info-circle me-2"></i>Ampla
+                                    Concorrência</h6>
+                                <p class="smaller text-dark mb-0 opacity-75">Candidatos em vagas reservadas também
+                                    disputam na ampla concorrência caso possuam nota suficiente.</p>
                             </div>
                         </div>
                     </div>
@@ -2816,22 +2843,22 @@
                         lido_em: n.lido_em,
                         timestamp: n.timestamp
                     }));
-                } catch(e) {
+                } catch (e) {
                     console.error("Erro ao processar notificações:", e);
                     return [];
                 }
             })(),
-                cronograma: [
-                    { id: 1, etapa: 'Publicação do Edital', inicio: '2026-04-17', fim: '2026-04-16' },
-                    { id: 2, etapa: 'Período de Inscrições', inicio: '2026-04-17', fim: '2026-05-06' },
-                    { id: 3, etapa: 'Análise das Inscrições', inicio: '2026-04-17', fim: '2026-05-19' },
-                    { id: 4, etapa: 'Publicação das Inscrições', inicio: '2026-04-17', fim: '2026-05-21' },
-                    { id: 5, etapa: 'Recursos às Inscrições', inicio: '2026-04-17', fim: '2026-05-26' },
-                    { id: 6, etapa: 'Análise de Seleção e Critérios', inicio: '2026-04-17', fim: '2026-06-15' },
-                    { id: 7, etapa: 'Resultado Preliminar Seleção', inicio: '2026-04-17', fim: '2026-06-16' },
-                    { id: 8, etapa: 'Recursos à Seleção', inicio: '2026-04-17', fim: '2026-06-19' },
-                    { id: 9, etapa: 'Resultado Final e Homologação', inicio: '2026-04-17', fim: '2026-06-27' }
-                ],
+            cronograma: [
+                { id: 1, etapa: 'Publicação do Edital', inicio: '2026-04-17', fim: '2026-04-16' },
+                { id: 2, etapa: 'Período de Inscrições', inicio: '2026-04-17', fim: '2026-05-06' },
+                { id: 3, etapa: 'Análise das Inscrições', inicio: '2026-04-17', fim: '2026-05-19' },
+                { id: 4, etapa: 'Publicação das Inscrições', inicio: '2026-04-17', fim: '2026-05-21' },
+                { id: 5, etapa: 'Recursos às Inscrições', inicio: '2026-04-17', fim: '2026-05-26' },
+                { id: 6, etapa: 'Análise de Seleção e Critérios', inicio: '2026-04-17', fim: '2026-06-15' },
+                { id: 7, etapa: 'Resultado Preliminar Seleção', inicio: '2026-04-17', fim: '2026-06-16' },
+                { id: 8, etapa: 'Recursos à Seleção', inicio: '2026-04-17', fim: '2026-06-19' },
+                { id: 9, etapa: 'Resultado Final e Homologação', inicio: '2026-04-17', fim: '2026-06-27' }
+            ],
         };
         // Deriva as janelas de recurso automaticamente a partir do cronograma
         AppState.janelasRecurso = [
@@ -2910,46 +2937,46 @@
                 }
             }
 
-        function updateQuotaBadges() {
-            try {
-                const numInsc = (document.getElementById('numInscricao')?.value || '').trim();
-                const isPendente = !numInsc || numInsc === "" || numInsc.toLowerCase() === "pendente";
-                
-                // 1. Mãe/Pai Atípico
-                const switchAtipico = document.getElementById('maeAtipica');
-                const analise = (document.getElementById('analisesociofamiliar')?.value || '').trim().toLowerCase();
-                const jul = (document.getElementById('julsociofamiliar')?.value || '').trim().toLowerCase();
-                const containerAtipico = document.getElementById('quota-atipico-status');
+            function updateQuotaBadges() {
+                try {
+                    const numInsc = (document.getElementById('numInscricao')?.value || '').trim();
+                    const isPendente = !numInsc || numInsc === "" || numInsc.toLowerCase() === "pendente";
 
-                if (containerAtipico) {
-                    let status = 'Não se aplica';
-                    let bgClass = 'bg-light text-muted border';
-                    let iconClass = 'fa-minus-circle';
+                    // 1. Mãe/Pai Atípico
+                    const switchAtipico = document.getElementById('maeAtipica');
+                    const analise = (document.getElementById('analisesociofamiliar')?.value || '').trim().toLowerCase();
+                    const jul = (document.getElementById('julsociofamiliar')?.value || '').trim().toLowerCase();
+                    const containerAtipico = document.getElementById('quota-atipico-status');
 
-                    const isAtipicoChecked = !!switchAtipico?.checked;
+                    if (containerAtipico) {
+                        let status = 'Não se aplica';
+                        let bgClass = 'bg-light text-muted border';
+                        let iconClass = 'fa-minus-circle';
 
-                    if (analise === 'sim' || jul === 'sim') {
-                        status = 'Aprovado';
-                        bgClass = 'bg-success';
-                        iconClass = 'fa-check-circle';
-                    } else if (analise === 'nao' || jul === 'nao') {
-                        status = 'Rejeitado';
-                        bgClass = 'bg-danger text-white';
-                        iconClass = 'fa-times-circle';
-                    } else if (isAtipicoChecked) {
-                        status = isPendente ? 'Aguardando validação' : 'Em análise';
-                        bgClass = 'bg-warning text-dark';
-                        iconClass = 'fa-hourglass-half';
+                        const isAtipicoChecked = !!switchAtipico?.checked;
+
+                        if (analise === 'sim' || jul === 'sim') {
+                            status = 'Aprovado';
+                            bgClass = 'bg-success';
+                            iconClass = 'fa-check-circle';
+                        } else if (analise === 'nao' || jul === 'nao') {
+                            status = 'Rejeitado';
+                            bgClass = 'bg-danger text-white';
+                            iconClass = 'fa-times-circle';
+                        } else if (isAtipicoChecked) {
+                            status = isPendente ? 'Aguardando validação' : 'Em análise';
+                            bgClass = 'bg-warning text-dark';
+                            iconClass = 'fa-hourglass-half';
+                        }
+
+                        containerAtipico.innerHTML = `<span class="badge ${bgClass} px-3 py-2 animate__animated animate__fadeIn"><i class="fas ${iconClass} me-1"></i>${status}</span>`;
                     }
-                    
-                    containerAtipico.innerHTML = `<span class="badge ${bgClass} px-3 py-2 animate__animated animate__fadeIn"><i class="fas ${iconClass} me-1"></i>${status}</span>`;
+
+
+                } catch (e) {
+                    console.error("Erro ao atualizar badges de cotas:", e);
                 }
-
-
-            } catch (e) {
-                console.error("Erro ao atualizar badges de cotas:", e);
             }
-        }
 
             // Fallback calculation helper
             const getScore = (baseId, fallbackFunc) => {
@@ -3027,52 +3054,52 @@
             if ((vAnaliseTempo === 'nao' || vAnaliseTempo === 'não') && vJulRecTempo !== 'sim') {
                 scoreAppTempo = 0;
             }
-        const scoreApp = scoreAppBase + scoreAppTempo;
+            const scoreApp = scoreAppBase + scoreAppTempo;
 
-        const total = scoreRaca + scorePcd + scoreMulher + scoreMulherViolencia + scoreRenda + scoreFamilia + scoreDependente + scoreAcolhimento + scoreApp + scoreBolsa + scoreSemTrabalho;
+            const total = scoreRaca + scorePcd + scoreMulher + scoreMulherViolencia + scoreRenda + scoreFamilia + scoreDependente + scoreAcolhimento + scoreApp + scoreBolsa + scoreSemTrabalho;
 
-        document.getElementById('score-raca-badge').innerText = `${scoreRaca} / 20`;
-        updateBadgeColor(document.getElementById('score-raca-badge'), scoreRaca);
+            document.getElementById('score-raca-badge').innerText = `${scoreRaca} / 20`;
+            updateBadgeColor(document.getElementById('score-raca-badge'), scoreRaca);
 
-        document.getElementById('score-pcd-badge').innerText = `${scorePcd} / 20`;
-        updateBadgeColor(document.getElementById('score-pcd-badge'), scorePcd);
+            document.getElementById('score-pcd-badge').innerText = `${scorePcd} / 20`;
+            updateBadgeColor(document.getElementById('score-pcd-badge'), scorePcd);
 
-        document.getElementById('score-mulher-badge').innerText = `${scoreMulher} / 15`;
-        updateBadgeColor(document.getElementById('score-mulher-badge'), scoreMulher);
+            document.getElementById('score-mulher-badge').innerText = `${scoreMulher} / 15`;
+            updateBadgeColor(document.getElementById('score-mulher-badge'), scoreMulher);
 
-        document.getElementById('score-mulher-violencia-badge').innerText = `${scoreMulherViolencia} / 20`;
-        updateBadgeColor(document.getElementById('score-mulher-violencia-badge'), scoreMulherViolencia);
+            document.getElementById('score-mulher-violencia-badge').innerText = `${scoreMulherViolencia} / 20`;
+            updateBadgeColor(document.getElementById('score-mulher-violencia-badge'), scoreMulherViolencia);
 
-        document.getElementById('score-renda-badge').innerText = `${scoreRenda} / 20`;
-        updateBadgeColor(document.getElementById('score-renda-badge'), scoreRenda);
+            document.getElementById('score-renda-badge').innerText = `${scoreRenda} / 20`;
+            updateBadgeColor(document.getElementById('score-renda-badge'), scoreRenda);
 
-        document.getElementById('score-familia-badge').innerText = `${scoreFamilia} / 20`;
-        updateBadgeColor(document.getElementById('score-familia-badge'), scoreFamilia);
+            document.getElementById('score-familia-badge').innerText = `${scoreFamilia} / 20`;
+            updateBadgeColor(document.getElementById('score-familia-badge'), scoreFamilia);
 
-        document.getElementById('score-dependente-tratamento-badge').innerText = `${scoreDependente} / 20`;
-        updateBadgeColor(document.getElementById('score-dependente-tratamento-badge'), scoreDependente);
+            document.getElementById('score-dependente-tratamento-badge').innerText = `${scoreDependente} / 20`;
+            updateBadgeColor(document.getElementById('score-dependente-tratamento-badge'), scoreDependente);
 
-        document.getElementById('score-acolhimento-badge').innerText = `${scoreAcolhimento} / 20`;
-        updateBadgeColor(document.getElementById('score-acolhimento-badge'), scoreAcolhimento);
+            document.getElementById('score-acolhimento-badge').innerText = `${scoreAcolhimento} / 20`;
+            updateBadgeColor(document.getElementById('score-acolhimento-badge'), scoreAcolhimento);
 
 
 
-        document.getElementById('score-app-badge').innerText = `${scoreAppBase} / 20`;
-        updateBadgeColor(document.getElementById('score-app-badge'), scoreAppBase);
+            document.getElementById('score-app-badge').innerText = `${scoreAppBase} / 20`;
+            updateBadgeColor(document.getElementById('score-app-badge'), scoreAppBase);
 
-        document.getElementById('score-app-tempo-badge').innerText = `${scoreAppTempo} / 20`;
-        updateBadgeColor(document.getElementById('score-app-tempo-badge'), scoreAppTempo);
+            document.getElementById('score-app-tempo-badge').innerText = `${scoreAppTempo} / 20`;
+            updateBadgeColor(document.getElementById('score-app-tempo-badge'), scoreAppTempo);
 
-        document.getElementById('score-bolsa-badge').innerText = `${scoreBolsa} / 15`;
-        updateBadgeColor(document.getElementById('score-bolsa-badge'), scoreBolsa);
+            document.getElementById('score-bolsa-badge').innerText = `${scoreBolsa} / 15`;
+            updateBadgeColor(document.getElementById('score-bolsa-badge'), scoreBolsa);
 
-        document.getElementById('score-trabalho-badge').innerText = `${scoreSemTrabalho} / 15`;
-        updateBadgeColor(document.getElementById('score-trabalho-badge'), scoreSemTrabalho);
+            document.getElementById('score-trabalho-badge').innerText = `${scoreSemTrabalho} / 15`;
+            updateBadgeColor(document.getElementById('score-trabalho-badge'), scoreSemTrabalho);
 
-        document.getElementById('score-total-display').innerText = `${total} / 225`;
-        
-        // Always sync quota badges when score updates
-        updateQuotaBadges();
+            document.getElementById('score-total-display').innerText = `${total} / 225`;
+
+            // Always sync quota badges when score updates
+            updateQuotaBadges();
         }
 
         function updateBadgeColor(el, val) {
@@ -3204,6 +3231,7 @@
                 if (tabId === 'matricula') checkMatriculaStatus();
                 if (tabId === 'situacao') { updateStatusTab(); fetchWorkflowStatus(); }
                 if (tabId === 'cronograma') { renderTimeline(); updateProgress(); }
+                if (tabId === 'recursos') { checkRecurso(); }
             }
             if (window.innerWidth < 992) {
                 const sidebar = document.getElementById('sidebar');
@@ -3315,7 +3343,7 @@
             } else if (status.includes('12')) {
                 const possuiRecJ1Raw = (document.getElementById('possuirecursoinscricao')?.value || '').trim();
                 const possuiRecJ1 = !possuiRecJ1Raw || possuiRecJ1Raw === 'null' || possuiRecJ1Raw === 'undefined' || possuiRecJ1Raw.toLowerCase() === 'não' || possuiRecJ1Raw.toLowerCase() === 'nao';
-                
+
                 if (possuiRecJ1) {
                     // NÃO interpôs recurso de inscrição (acatada direto)
                     info = {
@@ -3465,7 +3493,17 @@
             document.querySelectorAll('[data-tab]').forEach(link => {
                 link.onclick = (e) => {
                     e.preventDefault();
-                    showTab(link.dataset.tab);
+                    const targetTab = link.dataset.tab;
+                    
+                    // Comportamento especial para Recursos: recarrega a página para garantir dados frescos do backend
+                    if (targetTab === 'recursos') {
+                        window.location.hash = '#recursos';
+                        window.location.reload();
+                    } else {
+                        showTab(targetTab);
+                        // Atualiza hash sem recarregar para as demais abas
+                        window.history.pushState(null, null, '#' + targetTab);
+                    }
                 };
             });
 
@@ -3492,21 +3530,21 @@
             // Listener do modalEdital: ao fechar, verifica se deve exibir modal de reaproveitamento
             const elModalEdital = document.getElementById('modalEdital');
             if (elModalEdital) {
-                    elModalEdital.addEventListener('hidden.bs.modal', () => {
-                        const hAnteriorVal = document.getElementById('data_inscricao_homologada_anterior')?.value;
-                        const sitAnterior = document.getElementById('data_situacao_anterior')?.value;
-                        const numV = (document.getElementById('numInscricao').value || '').trim().toLowerCase();
-                        const isPend = numV === "" || numV === "pendente";
+                elModalEdital.addEventListener('hidden.bs.modal', () => {
+                    const hAnteriorVal = document.getElementById('data_inscricao_homologada_anterior')?.value;
+                    const sitAnterior = document.getElementById('data_situacao_anterior')?.value;
+                    const numV = (document.getElementById('numInscricao').value || '').trim().toLowerCase();
+                    const isPend = numV === "" || numV === "pendente";
 
-                        const podeReaproveitar = isSim(hAnteriorVal) &&
-                            sitAnterior !== "Inscrição anterior inexistente" &&
-                            sitAnterior !== "Inscrição não homologada";
+                    const podeReaproveitar = isSim(hAnteriorVal) &&
+                        sitAnterior !== "Inscrição anterior inexistente" &&
+                        sitAnterior !== "Inscrição não homologada";
 
-                        if (podeReaproveitar && isPend) {
-                            const modalReuso = new bootstrap.Modal(document.getElementById('modalConfirmarReuso'));
-                            modalReuso.show();
-                        }
-                    });
+                    if (podeReaproveitar && isPend) {
+                        const modalReuso = new bootstrap.Modal(document.getElementById('modalConfirmarReuso'));
+                        modalReuso.show();
+                    }
+                });
             }
 
             // Botão Confirmar Reuso
@@ -3683,8 +3721,8 @@
             const elMae = document.getElementById('maeAtipica');
             if (elMae) {
                 elMae.addEventListener('change', () => {
-                    try { updateScore(); } catch(e) {}
-                    try { updateQuotaBadges(); } catch(e) {}
+                    try { updateScore(); } catch (e) { }
+                    try { updateQuotaBadges(); } catch (e) { }
                 });
             }
 
@@ -4157,7 +4195,7 @@
                 icon.className = 'fas fa-envelope-open';
             }
         }
-        
+
         function renderStatusMessage(title, desc, color, icon) {
             return `
                 <div class="card border-0 shadow-sm mb-4">
@@ -4385,7 +4423,7 @@
                         if (shouldShow) {
                             elWrap.classList.remove('d-none');
                             hasAnyCriteria = true;
-                            
+
                             // Inject analyst justification
                             let finalJust = "";
                             if (c.id === 'socioocup') {
@@ -4462,7 +4500,7 @@
                     if (workflowStatus.includes("177")) {
                         const justInsc = document.getElementById('justinscricao')?.value;
                         if (justInsc && justInsc !== 'undefined' && justInsc.trim() !== "") {
-                             statusEl.innerHTML = renderStatusMessage(
+                            statusEl.innerHTML = renderStatusMessage(
                                 "Inscrição Rejeitada",
                                 `Sua inscrição inicial não foi aceita. Você pode interpor recurso abaixo.<br><br><strong>Motivo da Rejeição:</strong> ${justInsc}`,
                                 "warning", "fa-exclamation-circle"
@@ -4569,10 +4607,10 @@
                     const hasValT = valT && valT !== 'undefined' && !valT.startsWith('{{');
 
                     if (!hasVal && !hasValT) return '';
-                    
+
                     // Acatado apenas se todas as partes julgadas forem 'sim'
                     const finalAcatado = (hasVal ? val === 'sim' : true) && (hasValT ? valT === 'sim' : true);
-                    
+
                     let just = document.getElementById(c.justId)?.value || '';
 
                     // Especial Sócio-Ocupacional: pode ter rejeição específica de tempo
@@ -4588,7 +4626,7 @@
                             just = (just ? "Base: " + just + " | " : "") + "Tempo: Acatado.";
                         }
                     }
-                    
+
                     return `
                         <div class="col-12">
                             <div class="p-3 rounded-3 border-start border-4 ${finalAcatado ? 'border-success bg-success bg-opacity-10' : 'border-danger bg-danger bg-opacity-10'} h-100">
@@ -4719,7 +4757,7 @@
             const nomeMap = { redeprot: 'Rede de Proteção Social', sociofami: 'Sociofamiliar', socioassi: 'Socioassistencial', socioocup: 'Sócio-Ocupacional', depterap: 'Dependência Terapêutica' };
 
             let selecionados = tipos.filter(t => document.getElementById(swMap[t])?.checked);
-            
+
             if (selecionados.length === 0) {
                 mostrarAlerta('Selecione ao menos um critério antes de enviar.', 'Atenção', 'warning');
                 return;
@@ -4733,7 +4771,7 @@
                     return;
                 }
             }
-            
+
             // Verifica justificativa critério pontuação geral — removido
 
             const btn = document.getElementById('btnEnviarRecursoJ2');
@@ -4750,7 +4788,7 @@
 
             // Cria um array de objetos das justificativas consolidando humanos e pontuação
             const recursosArray = [];
-            
+
             // Adiciona critérios humanos selecionados
             selecionados.forEach(t => {
                 recursosArray.push({
@@ -4761,7 +4799,7 @@
             });
 
             formData.append('recursos', JSON.stringify(recursosArray));
-            
+
             // Gera string de tipos consolidada
             const todosTipos = recursosArray.map(r => r.tipo);
             formData.append('tiposRecurso', todosTipos.join(','));
