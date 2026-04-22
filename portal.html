@@ -638,11 +638,13 @@
                     <input type="hidden" id="analisesocioassistencial" value="{{ $json.data.analisesocioassi }}">
                     <input type="hidden" id="analisesocioocupacional" value="{{ $json.data.analisesocioocup }}">
                     <input type="hidden" id="analisedepterapeutica" value="{{ $json.data.analisedepterape }}">
+                    <input type="hidden" id="analisetempo" value="{{ $json.data.analisetempo }}">
                     <input type="hidden" id="justrecredpro" value="{{ $json.data.justredprotecao }}">
                     <input type="hidden" id="justrecsociofami" value="{{ $json.data.justsociofamili }}">
                     <input type="hidden" id="justrecsocioassi" value="{{ $json.data.justsocioassis }}">
                     <input type="hidden" id="justrecsocioocup" value="{{ $json.data.justsocioocup }}">
                     <input type="hidden" id="justrecdepterap" value="{{ $json.data.justdepterap }}">
+                    <input type="hidden" id="justtempo" value="{{ $json.data.justtempo }}">
                     <input type="hidden" id="justinscricao" value="{{ $json.data.justinscricao }}">
                     <input type="hidden" id="jupontuacao" value="{{ $json.data.jupontuacao }}">
                     <input type="hidden" id="recpontuacao" value="{{ $json.data.recpontuacao }}">
@@ -4347,7 +4349,9 @@
                             id: 'socioocup',
                             wrap: 'wrapRecSocioOcup',
                             analise: (document.getElementById('analisesocioocupacional')?.value || '').trim(),
+                            analiseTempo: (document.getElementById('analisetempo')?.value || '').trim(),
                             just: document.getElementById('justrecsocioocup')?.value || '',
+                            justTempo: document.getElementById('justtempo')?.value || '',
                         },
                         {
                             id: 'depterap',
@@ -4363,15 +4367,36 @@
                         const elJustText = document.getElementById(`textJust_${c.id}`);
 
                         // Show if: analyst said 'não' / 'nao' (AND not gender locked)
-                        const shouldShow = isNao(c.analise) && !c.genderLock;
+                        // Special for socioocup: check both analise and analiseTempo
+                        let shouldShow = isNao(c.analise) && !c.genderLock;
+                        if (c.id === 'socioocup' && isNao(c.analiseTempo)) {
+                            shouldShow = true;
+                        }
 
                         if (shouldShow) {
                             elWrap.classList.remove('d-none');
                             hasAnyCriteria = true;
-                            // Inject analyst justification if present
-                            if (c.just && c.just !== 'undefined') {
+                            
+                            // Inject analyst justification
+                            let finalJust = "";
+                            if (c.id === 'socioocup') {
+                                // Combine justifications if both rejected, or pick the relevant one
+                                let j1 = (c.just && c.just !== 'undefined') ? c.just : "";
+                                let j2 = (c.justTempo && c.justTempo !== 'undefined') ? c.justTempo : "";
+                                if (isNao(c.analise) && isNao(c.analiseTempo)) {
+                                    finalJust = j1 + (j1 && j2 ? " | " : "") + j2;
+                                } else if (isNao(c.analise)) {
+                                    finalJust = j1;
+                                } else {
+                                    finalJust = j2;
+                                }
+                            } else {
+                                finalJust = (c.just && c.just !== 'undefined') ? c.just : "";
+                            }
+
+                            if (finalJust) {
                                 if (elJustWrap) elJustWrap.classList.remove('d-none');
-                                if (elJustText) elJustText.textContent = c.just;
+                                if (elJustText) elJustText.textContent = finalJust;
                             }
                         } else {
                             elWrap.classList.add('d-none');
