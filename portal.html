@@ -2860,6 +2860,17 @@
                 { id: 9, etapa: 'Resultado Final e Homologação', inicio: '2026-04-17', fim: '2026-06-27' }
             ],
         };
+
+        // Funções globais de utilidade para checagem de status (Sim/Não)
+        const isSim = (v) => {
+            const s = (v || '').toLowerCase().trim();
+            return s === 'sim' || s === 'true' || s === '1';
+        };
+        const isNao = (v) => {
+            if (!v || v.toString().startsWith('{{')) return false;
+            const s = v.toString().toLowerCase().trim();
+            return s === 'nao' || s === 'não' || s === 'false' || s === '0';
+        };
         // Deriva as janelas de recurso automaticamente a partir do cronograma
         AppState.janelasRecurso = [
             AppState.cronograma.find(e => e.etapa === 'Recursos às Inscrições'),
@@ -3049,9 +3060,9 @@
             });
 
             // Refatoração Tempo de Atividade: Se analise for não, zera. Atualiza se recurso for sim.
-            const vAnaliseTempo = (document.getElementById('analisetempo')?.value || '').toLowerCase().trim();
-            const vJulRecTempo = (document.getElementById('julrectempo')?.value || '').toLowerCase().trim();
-            if ((vAnaliseTempo === 'nao' || vAnaliseTempo === 'não') && vJulRecTempo !== 'sim') {
+            const vAnaliseTempo = document.getElementById('analisetempo')?.value;
+            const vJulRecTempo = document.getElementById('julrectempo')?.value;
+            if (isNao(vAnaliseTempo) && !isSim(vJulRecTempo)) {
                 scoreAppTempo = 0;
             }
             const scoreApp = scoreAppBase + scoreAppTempo;
@@ -3591,10 +3602,7 @@
                 data_inicio_app: sanitize(document.getElementById('data_data_inicio_app')?.value)
             };
 
-            const isSim = (v) => {
-                const s = (v || '').toString().toLowerCase().trim();
-                return s === 'sim' || s === 'true';
-            };
+            // (isSim agora é global)
 
             const initialDataApp = document.getElementById('data_data_inicio_app')?.value;
             const diaField = document.getElementById('dataInicioApp');
@@ -4235,10 +4243,7 @@
                 return;
             }
 
-            const isNao = (v) => {
-                const s = (v || '').toLowerCase().trim();
-                return s === 'nao' || s === 'não';
-            };
+            // (isNao agora é global)
 
             // --- Janela 1: Recurso de Inscrição ---
             const j1 = AppState.janelasRecurso[0];
@@ -4367,10 +4372,7 @@
                     const gender = (document.getElementById('genero')?.value || '').toUpperCase();
 
                     // Normalização simples para tratar "nao" e "não"
-                    const isNao = (v) => {
-                        const s = (v || '').toLowerCase().trim();
-                        return s === 'nao' || s === 'não';
-                    };
+                    // (isNao agora é global)
 
                     const listCriteria = [
                         {
