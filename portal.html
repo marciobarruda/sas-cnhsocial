@@ -4292,11 +4292,17 @@
             }
 
 
-            // ---- PRIORIZAÇÃO DA JANELA ----
-            // Se as datas das janelas se sobrepuserem (comum em testes), o status do candidato determina qual bloco exibir.
-
+            // ---- PRIORIZAÇÃO POR STATUS DEFINITIVO (Sobrescreve datas) ----
+            if (workflowStatus.includes("200")) {
+                if (!possuiRecJ2) {
+                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>A análise dos recursos de pontuação foi <strong>concluída</strong>. Você pode conferir o resultado final detalhado logo abaixo.</div>';
+                } else {
+                    statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>A análise dos recursos de pontuação foi <strong>concluída</strong>. Como você não interpôs recurso, sua pontuação preliminar foi mantida como definitiva.</div>';
+                }
+                // O bloco de resultado será exibido pela lógica PÓS-JANELA 2 no final da função
+            }
             // PRIORIDADE 1: Janela 2 Ativa e Candidato em status de Pontuação
-            if (isDate2 && isStatus2) {
+            else if (isDate2 && isStatus2) {
                 if (!possuiRecJ2) {
                     // Já enviou recurso - Verifica resultado
                     const jupont = (document.getElementById('jupontuacao')?.value || '').toLowerCase().trim();
@@ -4481,37 +4487,48 @@
             }
 
             // ---- RESULTADO PÓS-JANELA 2 ----
-            if (j2Encerrada && !possuiRecJ2) {
+            if ((j2Encerrada || workflowStatus.includes("200")) && !possuiRecJ2) {
                 const criterios = [
                     { id: 'julredeprotecao', nome: 'Rede de Proteção Social', justId: 'justrecredpro' },
                     { id: 'julsociofamiliar', nome: 'Sociofamiliar', justId: 'justrecsociofami' },
                     { id: 'julsocioassistencial', nome: 'Socioassistencial', justId: 'justrecsocioassi' },
                     { id: 'julsocioocupacional', nome: 'Sócio-Ocupacional', justId: 'justrecsocioocup' },
                     { id: 'juldepterapeutica', nome: 'Dependência Terapêutica', justId: 'justrecdepterap' },
+                    { id: 'jupontuacao', nome: 'Recurso de Pontuação Geral', justId: 'recpontuacao' },
                 ];
-                const linhas = criterios.map(c => {
+                const cardsHtml = criterios.map(c => {
                     const val = (document.getElementById(c.id)?.value || '').toLowerCase().trim();
                     if (!val || val === 'undefined' || val.startsWith('{{')) return '';
                     const acatado = val === 'sim';
                     const just = document.getElementById(c.justId)?.value || '';
-                    let linha = `<tr>
-                        <td class="fw-bold">${c.nome}</td>
-                        <td><span class="badge ${acatado ? 'bg-success' : 'bg-danger'}">${acatado ? '✅ Acatado' : '❌ Rejeitado'}</span></td>
-                        <td class="small text-muted">${(!acatado && just && just !== 'undefined') ? just : '—'}</td>
-                    </tr>`;
-                    return linha;
+                    
+                    return `
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 border-start border-4 ${acatado ? 'border-success bg-success bg-opacity-10' : 'border-danger bg-danger bg-opacity-10'} h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                    <span class="fw-bold text-dark"><i class="fas fa-check-circle me-2 ${acatado ? 'text-success' : 'text-danger'}"></i>${c.nome}</span>
+                                    <span class="badge ${acatado ? 'bg-success' : 'bg-danger'} px-3 py-2">${acatado ? '✅ Acatado' : '❌ Rejeitado'}</span>
+                                </div>
+                                <div class="small text-muted bg-white p-2 rounded border-light shadow-sm">
+                                    <strong class="text-secondary"><i class="fas fa-comment-dots me-1"></i>Justificativa da Comissão:</strong> 
+                                    <div class="mt-1">${(!acatado && just && just !== 'undefined') ? just : (acatado ? 'Critério validado conforme documentação/análise.' : '—')}</div>
+                                </div>
+                            </div>
+                        </div>`;
                 }).filter(Boolean).join('');
 
-                if (linhas) {
-                    const html = `<div class="card border-0 shadow-sm">
-                        <div class="card-header fw-bold"><i class="fas fa-gavel me-2"></i>Resultado do Recurso de Pontuação</div>
-                        <div class="card-body p-0">
-                            <table class="table table-hover table-sm mb-0">
-                                <thead class="table-light"><tr><th>Critério</th><th>Resultado</th><th>Justificativa</th></tr></thead>
-                                <tbody>${linhas}</tbody>
-                            </table>
-                        </div>
-                    </div>`;
+                if (cardsHtml) {
+                    const html = `
+                        <div class="card border-0 shadow-sm mt-4">
+                            <div class="card-header fw-bold bg-white py-3 border-bottom-0">
+                                <i class="fas fa-gavel me-2 text-primary"></i>Resultado Detalhado do Recurso de Pontuação
+                            </div>
+                            <div class="card-body pt-0">
+                                <div class="row g-3">
+                                    ${cardsHtml}
+                                </div>
+                            </div>
+                        </div>`;
                     resultadoEl.innerHTML += html;
                     resultadoEl.classList.remove('d-none');
                 }
