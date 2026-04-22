@@ -3302,11 +3302,49 @@
                 };
                 matched = true;
             } else if (status.includes('12')) {
+                const possuiRecJ1Raw = (document.getElementById('possuirecursoinscricao')?.value || '').trim();
+                const possuiRecJ1 = !possuiRecJ1Raw || possuiRecJ1Raw === 'null' || possuiRecJ1Raw === 'undefined' || possuiRecJ1Raw.toLowerCase() === 'não' || possuiRecJ1Raw.toLowerCase() === 'nao';
+                
+                if (possuiRecJ1) {
+                    // NÃO interpôs recurso de inscrição (acatada direto)
+                    info = {
+                        text: "Inscrição Acatada",
+                        color: "success",
+                        icon: "fa-check-double",
+                        desc: "Sua inscrição foi acatada com sucesso. Acompanhe as próximas convocações no site oficial."
+                    };
+                } else {
+                    // Interpôs recurso e foi encerrado (acatado pós recurso)
+                    info = {
+                        text: "Processo Encerrado (Inscrição Acatada)",
+                        color: "secondary",
+                        icon: "fa-folder-closed",
+                        desc: "Sua inscrição foi acatada após análise de recurso e o processo foi finalizado."
+                    };
+                }
+                matched = true;
+            } else if (status.includes('300')) {
                 info = {
-                    text: "Processo Encerrado.",
-                    color: "secondary",
+                    text: "Processo Encerrado (Inscrição Negada)",
+                    color: "danger",
                     icon: "fa-folder-closed",
-                    desc: "O ciclo deste processo seletivo foi finalizado."
+                    desc: "O recurso de inscrição não foi acatado e o processo foi finalizado."
+                };
+                matched = true;
+            } else if (status.includes('301')) {
+                info = {
+                    text: "Processo Encerrado (Recurso Indeferido)",
+                    color: "danger",
+                    icon: "fa-folder-closed",
+                    desc: "O recurso de pontuação não foi acatado e o processo foi finalizado."
+                };
+                matched = true;
+            } else if (status.includes('302')) {
+                info = {
+                    text: "Processo Encerrado (Recurso Deferido)",
+                    color: "success",
+                    icon: "fa-folder-closed",
+                    desc: "O recurso de pontuação foi acatado e o processo foi finalizado."
                 };
                 matched = true;
             } else if (status.includes('86')) {
@@ -4140,7 +4178,7 @@
             const isDate1 = j1 && now >= new Date(j1.inicio) && now <= new Date(j1.fim + 'T23:59:59');
             const isStatus1 = workflowStatus.includes("177") || workflowStatus.includes("179");
             const possuiRecJ1Raw = (document.getElementById('possuirecursoinscricao')?.value || '').trim();
-            const possuiRecJ1 = !possuiRecJ1Raw || possuiRecJ1Raw === 'null' || possuiRecJ1Raw === 'undefined';
+            const possuiRecJ1 = !possuiRecJ1Raw || possuiRecJ1Raw === 'null' || possuiRecJ1Raw === 'undefined' || possuiRecJ1Raw.toLowerCase() === 'não' || possuiRecJ1Raw.toLowerCase() === 'nao';
             const juinscVal = (document.getElementById('juinscricao')?.value || '').trim();
             const juinscIsNao = isNao(juinscVal);
             const juinscIsSim = juinscVal.toLowerCase() === 'sim';
@@ -4172,7 +4210,23 @@
 
 
             // ---- PRIORIZAÇÃO POR STATUS DEFINITIVO (Sobrescreve datas) ----
-            if (workflowStatus.includes("200")) {
+            if (workflowStatus.includes("12")) {
+                if (possuiRecJ1) {
+                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong>. Não é necessário interpor recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
+                } else {
+                    statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Processo Encerrado. Sua inscrição foi <strong>acatada</strong> após análise de recurso.</div>';
+                }
+            }
+            else if (workflowStatus.includes("300")) {
+                statusEl.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-folder-closed me-2"></i>Processo Encerrado. O seu recurso de inscrição <strong>não foi acatado</strong> e o processo foi finalizado.</div>';
+            }
+            else if (workflowStatus.includes("301")) {
+                statusEl.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-folder-closed me-2"></i>Processo Encerrado. O seu recurso de pontuação <strong>não foi acatado</strong> e o processo foi finalizado.</div>';
+            }
+            else if (workflowStatus.includes("302")) {
+                statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Processo Encerrado. O seu recurso de pontuação foi <strong>acatado</strong> e o processo foi finalizado.</div>';
+            }
+            else if (workflowStatus.includes("200")) {
                 if (!possuiRecJ2) {
                     statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>A análise dos recursos de pontuação foi <strong>concluída</strong>. Você pode conferir o resultado final detalhado logo abaixo.</div>';
                 } else {
@@ -4317,14 +4371,14 @@
                     // Status definitivo (Acatada ou Rejeitada após recurso)
                     if (!possuiRecJ1) {
                         if (juinscIsSim) {
-                            statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong> após análise de recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
+                            statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong> após análise de recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
                         } else if (juinscIsNao) {
-                            statusEl.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-times-circle me-2"></i>O seu recurso de inscrição foi <strong>rejeitada</strong>. Confira os detalhes no painel abaixo.</div>';
+                            statusEl.innerHTML = '<div class="alert alert-danger border-0 shadow-sm"><i class="fas fa-times-circle me-2"></i>O seu recurso de inscrição foi <strong>rejeitado</strong>. Confira os detalhes no painel abaixo.</div>';
                         } else {
                             statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-hourglass-half me-2"></i>Seu recurso de inscrição está em fase final de processamento. Por favor, aguarde.</div>';
                         }
                     } else {
-                        statusEl.innerHTML = '<div class="alert alert-info border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong>. Não é necessário interpor recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
+                        statusEl.innerHTML = '<div class="alert alert-success border-0 shadow-sm"><i class="fas fa-check-double me-2"></i>Sua inscrição foi <strong>acatada</strong>. Não é necessário interpor recurso. Por favor, aguarde as próximas etapas do processo seletivo.</div>';
                     }
                 }
             }
