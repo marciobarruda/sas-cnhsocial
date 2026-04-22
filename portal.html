@@ -645,6 +645,7 @@
                     <input type="hidden" id="justrecsocioocup" value="{{ $json.data.justsocioocup }}">
                     <input type="hidden" id="justrecdepterap" value="{{ $json.data.justdepterap }}">
                     <input type="hidden" id="justtempo" value="{{ $json.data.justtempo }}">
+                    <input type="hidden" id="julrectempo" value="{{ $json.data.julrectempo }}">
                     <input type="hidden" id="justinscricao" value="{{ $json.data.justinscricao }}">
                     <input type="hidden" id="jupontuacao" value="{{ $json.data.jupontuacao }}">
                     <input type="hidden" id="recpontuacao" value="{{ $json.data.recpontuacao }}">
@@ -3004,20 +3005,27 @@
             const scoreAppBase = getScore('base_pts_trabalhador_app_base', () => {
                 return !!document.getElementById('trabalhadorAplicativo')?.checked ? 20 : 0;
             });
-            const scoreAppTempo = getScore('base_pts_trabalhador_app_tempo', () => {
+            let scoreAppTempo = getScore('base_pts_trabalhador_app_tempo', () => {
                 if (!document.getElementById('trabalhadorAplicativo')?.checked) return 0;
                 const dataVal = document.getElementById('dataInicioApp')?.value;
                 if (!dataVal) return 0;
                 const start = new Date(dataVal + 'T00:00:00');
                 const now = AppState.currentDate;
-            const diffMs = now - start;
-            const diffDays = diffMs / (1000 * 60 * 60 * 24);
-            const diffYears = diffDays / 365.25;
-            if (diffYears > 3) return 20;
-            if (diffYears >= 2) return 15;
-            if (diffYears >= 1) return 10;
-            return 0;
-        });
+                const diffMs = now - start;
+                const diffDays = diffMs / (1000 * 60 * 60 * 24);
+                const diffYears = diffDays / 365.25;
+                if (diffYears > 3) return 20;
+                if (diffYears >= 2) return 15;
+                if (diffYears >= 1) return 10;
+                return 0;
+            });
+
+            // Refatoração Tempo de Atividade: Se analise for não, zera. Atualiza se recurso for sim.
+            const vAnaliseTempo = (document.getElementById('analisetempo')?.value || '').toLowerCase().trim();
+            const vJulRecTempo = (document.getElementById('julrectempo')?.value || '').toLowerCase().trim();
+            if ((vAnaliseTempo === 'nao' || vAnaliseTempo === 'não') && vJulRecTempo !== 'sim') {
+                scoreAppTempo = 0;
+            }
         const scoreApp = scoreAppBase + scoreAppTempo;
 
         const total = scoreRaca + scorePcd + scoreMulher + scoreMulherViolencia + scoreRenda + scoreFamilia + scoreDependente + scoreAcolhimento + scoreApp + scoreBolsa + scoreSemTrabalho;
