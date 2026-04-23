@@ -336,7 +336,7 @@
                         <div class="icon-wrapper bg-primary bg-opacity-10 text-primary">
                             <i class="fas fa-users"></i>
                         </div>
-                        <span class="value" id="count-total">3.245</span>
+                        <span class="value" id="count-total">---</span>
                         <span class="label">Total Inscrições</span>
                     </div>
                 </div>
@@ -345,7 +345,7 @@
                         <div class="icon-wrapper bg-warning bg-opacity-10 text-warning">
                             <i class="fas fa-clock"></i>
                         </div>
-                        <span class="value" id="count-pending">1.120</span>
+                        <span class="value" id="count-pending">---</span>
                         <span class="label">Pendente Homologação</span>
                     </div>
                 </div>
@@ -354,7 +354,7 @@
                         <div class="icon-wrapper bg-info bg-opacity-10 text-info">
                             <i class="fas fa-user-clock"></i>
                         </div>
-                        <span class="value" id="count-human">450</span>
+                        <span class="value" id="count-human">---</span>
                         <span class="label">Análise Humana</span>
                     </div>
                 </div>
@@ -363,7 +363,7 @@
                         <div class="icon-wrapper bg-success bg-opacity-10 text-success">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <span class="value" id="count-approved">1.675</span>
+                        <span class="value" id="count-approved">---</span>
                         <span class="label">Homologadas</span>
                     </div>
                 </div>
@@ -603,6 +603,7 @@
         // Data Fetching
         async function fetchEnrollments() {
             try {
+                // Indicador visual de carregamento (opcional, aqui apenas limpando valores se necessário)
                 const response = await fetch(ENDPOINT);
                 const data = await response.json();
                 // Filtro para remover registros nulos (como o ID 25 do payload)
