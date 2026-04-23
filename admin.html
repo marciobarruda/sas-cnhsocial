@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - CNH Social Recife</title>
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Gestão e análise de inscrições do Programa CNH Social Recife">
+    <!-- Google Fonts: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <style>
+        :root {
+            --sidebar-bg: #ffffff;
+            --main-bg: #f8fafc;
+            --primary: #0046ad;
+            --primary-light: #0061f2;
+            --secondary: #ff9d00;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--main-bg);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-header .brand img {
+            height: 40px;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 20px 15px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 18px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background-color: rgba(0, 70, 173, 0.08);
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            width: 24px;
+            font-size: 1.2rem;
+            margin-right: 12px;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Main Content Styling */
+        #main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+            transition: var(--transition);
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        /* Dash Cards */
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            height: 100%;
+        }
+
+        .stat-card .icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Tab Content Control */
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Table & Forms */
+        .card-container {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table thead {
+            background: #f8fafc;
+        }
+
+        .table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: 15px 20px;
+            border: none;
+        }
+
+        .table td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            color: var(--text-dark);
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            #sidebar.show {
+                transform: translateX(0);
+            }
+            #main-content {
+                margin-left: 0;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+        }
+
+        .mobile-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            display: none;
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Form Customization */
+        .form-control, .form-select {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 70, 173, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+
+    <button class="mobile-toggle" id="mobile-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="brand">
+                <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png?v=2" alt="Logo">
+                <span>CNH Admin</span>
+            </a>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-item active" data-tab="inicio">
+                <i class="fas fa-chart-line"></i> Início
+            </div>
+            <div class="nav-item" data-tab="homologacao">
+                <i class="fas fa-file-signature"></i> Homologação Doc.
+            </div>
+            <div class="nav-item" data-tab="humano">
+                <i class="fas fa-user-check"></i> Critérios Humanos
+            </div>
+            <div class="nav-item" data-tab="recursos">
+                <i class="fas fa-exclamation-triangle"></i> Recursos
+            </div>
+            <div class="nav-item" data-tab="concluidos">
+                <i class="fas fa-check-double"></i> Concluídos
+            </div>
+            <hr class="my-4">
+            <div class="nav-item" data-tab="usuarios">
+                <i class="fas fa-users-cog"></i> Administração
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                    <div class="fw-bold small">Admin Root</div>
+                    <div class="text-muted small">ID: sas_001</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        
+        <!-- Tab: Início (Dashboard) -->
+        <section id="tab-inicio" class="tab-pane active animate__animated animate__fadeIn">
+            <div class="page-header">
+                <h1>Painel de Controle</h1>
+                <div class="text-muted small">Última atualização: <span id="last-update">agora</span></div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon-wrapper bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="value" id="count-total">3.245</span>
+                        <span class="label">Total Inscrições</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon-wrapper bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <span class="value" id="count-pending">1.120</span>
+                        <span class="label">Pendente Homologação</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon-wrapper bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <span class="value" id="count-human">450</span>
+                        <span class="label">Análise Humana</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="icon-wrapper bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <span class="value" id="count-approved">1.675</span>
+                        <span class="label">Homologadas</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card-container p-4">
+                        <h5 class="fw-bold mb-4">Inscrições Recentes</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Candidato</th>
+                                        <th>CPF</th>
+                                        <th>Modalidade</th>
+                                        <th>Status</th>
+                                        <th>Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-table">
+                                    <!-- Mock data -->
+                                    <tr>
+                                        <td>João Silva Santos</td>
+                                        <td>***.456.789-**</td>
+                                        <td>1ª Hab - Cat A</td>
+                                        <td><span class="badge-status bg-warning bg-opacity-10 text-warning">Pendente Doc</span></td>
+                                        <td><button class="btn btn-sm btn-outline-primary">Analisar</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Maria Clara Souza</td>
+                                        <td>***.123.456-**</td>
+                                        <td>1ª Hab - Cat B</td>
+                                        <td><span class="badge-status bg-info bg-opacity-10 text-info">Análise Humana</span></td>
+                                        <td><button class="btn btn-sm btn-outline-primary">Analisar</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-container p-4">
+                        <h5 class="fw-bold mb-4">Alertas de Recursos</h5>
+                        <div class="alert alert-danger d-flex align-items-center mb-3">
+                            <i class="fas fa-exclamation-circle me-3"></i>
+                            <div><strong>12 novos recursos</strong> aguardando revisão imediata.</div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button class="btn btn-primary w-100" onclick="switchTab('recursos')">Ver Recursos</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Homologação Documental -->
+        <section id="tab-homologacao" class="tab-pane animate__animated animate__fadeIn">
+            <div class="page-header">
+                <h1>Homologação Documental</h1>
+            </div>
+            <div class="card-container p-4">
+                <div class="d-flex justify-content-between mb-4">
+                    <div class="d-flex gap-3">
+                        <input type="text" class="form-control" placeholder="Buscar por nome ou CPF..." style="width: 300px;">
+                        <select class="form-select" style="width: 200px;">
+                            <option value="">Todas Categorias</option>
+                            <option>1ª Hab A</option>
+                            <option>1ª Hab B</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Protocolo</th>
+                                <th>Candidato</th>
+                                <th>Data Inscrição</th>
+                                <th>Docs Pendentes</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doc-table">
+                            <!-- Mock Data -->
+                            <tr>
+                                <td>#2026-0001</td>
+                                <td>Ana Paula Ribeiro</td>
+                                <td>24/04/2026</td>
+                                <td>3 arquivos</td>
+                                <td><button class="btn btn-primary btn-sm">Abrir Analisador</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Critérios Humanos -->
+        <section id="tab-humano" class="tab-pane animate__animated animate__fadeIn">
+            <div class="page-header">
+                <h1>Análise de Critérios Humanos</h1>
+            </div>
+            <div class="alert alert-info border-0 shadow-sm mb-4">
+                <i class="fas fa-info-circle me-2"></i> Esta aba agrupa candidatos que alegaram condições como: Pessoas Negras/Indígenas, PCD, Vítimas de Violência, etc.
+            </div>
+            <div class="card-container p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Candidato</th>
+                                <th>Critérios Declarados</th>
+                                <th>Pontuação Preliminar</th>
+                                <th>Status Análise</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="human-table">
+                            <tr>
+                                <td>Ricardo Pereira</td>
+                                <td><span class="badge bg-secondary me-1">PCD</span> <span class="badge bg-secondary">Bolsa Família</span></td>
+                                <td>35 pts</td>
+                                <td><span class="badge-status bg-warning bg-opacity-10 text-warning">Aguardando</span></td>
+                                <td><button class="btn btn-primary btn-sm">Validar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Recursos -->
+        <section id="tab-recursos" class="tab-pane animate__animated animate__fadeIn">
+            <div class="page-header">
+                <h1>Interposição de Recursos</h1>
+            </div>
+            <div class="card-container p-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tipo Recurso</th>
+                                <th>Candidato</th>
+                                <th>Justificativa</th>
+                                <th>Data</th>
+                                <th>Julgamento</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resource-table">
+                            <tr>
+                                <td>Inscrição</td>
+                                <td>Juliana Mendes</td>
+                                <td><em>"Documento de residência estava com erro no upload..."</em></td>
+                                <td>31/05/2026</td>
+                                <td><button class="btn btn-danger btn-sm me-2">Indeferir</button><button class="btn btn-success btn-sm">Deferir</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Concluidos -->
+        <section id="tab-concluidos" class="tab-pane animate__animated animate__fadeIn">
+            <div class="page-header">
+                <h1>Inscrições Finalizadas</h1>
+            </div>
+            <div class="card-container p-4 text-center py-5">
+                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                <p class="text-muted">As inscrições só aparecerão aqui após a homologação final do processo.</p>
+            </div>
+        </section>
+
+        <!-- Tab: Administração de Usuários -->
+        <section id="tab-usuarios" class="tab-pane animate__animated animate__fadeIn">
+            <div class="page-header">
+                <h1>Gestão da Equipe Admin</h1>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card-container p-4">
+                        <h5 class="fw-bold mb-4">Novo Usuário</h5>
+                        <form id="form-user-admin">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Nome Completo</label>
+                                <input type="text" class="form-control" placeholder="Ex: Márcio Arruda" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">CPF</label>
+                                <input type="text" class="form-control" placeholder="000.000.000-00" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold">Login AD (Prefeitura)</label>
+                                <input type="text" class="form-control" placeholder="usuario.ad" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Incluir Usuário</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-container p-4">
+                        <h5 class="fw-bold mb-4">Usuários Cadastrados</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Login</th>
+                                        <th>Perfil</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-admin-table">
+                                    <tr>
+                                        <td>Admin Root</td>
+                                        <td>sas_001</td>
+                                        <td>Super Admin</td>
+                                        <td><span class="badge bg-success">Ativo</span></td>
+                                        <td><button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Tab Navigation Logic
+        const navItems = document.querySelectorAll('.nav-item');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        function switchTab(tabId) {
+            // Update Menu
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.tab === tabId) item.classList.add('active');
+            });
+
+            // Update View
+            tabPanes.forEach(pane => {
+                pane.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            // Close mobile sidebar if open
+            if (window.innerWidth < 992) {
+                document.getElementById('sidebar').classList.remove('show');
+            }
+
+            // Mock: Refresh data based on tab
+            console.log(`Carregando dados para aba: ${tabId}`);
+        }
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                switchTab(item.dataset.tab);
+            });
+        });
+
+        // Mobile Toggle logic
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+
+        // Form Submission Mock
+        document.getElementById('form-user-admin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Mock: Usuário adicionado com sucesso!');
+            this.reset();
+        });
+
+        // Service Worker Registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // In a real scenario, register sw.js here
+                console.log('PWA Ready');
+            });
+        }
+    </script>
+</body>
+</html>
