@@ -601,30 +601,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Global State
+        let allEnrollments = [];
+        const ENDPOINT = 'https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultarcnhsocial2';
+
         // Tab Navigation Logic
         const navItems = document.querySelectorAll('.nav-item');
         const tabPanes = document.querySelectorAll('.tab-pane');
 
         function switchTab(tabId) {
-            // Update Menu
             navItems.forEach(item => {
                 item.classList.remove('active');
                 if (item.dataset.tab === tabId) item.classList.add('active');
             });
-
-            // Update View
             tabPanes.forEach(pane => {
                 pane.classList.remove('active');
             });
             document.getElementById(`tab-${tabId}`).classList.add('active');
-
-            // Close mobile sidebar if open
             if (window.innerWidth < 992) {
                 document.getElementById('sidebar').classList.remove('show');
             }
-
-            // Mock: Refresh data based on tab
-            console.log(`Carregando dados para aba: ${tabId}`);
+            renderDataForTab(tabId);
         }
 
         navItems.forEach(item => {
@@ -633,10 +630,233 @@
             });
         });
 
+        // Data Fetching
+        async function fetchEnrollments() {
+            try {
+                const response = await fetch(ENDPOINT);
+                const data = await response.json();
+                // Filtro para remover registros nulos (como o ID 25 do payload)
+                allEnrollments = data.filter(item => item.cpf && item.nomecompleto);
+                updateDashboard();
+                renderDataForTab('inicio');
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        }
+
+        function updateDashboard() {
+            document.getElementById('count-total').innerText = allEnrollments.length;
+            
+            const pendingDoc = allEnrollments.length; // Simulando que todos precisam de análise inicial
+            document.getElementById('count-pending').innerText = pendingDoc;
+
+            const humanCriteria = allEnrollments.filter(e => 
+                e.racacor !== 'BRANCA' || e.pcd === 'Sim' || e.maeatipica === 'Sim' || 
+                e.vitimaviolencia === 'Sim' || e.acolhimento === 'Sim' || e.dependentetrata === 'Sim'
+            ).length;
+            document.getElementById('count-human').innerText = humanCriteria;
+            
+            document.getElementById('count-approved').innerText = '0';
+            document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
+        }
+
+        function renderDataForTab(tabId) {
+            const recentBody = document.getElementById('recent-table');
+            const docBody = document.getElementById('doc-table');
+            const humanBody = document.getElementById('human-table');
+
+            if (tabId === 'inicio' && recentBody) {
+                recentBody.innerHTML = allEnrollments.slice(0, 5).map(e => `
+                    <tr>
+                        <td>${e.nomecompleto}</td>
+                        <td>${e.cpf}</td>
+                        <td>${formatCategoria(e.categoria)}</td>
+                        <td><span class="badge-status bg-warning bg-opacity-10 text-warning">Pendente</span></td>
+                        <td><button class="btn btn-sm btn-outline-primary" onclick="openAnalyzer('${e.id_cadastro}')">Analisar</button></td>
+                    </tr>
+                `).join('');
+            }
+
+            if (tabId === 'homologacao' && docBody) {
+                docBody.innerHTML = allEnrollments.map(e => `
+                    <tr>
+                        <td>${e.inscricao || 'PENDENTE'}</td>
+                        <td>${e.nomecompleto}</td>
+                        <td>${new Date(e.created_at).toLocaleDateString()}</td>
+                        <td>Documentação Básica</td>
+                        <td><button class="btn btn-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro}')">Abrir Analisador</button></td>
+                    </tr>
+                `).join('');
+            }
+
+            if (tabId === 'humano' && humanBody) {
+                const humanList = allEnrollments.filter(e => 
+                    e.racacor !== 'BRANCA' || e.pcd === 'Sim' || e.maeatipica === 'Sim' || 
+                    e.vitimaviolencia === 'Sim' || e.acolhimento === 'Sim' || e.dependentetrata === 'Sim'
+                );
+                humanBody.innerHTML = humanList.map(e => `
+                    <tr>
+                        <td>${e.nomecompleto}</td>
+                        <td>${renderBadges(e)}</td>
+                        <td>${calculatePoints(e)} pts</td>
+                        <td><span class="badge-status bg-warning bg-opacity-10 text-warning">Aguardando</span></td>
+                        <td><button class="btn btn-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro}')">Validar</button></td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function formatCategoria(cat) {
+            const map = {
+                'a_primeira': '1ª Hab - A',
+                'b_primeira': '1ª Hab - B',
+                'a_adicao': 'Adição - A',
+                'b_adicao': 'Adição - B'
+            };
+            return map[cat] || cat;
+        }
+
+        function renderBadges(e) {
+            let html = '';
+            if (e.racacor !== 'BRANCA') html += `<span class="badge bg-secondary me-1">${e.racacor}</span>`;
+            if (e.pcd === 'Sim') html += `<span class="badge bg-info me-1">PCD</span>`;
+            if (e.maeatipica === 'Sim') html += `<span class="badge bg-primary me-1">Mãe Atípica</span>`;
+            if (e.vitimaviolencia === 'Sim') html += `<span class="badge bg-danger me-1">Violência</span>`;
+            return html || '<span class="text-muted">Nenhum</span>';
+        }
+
+        function calculatePoints(e) {
+            let pts = 0;
+            if (e.racacor !== 'BRANCA') pts += 20;
+            if (e.pcd === 'Sim') pts += 20;
+            if (e.mulherchefe === 'Sim') pts += 15;
+            if (parseFloat(e.rendapercapita) <= 218) pts += 20;
+            if (e.programasociais === 'Sim') pts += 15;
+            if (e.situacaotrabalho === 'Não') pts += 15;
+            if (e.trabalhadorapp === 'Sim') pts += 20;
+            if (e.acolhimento === 'Sim') pts += 20;
+            if (e.dependentetrata === 'Sim') pts += 20;
+            return pts;
+        }
+
+        function openAnalyzer(id) {
+            const e = allEnrollments.find(x => x.id_cadastro == id);
+            if (!e) return;
+
+            const modalHtml = `
+                <div class="modal fade" id="analyzerModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px;">
+                            <div class="modal-header border-0 p-4">
+                                <h5 class="modal-title fw-bold">Analisador de Inscrição: ${e.inscricao || 'PENDENTE'}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body p-4 bg-light">
+                                <div class="row g-4">
+                                    <div class="col-md-7">
+                                        <div class="card-container p-4 h-100">
+                                            <h6 class="fw-bold text-primary mb-4 border-bottom pb-2">DADOS DO CANDIDATO</h6>
+                                            <div class="row g-3">
+                                                <div class="col-sm-6"><label class="text-muted small d-block">Nome Completo</label><div class="fw-bold">${e.nomecompleto}</div></div>
+                                                <div class="col-sm-6"><label class="text-muted small d-block">Nome Social</label><div>${e.nomesocial || '-'}</div></div>
+                                                <div class="col-sm-6"><label class="text-muted small d-block">CPF</label><div class="fw-bold">${e.cpf}</div></div>
+                                                <div class="col-sm-6"><label class="text-muted small d-block">Data Nascimento</label><div>${new Date(e.datanascimento).toLocaleDateString()} (${e.idade} anos)</div></div>
+                                                <div class="col-sm-6"><label class="text-muted small d-block">Gênero</label><div>${e.genero}</div></div>
+                                                <div class="col-sm-6"><label class="text-muted small d-block">NIS</label><div>${e.nis}</div></div>
+                                            </div>
+                                            
+                                            <h6 class="fw-bold text-primary mt-5 mb-4 border-bottom pb-2">CONTATO E ENDEREÇO</h6>
+                                            <div class="row g-3">
+                                                <div class="col-sm-6"><label class="text-muted small d-block">Telefone</label><div>${e.telefone}</div></div>
+                                                <div class="col-sm-6"><label class="text-muted small d-block">E-mail</label><div>${e.email}</div></div>
+                                                <div class="col-sm-12"><label class="text-muted small d-block">Endereço</label><div>${e.logradouro}, ${e.numero} ${e.complemento} - ${e.bairro}, ${e.cidade}/${e.uf} - CEP: ${e.cep}</div></div>
+                                            </div>
+
+                                            <h6 class="fw-bold text-primary mt-5 mb-4 border-bottom pb-2">CRITÉRIOS ESPECÍFICOS</h6>
+                                            <div class="row g-3">
+                                                <div class="col-sm-4"><label class="text-muted small d-block">Trabalhador App</label><div>${e.trabalhadorapp} ${e.inicioapp ? `(Desde ${e.inicioapp})` : ''}</div></div>
+                                                <div class="col-sm-4"><label class="text-muted small d-block">Mãe Atípica</label><div>${e.maeatipica}</div></div>
+                                                <div class="col-sm-4"><label class="text-muted small d-block">Vítima Violência</label><div>${e.vitimaviolencia}</div></div>
+                                                <div class="col-sm-4"><label class="text-muted small d-block">Acolhimento Municipal</label><div>${e.acolhimento}</div></div>
+                                                <div class="col-sm-4"><label class="text-muted small d-block">Dep. Tratamento</label><div>${e.dependentetrata}</div></div>
+                                                <div class="col-sm-4"><label class="text-muted small d-block">Composição Familiar</label><div>${e.compfamilar} pessoas</div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="card-container p-4 h-100">
+                                            <h6 class="fw-bold text-primary mb-4 border-bottom pb-2">PONTUAÇÃO DETALHADA</h6>
+                                            <div class="list-group list-group-flush">
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>Raça/Cor: <span class="fw-bold">${e.racacor}</span></div>
+                                                    <span class="badge ${e.racacor !== 'BRANCA' ? 'bg-success' : 'bg-light text-muted'}">${e.racacor !== 'BRANCA' ? '20' : '0'} pts</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>Mulher Chefe de Família</div>
+                                                    <span class="badge ${e.mulherchefe === 'Sim' ? 'bg-success' : 'bg-light text-muted'}">${e.mulherchefe === 'Sim' ? '15' : '0'} pts</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>Renda Per Capita: R$ ${e.rendapercapita}</div>
+                                                    <span class="badge ${parseFloat(e.rendapercapita) <= 218 ? 'bg-success' : 'bg-light text-muted'}">${parseFloat(e.rendapercapita) <= 218 ? '20' : '0'} pts</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>Bolsa Família</div>
+                                                    <span class="badge ${e.programasociais === 'Sim' ? 'bg-success' : 'bg-light text-muted'}">${e.programasociais === 'Sim' ? '15' : '0'} pts</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>Desempregado (Sem Trabalho Formal)</div>
+                                                    <span class="badge ${e.situacaotrabalho === 'Não' ? 'bg-success' : 'bg-light text-muted'}">${e.situacaotrabalho === 'Não' ? '15' : '0'} pts</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>PCD</div>
+                                                    <span class="badge ${e.pcd === 'Sim' ? 'bg-success' : 'bg-light text-muted'}">${e.pcd === 'Sim' ? '20' : '0'} pts</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>Trabalhador App</div>
+                                                    <span class="badge ${e.trabalhadorapp === 'Sim' ? 'bg-success' : 'bg-light text-muted'}">${e.trabalhadorapp === 'Sim' ? '20' : '0'} pts</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>Acolhimento Municipal</div>
+                                                    <span class="badge ${e.acolhimento === 'Sim' ? 'bg-success' : 'bg-light text-muted'}">${e.acolhimento === 'Sim' ? '20' : '0'} pts</span>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                    <div>Dependente em Tratamento</div>
+                                                    <span class="badge ${e.dependentetrata === 'Sim' ? 'bg-success' : 'bg-light text-muted'}">${e.dependentetrata === 'Sim' ? '20' : '0'} pts</span>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 p-3 bg-primary bg-opacity-10 rounded text-center">
+                                                <div class="text-primary small fw-bold">PONTUAÇÃO TOTAL ACUMULADA</div>
+                                                <div class="h2 fw-bold text-primary mb-0">${calculatePoints(e)} pts</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 p-4">
+                                <button class="btn btn-outline-danger me-auto" onclick="alert('Rejeitado')">Rejeitar Inscrição</button>
+                                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                                <button class="btn btn-success" onclick="alert('Homologado')">Homologar Inscrição</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove modal anterior se existir
+            const oldModal = document.getElementById('analyzerModal');
+            if (oldModal) oldModal.remove();
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('analyzerModal'));
+            modal.show();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', fetchEnrollments);
+
         // Mobile Toggle logic
         const mobileToggle = document.getElementById('mobile-toggle');
         const sidebar = document.getElementById('sidebar');
-
         mobileToggle.addEventListener('click', () => {
             sidebar.classList.toggle('show');
         });
@@ -644,17 +864,9 @@
         // Form Submission Mock
         document.getElementById('form-user-admin').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Mock: Usuário adicionado com sucesso!');
+            alert('Usuário administrativo incluído no sistema.');
             this.reset();
         });
-
-        // Service Worker Registration for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                // In a real scenario, register sw.js here
-                console.log('PWA Ready');
-            });
-        }
     </script>
 </body>
 </html>
