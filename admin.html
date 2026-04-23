@@ -376,30 +376,17 @@
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
-                                    <tr>
-                                        <th>Candidato</th>
-                                        <th>CPF</th>
-                                        <th>Modalidade</th>
-                                        <th>Status</th>
-                                        <th>Ação</th>
-                                    </tr>
+                                        <tr>
+                                            <th>Inscrição</th>
+                                            <th>Candidato</th>
+                                            <th>CPF</th>
+                                            <th>Modalidade</th>
+                                            <th>Status</th>
+                                            <th>Ação</th>
+                                        </tr>
                                 </thead>
                                 <tbody id="recent-table">
-                                    <!-- Mock data -->
-                                    <tr>
-                                        <td>João Silva Santos</td>
-                                        <td>***.456.789-**</td>
-                                        <td>1ª Hab - Cat A</td>
-                                        <td><span class="badge-status bg-warning bg-opacity-10 text-warning">Pendente Doc</span></td>
-                                        <td><button class="btn btn-sm btn-outline-primary">Analisar</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Maria Clara Souza</td>
-                                        <td>***.123.456-**</td>
-                                        <td>1ª Hab - Cat B</td>
-                                        <td><span class="badge-status bg-info bg-opacity-10 text-info">Análise Humana</span></td>
-                                        <td><button class="btn btn-sm btn-outline-primary">Analisar</button></td>
-                                    </tr>
+                                    <!-- Dados carregados via API -->
                                 </tbody>
                             </table>
                         </div>
@@ -440,7 +427,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Protocolo</th>
+                                <th>Inscrição</th>
                                 <th>Candidato</th>
                                 <th>Data Inscrição</th>
                                 <th>Docs Pendentes</th>
@@ -448,14 +435,7 @@
                             </tr>
                         </thead>
                         <tbody id="doc-table">
-                            <!-- Mock Data -->
-                            <tr>
-                                <td>#2026-0001</td>
-                                <td>Ana Paula Ribeiro</td>
-                                <td>24/04/2026</td>
-                                <td>3 arquivos</td>
-                                <td><button class="btn btn-primary btn-sm">Abrir Analisador</button></td>
-                            </tr>
+                            <!-- Dados carregados via API -->
                         </tbody>
                     </table>
                 </div>
@@ -475,6 +455,7 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th>Inscrição</th>
                                 <th>Candidato</th>
                                 <th>Critérios Declarados</th>
                                 <th>Pontuação Preliminar</th>
@@ -483,13 +464,7 @@
                             </tr>
                         </thead>
                         <tbody id="human-table">
-                            <tr>
-                                <td>Ricardo Pereira</td>
-                                <td><span class="badge bg-secondary me-1">PCD</span> <span class="badge bg-secondary">Bolsa Família</span></td>
-                                <td>35 pts</td>
-                                <td><span class="badge-status bg-warning bg-opacity-10 text-warning">Aguardando</span></td>
-                                <td><button class="btn btn-primary btn-sm">Validar</button></td>
-                            </tr>
+                            <!-- Dados carregados via API -->
                         </tbody>
                     </table>
                 </div>
@@ -506,6 +481,7 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th>Inscrição</th>
                                 <th>Tipo Recurso</th>
                                 <th>Candidato</th>
                                 <th>Justificativa</th>
@@ -514,13 +490,7 @@
                             </tr>
                         </thead>
                         <tbody id="resource-table">
-                            <tr>
-                                <td>Inscrição</td>
-                                <td>Juliana Mendes</td>
-                                <td><em>"Documento de residência estava com erro no upload..."</em></td>
-                                <td>31/05/2026</td>
-                                <td><button class="btn btn-danger btn-sm me-2">Indeferir</button><button class="btn btn-success btn-sm">Deferir</button></td>
-                            </tr>
+                            <!-- Dados carregados via API -->
                         </tbody>
                     </table>
                 </div>
@@ -668,6 +638,7 @@
             if (tabId === 'inicio' && recentBody) {
                 recentBody.innerHTML = allEnrollments.slice(0, 5).map(e => `
                     <tr>
+                        <td class="small fw-bold">${e.inscricao || '---'}</td>
                         <td>${e.nomecompleto}</td>
                         <td>${e.cpf}</td>
                         <td>${formatCategoria(e.categoria)}</td>
@@ -696,6 +667,7 @@
                 );
                 humanBody.innerHTML = humanList.map(e => `
                     <tr>
+                        <td class="small fw-bold">${e.inscricao || '---'}</td>
                         <td>${e.nomecompleto}</td>
                         <td>${renderBadges(e)}</td>
                         <td>${calculatePoints(e)} pts</td>
@@ -703,6 +675,29 @@
                         <td><button class="btn btn-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro}')">Validar</button></td>
                     </tr>
                 `).join('');
+            }
+
+            if (tabId === 'recursos' && document.getElementById('resource-table')) {
+                const resourceBody = document.getElementById('resource-table');
+                // Filtragem mock para recursos até que o campo exista no JSON
+                const resourceList = allEnrollments.filter(e => e.possuiRecurso === 'Sim');
+                if (resourceList.length === 0) {
+                    resourceBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Nenhum recurso encontrado</td></tr>';
+                } else {
+                    resourceBody.innerHTML = resourceList.map(e => `
+                        <tr>
+                            <td class="small fw-bold">${e.inscricao || '---'}</td>
+                            <td>Inscrição</td>
+                            <td>${e.nomecompleto}</td>
+                            <td><em>"${e.justificativaRecurso || '---'}"</em></td>
+                            <td>${e.dataRecurso || '---'}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm me-1">Indeferir</button>
+                                <button class="btn btn-success btn-sm">Deferir</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
             }
         }
 
@@ -852,7 +847,11 @@
         }
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', fetchEnrollments);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchEnrollments();
+            // Auto-refresh a cada 5 minutos (300.000 ms)
+            setInterval(fetchEnrollments, 300000);
+        });
 
         // Mobile Toggle logic
         const mobileToggle = document.getElementById('mobile-toggle');
