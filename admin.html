@@ -1557,15 +1557,15 @@
             return RESTRICTED_VIEW_ONLY_USERS.includes(login);
         }
 
-        // Dados do Usuário Logado (Injetados pelo n8n)
+        // Dados do Usuário Logado (substituídos pelo Code node do n8n antes de servir)
         const LOGGED_USER = (() => {
-            const login = '{{ $json.userInfo?.[0]?.login || "" }}';
+            const login = '{{ login }}';
             if (!login) return null;
             return {
-                nome:   '{{ $json.userInfo?.[0]?.nome   || "" }}',
+                nome:   '{{ nome }}',
                 login,
-                perfil: '{{ $json.userInfo?.[0]?.perfil || "" }}',
-                status: '{{ $json.userInfo?.[0]?.status || "" }}'
+                perfil: '{{ perfil }}',
+                status: '{{ status }}'
             };
         })();
 
