@@ -1558,7 +1558,16 @@
         }
 
         // Dados do Usuário Logado (Injetados pelo n8n)
-        const LOGGED_USER = ({{ JSON.stringify($json.userInfo || []) }})[0] || null;
+        const LOGGED_USER = (() => {
+            const login = '{{ $json.userInfo?.[0]?.login || "" }}';
+            if (!login) return null;
+            return {
+                nome:   '{{ $json.userInfo?.[0]?.nome   || "" }}',
+                login,
+                perfil: '{{ $json.userInfo?.[0]?.perfil || "" }}',
+                status: '{{ $json.userInfo?.[0]?.status || "" }}'
+            };
+        })();
 
         /**
          * Prioridade de exibição e seleção das categorias
