@@ -3,6 +3,27 @@
 
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <script>
+        const APP_VERSION = 'v1.0.1';
+        try {
+            if (localStorage.getItem('portal_cnh_version') !== APP_VERSION) {
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                    });
+                }
+                localStorage.setItem('portal_cnh_version', APP_VERSION);
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 500);
+            }
+        } catch (e) {
+            console.warn("Acesso ao localStorage negado (ambiente sandboxed). Ignorando verificação de versão.");
+        }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Portal do Candidato • CNH Recife</title>
     <link rel="icon" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png?v=2" />
@@ -12,6 +33,7 @@
         rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="icon" type="image/png" href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png?v=2">
     <style>
         :root {
             --brand-primary: #0053a4;
@@ -324,57 +346,194 @@
         }
 
         /* Specific Components */
-        .timeline {
-            position: relative;
-            padding: 1rem 0;
+        /* New Cronograma Layout */
+        .cronograma-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .cronograma-header {
+            margin-bottom: 2.5rem;
         }
 
-        .timeline::before {
+        .progress-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 3.5rem;
+        }
+
+        .progress-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .progress-card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-percent-badge {
+            background: var(--brand-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .progress-container {
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-indicator {
+            height: 100%;
+            background: var(--brand-primary);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Timeline */
+        .new-timeline {
+            position: relative;
+            padding-left: 80px;
+        }
+
+        .new-timeline::before {
             content: '';
             position: absolute;
-            left: 20px;
+            left: 35px;
             top: 0;
             bottom: 0;
             width: 2px;
-            background: #e9ecef;
+            background: #e2e8f0;
         }
 
-        .timeline-item {
+        .timeline-step {
             position: relative;
-            padding-left: 50px;
             margin-bottom: 2rem;
         }
 
-        .timeline-marker {
+        .timeline-step-icon {
             position: absolute;
-            left: 0;
-            top: 0;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+            left: -80px;
+            top: 20px;
+            width: 70px;
+            height: 70px;
             background: white;
-            border: 3px solid var(--brand-primary);
+            border: 2px solid #e2e8f0;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1;
+            z-index: 2;
+            color: #94a3b8;
+            font-size: 1.4rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .timeline-item.completed .timeline-marker {
+        .timeline-step.active .timeline-step-icon {
+            border-color: var(--brand-highlight);
+            color: var(--brand-highlight);
+            box-shadow: 0 0 0 5px rgba(0, 163, 255, 0.1);
+            background: white;
+        }
+        
+        .timeline-step.completed .timeline-step-icon {
+            border-color: var(--brand-primary);
             background: var(--brand-primary);
             color: white;
         }
 
-        .timeline-content h5 {
-            margin-bottom: 0.25rem;
-            font-weight: 700;
+        .timeline-step-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.75rem 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
         }
 
-        .timeline-date {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 600;
+        .timeline-step.active .timeline-step-card {
+            border-left: 4px solid var(--brand-highlight);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            transform: translateX(5px);
         }
+
+        .timeline-step-date {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-step-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .timeline-step-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+        }
+
+        .timeline-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 6px 16px;
+            border-radius: 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-waiting {
+            background: #f8f9fa;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-ongoing {
+            background: rgba(0, 83, 164, 0.08);
+            color: var(--brand-primary);
+            border: 1px solid rgba(0, 83, 164, 0.15);
+            animation: pulse-ongoing 2s infinite;
+        }
+
+        .status-completed {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        @keyframes pulse-ongoing {
+            0% { box-shadow: 0 0 0 0 rgba(0, 83, 164, 0.2); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 83, 164, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 83, 164, 0); }
+        }
+
 
         /* Mobile View */
         @media (max-width: 991px) {
@@ -530,6 +689,27 @@
 
 <body>
 
+    <!-- Tela Amigável: Período Encerrado (para quem não tem inscrição) -->
+    <div id="screen-prazo-encerrado" class="d-none position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white" style="z-index: 9999;">
+        <div class="text-center p-4" style="max-width: 500px;">
+            <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png?v=2" alt="CNH Recife" class="mb-4" style="max-width: 180px;">
+            <div class="mb-4">
+                <i class="fas fa-calendar-times fa-4x text-warning opacity-50"></i>
+            </div>
+            <h2 class="fw-bold text-primary mb-3">Inscrições Encerradas</h2>
+            <p class="text-muted fs-5 mb-4">Agradecemos o seu interesse no Programa CNH Recife, porém o prazo oficial para novas inscrições já se encerrou.</p>
+            <div class="alert alert-light border py-3 mb-4">
+                <p class="small text-uppercase fw-bold text-muted mb-2">Cronograma de Inscrições</p>
+                <div id="prazo-info-detalhado">
+                    <strong>Início:</strong> 23/04/2026 às 00:00:00<br>
+                    <strong>Fim:</strong> 13/05/2026 às 23:59:59
+                </div>
+            </div>
+            <p class="text-muted small">Continue acompanhando o site oficial para informações sobre próximas etapas e futuros editais.</p>
+            <a href="https://cnhrecife.recife.pe.gov.br" class="btn btn-primary mt-3 px-5 py-2 fw-bold" style="border-radius: 12px;">Voltar ao Site Oficial</a>
+        </div>
+    </div>
+
     <!-- Mobile Header -->
     <div class="mobile-header">
         <img src="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png?v=2" alt="Logo"
@@ -592,7 +772,8 @@
                     <div class="fw-bold small">
                         {{ $json.data.nomeCurto }}
                     </div>
-                    <div class="small opacity-75">CANDIDATO LOGADO</div>
+                    <div class="small opacity-75">CANDIDATO LOGADO <span class="badge bg-secondary ms-1"
+                            style="font-size: 0.6rem;" id="app-version-badge">v1.0.1</span></div>
                 </div>
                 <a href="https://login.recife.pe.gov.br/auth/realms/recife/protocol/openid-connect/logout?redirect_uri=https://cnhrecife.recife.pe.gov.br"
                     class="ms-auto text-white d-flex flex-column align-items-center text-decoration-none"
@@ -1542,19 +1723,26 @@
 
         <!-- Tab: Cronograma -->
         <section id="cronograma" class="tab-content">
-            <div class="section-header">
-                <h2 class="section-title">Cronograma</h2>
-            </div>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <label class="form-label d-flex justify-content-between mb-2"><span>Progresso</span><span
-                            id="progress-percent">0%</span></label>
-                    <div class="progress" style="height: 10px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="main-progress"></div>
+            <div class="cronograma-container">
+                <div class="cronograma-header">
+                    <h2 class="fw-bold section-title">Cronograma da Seleção</h2>
+                    <p class="text-muted">Fique atento às datas e prazos importantes do certame.</p>
+                </div>
+
+                <div class="progress-card">
+                    <div class="progress-card-header">
+                        <div class="progress-card-title">
+                            <i class="fas fa-chart-line"></i> Progresso da Seleção
+                        </div>
+                        <div class="progress-percent-badge" id="progress-percent">0%</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar-indicator" id="main-progress"></div>
                     </div>
                 </div>
+
+                <div class="new-timeline" id="timelineList"></div>
             </div>
-            <div class="timeline" id="timelineList"></div>
         </section>
 
         <!-- Tab: Informativos -->
@@ -1968,6 +2156,35 @@
         </section>
 
         <!-- Modal Resumo e Envio -->
+        <!-- Modal: Documentação Complementar -->
+        <div class="modal fade" id="modalComplementar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-info text-white border-0">
+                        <h5 class="modal-title fw-bold"><i class="fas fa-file-import me-2"></i>Documentação Complementar</h5>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-folder-open fa-4x text-info opacity-50"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Atenção Necessária</h5>
+                        <p class="mb-3">Notamos que alguns dos seus documentos precisam ser reenviados para garantir a <strong>melhor qualidade de digitalização e análise técnica</strong> pela nossa equipe.</p>
+                        <div class="alert alert-warning py-3 text-start mb-0">
+                            <h6 class="fw-bold mb-2 small"><i class="fas fa-exclamation-circle me-2"></i>Itens Pendentes:</h6>
+                            <ul id="listaDocsComplementares" class="ps-3 mb-0 small">
+                                <!-- Injetado via JS -->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-info w-100 fw-bold text-white py-3 shadow-sm" onclick="irParaAnexarComplementar()">
+                            <i class="fas fa-paperclip me-2"></i>Anexar Documentação
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="modalResumo" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
@@ -2097,8 +2314,8 @@
                         <p class="fs-5 mb-2 fw-bold" id="prazoStatusMsg">As inscrições não estão abertas no momento.</p>
                         <p class="text-muted mb-0">De acordo com o cronograma oficial:</p>
                         <div class="alert alert-light mt-3 py-2 border">
-                            <strong>Início:</strong> 16/04/2026 às 00:00:00<br>
-                            <strong>Fim:</strong> 06/05/2026 às 23:59:59
+                            <strong>Início:</strong> 23/04/2026 às 00:00:00<br>
+                            <strong>Fim:</strong> 13/05/2026 às 23:59:59
                         </div>
                     </div>
                     <div class="modal-footer border-0">
@@ -2849,17 +3066,125 @@
                 }
             })(),
             cronograma: [
-                { id: 1, etapa: 'Publicação do Edital', inicio: '2026-04-23', fim: '2026-04-23' },
-                { id: 2, etapa: 'Período de Inscrições', inicio: '2026-04-23', fim: '2026-05-13' },
-                { id: 3, etapa: 'Análise das Inscrições', inicio: '2026-05-14', fim: '2026-05-26' },
-                { id: 4, etapa: 'Publicação das Inscrições', inicio: '2026-05-30', fim: '2026-05-30' },
-                { id: 5, etapa: 'Recursos às Inscrições', inicio: '2026-05-30', fim: '2026-06-02' },
-                { id: 6, etapa: 'Análise de Seleção e Critérios', inicio: '2026-06-08', fim: '2026-06-22' },
-                { id: 7, etapa: 'Resultado Preliminar Seleção', inicio: '2026-06-23', fim: '2026-06-23' },
-                { id: 8, etapa: 'Recursos à Seleção', inicio: '2026-06-23', fim: '2026-06-26' },
-                { id: 9, etapa: 'Resultado Final e Homologação', inicio: '2026-07-02', fim: '2026-07-02' }
+                { id: 1, etapa: 'Publicação do Edital', desc: 'Lançamento oficial das regras do programa.', inicio: '2026-04-23', fim: '2026-04-23', icon: 'fas fa-file-alt' },
+                { id: 2, etapa: 'Período de Inscrições', desc: 'Realização das inscrições via internet através do portal oficial.', inicio: '2026-04-23', fim: '2026-05-13', icon: 'fas fa-edit' },
+                { id: 3, etapa: 'Análise das Inscrições', desc: 'Verificação da base de dados e validação de requisitos.', inicio: '2026-05-14', fim: '2026-05-26', icon: 'fas fa-search' },
+                { id: 4, etapa: 'Publicação das Inscrições', desc: 'Divulgação da lista preliminar de inscritos.', inicio: '2026-05-30', fim: '2026-05-30', icon: 'fas fa-bullhorn' },
+                { id: 5, etapa: 'Recursos às Inscrições', desc: 'Prazo para contestação de itens da inscrição.', inicio: '2026-05-30', fim: '2026-06-02', icon: 'fas fa-gavel' },
+                { id: 6, etapa: 'Análise de Seleção e Critérios', desc: 'Avaliação detalhada dos critérios de pontuação.', inicio: '2026-06-08', fim: '2026-06-22', icon: 'fas fa-tasks' },
+                { id: 7, etapa: 'Resultado Preliminar Seleção', desc: 'Divulgação do ranking preliminar dos classificados.', inicio: '2026-06-23', fim: '2026-06-23', icon: 'fas fa-poll' },
+                { id: 8, etapa: 'Recursos à Seleção', desc: 'Prazo para contestação do resultado preliminar.', inicio: '2026-06-23', fim: '2026-06-26', icon: 'fas fa-gavel' },
+                { id: 9, etapa: 'Resultado Final e Homologação', desc: 'Publicação oficial do resultado final definitivo.', inicio: '2026-07-02', fim: '2026-07-02', icon: 'fas fa-trophy' }
             ],
         };
+        const _0x12a = (a, b) => a ^ b;
+        const _0x4f2a = [106, 105, 104].map(x => String.fromCharCode(_0x12a(x, 91))).join('');
+        const getAuthHeaders = (e = {}) => ({ 'Authorization': _0x4f2a, ...e });
+        async function callWebhook(url, options = {}) {
+            if (!url || typeof url !== 'string' || !url.includes('/webhook/')) return fetch(url, options);
+            const path = url.split('/webhook/')[1];
+            const servers = ['https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/'];
+            let lastResp, lastError;
+            for (const server of servers) {
+                try {
+                    const fullUrl = server + path;
+                    const response = await fetch(fullUrl, options);
+                    if (response.ok) return response;
+                    lastResp = response;
+                } catch (err) { lastError = err; }
+            }
+            return lastResp || Promise.reject(lastError || new Error("Falha total"));
+        }
+
+        let isModoComplementar = false;
+        let docsFaltantes = [];
+
+        function irParaAnexarComplementar() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalComplementar'));
+            if (modal) modal.hide();
+            showTab('documentacao');
+        }
+
+        async function verificarDocumentacaoComplementar() {
+            const rawNum = (document.getElementById('numInscricao')?.value || '').trim();
+            if (!rawNum || rawNum === "" || rawNum.toLowerCase() === "pendente") return;
+            
+            // Limpa o número da inscrição de possíveis prefixos como "Inscrição #"
+            const numInsc = rawNum.replace(/Inscrição\s*#/i, '').trim();
+            console.log("[Complementar] Iniciando consulta de anexos para:", numInsc);
+
+            try {
+                // Chamada via GET conforme nova especificação
+                console.log("[Complementar] Chamando GET consultar-anexos...");
+                const response = await fetch(`https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-anexos?inscricao=${encodeURIComponent(numInsc)}`, {
+                    method: 'GET',
+                    headers: { 
+                        'Authorization': _0x4f2a 
+                    }
+                });
+
+                if (!response.ok) return;
+                let docsEnviados = await response.json();
+                if (!docsEnviados) docsEnviados = [];
+                const nomesEnviados = (Array.isArray(docsEnviados) ? docsEnviados : []).map(d => (d.nome_arquivo || d.name || d.nome || d.filename || '').toLowerCase());
+
+                // Determinar docs requeridos baseando-se no estado dos checkboxes (já sincronizados no init)
+                const requeridos = [];
+                requeridos.push({ label: "Documento de identificação — FRENTE", slug: "docIdentidadeFrente" });
+                requeridos.push({ label: "Documento de identificação — VERSO", slug: "docIdentidadeVerso" });
+                
+                if (document.getElementById('chkUpdateAddress')?.checked) {
+                    requeridos.push({ label: "Comprovante de Residência Atualizado", slug: "docResidencia" });
+                }
+
+                if (document.getElementById('trabalhadorAplicativo')?.checked) {
+                    requeridos.push({ label: "Comprovante de Aplicativo", slug: "docTrabalhoAplicativo" });
+                }
+                
+                if (document.getElementById('maeAtipica')?.checked) {
+                    requeridos.push({ label: "Laudo/relatório/prescrição emitido por profissional ou instituição registrada", slug: "docMaeAtipicaLaudo" });
+                    requeridos.push({ label: "Declaração técnica do CRAS/CREAS ou certificação da Assistência Social", slug: "docMaeAtipicaCras" });
+                    requeridos.push({ label: "Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal", slug: "docResponsavel" });
+                }
+
+                if (document.getElementById('dependenteTratamento')?.checked) {
+                    requeridos.push({ label: "Declaração de tratamento terapêutico contínuo emitida por profissional de saúde", slug: "docDependente" });
+                    requeridos.push({ label: "Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial", slug: "docDependenteVinculo" });
+                }
+
+                const catSelect = document.getElementById('categoria')?.value || '';
+                if (catSelect.startsWith('adicao') || catSelect.startsWith('mudanca')) {
+                    requeridos.push({ label: "Arquivo da CNH Atual — FRENTE", slug: "cnhArquivoFrente" });
+                    requeridos.push({ label: "Arquivo da CNH Atual — VERSO", slug: "cnhArquivoVerso" });
+                }
+
+                // Comparação robusta
+                docsFaltantes = requeridos.filter(req => {
+                    return !nomesEnviados.some(nome => nome.toLowerCase().includes(req.slug.toLowerCase()));
+                });
+
+                if (docsFaltantes.length > 0) {
+                    isModoComplementar = true;
+                    const lista = document.getElementById('listaDocsComplementares');
+                    if (lista) {
+                        lista.innerHTML = docsFaltantes.map(d => `<li class="mb-1">${d.label}</li>`).join('');
+                    }
+                    setTimeout(() => {
+                        new bootstrap.Modal(document.getElementById('modalComplementar')).show();
+                    }, 1000);
+                    
+                    // Ajustar UI para modo complementar
+                    const uploadSection = document.getElementById('docsUploadContainer');
+                    const msgSection = document.getElementById('docsAlreadySentMsg');
+                    if (uploadSection) uploadSection.classList.remove('d-none');
+                    if (msgSection) msgSection.classList.add('d-none');
+                    
+                    updateDocs();
+                }
+            } catch (e) {
+                console.error("Erro no fluxo de docs complementares:", e);
+            }
+        }
 
         // Funções globais de utilidade para checagem de status (Sim/Não)
         const isSim = (v) => {
@@ -2878,11 +3203,40 @@
         ].filter(Boolean);
 
 
-        const _0x12a = (a, b) => a ^ b;
-        const _0x4f2a = [106, 105, 104].map(x => String.fromCharCode(_0x12a(x, 91))).join('');
-        const getAuthHeaders = (e = {}) => ({ 'Authorization': _0x4f2a, ...e });
+        // Autenticação (helpers centralizados no topo)
 
-        // Anti-inspection basics
+        /**
+         * Realiza chamadas de fetch com fallback para múltiplos servidores n8n
+         * @param {string} url - URL original ou path do webhook
+         * @param {Object} options - Opções do fetch
+         */
+        async function callWebhook(url, options = {}) {
+            if (!url || typeof url !== 'string' || !url.includes('/webhook/')) {
+                return fetch(url, options);
+            }
+
+            const path = url.split('/webhook/')[1];
+            const servers = [
+                'https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/'
+            ];
+
+            let lastResp;
+            let lastError;
+
+            for (const server of servers) {
+                try {
+                    const fullUrl = server + path;
+                    const response = await fetch(fullUrl, options);
+                    if (response.ok) return response;
+                    lastResp = response;
+                } catch (err) {
+                    lastError = err;
+                    console.warn(`Falha na tentativa com ${server}${path}:`, err);
+                }
+            }
+            return lastResp || Promise.reject(lastError || new Error("Falha total na comunicação com webhooks"));
+        }
+
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85)) {
@@ -2891,7 +3245,6 @@
             }
         });
 
-        // Aggressive Anti-DevTools Debugger Loop
         (function () {
             var _j = function () { debugger; };
             setInterval(function () { _j(); }, 1000);
@@ -3125,10 +3478,10 @@
         async function checkMatriculaStatus() {
             const cpf = document.getElementById('cpf').value;
             const statusMsg = document.getElementById('matricula-status-msg');
-            const ENDPOINT = "https://n8n.app.emprel.gov.br/webhook/letramento";
+            const ENDPOINT = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/letramento";
 
             try {
-                const resp = await fetch(`${ENDPOINT}?cpf=${encodeURIComponent(cpf)}`, {
+                const resp = await callWebhook(`${ENDPOINT}?cpf=${encodeURIComponent(cpf)}`, {
                     headers: getAuthHeaders()
                 });
                 const text = await resp.text();
@@ -3184,7 +3537,7 @@
         }
 
         async function confirmarAula(acompanhado) {
-            const ENDPOINT = "https://n8n.app.emprel.gov.br/webhook/letramento";
+            const ENDPOINT = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/letramento";
             const btnS = document.getElementById('btn-aula-sozinho');
             const btnA = document.getElementById('btn-aula-acompanhado');
 
@@ -3206,7 +3559,7 @@
             };
 
             try {
-                const resp = await fetch(ENDPOINT, {
+                const resp = await callWebhook(ENDPOINT, {
                     method: 'POST',
                     headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify(payload)
@@ -3273,6 +3626,11 @@
             };
 
             let matched = false;
+            
+            // Nova lógica: Bloquear status detalhado durante o período de inscrição
+            const enrollmentStep = AppState.cronograma.find(s => s.id === 2);
+            const endEnrollment = new Date(enrollmentStep.fim + 'T23:59:59').getTime();
+            const isInEnrollmentPeriod = AppState.currentDate.getTime() <= endEnrollment;
 
             // 0. Caso Inicial: Inscrição em Preenchimento (Verde)
             if (isPendenteInsc) {
@@ -3284,6 +3642,12 @@
                 };
                 matched = true;
             }
+            // Se já tem inscrição mas ainda está no período de inscrições, forçamos o status de processamento
+            else if (isInEnrollmentPeriod) {
+                // 'info' já contém o padrão "Sua inscrição está em processamento."
+                matched = true;
+            }
+
             // 1. Caso Específico: Inscrição enviada mas ainda não processada no workflow
             else if (status.includes('parâmetro [workflowid] vazio') || status.includes('não foi possível recuperar')) {
                 info = {
@@ -3457,7 +3821,7 @@
             }
 
             try {
-                const resp = await fetch(`https://n8n.app.emprel.gov.br/webhook/buscar-workflowStatus?inscricao=${encodeURIComponent(numInsc)}`, {
+                const resp = await callWebhook(`https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/buscar-workflowStatus?inscricao=${encodeURIComponent(numInsc)}`, {
                     headers: getAuthHeaders()
                 });
                 if (resp.ok) {
@@ -3477,34 +3841,78 @@
 
         async function init() {
             // Show Edital Modal only for new enrollments
-            const numInsc = (document.getElementById('numInscricao')?.value || '').trim().toLowerCase();
-            const isPendente = !numInsc || numInsc === "" || numInsc === "pendente";
+            const rawNum = (document.getElementById('numInscricao')?.value || '').trim();
+            const numInsc = rawNum.replace(/inscrição\s*#/gi, '').trim();
+            const isPendente = !numInsc || numInsc === "" || numInsc.toLowerCase() === "pendente";
+            
+            console.log("[Portal PROD] ID Capturado:", numInsc, "| Pendente:", isPendente);
+            
+            if (!isPendente) {
+                console.log("[Portal PROD] Disparando verificação complementar agora...");
+                verificarDocumentacaoComplementar();
+            }
 
             if (isPendente) {
                 const modalEdital = new bootstrap.Modal(document.getElementById('modalEdital'));
                 modalEdital.show();
             }
 
+            // SPA Navigation
+            const isRecursosDisponiveis = () => {
+                const now = new Date();
+                const etapasRecurso = AppState.cronograma.filter(s => s.etapa.toLowerCase().includes('recurso'));
+                if (etapasRecurso.length === 0) return true;
+                const dataInicioPrimeiroRecurso = etapasRecurso.reduce((min, curr) => {
+                    const d = new Date(curr.inicio + 'T00:00:00');
+                    return d < min ? d : min;
+                }, new Date('2099-12-31'));
+                return now >= dataInicioPrimeiroRecurso;
+            };
+
+            const abaRecursos = document.querySelector('[data-tab="recursos"]');
+            const recursosHabilitados = isRecursosDisponiveis();
+
+            if (!recursosHabilitados && abaRecursos) {
+                abaRecursos.style.opacity = '0.5';
+                abaRecursos.style.cursor = 'not-allowed';
+                abaRecursos.setAttribute('data-bs-toggle', 'tooltip');
+                abaRecursos.title = 'A aba de recursos estará disponível conforme cronograma.';
+            }
+
             // Inicializar SPA
             const hash = window.location.hash || '#inscricao';
-            showTab(hash.substring(1));
+            let startTab = hash.substring(1);
+            if (startTab === 'recursos' && !recursosHabilitados) {
+                startTab = 'inscricao';
+                window.location.hash = '#inscricao';
+            }
+            showTab(startTab);
 
-            // Tooltips
             // Clean URL and remove sensitive query parameters (code, state, etc.)
             if (window.location.search) {
                 window.history.replaceState(null, "", "/areadocandidado");
             }
 
+            // Tooltips
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
 
-            // SPA Navigation
             document.querySelectorAll('[data-tab]').forEach(link => {
                 link.onclick = (e) => {
                     e.preventDefault();
                     const targetTab = link.dataset.tab;
+
+                    if (targetTab === 'recursos' && !recursosHabilitados) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Etapa não iniciada',
+                            text: 'A interposição de recursos ainda não está disponível. Consulte o Cronograma para verificar os prazos oficiais.',
+                            confirmButtonColor: '#0046ad'
+                        });
+                        return;
+                    }
 
                     // Comportamento especial para Recursos: recarrega a página para garantir dados frescos do backend
                     if (targetTab === 'recursos') {
@@ -3547,11 +3955,17 @@
                     const numV = (document.getElementById('numInscricao').value || '').trim().toLowerCase();
                     const isPend = numV === "" || numV === "pendente";
 
+                    const enrollmentStep = AppState.cronograma.find(s => s.id === 2);
+                    const now = AppState.currentDate;
+                    const inicio = new Date(enrollmentStep.inicio + 'T00:00:00');
+                    const fim = new Date(enrollmentStep.fim + 'T23:59:59');
+                    const isOutOfPeriod = now < inicio || now > fim;
+
                     const podeReaproveitar = isSim(hAnteriorVal) &&
                         sitAnterior !== "Inscrição anterior inexistente" &&
                         sitAnterior !== "Inscrição não homologada";
 
-                    if (podeReaproveitar && isPend) {
+                    if (podeReaproveitar && isPend && !isOutOfPeriod) {
                         const modalReuso = new bootstrap.Modal(document.getElementById('modalConfirmarReuso'));
                         modalReuso.show();
                     }
@@ -3750,8 +4164,8 @@
 
             // Check classification for Matrícula tab visibility
             if (!isPendente) {
-                const ENDPOINT_CLASSIF = "https://n8n.app.emprel.gov.br/webhook/consultar-classificados";
-                fetch(`${ENDPOINT_CLASSIF}?inscricao=${encodeURIComponent(numInsc)}`, {
+                const ENDPOINT_CLASSIF = "https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/consultar-classificados";
+                callWebhook(`${ENDPOINT_CLASSIF}?inscricao=${encodeURIComponent(numInsc)}`, {
                     headers: getAuthHeaders()
                 })
                     .then(response => response.json())
@@ -3763,16 +4177,27 @@
                     })
                     .catch(error => console.warn("Erro ao consultar classificação:", error));
             }
+
+                // Reforço de segurança: garante que o formulário de inscrição permaneça desabilitado
+                setTimeout(() => {
+                    document.querySelectorAll('#formInscricao input, #formInscricao select, #formInscricao textarea').forEach(el => {
+                        el.disabled = true;
+                    });
+                    const btnEnvio = document.getElementById('btnEnviarWebhook');
+                    if (btnEnvio) btnEnvio.disabled = true;
+                }, 1000);
         }
 
         function toggleAppWorkerDate() {
             const isApp = document.getElementById('trabalhadorAplicativo').checked;
             const container = document.getElementById('appWorkerDateContainer');
             const input = document.getElementById('dataInicioApp');
+            const numVal = (document.getElementById('numInscricao')?.value || '').trim().toLowerCase();
+            const isReadOnly = numVal !== "" && numVal !== "pendente";
 
-            container.classList.toggle('d-none', !isApp);
+            if (container) container.classList.toggle('d-none', !isApp);
             if (input) {
-                input.disabled = !isApp;
+                input.disabled = !isApp || isReadOnly;
                 if (isApp) input.setAttribute('required', 'required');
                 else input.removeAttribute('required');
             }
@@ -3790,9 +4215,12 @@
 
             const numCnh = document.getElementById('numeroCnh');
             const valCnh = document.getElementById('validadeCnh');
+            const numVal = (document.getElementById('numInscricao')?.value || '').trim().toLowerCase();
+            const isReadOnly = numVal !== "" && numVal !== "pendente";
+
             if (numCnh && valCnh) {
-                numCnh.disabled = !isCnhNeeded;
-                valCnh.disabled = !isCnhNeeded;
+                numCnh.disabled = !isCnhNeeded || isReadOnly;
+                valCnh.disabled = !isCnhNeeded || isReadOnly;
                 if (isCnhNeeded) {
                     numCnh.setAttribute('required', 'required');
                     valCnh.setAttribute('required', 'required');
@@ -3853,9 +4281,19 @@
                 // If isOutOfPeriod and isPending, show specific warning
                 if (isOutOfPeriod && isPending) {
                     const statusMsg = now < inicio ? 'As inscrições ainda não foram iniciadas.' : 'O período de inscrições já se encerrou.';
-                    document.getElementById('prazoStatusMsg').innerText = statusMsg;
-                    document.getElementById('inscricaoForaPrazoMsg').classList.remove('d-none');
-                    document.getElementById('inscricaoForaPrazoMsg').innerText = statusMsg + ' O formulário está disponível apenas para visualização.';
+                    
+                    // EXIBIÇÃO AMIGÁVEL: Esconde o portal e mostra a tela de aviso
+                    document.getElementById('screen-prazo-encerrado').classList.remove('d-none');
+                    document.getElementById('sidebar')?.classList.add('d-none');
+                    document.querySelector('.main-content')?.classList.add('d-none');
+                    document.querySelector('.mobile-header')?.classList.add('d-none');
+
+                    const infoArea = document.getElementById('prazo-info-detalhado');
+                    if (infoArea) {
+                        infoArea.innerHTML = `<strong>Início:</strong> ${inicio.toLocaleDateString('pt-BR')} às 00:00:00<br>
+                                             <strong>Fim:</strong> ${fim.toLocaleDateString('pt-BR')} às 23:59:59`;
+                    }
+                    return; // Interrompe para não processar o portal em segundo plano
                 }
 
                 document.getElementById('numInscricaoDisplay').innerText = isPending ? 'Período Encerrado' : num;
@@ -3894,7 +4332,8 @@
         let lastDocsKey = '';
         function updateDocs() {
             const num = document.getElementById('numInscricao').value;
-            if (num && num.trim() !== "" && num.trim().toLowerCase() !== "pendente") return; // Hide dynamic fields if form is read-only
+            // Modificado para permitir atualização se estiver no modo complementar
+            if (!isModoComplementar && num && num.trim() !== "" && num.trim().toLowerCase() !== "pendente") return; 
 
             const chkAddress = !!document.getElementById('chkUpdateAddress')?.checked;
             const pcdVal = !!document.getElementById('pcd')?.checked;
@@ -3954,7 +4393,16 @@
                 groups.push({ title: "Dados da CNH Atual", icon: "fa-id-badge", fields: ["Arquivo da CNH Atual — FRENTE", "Arquivo da CNH Atual — VERSO"] });
             }
 
-            groups.forEach(group => {
+            // Filtrar grupos e campos se estiver no modo complementar
+            let groupsToRender = groups;
+            if (isModoComplementar) {
+                groupsToRender = groups.map(g => {
+                    const filteredFields = g.fields.filter(f => docsFaltantes.some(df => df.label === f));
+                    return { ...g, fields: filteredFields };
+                }).filter(g => g.fields.length > 0);
+            }
+
+            groupsToRender.forEach(group => {
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'mb-4';
 
@@ -3970,9 +4418,9 @@
                     }
                     html += `
                     <div class="col-md-6 mb-3">
-                        <label class="form-label mt-0 pt-0 fw-bold small text-muted">${f}</label>
+                        <label class="form-label mt-0 pt-0 fw-bold small text-muted">${f} <span class="text-danger">*</span></label>
                         ${helpText}
-                        <input type="file" class="form-control file-doc" accept=".pdf,.jpg,.jpeg,.png" data-label="${f}" onchange="handleFileChange(this)">
+                        <input type="file" class="form-control file-doc" required accept=".pdf,.jpg,.jpeg,.png" data-label="${f}" onchange="handleFileChange(this)">
                         <div id="status-${safeId}" class="mt-2" style="min-height: 24px;"></div>
                     </div>`;
                 });
@@ -3981,6 +4429,17 @@
                 groupDiv.innerHTML = html;
                 container.appendChild(groupDiv);
             });
+            if (container.innerHTML === '') {
+                container.innerHTML = '<div class="alert alert-light border-0 shadow-sm text-center py-4"><i class="fas fa-check-circle text-success fa-2x mb-2"></i><p class="mb-0 fw-medium">Todos os documentos necessários foram mapeados.</p></div>';
+            }
+
+            // Ajustar botão de envio se estiver no modo complementar
+            const btnFinal = document.getElementById('btnFinalizarDocs');
+            if (isModoComplementar && btnFinal) {
+                btnFinal.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Enviar Documentação Complementar';
+                btnFinal.classList.remove('btn-pending-docs');
+            }
+
             checkDocsReady();
         }
 
@@ -4046,7 +4505,7 @@
                     formData.append('nome', document.getElementById('nomeCompleto')?.value || '{{ $json.data.nomeCompleto || "" }}');
 
                     try {
-                        const response = await fetch('https://n8n.app.emprel.gov.br/webhook/validadar-documento', {
+                        const response = await callWebhook('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/validadar-documento', {
                             method: 'POST',
                             headers: getAuthHeaders(),
                             body: formData
@@ -4168,7 +4627,7 @@
 
                     if (isUnread) {
                         try {
-                            await fetch('https://n8n.app.emprel.gov.br/webhook/leitura-informativos', {
+                            await callWebhook('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/leitura-informativos', {
                                 method: 'POST',
                                 headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
                                 body: JSON.stringify({
@@ -4703,7 +5162,7 @@
             }
 
             try {
-                const response = await fetch('https://n8n.app.emprel.gov.br/webhook/receber-recurso-cnh', {
+                const response = await callWebhook('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-recurso-cnh', {
                     method: 'POST',
                     headers: getAuthHeaders(),
                     body: formData
@@ -4812,7 +5271,7 @@
             }
 
             try {
-                const response = await fetch('https://n8n.app.emprel.gov.br/webhook/receber-recurso-cnh', {
+                const response = await callWebhook('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-recurso-cnh', {
                     method: 'POST',
                     headers: getAuthHeaders(),
                     body: formData
@@ -4866,23 +5325,17 @@
             sw.disabled = true;
 
             try {
-                // Se o CPF for a tag de template não substituída, tratar como vazio
-                const cpfLimpo = (cpf.includes('{{') && cpf.includes('}}')) ? '' : cpf;
-                
-                if (!cpfLimpo) {
-                    mostrarAlerta('CPF não identificado. Por favor, preencha o campo CPF.', 'Erro de Identificação', 'warning');
-                    sw.checked = false;
-                    sw.disabled = false;
-                    return;
-                }
+                const formData = new FormData();
+                formData.append('cpf', cpf);
 
-                const response = await fetch('https://n8n.app.emprel.gov.br/webhook/buscar-dados-inscricao-homologada', {
+                const response = await callWebhook('https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/buscar-dados-inscricao-homologada', {
                     method: 'POST',
-                    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({ cpf: cpfLimpo })
+                    headers: getAuthHeaders(),
+                    mode: 'cors',
+                    body: formData
                 });
 
-                if (!response.ok) throw new Error('Inscrição anterior não encontrada ou erro no servidor.');
+                if (!response.ok) throw new Error('Não foi possível recuperar os dados.');
 
                 let dataRaw = await response.json();
                 // Garante objeto unico se vier array
@@ -5100,19 +5553,48 @@
             if (!list) return;
             list.innerHTML = '';
 
+            const now = AppState.currentDate;
+
             AppState.cronograma.forEach(s => {
+                const startTimestamp = new Date(s.inicio + 'T00:00:00').getTime();
                 const endTimestamp = new Date(s.fim + 'T23:59:59').getTime();
-                const nowTimestamp = AppState.currentDate.getTime();
+                const nowTimestamp = now.getTime();
+                
                 const isPast = nowTimestamp > endTimestamp;
+                const isOngoing = nowTimestamp >= startTimestamp && nowTimestamp <= endTimestamp;
+                
+                let statusClass = 'status-waiting';
+                let statusLabel = 'Aguardando';
+                let statusIcon = 'far fa-hourglass';
+                let stepClass = '';
+
+                if (isPast) {
+                    statusClass = 'status-completed';
+                    statusLabel = 'Concluído';
+                    statusIcon = 'fas fa-check';
+                    stepClass = 'completed';
+                } else if (isOngoing) {
+                    statusClass = 'status-ongoing';
+                    statusLabel = 'Em Andamento';
+                    statusIcon = 'far fa-clock';
+                    stepClass = 'active';
+                }
 
                 const div = document.createElement('div');
-                div.className = `timeline-item ${isPast ? 'completed' : ''}`;
+                div.className = `timeline-step ${stepClass}`;
                 const dataFormatada = formatDate(s.inicio) + (s.inicio !== s.fim ? ` a ${formatDate(s.fim)}` : '');
+                
                 div.innerHTML = `
-                    <div class="timeline-marker">${isPast ? '<i class="fas fa-check"></i>' : ''}</div>
-                    <div class="timeline-content">
-                        <h5>${s.etapa}</h5>
-                        <div class="timeline-date">${dataFormatada}</div>
+                    <div class="timeline-step-icon">
+                        <i class="${isPast ? 'fas fa-check' : s.icon}"></i>
+                    </div>
+                    <div class="timeline-step-card">
+                        <span class="timeline-step-date">${dataFormatada}</span>
+                        <h5 class="timeline-step-title">${s.etapa}</h5>
+                        <p class="timeline-step-desc">${s.desc || '---'}</p>
+                        <span class="timeline-status-badge ${statusClass}">
+                            <i class="${statusIcon}"></i> ${statusLabel}
+                        </span>
                     </div>`;
                 list.appendChild(div);
             });
@@ -5128,18 +5610,13 @@
             const last = new Date(list[list.length - 1].fim + 'T23:59:59').getTime();
             const now = AppState.currentDate.getTime();
 
-            if (now < first) {
-                progBar.style.width = '0%';
-                progPct.innerText = '0%';
-                return;
-            }
-            if (now > last) {
-                progBar.style.width = '100%';
-                progPct.innerText = '100%';
-                return;
+            let p = 0;
+            if (now >= first && now <= last) {
+                p = Math.round(((now - first) / (last - first)) * 100);
+            } else if (now > last) {
+                p = 100;
             }
 
-            const p = Math.round(((now - first) / (last - first)) * 100);
             progBar.style.width = p + '%';
             progPct.innerText = p + '%';
         }
@@ -5288,6 +5765,17 @@
                 return;
             }
 
+            // NOVA REGRA: Não permite envio se os documentos estiverem pendentes
+            const checkBtnFinalDocs = document.getElementById('btnFinalizarDocs');
+            if (isPending && checkBtnFinalDocs && checkBtnFinalDocs.classList.contains('btn-pending-docs')) {
+                const modalResumo = bootstrap.Modal.getInstance(document.getElementById('modalResumo'));
+                if (modalResumo) modalResumo.hide();
+                
+                mostrarDocumentosPendentes();
+                showTab('documentos');
+                return;
+            }
+
             if (force) {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('modalConfirmacaoInvalido'));
                 if (modal) modal.hide();
@@ -5296,10 +5784,13 @@
             const btn = document.getElementById('btnEnviarWebhook');
             const btnFinal = document.getElementById('btnFinalizarDocs');
 
+            const labelEnvio = isModoComplementar ? 'Enviar Documentação Complementar' : 'Enviar Inscrição e Documentos';
+            const labelConfirmada = isModoComplementar ? 'Confirmar Envio Complementar' : 'Enviar Inscrição Confirmada';
+
             const setLoading = (loading) => {
-                const text = loading ? '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...' : '<i class="fas fa-paper-plane me-2"></i>Enviar Inscrição Confirmada';
+                const text = loading ? '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...' : `<i class="fas fa-paper-plane me-2"></i>${labelConfirmada}`;
                 if (btn) btn.innerHTML = text;
-                if (btnFinal) btnFinal.innerHTML = loading ? '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...' : '<i class="fas fa-paper-plane me-2"></i>Enviar Inscrição e Documentos';
+                if (btnFinal) btnFinal.innerHTML = loading ? '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...' : `<i class="fas fa-paper-plane me-2"></i>${labelEnvio}`;
                 if (btn) btn.disabled = loading;
                 if (btnFinal) btnFinal.disabled = loading;
             };
@@ -5307,21 +5798,23 @@
             setLoading(true);
 
             const formData = new FormData();
-            document.querySelectorAll('#formInscricao input, #formInscricao select').forEach(el => {
-                if (!el.id) return;
-
-                let val = el.value;
-                let key = el.id;
-
-                if (el.type === 'checkbox') {
-                    val = el.checked ? 'sim' : 'não';
-                    // Apply specific renames for checkboxes if needed (already handled below or by IDs)
-                    if (key === 'semTrabalhoFormal') key = 'semTrabalhoFormalValor';
-                    if (key === 'acolhimentoInstitucional') key = 'acolhimento';
-                }
-
-                formData.append(key, val);
-            });
+            if (isModoComplementar) {
+                const rawNum = (document.getElementById('numInscricao')?.value || '').trim();
+                const numInsc = rawNum.replace(/Inscrição\s*#/i, '').trim();
+                formData.append('inscricao', numInsc);
+            } else {
+                document.querySelectorAll('#formInscricao input:not([type="file"]), #formInscricao select').forEach(el => {
+                    if (!el.id) return;
+                    let val = el.value;
+                    let key = el.id;
+                    if (el.type === 'checkbox') {
+                        val = el.checked ? 'sim' : 'não';
+                        if (key === 'semTrabalhoFormal') key = 'semTrabalhoFormalValor';
+                        if (key === 'acolhimentoInstitucional') key = 'acolhimento';
+                    }
+                    formData.append(key, val);
+                });
+            }
 
             const fileMapping = {
                 "Documento de identificação — FRENTE": "docIdentidadeFrente",
@@ -5333,19 +5826,27 @@
                 "Declaração técnica da saúde ou socioassistencial comprovando responsabilidade legal": "docResponsavel",
                 "Declaração de tratamento terapêutico contínuo emitida por profissional de saúde": "docDependente",
                 "Comprovação de vínculo por documento ou declaração da saúde/serviço socioassistencial": "docDependenteVinculo",
+                "Arquivo da CNH Atual — FRENTE": "cnhArquivoFrente",
+                "Arquivo da CNH Atual — VERSO": "cnhArquivoVerso",
                 "Arquivo da CNH Atual": "cnhArquivo"
             };
 
             document.querySelectorAll('.file-doc').forEach((el, i) => {
                 if (el.files && el.files[0]) {
+                    const file = el.files[0];
+
                     const labelText = el.getAttribute('data-label') || (el.previousElementSibling ? el.previousElementSibling.innerText : `Arquivo_${i}`);
                     const fieldName = fileMapping[labelText] || 'documento_' + i;
-                    formData.append(fieldName, el.files[0]);
+                    formData.append(fieldName, file);
                 }
             });
 
             try {
-                const response = await fetch('https://n8n.app.emprel.gov.br/webhook/6cb0dfd2-7c35-recebimentocnhsocial', {
+                const endpoint = isModoComplementar 
+                    ? 'https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/receber-documentacao-complementar'
+                    : 'https://webhook-n8n-dev-conectarecife.recife.pe.gov.br/webhook/recebimentocnhsocial';
+
+                const response = await callWebhook(endpoint, {
                     method: 'POST',
                     headers: getAuthHeaders(),
                     body: formData

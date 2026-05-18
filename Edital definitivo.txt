@@ -48,7 +48,7 @@ A Secretaria de Assistência Social e Combate à Fome do Recife (SAS/PCR), no us
 4.2. Será exigida frequência mínima de 75% (setenta e cinco por cento) em cada módulo teórico e prático. O não cumprimento implicará convocação do próximo candidato aprovado, salvo justificativa aceita pela coordenação pedagógica.
 
 5. DAS INSCRIÇÕES
-5.1. As inscrições serão realizadas exclusivamente pela Plataforma Conecta Recife, no período de 16 de abril de 2026 a 05 de maio de 2026, de acordo com cronograma contido no Anexo I. 
+5.1. As inscrições serão realizadas exclusivamente pela Plataforma Conecta Recife, no período de 23 de abril de 2026 a 13 de maio de 2026, de acordo com cronograma contido no Anexo I. 
 5.2. O candidato deverá preencher o formulário eletrônico e anexar os seguintes documentos digitalizados (PDF, JPG ou PNG legível):
 I.	Documento de identificação oficial com foto (RG ou CNH), emitido há, no máximo, 10 anos, apresentado frente e verso; 
 II.	CPF;
@@ -134,19 +134,20 @@ Secretária de Assistência Social e Combate à Fome em exercício
 ANEXO I – CRONOGRAMA
 
 ETAPA	DATA
-Publicação do Edital	16/06/2026
-Período de Inscrições	16/04/2026 a 06/05/2026
-Análise das Inscrições	07/05/2026 a 19/05/2026
-Publicação das inscrições	até 21/05/2026
-Período para Interposição de Recursos às inscrições	23/05/2026 a 26/05/2026
-Análise de recursos às inscrições	27/05/2026 a 29/05/2026
-Homologação das inscrições	30/05/2026
-Análise dos critérios e seleção dos candidatos	01/06/2026 a 15/06/2026
-Divulgação do Resultado Preliminar	16/06/2026
-Período para Interposição de Recursos quanto ao resultado	16/06/2026 a 19/06/2026
-Análise dos recursos	22/06/2026 a 25/06/2026
-Divulgação do Resultado Final e Homologação	27/06/2026
-Convocação para matrículas dos Selecionados	27/06/2026
+Publicação do Edital	23/04/2026
+Período de Inscrições	23/04/2026 a 13/05/2026
+Análise das Inscrições	14/05/2026 a 26/05/2026
+Publicação das inscrições	até 30/05/2026
+Período para Interposição de Recursos às inscrições	30/05/2026 a 02/06/2026
+Análise de recursos às inscrições	03/06/2026 a 05/06/2026
+Homologação das inscrições	06/06/2026
+Análise dos critérios e seleção dos candidatos	08/06/2026 a 22/06/2026
+Divulgação do Resultado Preliminar	23/06/2026
+Período para Interposição de Recursos quanto ao resultado	23/06/2026 a 26/06/2026
+Análise dos recursos	29/06/2026 a 01/07/2026
+Divulgação do Resultado Final e Homologação	02/07/2026
+Convocação para matrículas dos Selecionados	02/07/2026
+
 
 ANEXO II – CRITÉRIOS DE PONTUAÇÃO E DOCUMENTAÇÃO COMPROBATÓRIA
 
@@ -170,4 +171,3 @@ Outros perfis de vulnerabilidade social	Pessoas em unidades de acolhimento da Pr
 		de 2 ano até 3 anos	Comprovação via app/cadastro	15
 		de 3 anos ou mais	Comprovação via app/cadastro	20
 	Integra família beneficiária do Programa Bolsa Família	-	Base de dados do CadÚnico	15
-
