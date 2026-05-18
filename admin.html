@@ -1558,14 +1558,7 @@
         }
 
         // Dados do Usuário Logado (Injetados pelo n8n)
-        const LOGGED_USER = [
-            {
-                "nome": "Marcio Arruda",
-                "login": "marcio.arruda",
-                "perfil": "Gestor",
-                "status": "Ativo"
-            }
-        ][0]; // Pega o primeiro item do array enviado pelo n8n
+        const LOGGED_USER = ({{ JSON.stringify($json.userInfo || []) }})[0] || null;
 
         /**
          * Prioridade de exibição e seleção das categorias
