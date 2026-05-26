@@ -47,9 +47,9 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--main-bg);
             color: var(--text-dark);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         /* Pre-loader */
@@ -191,7 +191,22 @@
             margin-left: 280px;
             flex: 1;
             padding: 40px;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
             transition: var(--transition);
+        }
+
+        @media (max-width: 1200px) {
+            #main-content {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #main-content {
+                padding: 16px;
+            }
         }
 
         .page-header {
@@ -289,7 +304,7 @@
         }
 
         /* Responsive */
-        @media (max-width: 992px) {
+        @media (max-width: 1200px) {
             #sidebar {
                 transform: translateX(-100%);
             }
@@ -2062,7 +2077,7 @@
         }
 
         function isMobile() {
-            return window.innerWidth < 992;
+            return window.innerWidth < 1200;
         }
 
         function addDashboardFilter(type, value) {
@@ -2136,7 +2151,7 @@
                 pane.classList.remove('active');
             });
             document.getElementById(`tab-${tabId}`).classList.add('active');
-            if (window.innerWidth < 992) {
+            if (window.innerWidth < 1200) {
                 document.getElementById('sidebar').classList.remove('show');
             }
 
