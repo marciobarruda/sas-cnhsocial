@@ -19,8 +19,13 @@
     <!-- ApexCharts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- jsPDF + AutoTable para exportação PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- heic2any: converte HEIC/HEIF para JPEG/PNG no cliente -->
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <link rel="icon" type="image/png"
         href="https://cnhsocial.recife.pe.gov.br/wp-content/uploads/2025/12/CNH-Recife-Logo.png?v=2">
 
@@ -735,6 +740,18 @@
             70% { box-shadow: 0 0 0 10px rgba(0, 70, 173, 0); }
             100% { box-shadow: 0 0 0 0 rgba(0, 70, 173, 0); }
         }
+        .active-filter {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(0, 70, 173, 0.15) !important;
+            background-color: rgba(0, 70, 173, 0.02) !important;
+        }
+        .status-card-clickable {
+            transition: var(--transition) !important;
+        }
+        .status-card-clickable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+        }
     </style>
 </head>
 
@@ -891,6 +908,26 @@
                             <div class="kpi-value" id="kpi-gender-ratio" style="font-size:1.1rem;">---</div>
                             <div class="kpi-label">Gênero Predom.</div>
                             <div class="kpi-subtext" id="kpi-gender-ratio-sub">---</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="kpi-card h-100">
+                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="fas fa-check-double"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="kpi-value" id="kpi-homologadas">---</div>
+                            <div class="kpi-label">Inscrições Homologadas</div>
+                            <div class="kpi-subtext" id="kpi-homologadas-sub">---</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg">
+                    <div class="kpi-card h-100">
+                        <div class="kpi-icon bg-danger bg-opacity-10 text-danger"><i class="fas fa-times-circle"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="kpi-value" id="kpi-nao-homologadas">---</div>
+                            <div class="kpi-label">Inscrições Não Homologadas</div>
+                            <div class="kpi-subtext" id="kpi-nao-homologadas-sub">---</div>
                         </div>
                     </div>
                 </div>
@@ -1097,20 +1134,86 @@
                 </div>
             </div>
             <div class="card-container p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                     <h5 class="fw-bold mb-0 d-none d-md-block">Lista de Homologação</h5>
-                    <div class="d-flex gap-2 flex-grow-1" style="max-width: 700px;">
+                    <div class="d-flex flex-wrap gap-2 align-items-center flex-grow-1 justify-content-end" style="max-width: 900px;">
                         <button class="btn btn-outline-primary" onclick="refreshData(this)" title="Atualizar Tabela">
                             <i class="fas fa-sync-alt"></i>
                         </button>
-                        <div class="input-group flex-grow-1">
+                        <div class="input-group flex-grow-1" style="min-width: 250px; max-width: 400px;">
                             <span class="input-group-text bg-white border-end-0"><i
                                     class="fas fa-search text-muted"></i></span>
                             <input type="text" class="form-control border-start-0 global-search"
-                                placeholder="Buscar por CPF, nome, inscrição ou categoria...">
+                                placeholder="Buscar por CPF, nome, inscrição, categoria ou cidade...">
+                        </div>
+                        <div class="d-flex align-items-center gap-1 bg-white border rounded px-2" style="height: 38px;">
+                            <span class="text-muted small px-1" title="Filtro Alfabético"><i class="fas fa-sort-alpha-down"></i></span>
+                            <select class="form-select form-select-sm border-0 bg-transparent letter-filter-start" style="width: 80px; font-size: 0.85rem; cursor: pointer;" title="Letra Inicial">
+                                <option value="">Início</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="G">G</option>
+                                <option value="H">H</option>
+                                <option value="I">I</option>
+                                <option value="J">J</option>
+                                <option value="K">K</option>
+                                <option value="L">L</option>
+                                <option value="M">M</option>
+                                <option value="N">N</option>
+                                <option value="O">O</option>
+                                <option value="P">P</option>
+                                <option value="Q">Q</option>
+                                <option value="R">R</option>
+                                <option value="S">S</option>
+                                <option value="T">T</option>
+                                <option value="U">U</option>
+                                <option value="V">V</option>
+                                <option value="W">W</option>
+                                <option value="X">X</option>
+                                <option value="Y">Y</option>
+                                <option value="Z">Z</option>
+                            </select>
+                            <span class="text-muted small">até</span>
+                            <select class="form-select form-select-sm border-0 bg-transparent letter-filter-end" style="width: 80px; font-size: 0.85rem; cursor: pointer;" title="Letra Final">
+                                <option value="">Fim</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="G">G</option>
+                                <option value="H">H</option>
+                                <option value="I">I</option>
+                                <option value="J">J</option>
+                                <option value="K">K</option>
+                                <option value="L">L</option>
+                                <option value="M">M</option>
+                                <option value="N">N</option>
+                                <option value="O">O</option>
+                                <option value="P">P</option>
+                                <option value="Q">Q</option>
+                                <option value="R">R</option>
+                                <option value="S">S</option>
+                                <option value="T">T</option>
+                                <option value="U">U</option>
+                                <option value="V">V</option>
+                                <option value="W">W</option>
+                                <option value="X">X</option>
+                                <option value="Y">Y</option>
+                                <option value="Z">Z</option>
+                            </select>
+                            <button class="btn btn-sm btn-link text-danger p-0 px-1 clear-letter-filter animate__animated animate__fadeIn d-none" title="Limpar filtro alfabético">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
+                <div id="letter-filter-alert-doc" class="mb-3 animate__animated animate__fadeIn d-none"></div>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -1122,6 +1225,8 @@
                                 <th onclick="sortTable('doc-table', 2)" style="cursor:pointer">CPF <i
                                         class="fas fa-sort small opacity-50"></i></th>
                                 <th onclick="sortTable('doc-table', 3)" style="cursor:pointer">Data Solicitação <i
+                                        class="fas fa-sort small opacity-50"></i></th>
+                                <th onclick="sortTable('doc-table', 4)" style="cursor:pointer">Cidade <i
                                         class="fas fa-sort small opacity-50"></i></th>
                                 <th>Analista</th>
                                 <th>Analisar</th>
@@ -1137,30 +1242,68 @@
 
         <!-- Tab: Resultado Homologação -->
         <section id="tab-resultado_homologacao" class="tab-pane animate__animated animate__fadeIn">
-            <div class="page-header">
-                <h1>Resultado Homologação</h1>
-                <p class="text-muted small">Visualização das inscrições já analisadas na etapa documental.</p>
+            <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1>Resultado Homologação</h1>
+                    <p class="text-muted small">Visualização das inscrições já analisadas na etapa documental.</p>
+                </div>
+                <div class="d-flex gap-3 flex-wrap align-items-center">
+                    <div class="stat-card bg-white shadow-sm border-0 py-2 px-4 d-flex align-items-center gap-3 status-card-clickable"
+                        data-status="Homologada" onclick="selectStatusFilter('homologacao', 'Homologada')"
+                        style="border-radius: 15px; min-width: 220px; cursor: pointer; border: 1.5px solid transparent !important;">
+                        <div class="icon-wrapper bg-success bg-opacity-10 text-success"
+                            style="width: 45px; height: 45px; font-size: 1.2rem;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-4" id="tab-result-homologados-count">0</div>
+                            <div class="text-muted x-small uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.5px;">HOMOLOGADOS</div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white shadow-sm border-0 py-2 px-4 d-flex align-items-center gap-3 status-card-clickable"
+                        data-status="Não Homologada" onclick="selectStatusFilter('homologacao', 'Não Homologada')"
+                        style="border-radius: 15px; min-width: 220px; cursor: pointer; border: 1.5px solid transparent !important;">
+                        <div class="icon-wrapper bg-danger bg-opacity-10 text-danger"
+                            style="width: 45px; height: 45px; font-size: 1.2rem;">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-4" id="tab-result-reprovados-count">0</div>
+                            <div class="text-muted x-small uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.5px;">NÃO HOMOLOGADOS</div>
+                        </div>
+                    </div>
+                    <button id="btn-clear-homologacao" class="btn btn-sm btn-outline-secondary d-none animate__animated animate__fadeIn" onclick="selectStatusFilter('homologacao', '')" style="border-radius: 12px; height: 38px;">
+                        <i class="fas fa-times-circle me-1"></i> Limpar Filtro
+                    </button>
+                </div>
             </div>
 
             <div class="card-container p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="fw-bold mb-0">Lista de Resultados</h5>
-                    <div class="d-flex gap-2 flex-grow-1" style="max-width: 700px;">
-                        <div class="input-group flex-grow-1">
-                            <span class="input-group-text bg-white border-end-0"><i
-                                    class="fas fa-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 global-search"
-                                placeholder="Buscar por CPF, nome ou inscrição...">
+                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                        <div class="input-group" style="max-width: 380px;">
+                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 global-search" placeholder="Buscar por CPF, nome ou inscrição...">
                         </div>
+                        <button class="btn btn-sm btn-success d-flex align-items-center gap-2" onclick="exportHomologacaoXLS()" title="Exportar para XLS" style="border-radius: 10px; font-size: 0.82rem;">
+                            <i class="fas fa-file-excel"></i> XLS
+                        </button>
+                        <button class="btn btn-sm btn-danger d-flex align-items-center gap-2" onclick="exportHomologacaoPDF()" title="Exportar para PDF" style="border-radius: 10px; font-size: 0.82rem;">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="table-resultado-homologacao">
                         <thead>
                             <tr>
                                 <th>Inscrição</th>
                                 <th>Candidato</th>
                                 <th>CPF</th>
+                                <th>CPF LGPD</th>
                                 <th>Resultado</th>
                                 <th>Ações</th>
                             </tr>
@@ -1175,24 +1318,185 @@
 
         <!-- Tab: Critérios Humanos -->
         <section id="tab-humano" class="tab-pane animate__animated animate__fadeIn">
-            <div class="page-header">
-                <h1>Análise de Critérios Humanos</h1>
+            <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1>Análise de Critérios Humanos</h1>
+                    <p class="text-muted small">Inscrições aguardando validação humana de critérios de desempate.</p>
+                </div>
+                <div class="d-flex gap-3 flex-wrap">
+                    <div class="stat-card bg-white shadow-sm border-0 py-2 px-4 d-flex align-items-center gap-3"
+                        style="border-radius: 15px; min-width: 250px;">
+                        <div class="icon-wrapper bg-warning bg-opacity-10 text-warning"
+                            style="width: 45px; height: 45px; font-size: 1.2rem;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-4" id="tab-humano-pending-count">0</div>
+                            <div class="text-muted x-small uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.5px;">PENDENTES NESTA ETAPA</div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white shadow-sm border-0 py-2 px-4 d-flex align-items-center gap-3"
+                        style="border-radius: 15px; min-width: 250px;">
+                        <div class="icon-wrapper bg-success bg-opacity-10 text-success"
+                            style="width: 45px; height: 45px; font-size: 1.2rem;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-4" id="tab-humano-analyzed-count">0</div>
+                            <div class="text-muted x-small uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.5px;">ANALISADAS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Criteria Count Cards -->
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <div class="flex-fill" style="min-width: 130px; max-width: 200px;">
+                    <div class="kpi-card p-3 h-100 crit-card-filter active-filter" data-criteria="" style="cursor: pointer; border: 1.5px solid var(--border-color); border-radius: 16px;" onclick="selectCriteriaFilter('')">
+                        <div class="kpi-icon bg-secondary bg-opacity-10 text-secondary" style="width: 40px; height: 40px; font-size: 1rem;"><i class="fas fa-th-large"></i></div>
+                        <div>
+                            <div class="fw-bold fs-5" id="crit-count-todos">0</div>
+                            <div class="text-muted" style="font-size: 0.7rem; font-weight: 600; white-space: nowrap;">Todos</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-fill" style="min-width: 130px; max-width: 200px;">
+                    <div class="kpi-card p-3 h-100 crit-card-filter" data-criteria="trabalhadorapp" style="cursor: pointer; border: 1.5px solid var(--border-color); border-radius: 16px;" onclick="selectCriteriaFilter('trabalhadorapp')">
+                        <div class="kpi-icon bg-success bg-opacity-10 text-success" style="width: 40px; height: 40px; font-size: 1rem;"><i class="fas fa-mobile-alt"></i></div>
+                        <div>
+                            <div class="fw-bold fs-5" id="crit-count-app">0</div>
+                            <div class="text-muted" style="font-size: 0.7rem; font-weight: 600; white-space: nowrap;">Trab. App</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-fill" style="min-width: 130px; max-width: 200px;">
+                    <div class="kpi-card p-3 h-100 crit-card-filter" data-criteria="maeatipica" style="cursor: pointer; border: 1.5px solid var(--border-color); border-radius: 16px;" onclick="selectCriteriaFilter('maeatipica')">
+                        <div class="kpi-icon bg-primary bg-opacity-10 text-primary" style="width: 40px; height: 40px; font-size: 1rem;"><i class="fas fa-child"></i></div>
+                        <div>
+                            <div class="fw-bold fs-5" id="crit-count-atipica">0</div>
+                            <div class="text-muted" style="font-size: 0.7rem; font-weight: 600; white-space: nowrap;">Mãe Atípica</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-fill" style="min-width: 130px; max-width: 200px;">
+                    <div class="kpi-card p-3 h-100 crit-card-filter" data-criteria="vitimaviolencia" style="cursor: pointer; border: 1.5px solid var(--border-color); border-radius: 16px;" onclick="selectCriteriaFilter('vitimaviolencia')">
+                        <div class="kpi-icon bg-danger bg-opacity-10 text-danger" style="width: 40px; height: 40px; font-size: 1rem;"><i class="fas fa-house-damage"></i></div>
+                        <div>
+                            <div class="fw-bold fs-5" id="crit-count-violencia">0</div>
+                            <div class="text-muted" style="font-size: 0.7rem; font-weight: 600; white-space: nowrap;">Violência</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-fill" style="min-width: 130px; max-width: 200px;">
+                    <div class="kpi-card p-3 h-100 crit-card-filter" data-criteria="pcd" style="cursor: pointer; border: 1.5px solid var(--border-color); border-radius: 16px;" onclick="selectCriteriaFilter('pcd')">
+                        <div class="kpi-icon bg-info bg-opacity-10 text-info" style="width: 40px; height: 40px; font-size: 1rem;"><i class="fas fa-wheelchair"></i></div>
+                        <div>
+                            <div class="fw-bold fs-5" id="crit-count-pcd">0</div>
+                            <div class="text-muted" style="font-size: 0.7rem; font-weight: 600; white-space: nowrap;">PCD</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-fill" style="min-width: 130px; max-width: 200px;">
+                    <div class="kpi-card p-3 h-100 crit-card-filter" data-criteria="acolhimento" style="cursor: pointer; border: 1.5px solid var(--border-color); border-radius: 16px;" onclick="selectCriteriaFilter('acolhimento')">
+                        <div class="kpi-icon bg-warning bg-opacity-10 text-warning" style="width: 40px; height: 40px; font-size: 1rem;"><i class="fas fa-home"></i></div>
+                        <div>
+                            <div class="fw-bold fs-5" id="crit-count-acolhimento">0</div>
+                            <div class="text-muted" style="font-size: 0.7rem; font-weight: 600; white-space: nowrap;">Acolhimento</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-fill" style="min-width: 130px; max-width: 200px;">
+                    <div class="kpi-card p-3 h-100 crit-card-filter" data-criteria="dependentetrata" style="cursor: pointer; border: 1.5px solid var(--border-color); border-radius: 16px;" onclick="selectCriteriaFilter('dependentetrata')">
+                        <div class="kpi-icon bg-secondary bg-opacity-10 text-secondary" style="width: 40px; height: 40px; font-size: 1rem;"><i class="fas fa-heartbeat"></i></div>
+                        <div>
+                            <div class="fw-bold fs-5" id="crit-count-tratamento">0</div>
+                            <div class="text-muted" style="font-size: 0.7rem; font-weight: 600; white-space: nowrap;">Dep. Tratamento</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-container p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                     <h5 class="fw-bold mb-0 d-none d-md-block">Candidatos para Validação</h5>
-                    <div class="d-flex gap-2 flex-grow-1" style="max-width: 700px;">
+                    <div class="d-flex flex-wrap gap-2 align-items-center flex-grow-1 justify-content-end" style="max-width: 900px;">
                         <button class="btn btn-outline-primary" onclick="refreshData(this)" title="Atualizar Tabela">
                             <i class="fas fa-sync-alt"></i>
                         </button>
-                        <div class="input-group flex-grow-1">
+                        <div class="input-group flex-grow-1" style="min-width: 250px; max-width: 400px;">
                             <span class="input-group-text bg-white border-end-0"><i
                                     class="fas fa-search text-muted"></i></span>
                             <input type="text" class="form-control border-start-0 global-search"
                                 placeholder="Buscar por CPF, nome, inscrição ou categoria...">
                         </div>
+                        <div class="d-flex align-items-center gap-1 bg-white border rounded px-2" style="height: 38px;">
+                            <span class="text-muted small px-1" title="Filtro Alfabético"><i class="fas fa-sort-alpha-down"></i></span>
+                            <select class="form-select form-select-sm border-0 bg-transparent letter-filter-start" style="width: 80px; font-size: 0.85rem; cursor: pointer;" title="Letra Inicial">
+                                <option value="">Início</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="G">G</option>
+                                <option value="H">H</option>
+                                <option value="I">I</option>
+                                <option value="J">J</option>
+                                <option value="K">K</option>
+                                <option value="L">L</option>
+                                <option value="M">M</option>
+                                <option value="N">N</option>
+                                <option value="O">O</option>
+                                <option value="P">P</option>
+                                <option value="Q">Q</option>
+                                <option value="R">R</option>
+                                <option value="S">S</option>
+                                <option value="T">T</option>
+                                <option value="U">U</option>
+                                <option value="V">V</option>
+                                <option value="W">W</option>
+                                <option value="X">X</option>
+                                <option value="Y">Y</option>
+                                <option value="Z">Z</option>
+                            </select>
+                            <span class="text-muted small">até</span>
+                            <select class="form-select form-select-sm border-0 bg-transparent letter-filter-end" style="width: 80px; font-size: 0.85rem; cursor: pointer;" title="Letra Final">
+                                <option value="">Fim</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="G">G</option>
+                                <option value="H">H</option>
+                                <option value="I">I</option>
+                                <option value="J">J</option>
+                                <option value="K">K</option>
+                                <option value="L">L</option>
+                                <option value="M">M</option>
+                                <option value="N">N</option>
+                                <option value="O">O</option>
+                                <option value="P">P</option>
+                                <option value="Q">Q</option>
+                                <option value="R">R</option>
+                                <option value="S">S</option>
+                                <option value="T">T</option>
+                                <option value="U">U</option>
+                                <option value="V">V</option>
+                                <option value="W">W</option>
+                                <option value="X">X</option>
+                                <option value="Y">Y</option>
+                                <option value="Z">Z</option>
+                            </select>
+                            <button class="btn btn-sm btn-link text-danger p-0 px-1 clear-letter-filter animate__animated animate__fadeIn d-none" title="Limpar filtro alfabético">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <div id="letter-filter-alert-human" class="mb-3 animate__animated animate__fadeIn d-none"></div>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -1221,31 +1525,70 @@
 
         <!-- Tab: Resultado Pontuação -->
         <section id="tab-resultado_pontuacao" class="tab-pane animate__animated animate__fadeIn">
-            <div class="page-header">
-                <h1>Resultado Preliminar da Pontuação</h1>
-                <p class="text-muted small">Consolidado de pontuação básica e critérios humanos (apenas para
-                    homologados).</p>
+            <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h1>Resultado Preliminar da Pontuação</h1>
+                    <p class="text-muted small">Consolidado de pontuação básica e critérios humanos (apenas para homologados).</p>
+                </div>
+                <div class="d-flex gap-3 flex-wrap align-items-center">
+                    <div class="stat-card bg-white shadow-sm border-0 py-2 px-4 d-flex align-items-center gap-3 status-card-clickable"
+                        data-status="Homologada" onclick="selectStatusFilter('pontuacao', 'Homologada')"
+                        style="border-radius: 15px; min-width: 220px; cursor: pointer; border: 1.5px solid transparent !important;">
+                        <div class="icon-wrapper bg-success bg-opacity-10 text-success"
+                            style="width: 45px; height: 45px; font-size: 1.2rem;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-4" id="tab-pontuacao-homologados-count">0</div>
+                            <div class="text-muted x-small uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.5px;">HOMOLOGADOS</div>
+                        </div>
+                    </div>
+                    <div class="stat-card bg-white shadow-sm border-0 py-2 px-4 d-flex align-items-center gap-3 status-card-clickable"
+                        data-status="Não Homologada" onclick="selectStatusFilter('pontuacao', 'Não Homologada')"
+                        style="border-radius: 15px; min-width: 220px; cursor: pointer; border: 1.5px solid transparent !important;">
+                        <div class="icon-wrapper bg-danger bg-opacity-10 text-danger"
+                            style="width: 45px; height: 45px; font-size: 1.2rem;">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-4" id="tab-pontuacao-reprovados-count">0</div>
+                            <div class="text-muted x-small uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.5px;">NÃO HOMOLOGADOS</div>
+                        </div>
+                    </div>
+                    <button id="btn-clear-pontuacao" class="btn btn-sm btn-outline-secondary d-none animate__animated animate__fadeIn" onclick="selectStatusFilter('pontuacao', '')" style="border-radius: 12px; height: 38px;">
+                        <i class="fas fa-times-circle me-1"></i> Limpar Filtro
+                    </button>
+                </div>
             </div>
 
             <div class="card-container p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="fw-bold mb-0">Ranking Preliminar</h5>
-                    <div class="d-flex gap-2 flex-grow-1" style="max-width: 700px;">
-                        <div class="input-group flex-grow-1">
-                            <span class="input-group-text bg-white border-end-0"><i
-                                    class="fas fa-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 global-search"
-                                placeholder="Buscar por candidato...">
+                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                        <div class="input-group" style="max-width: 380px;">
+                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 global-search" placeholder="Buscar por candidato, CPF ou inscrição...">
                         </div>
+                        <button class="btn btn-sm btn-success d-flex align-items-center gap-2" onclick="exportPontuacaoXLS()" title="Exportar para XLS" style="border-radius: 10px; font-size: 0.82rem;">
+                            <i class="fas fa-file-excel"></i> XLS
+                        </button>
+                        <button class="btn btn-sm btn-danger d-flex align-items-center gap-2" onclick="exportPontuacaoPDF()" title="Exportar para PDF" style="border-radius: 10px; font-size: 0.82rem;">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="table-resultado-pontuacao">
                         <thead>
                             <tr>
                                 <th>Inscrição</th>
                                 <th>Candidato</th>
+                                <th>CPF</th>
+                                <th>CPF LGPD</th>
+                                <th>Categoria</th>
                                 <th>Status Doc.</th>
                                 <th>Pts Básicos</th>
                                 <th>Pts Humanos</th>
@@ -1269,9 +1612,17 @@
             <div class="card-container p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="fw-bold mb-0">Recursos Registrados</h5>
-                    <button class="btn btn-outline-primary" onclick="refreshData(this)" title="Atualizar Tabela">
-                        <i class="fas fa-sync-alt"></i> Atualizar
-                    </button>
+                    <div class="d-flex gap-2">
+                        <select class="form-select status-filter-recursos" style="min-width: 180px; font-size: 0.85rem;" onchange="renderDataForTab('recursos')">
+                            <option value="">Todos os Julgamentos</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Deferido">Deferido</option>
+                            <option value="Indeferido">Indeferido</option>
+                        </select>
+                        <button class="btn btn-outline-primary" onclick="refreshData(this)" title="Atualizar Tabela">
+                            <i class="fas fa-sync-alt"></i> Atualizar
+                        </button>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table">
@@ -1639,6 +1990,77 @@
             criterio: null
         };
 
+        window.letterFilterStart = '';
+        window.letterFilterEnd = '';
+
+        window.selectedCriteriaFilter = '';
+        window.selectedStatusFilterHomologacao = '';
+        window.selectedStatusFilterPontuacao = '';
+
+        function selectStatusFilter(tab, status) {
+            if (tab === 'homologacao') {
+                window.selectedStatusFilterHomologacao = status;
+
+                // Update visual active state
+                document.querySelectorAll('#tab-resultado_homologacao .status-card-clickable').forEach(card => {
+                    if (card.dataset.status === status) {
+                        card.classList.add('active-filter');
+                    } else {
+                        card.classList.remove('active-filter');
+                    }
+                });
+
+                // Show/hide clear button
+                const btnClear = document.getElementById('btn-clear-homologacao');
+                if (btnClear) {
+                    if (status) {
+                        btnClear.classList.remove('d-none');
+                    } else {
+                        btnClear.classList.add('d-none');
+                    }
+                }
+
+                renderDataForTab('resultado_homologacao');
+            } else if (tab === 'pontuacao') {
+                window.selectedStatusFilterPontuacao = status;
+
+                // Update visual active state
+                document.querySelectorAll('#tab-resultado_pontuacao .status-card-clickable').forEach(card => {
+                    if (card.dataset.status === status) {
+                        card.classList.add('active-filter');
+                    } else {
+                        card.classList.remove('active-filter');
+                    }
+                });
+
+                // Show/hide clear button
+                const btnClear = document.getElementById('btn-clear-pontuacao');
+                if (btnClear) {
+                    if (status) {
+                        btnClear.classList.remove('d-none');
+                    } else {
+                        btnClear.classList.add('d-none');
+                    }
+                }
+
+                renderDataForTab('resultado_pontuacao');
+            }
+        }
+        function selectCriteriaFilter(criteria) {
+            window.selectedCriteriaFilter = criteria;
+
+            // Update visual active state
+            document.querySelectorAll('.crit-card-filter').forEach(card => {
+                if (card.dataset.criteria === criteria) {
+                    card.classList.add('active-filter');
+                } else {
+                    card.classList.remove('active-filter');
+                }
+            });
+
+            renderDataForTab('humano');
+        }
+
         function isMobile() {
             return window.innerWidth < 992;
         }
@@ -1750,14 +2172,78 @@
                 }
             });
 
+            // Listener para Filtro Alfabético
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('letter-filter-start') || e.target.classList.contains('letter-filter-end')) {
+                    if (e.target.classList.contains('letter-filter-start')) {
+                        window.letterFilterStart = e.target.value;
+                    } else {
+                        window.letterFilterEnd = e.target.value;
+                    }
+                    
+                    // Sincronizar os valores dos selects em todas as abas
+                    document.querySelectorAll('.letter-filter-start').forEach(sel => {
+                        sel.value = window.letterFilterStart;
+                    });
+                    document.querySelectorAll('.letter-filter-end').forEach(sel => {
+                        sel.value = window.letterFilterEnd;
+                    });
+
+                    // Mostrar ou esconder botão de limpar
+                    const hasFilter = window.letterFilterStart || window.letterFilterEnd;
+                    document.querySelectorAll('.clear-letter-filter').forEach(btn => {
+                        if (hasFilter) {
+                            btn.classList.remove('d-none');
+                        } else {
+                            btn.classList.add('d-none');
+                        }
+                    });
+
+                    // Re-renderizar aba ativa
+                    const activeTabId = document.querySelector('.tab-pane.active').id.replace('tab-', '');
+                    renderDataForTab(activeTabId);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                const clearBtn = e.target.closest('.clear-letter-filter');
+                if (clearBtn) {
+                    window.letterFilterStart = '';
+                    window.letterFilterEnd = '';
+                    
+                    document.querySelectorAll('.letter-filter-start').forEach(sel => {
+                        sel.value = '';
+                    });
+                    document.querySelectorAll('.letter-filter-end').forEach(sel => {
+                        sel.value = '';
+                    });
+                    document.querySelectorAll('.clear-letter-filter').forEach(btn => {
+                        btn.classList.add('d-none');
+                    });
+
+                    const activeTabId = document.querySelector('.tab-pane.active').id.replace('tab-', '');
+                    renderDataForTab(activeTabId);
+                }
+            });
+
             // Inatividade: 15 minutos (900.000 ms)
             let inactivityTimeout;
-            const logoutUrl = 'https://login.recife.pe.gov.br/auth/realms/prefeitura/protocol/openid-connect/openid-connect/logout?redirect_uri=https://cnhrecife.recife.pe.gov.br/portal-adm';
+            const logoutUrl = 'https://login.recife.pe.gov.br/auth/realms/prefeitura/protocol/openid-connect/logout?redirect_uri=https://cnhrecife.recife.pe.gov.br/portal-adm';
 
             function resetInactivityTimer() {
                 clearTimeout(inactivityTimeout);
                 inactivityTimeout = setTimeout(() => {
-                    window.location.href = logoutUrl;
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Sessão Expirada',
+                        text: 'Sua sessão foi encerrada por inatividade. Você será redirecionado para autenticação.',
+                        confirmButtonText: '<i class="fas fa-sign-in-alt me-2"></i>Fazer Login Novamente',
+                        confirmButtonColor: '#0046ad',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => {
+                        window.location.href = logoutUrl;
+                    });
                 }, 15 * 60 * 1000);
             }
 
@@ -1839,7 +2325,9 @@
             let pendingDoc = 0;
             let humanCriteria = 0;
             let approvedCount = 0;
+            let rejectedCount = 0;
 
+            let humanAnalyzed = 0;
             for (const e of allEnrollments) {
                 const status = getHomologacaoStatus(e);
                 if (e.atividade_habilitada === "ATV-001" && status === "Em análise") {
@@ -1850,12 +2338,73 @@
                 }
                 if (status === "Homologada") {
                     approvedCount++;
+                } else if (status === "Não Homologada") {
+                    rejectedCount++;
+                }
+
+                // Count analyzed criteria:
+                // If it has validations or has score_final or is past ATV-002 and declared criteria
+                const hasValidations = e.validacoes !== undefined && e.validacoes !== null && e.validacoes !== "";
+                const hasScore = e.score_final !== undefined && e.score_final !== null && e.score_final !== "";
+                const isPastHuman = e.atividade_habilitada !== "ATV-002" && e.atividade_habilitada !== "ATV-001";
+                const declaredHuman = isSim(e.trabalhadorapp) || isSim(e.maeatipica) || isSim(e.vitimaviolencia) || isSim(e.acolhimento) || isSim(e.dependentetrata);
+
+                if (hasValidations || hasScore || (isPastHuman && declaredHuman)) {
+                    humanAnalyzed++;
                 }
             }
+
+            let critTodos = 0;
+            let critApp = 0;
+            let critAtipica = 0;
+            let critViolencia = 0;
+            let critPcd = 0;
+            let critAcolhimento = 0;
+            let critTratamento = 0;
+
+            for (const e of allEnrollments) {
+                if (e.atividade_habilitada === "ATV-002") {
+                    let hasCrit = false;
+                    if (isSim(e.trabalhadorapp)) { critApp++; hasCrit = true; }
+                    if (isSim(e.maeatipica)) { critAtipica++; hasCrit = true; }
+                    if (isSim(e.vitimaviolencia)) { critViolencia++; hasCrit = true; }
+                    if (isSim(e.pcd)) { critPcd++; hasCrit = true; }
+                    if (isSim(e.acolhimento)) { critAcolhimento++; hasCrit = true; }
+                    if (isSim(e.dependentetrata)) { critTratamento++; hasCrit = true; }
+                    if (hasCrit) critTodos++;
+                }
+            }
+            critTodos = humanCriteria;
+
+            if (document.getElementById('crit-count-todos')) document.getElementById('crit-count-todos').innerText = critTodos;
+            if (document.getElementById('crit-count-app')) document.getElementById('crit-count-app').innerText = critApp;
+            if (document.getElementById('crit-count-atipica')) document.getElementById('crit-count-atipica').innerText = critAtipica;
+            if (document.getElementById('crit-count-violencia')) document.getElementById('crit-count-violencia').innerText = critViolencia;
+            if (document.getElementById('crit-count-pcd')) document.getElementById('crit-count-pcd').innerText = critPcd;
+            if (document.getElementById('crit-count-acolhimento')) document.getElementById('crit-count-acolhimento').innerText = critAcolhimento;
+            if (document.getElementById('crit-count-tratamento')) document.getElementById('crit-count-tratamento').innerText = critTratamento;
 
             document.getElementById('count-pending').innerText = pendingDoc;
             if (document.getElementById('tab-doc-pending-count')) {
                 document.getElementById('tab-doc-pending-count').innerText = pendingDoc;
+            }
+            if (document.getElementById('tab-humano-pending-count')) {
+                document.getElementById('tab-humano-pending-count').innerText = humanCriteria;
+            }
+            if (document.getElementById('tab-humano-analyzed-count')) {
+                document.getElementById('tab-humano-analyzed-count').innerText = humanAnalyzed;
+            }
+            if (document.getElementById('tab-result-homologados-count')) {
+                document.getElementById('tab-result-homologados-count').innerText = approvedCount;
+            }
+            if (document.getElementById('tab-result-reprovados-count')) {
+                document.getElementById('tab-result-reprovados-count').innerText = rejectedCount;
+            }
+            if (document.getElementById('tab-pontuacao-homologados-count')) {
+                document.getElementById('tab-pontuacao-homologados-count').innerText = approvedCount;
+            }
+            if (document.getElementById('tab-pontuacao-reprovados-count')) {
+                document.getElementById('tab-pontuacao-reprovados-count').innerText = rejectedCount;
             }
             document.getElementById('count-human').innerText = humanCriteria;
             document.getElementById('count-approved').innerText = approvedCount;
@@ -1927,27 +2476,32 @@
         }
 
         function getHomologacaoStatus(e) {
-            const pairs = [
-                ['analiseinscricao', 'julinscricao'],
-                ['analiseredeprote', 'julredeprotecao'],
-                ['analisesociofami', 'julsociofamiliar'],
-                ['analisesocioassi', 'julsocioassisten'],
-                ['analisesocioocup', 'julsocioocupacio'],
-                ['analisetempo', 'julrectempo'],
-                ['analisedepterape', 'juldepterapeutic']
-            ];
+            const hasAnalise = (e.analiseinscricao !== null && e.analiseinscricao !== undefined && e.analiseinscricao !== "") ||
+                              (e.julinscricao !== null && e.julinscricao !== undefined && e.julinscricao !== "");
 
-            const allNull = pairs.every(([f1, f2]) =>
-                (e[f1] === null || e[f1] === undefined || e[f1] === "") &&
-                (e[f2] === null || e[f2] === undefined || e[f2] === "")
-            );
-
-            if (allNull && e.atividade_habilitada === "ATV-001") {
+            if (!hasAnalise && e.atividade_habilitada === "ATV-001") {
                 return "Em análise";
             }
 
-            const isHomologada = pairs.every(([f1, f2]) => isTrue(e[f1]) || isTrue(e[f2]));
+            const isHomologada = isTrue(e.analiseinscricao) || isTrue(e.julinscricao);
             return isHomologada ? "Homologada" : "Não Homologada";
+        }
+
+        function getRecursoStatus(e) {
+            if (e.atividade_habilitada === 'ATV-007') {
+                if (e.julinscricao === null || e.julinscricao === undefined || e.julinscricao === '') return 'Pendente';
+                return isTrue(e.julinscricao) ? 'Deferido' : 'Indeferido';
+            } else if (e.atividade_habilitada === 'ATV-010') {
+                if (e.julpontuacao === null || e.julpontuacao === undefined || e.julpontuacao === '') return 'Pendente';
+                return isTrue(e.julpontuacao) ? 'Deferido' : 'Indeferido';
+            }
+            if (e.julinscricao !== null && e.julinscricao !== undefined && e.julinscricao !== '') {
+                return isTrue(e.julinscricao) ? 'Deferido' : 'Indeferido';
+            }
+            if (e.julpontuacao !== null && e.julpontuacao !== undefined && e.julpontuacao !== '') {
+                return isTrue(e.julpontuacao) ? 'Deferido' : 'Indeferido';
+            }
+            return 'Pendente';
         }
 
         function isSim(v) {
@@ -2477,17 +3031,31 @@
                     return getCatPrio(e.categoria) === pFilter;
                 });
 
-                // Selecionar Ampla (Pega os primeiros em ordem de ranking, independente de ser atípica ou não)
-                let selAmpla = 0;
-                for (const cand of available) {
-                    if (selAmpla >= qtdAmpla) break;
-                    if (!selectedRankingIds.has(cand.inscricao)) {
-                        selectedRankingIds.add(cand.inscricao);
-                        selAmpla++;
-                    }
+                // Selecionar Ampla com garantia de no mínimo 10% de cota atípica
+                if (qtdAmpla > 0) {
+                    const minAtipica = Math.ceil(qtdAmpla * 0.1);
+                    
+                    const atipicosAvailable = available.filter(e => isAtipicaCandidate(e));
+                    const amplaAvailable = available.filter(e => !isAtipicaCandidate(e));
+
+                    // 1. Pegar os top minAtipica candidatos atípicos
+                    const selectedAtipicos = atipicosAvailable.slice(0, minAtipica);
+
+                    // 2. Juntar os atípicos restantes e os ampla em uma lista geral e ordenar por rank geral
+                    const remainingAtipicos = atipicosAvailable.slice(selectedAtipicos.length);
+                    const generalRemaining = remainingAtipicos.concat(amplaAvailable);
+                    generalRemaining.sort((a, b) => (parseInt(a.rank_geral) || 999999) - (parseInt(b.rank_geral) || 999999));
+
+                    // 3. Preencher o restante das vagas com os melhores posicionados no geral
+                    const remVacancies = Math.max(0, qtdAmpla - selectedAtipicos.length);
+                    const selectedGeneral = generalRemaining.slice(0, remVacancies);
+
+                    // 4. Adicionar todos os selecionados aos IDs selecionados
+                    selectedAtipicos.forEach(cand => selectedRankingIds.add(cand.inscricao));
+                    selectedGeneral.forEach(cand => selectedRankingIds.add(cand.inscricao));
                 }
 
-                // Selecionar Atípica
+                // Selecionar Atípica adicional (se o usuário especificou quantidade atípica extra manualmente)
                 let selAtipica = 0;
                 for (const cand of available) {
                     if (selAtipica >= qtdAtipica) break;
@@ -2674,6 +3242,16 @@
             </span>`;
         }
 
+        function renderCidadeBadge(e) {
+            const cidade = (e.cidade || e.cidadeuc || '').trim();
+            if (!cidade) return '<span class="text-muted small">---</span>';
+            const isRecife = cidade.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes('recife');
+            if (!isRecife) {
+                return `<span class="badge bg-danger text-white" style="font-size: 0.75rem;"><i class="fas fa-exclamation-triangle me-1"></i>${cidade}</span>`;
+            }
+            return `<span class="small">${cidade}</span>`;
+        }
+
         function renderDataForTab(tabId) {
             if (tabId === 'cronograma') {
                 renderTimeline();
@@ -2683,12 +3261,29 @@
 
             const query = (window.currentSearchQuery || '').toLowerCase();
             const filtered = allEnrollments.filter(e => {
-                if (!query) return true;
-                const cat = formatCategoria(e.categoria).toLowerCase();
-                return (e.nomecompleto || '').toLowerCase().includes(query) ||
-                    (e.cpf || '').includes(query) ||
-                    (e.inscricao || '').toLowerCase().includes(query) ||
-                    cat.includes(query);
+                if (query) {
+                    const cat = formatCategoria(e.categoria).toLowerCase();
+                    const cidadeSearch = (e.cidade || e.cidadeuc || '').toLowerCase();
+                    const matchesSearch = (e.nomecompleto || '').toLowerCase().includes(query) ||
+                        (e.cpf || '').includes(query) ||
+                        (e.inscricao || '').toLowerCase().includes(query) ||
+                        cat.includes(query) ||
+                        cidadeSearch.includes(query);
+                    if (!matchesSearch) return false;
+                }
+
+                if (window.letterFilterStart || window.letterFilterEnd) {
+                    const name = (e.nomecompleto || '').trim().toUpperCase();
+                    if (name.length > 0) {
+                        const firstChar = name.charAt(0);
+                        if (window.letterFilterStart && firstChar < window.letterFilterStart.toUpperCase()) return false;
+                        if (window.letterFilterEnd && firstChar > window.letterFilterEnd.toUpperCase()) return false;
+                    } else {
+                        return false;
+                    }
+                }
+
+                return true;
             });
 
             const me = getCurrentAnalyst().trim();
@@ -2728,12 +3323,43 @@
 
             if (tabId === 'homologacao' && docBody) {
                 const docList = filtered.filter(e => e.atividade_habilitada === "ATV-001" && getHomologacaoStatus(e) === "Em análise").sort(prioritySort);
+                
+                // Update alphabetical filter count card
+                const alertDoc = document.getElementById('letter-filter-alert-doc');
+                if (alertDoc) {
+                    if (window.letterFilterStart || window.letterFilterEnd) {
+                        const count = docList.length;
+                        alertDoc.innerHTML = `
+                            <div class="alert alert-info border-0 shadow-sm d-flex align-items-center justify-content-between p-3 animate__animated animate__fadeIn" style="background: linear-gradient(135deg, rgba(0, 70, 173, 0.08) 0%, rgba(0, 70, 173, 0.02) 100%); border-left: 4px solid var(--primary) !important; border-radius: 12px;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background-color: rgba(0, 70, 173, 0.15); width: 40px; height: 40px;">
+                                        <i class="fas fa-sort-alpha-down fs-5" style="color: var(--primary);"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.95rem;">Filtro Alfabético Ativo</h6>
+                                        <small class="text-muted">Mostrando candidatos com nome iniciando de <span class="fw-bold text-dark">${window.letterFilterStart || 'A'}</span> até <span class="fw-bold text-dark">${window.letterFilterEnd || 'Z'}</span></small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge rounded-pill fs-6 px-3 py-2 fw-semibold" style="background-color: var(--primary); color: #ffffff;">
+                                        ${count} ${count === 1 ? 'inscrição selecionada' : 'inscrições selecionadas'}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                        alertDoc.classList.remove('d-none');
+                    } else {
+                        alertDoc.classList.add('d-none');
+                    }
+                }
+
                 docBody.innerHTML = docList.map(e => `
                     <tr>
                         <td class="small fw-bold">${e.inscricao || 'PENDENTE'}</td>
                         <td>${e.nomecompleto}</td>
                         <td>${e.cpf}</td>
                         <td>${formatDate(e.created_at, true)}</td>
+                        <td>${renderCidadeBadge(e)}</td>
                         <td>${renderAnalystTag(e)}</td>
                         <td><button class="btn btn-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro}', false, 'homologacao')">Analisar</button></td>
                     </tr>
@@ -2742,7 +3368,18 @@
 
             if (tabId === 'resultado_homologacao' && document.getElementById('res-homologacao-table')) {
                 const resBody = document.getElementById('res-homologacao-table');
-                const resList = filtered.filter(e => getHomologacaoStatus(e) !== "Em análise").sort((a, b) => (b.inscricao || '').localeCompare(a.inscricao || ''));
+                let resList = filtered.filter(e => getHomologacaoStatus(e) !== "Em análise");
+
+                const selectedStatus = window.selectedStatusFilterHomologacao || '';
+                if (selectedStatus) {
+                    resList = resList.filter(e => getHomologacaoStatus(e) === selectedStatus);
+                }
+
+                // Ordenar por inscrição (crescente)
+                resList.sort((a, b) => (a.inscricao || '').localeCompare(b.inscricao || ''));
+
+                // Guardar lista renderizada para exportação
+                window._lastHomologacaoList = resList;
 
                 resBody.innerHTML = resList.map(e => {
                     const status = getHomologacaoStatus(e);
@@ -2751,17 +3388,35 @@
                         <tr>
                             <td class="small fw-bold">${e.inscricao || '---'}</td>
                             <td>${e.nomecompleto}</td>
-                            <td>${e.cpf}</td>
+                            <td class="font-monospace small">${e.cpf || '---'}</td>
+                            <td class="font-monospace small text-muted">${maskCPF(e.cpf)}</td>
                             <td><span class="badge ${badgeClass}">${status}</span></td>
-                            <td><button class="btn btn-outline-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro || e.idcadastro}', true)" title="Visualizar Inscrição"><i class="fas fa-eye"></i></button></td>
+                            <td><button class="btn btn-outline-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro || e.idcadastro}', true, 'resultado_homologacao')" title="Visualizar Inscrição"><i class="fas fa-eye"></i></button></td>
                         </tr>
                     `;
-                }).join('') || '<tr><td colspan="5" class="text-center py-4">Nenhum resultado disponível.</td></tr>';
+                }).join('') || '<tr><td colspan="6" class="text-center py-4">Nenhum resultado disponível.</td></tr>';
             }
 
             if (tabId === 'resultado_pontuacao' && document.getElementById('res-pontuacao-table')) {
                 const scoreBody = document.getElementById('res-pontuacao-table');
-                const scoreList = filtered.sort((a, b) => calculatePoints(b) - calculatePoints(a));
+                let scoreList = [...filtered];
+
+                const selectedStatus = window.selectedStatusFilterPontuacao || '';
+                if (selectedStatus) {
+                    scoreList = scoreList.filter(e => getHomologacaoStatus(e) === selectedStatus);
+                }
+
+                // Ordenar por categoria e depois por TOTAL (decrescente)
+                scoreList.sort((a, b) => {
+                    const catA = formatCategoria(a.categoria) || '';
+                    const catB = formatCategoria(b.categoria) || '';
+                    const catCmp = catA.localeCompare(catB);
+                    if (catCmp !== 0) return catCmp;
+                    return calculatePoints(b) - calculatePoints(a);
+                });
+
+                // Guardar lista renderizada para exportação
+                window._lastPontuacaoList = scoreList;
 
                 scoreBody.innerHTML = scoreList.map(e => {
                     const statusDoc = getHomologacaoStatus(e);
@@ -2776,6 +3431,9 @@
                         <tr>
                             <td class="small fw-bold">${e.inscricao || '---'}</td>
                             <td>${e.nomecompleto}</td>
+                            <td class="font-monospace small">${e.cpf || '---'}</td>
+                            <td class="font-monospace small text-muted">${maskCPF(e.cpf)}</td>
+                            <td><span class="badge bg-primary bg-opacity-75">${formatCategoria(e.categoria) || '---'}</span></td>
                             <td><span class="badge ${badgeClass}">${statusDoc}</span></td>
                             <td>${scores.base}</td>
                             <td>${scores.human}</td>
@@ -2783,11 +3441,47 @@
                             <td><button class="btn btn-outline-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro || e.idcadastro}', true)" title="Visualizar Inscrição"><i class="fas fa-eye"></i></button></td>
                         </tr>
                     `;
-                }).join('') || '<tr><td colspan="7" class="text-center py-4">Nenhum dado disponível.</td></tr>';
+                }).join('') || '<tr><td colspan="10" class="text-center py-4">Nenhum dado disponível.</td></tr>';
             }
 
             if (tabId === 'humano' && humanBody) {
-                const humanList = filtered.filter(e => e.atividade_habilitada === "ATV-002").sort(prioritySort);
+                let humanList = filtered.filter(e => e.atividade_habilitada === "ATV-002");
+
+                const selectedCriteria = window.selectedCriteriaFilter || '';
+                if (selectedCriteria) {
+                    humanList = humanList.filter(e => isSim(e[selectedCriteria]));
+                }
+
+                humanList.sort(prioritySort);
+
+                // Update alphabetical filter count card
+                const alertHuman = document.getElementById('letter-filter-alert-human');
+                if (alertHuman) {
+                    if (window.letterFilterStart || window.letterFilterEnd) {
+                        const count = humanList.length;
+                        alertHuman.innerHTML = `
+                            <div class="alert alert-info border-0 shadow-sm d-flex align-items-center justify-content-between p-3 animate__animated animate__fadeIn" style="background: linear-gradient(135deg, rgba(147, 51, 234, 0.08) 0%, rgba(147, 51, 234, 0.02) 100%); border-left: 4px solid #9333ea !important; border-radius: 12px;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background-color: rgba(147, 51, 234, 0.15); width: 40px; height: 40px;">
+                                        <i class="fas fa-sort-alpha-down fs-5" style="color: #9333ea;"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.95rem;">Filtro Alfabético Ativo</h6>
+                                        <small class="text-muted">Mostrando candidatos com nome iniciando de <span class="fw-bold text-dark">${window.letterFilterStart || 'A'}</span> até <span class="fw-bold text-dark">${window.letterFilterEnd || 'Z'}</span></small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge rounded-pill fs-6 px-3 py-2 fw-semibold" style="background-color: #9333ea; color: #ffffff;">
+                                        ${count} ${count === 1 ? 'inscrição selecionada' : 'inscrições selecionadas'}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                        alertHuman.classList.remove('d-none');
+                    } else {
+                        alertHuman.classList.add('d-none');
+                    }
+                }
 
                 humanBody.innerHTML = humanList.map(e => `
                     <tr>
@@ -2804,21 +3498,41 @@
 
             if (tabId === 'recursos' && document.getElementById('resource-table')) {
                 const resourceBody = document.getElementById('resource-table');
-                const resourceList = filtered.filter(e => e.atividade_habilitada === "ATV-007" || e.atividade_habilitada === "ATV-010").sort(prioritySort);
+                let resourceList = filtered.filter(e => e.atividade_habilitada === "ATV-007" || e.atividade_habilitada === "ATV-010");
+
+                const filterEl = document.querySelector('.status-filter-recursos');
+                const selectedStatus = filterEl ? filterEl.value : '';
+                if (selectedStatus) {
+                    resourceList = resourceList.filter(e => getRecursoStatus(e) === selectedStatus);
+                }
+
+                resourceList.sort(prioritySort);
 
                 if (resourceList.length === 0) {
-                    resourceBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">Nenhum recurso pendente para esta etapa.</td></tr>';
+                    resourceBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">Nenhum recurso correspondente ao filtro.</td></tr>';
                 } else {
-                    resourceBody.innerHTML = resourceList.map(e => `
-                        <tr>
-                            <td class="small fw-bold">${e.inscricao || '---'}</td>
-                            <td><span class="badge bg-secondary opacity-75">${e.atividade_habilitada === 'ATV-007' ? 'Inscrição' : 'Pontuação'}</span></td>
-                            <td>${e.nomecompleto}</td>
-                            <td class="small text-truncate" style="max-width: 200px;" title="${e.justificativa_recurso || ''}">${e.justificativa_recurso || '---'}</td>
-                            <td>${formatDate(e.created_at, true)}</td>
-                            <td><button class="btn btn-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro}')">Julgar</button></td>
-                        </tr>
-                    `).join('');
+                    resourceBody.innerHTML = resourceList.map(e => {
+                        const status = getRecursoStatus(e);
+                        let badgeClass = 'bg-warning text-dark';
+                        if (status === 'Deferido') badgeClass = 'bg-success';
+                        else if (status === 'Indeferido') badgeClass = 'bg-danger';
+
+                        return `
+                            <tr>
+                                <td class="small fw-bold">${e.inscricao || '---'}</td>
+                                <td><span class="badge bg-secondary opacity-75">${e.atividade_habilitada === 'ATV-007' ? 'Inscrição' : 'Pontuação'}</span></td>
+                                <td>${e.nomecompleto}</td>
+                                <td class="small text-truncate" style="max-width: 200px;" title="${e.justificativa_recurso || ''}">${e.justificativa_recurso || '---'}</td>
+                                <td>${formatDate(e.created_at, true)}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge ${badgeClass}">${status}</span>
+                                        <button class="btn btn-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro}')">${status === 'Pendente' ? 'Julgar' : 'Visualizar'}</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
                 }
             }
 
@@ -2947,6 +3661,10 @@
                 document.getElementById('kpi-app-workers').innerText = '0';
                 document.getElementById('kpi-top-rpa').innerText = '---';
                 document.getElementById('kpi-gender-ratio').innerText = '---';
+                if (document.getElementById('kpi-homologadas')) document.getElementById('kpi-homologadas').innerText = '0';
+                if (document.getElementById('kpi-nao-homologadas')) document.getElementById('kpi-nao-homologadas').innerText = '0';
+                if (document.getElementById('kpi-homologadas-sub')) document.getElementById('kpi-homologadas-sub').innerText = '---';
+                if (document.getElementById('kpi-nao-homologadas-sub')) document.getElementById('kpi-nao-homologadas-sub').innerText = '---';
                 document.getElementById('dash-last-update').innerText = new Date().toLocaleTimeString();
                 return;
             }
@@ -2999,6 +3717,10 @@
                 document.getElementById('kpi-app-workers').innerText = '0';
                 document.getElementById('kpi-top-rpa').innerText = '---';
                 document.getElementById('kpi-gender-ratio').innerText = '---';
+                if (document.getElementById('kpi-homologadas')) document.getElementById('kpi-homologadas').innerText = '0';
+                if (document.getElementById('kpi-nao-homologadas')) document.getElementById('kpi-nao-homologadas').innerText = '0';
+                if (document.getElementById('kpi-homologadas-sub')) document.getElementById('kpi-homologadas-sub').innerText = '---';
+                if (document.getElementById('kpi-nao-homologadas-sub')) document.getElementById('kpi-nao-homologadas-sub').innerText = '---';
                 return;
             }
 
@@ -3072,6 +3794,21 @@
             } else {
                 document.getElementById('kpi-top-rpa').innerText = '---';
                 document.getElementById('kpi-top-rpa-sub').innerText = 'Nenhuma RPA identificada';
+            }
+
+            // Homologadas and Não Homologadas KPI
+            const homologadasCount = data.filter(e => getHomologacaoStatus(e) === 'Homologada').length;
+            const naoHomologadasCount = data.filter(e => getHomologacaoStatus(e) === 'Não Homologada').length;
+
+            if (document.getElementById('kpi-homologadas')) {
+                document.getElementById('kpi-homologadas').innerText = homologadasCount.toLocaleString('pt-BR');
+                const pct = totalCount > 0 ? ((homologadasCount / totalCount) * 100).toFixed(1) : 0;
+                document.getElementById('kpi-homologadas-sub').innerText = `${pct}% do total geral`;
+            }
+            if (document.getElementById('kpi-nao-homologadas')) {
+                document.getElementById('kpi-nao-homologadas').innerText = naoHomologadasCount.toLocaleString('pt-BR');
+                const pct = totalCount > 0 ? ((naoHomologadasCount / totalCount) * 100).toFixed(1) : 0;
+                document.getElementById('kpi-nao-homologadas-sub').innerText = `${pct}% do total geral`;
             }
 
             document.getElementById('dash-last-update').innerText = new Date().toLocaleTimeString();
@@ -3544,19 +4281,21 @@
             }
 
             if (isReadOnly) {
-                const acatado = e.acatado;
-                const justDoc = e.justificativa || e.justificativa_documental || '';
-                const statusDocBadge = acatado === true || acatado === 'true'
+                const acatado = (e.analiseinscricao !== undefined && e.analiseinscricao !== null && e.analiseinscricao !== '')
+                    ? isTrue(e.analiseinscricao)
+                    : (e.acatado === true || e.acatado === 'true');
+                const justDoc = e.justinscricao || e.justificativa || e.justificativa_documental || '';
+                const statusDocBadge = acatado === true
                     ? '<span class="badge bg-success fs-6 px-3 py-2"><i class="fas fa-check me-1"></i>INSCRI\u00c7\u00c3O ACATADA</span>'
-                    : acatado === false || acatado === 'false'
+                    : acatado === false
                         ? '<span class="badge bg-danger fs-6 px-3 py-2"><i class="fas fa-times me-1"></i>INSCRI\u00c7\u00c3O N\u00c3O ACATADA</span>'
                         : '';
 
                 if (statusDocBadge) {
                     resultadoCard.innerHTML = `
-                        <div class="card-container p-4 mb-4 border-start border-4 ${(acatado === true || acatado === 'true') ? 'border-success' : 'border-danger'
+                        <div class="card-container p-4 mb-4 border-start border-4 ${acatado ? 'border-success' : 'border-danger'
                         }">
-                            <h6 class="fw-bold mb-3 ${(acatado === true || acatado === 'true') ? 'text-success' : 'text-danger'
+                            <h6 class="fw-bold mb-3 ${acatado ? 'text-success' : 'text-danger'
                         }"><i class="fas fa-file-contract me-2"></i>RESULTADO DA AN\u00c1LISE DOCUMENTAL</h6>
                             <div class="mb-3">${statusDocBadge}</div>
                             ${justDoc ? `
@@ -3633,6 +4372,29 @@
             const rCap = e.rendapercapita ? parseFloat(e.rendapercapita) : 0;
             document.getElementById('det-renda-capita').innerText = rCap ? `R$ ${rCap.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '---';
 
+            // Dados de Endereço
+            document.getElementById('det-cep').innerText = e.cep || e.cepuc || '---';
+            document.getElementById('det-logradouro').innerText = e.logradouro || e.logradourouc || '---';
+            document.getElementById('det-numero').innerText = e.numero || e.numerolimpo || '---';
+            document.getElementById('det-complemento').innerText = e.complemento || '---';
+            document.getElementById('det-bairro').innerText = e.bairro || e.bairrouc || '---';
+
+            const cidadeRaw = e.cidade || e.cidadeuc || '';
+            const cidadeVal = cidadeRaw.trim();
+            const detCidadeEl = document.getElementById('det-cidade');
+            if (cidadeVal) {
+                const isRecife = cidadeVal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes('recife');
+                if (!isRecife) {
+                    detCidadeEl.innerHTML = `<span class="badge bg-danger text-white px-2 py-1"><i class="fas fa-exclamation-triangle me-1"></i>${cidadeVal}</span>`;
+                } else {
+                    detCidadeEl.innerText = cidadeVal;
+                }
+            } else {
+                detCidadeEl.innerText = '---';
+            }
+
+            document.getElementById('det-uf').innerText = e.uf || e.ufuc || '---';
+
             // 2. Calcular Faixa de Tempo App e Pontos Individuais
             const getAppDetail = () => {
                 if (!isSim(e.trabalhadorapp) || !e.inicioapp) return '---';
@@ -3659,7 +4421,7 @@
             const cardHuman = document.getElementById('card-criterios-humanos');
             const sidebarPoints = document.querySelector('.col-lg-4');
 
-            if (e.atividade_habilitada === "ATV-001") {
+            if (e.atividade_habilitada === "ATV-001" || resolvedSourceTab === "resultado_homologacao" || resolvedSourceTab === "homologacao") {
                 if (cardDoc) cardDoc.style.display = 'block';
                 if (cardHuman) cardHuman.style.display = 'none';
                 // Sidebar de pontos permanece visível a pedido do usuário
@@ -3668,10 +4430,12 @@
                 const acatarSwitch = document.getElementById('val_acatar_inscricao');
                 const justDocText = document.getElementById('just_acatar_inscricao');
 
-                acatarSwitch.checked = (e.acatado === true || e.acatado === 'true');
+                acatarSwitch.checked = (e.analiseinscricao !== undefined && e.analiseinscricao !== null && e.analiseinscricao !== '') 
+                    ? isTrue(e.analiseinscricao) 
+                    : (e.acatado === true || e.acatado === 'true');
                 acatarSwitch.disabled = isReadOnly;
 
-                justDocText.value = e.justificativa || e.justificativa_documental || '';
+                justDocText.value = e.justinscricao || e.justificativa || e.justificativa_documental || '';
                 justDocText.disabled = isReadOnly;
 
                 document.getElementById('wrapper-justificativa-doc').style.display = (acatarSwitch.checked) ? 'none' : 'block';
@@ -3762,10 +4526,10 @@
                     if (link.includes('/download/storage/v1/b/')) {
                         try {
                             const parts = link.split('/b/')[1].split('/o/');
-                            link = `https://storage.googleapis.com/${parts[0]}/${parts[1].split('?')[0]}`;
+                            link = `https://storage.googleapis.com/${parts[0]}/${parts[1]}`;
                         } catch (err) { }
-                    } else if (link.includes('?')) {
-                        link = link.split('?')[0] + '?alt=media';
+                    } else if (!link.includes('alt=media')) {
+                        link += (link.includes('?') ? '&' : '?') + 'alt=media';
                     }
 
                     let nomeRaw = doc.name || doc.nome || doc.filename || '';
@@ -3779,19 +4543,37 @@
                         nome = nome.replace('doc', '').replace(/([A-Z])/g, ' $1').trim();
                     }
 
-                    return { link, nome };
+                    // Apenas permitir PDF, PNG, JPEG, JPG e HEIC
+                    const allowedExts = /\.(pdf|png|jpeg|jpg|heic)(\?.*)?$/i;
+                    if (!allowedExts.test(link) && !allowedExts.test(nomeRaw) && !nome.toLowerCase().includes('pdf') && !nomeRaw.toLowerCase().includes('pdf')) {
+                        return null;
+                    }
+
+                    return { link, nome, nomeRaw };
                 }).filter(x => x !== null);
 
+                // Se todos os documentos foram filtrados, mostra a mensagem de vazio
+                if (window.currentDocs.length === 0) {
+                    docsContainer.innerHTML = '<div class="alert alert-info w-100 py-2 small">Nenhum anexo suportado encontrado para esta inscrição. (Apenas PDF, PNG, JPEG/JPG e HEIC são aceitos)</div>';
+                    return;
+                }
+
                 docsContainer.innerHTML = window.currentDocs.map((doc, idx) => {
-                    const isImg = /\.(jpg|jpeg|png|gif)(\?.*)?$/i.test(doc.link);
-                    const isPdf = /\.pdf(\?.*)?$/i.test(doc.link) || doc.nome.toLowerCase().includes('pdf');
+                    const isImg = /\.(jpg|jpeg|png)(\?.*)?$/i.test(doc.link) || /\.(jpg|jpeg|png)$/i.test(doc.nomeRaw);
+                    const isHeic = /\.heic(\?.*)?$/i.test(doc.link) || /\.heic$/i.test(doc.nomeRaw);
+                    const isPdf = /\.pdf(\?.*)?$/i.test(doc.link) || /\.pdf$/i.test(doc.nomeRaw) || doc.nome.toLowerCase().includes('pdf') || (doc.nomeRaw && doc.nomeRaw.toLowerCase().includes('pdf'));
 
                     let thumbContent = '';
                     if (isImg) {
-                        thumbContent = `<img src="${doc.link}" class="thumb-doc" onclick="viewDocument(${idx})">`;
+                        thumbContent = `<img src="${doc.link}" class="thumb-doc" id="thumb-img-${idx}" onerror="fallbackImageLoad(${idx}, '${doc.link}')" onclick="viewDocument(${idx})">`;
+                    } else if (isHeic) {
+                        // Exibe um spinner enquanto converte o HEIC para JPEG no cliente
+                        thumbContent = `<div id="thumb-heic-${idx}" class="thumb-doc d-flex justify-content-center align-items-center" style="background: #f8fafc; cursor: pointer;" onclick="viewDocument(${idx})">
+                            <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                        </div>`;
                     } else {
-                        // Se não for imagem, exibe ícone do FontAwesome em vez de imagem externa que pode falhar
-                        const iconClass = isPdf || !isImg ? 'fa-file-pdf text-danger' : 'fa-file-alt text-secondary';
+                        // Se não for imagem nem HEIC, exibe ícone do FontAwesome
+                        const iconClass = isPdf ? 'fa-file-pdf text-danger' : 'fa-file-alt text-secondary';
                         thumbContent = `<div class="thumb-doc d-flex justify-content-center align-items-center" style="font-size: 3rem; background: #f8fafc; cursor: pointer;" onclick="viewDocument(${idx})"><i class="fas ${iconClass}"></i></div>`;
                     }
 
@@ -3807,6 +4589,81 @@
                         </div>
                     `;
                 }).join('');
+
+                // Função auxiliar para buscar blob com fallback de CORS proxy
+                async function fetchBlobWithProxy(url) {
+                    try {
+                        const r = await fetch(url);
+                        if (!r.ok) throw new Error('Fetch status ' + r.status);
+                        return await r.blob();
+                    } catch (e) {
+                        console.warn('Falha no fetch direto. Tentando via corsproxy.io...', e);
+                        try {
+                            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+                            const rProxy = await fetch(proxyUrl);
+                            if (!rProxy.ok) throw new Error('Proxy 1 status ' + rProxy.status);
+                            return await rProxy.blob();
+                        } catch (e2) {
+                            console.warn('Falha no corsproxy.io. Tentando via codetabs...', e2);
+                            const proxyUrl2 = 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url);
+                            const rProxy2 = await fetch(proxyUrl2);
+                            if (!rProxy2.ok) throw new Error('Proxy 2 status ' + rProxy2.status);
+                            return await rProxy2.blob();
+                        }
+                    }
+                }
+
+                // Fallback universal para imagens nativas quebradas (JPG/PNG)
+                window.fallbackImageLoad = function(idx, url) {
+                    const img = document.getElementById(`thumb-img-${idx}`);
+                    if (!img || img.dataset.fallbackAttempted) return;
+                    img.dataset.fallbackAttempted = 'true';
+                    img.outerHTML = `<div id="thumb-heic-${idx}" class="thumb-doc d-flex justify-content-center align-items-center" style="background: #f8fafc; cursor: pointer;" onclick="viewDocument(${idx})">
+                            <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                        </div>`;
+                    fetchBlobWithProxy(url)
+                        .then(blob => {
+                            const objectUrl = URL.createObjectURL(blob);
+                            window.currentDocs[idx]._convertedUrl = objectUrl;
+                            const container = document.getElementById(`thumb-heic-${idx}`);
+                            if (container) {
+                                container.outerHTML = `<img src="${objectUrl}" class="thumb-doc" onclick="viewDocument(${idx})">`;
+                            }
+                        })
+                        .catch(err => {
+                            const container = document.getElementById(`thumb-heic-${idx}`);
+                            if (container) {
+                                container.innerHTML = '<i class="fas fa-image text-secondary" style="font-size:2rem;"></i>';
+                                container.title = 'Erro ao carregar imagem';
+                            }
+                        });
+                };
+
+                // Conversão assíncrona dos thumbnails HEIC após renderizar o HTML
+                window.currentDocs.forEach((doc, idx) => {
+                    const isHeic = /\.heic(\?.*)?$/i.test(doc.link) || /\.heic$/i.test(doc.nomeRaw);
+                    if (isHeic) {
+                        fetchBlobWithProxy(doc.link)
+                            .then(blob => heic2any({ blob, toType: 'image/jpeg', quality: 0.6 }))
+                            .then(convertedBlob => {
+                                const url = URL.createObjectURL(convertedBlob);
+                                // Guardar URL convertida para uso no viewer
+                                window.currentDocs[idx]._convertedUrl = url;
+                                const container = document.getElementById(`thumb-heic-${idx}`);
+                                if (container) {
+                                    container.outerHTML = `<img src="${url}" class="thumb-doc" onclick="viewDocument(${idx})">`;
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Erro no thumbnail HEIC:', err);
+                                const container = document.getElementById(`thumb-heic-${idx}`);
+                                if (container) {
+                                    container.innerHTML = '<i class="fas fa-image text-secondary" style="font-size:2rem;"></i>';
+                                    container.title = 'Não foi possível renderizar a prévia HEIC';
+                                }
+                            });
+                    }
+                });
             });
 
             // 2. Lógica de Pontuação e Atualização
@@ -4043,28 +4900,108 @@
 
             const frame = document.getElementById('viewerFrame');
             const img = document.getElementById('viewerImage');
-            const isImg = /\.(jpg|jpeg|png|gif)(\?.*)?$/i.test(doc.link);
+            const isImg = /\.(jpg|jpeg|png)(\?.*)?$/i.test(doc.link) || /\.(jpg|jpeg|png)$/i.test(doc.nomeRaw);
+            const isHeic = /\.heic(\?.*)?$/i.test(doc.link) || /\.heic$/i.test(doc.nomeRaw);
 
             document.getElementById('viewerTitle').innerText = doc.nome;
             document.getElementById('doc-counter').innerText = `${index + 1} / ${window.currentDocs.length}`;
 
             resetZoom();
 
-            if (isImg) {
+            const btnOpenNewTab = document.getElementById('btn-open-new-tab');
+            if (btnOpenNewTab) btnOpenNewTab.href = doc.link;
+
+            if (isHeic) {
+                // Se já tiver URL convertida em cache, usa diretamente
+                if (doc._convertedUrl) {
+                    frame.style.display = 'none';
+                    img.style.display = 'block';
+                    img.src = doc._convertedUrl;
+                    viewerModal.show();
+                } else {
+                    // Converte na hora e exibe spinner no viewer
+                    frame.style.display = 'none';
+                    img.style.display = 'block';
+                    img.src = '';
+                    img.alt = 'Convertendo HEIC...';
+                    const loadingEl = document.getElementById('viewer-loading-heic');
+                    if (loadingEl) loadingEl.style.display = 'flex';
+                    viewerModal.show();
+
+                    async function fetchBlobWithProxyViewer(url) {
+                        try {
+                            const r = await fetch(url);
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                            return await r.blob();
+                        } catch (e) {
+                            console.warn('Falha no fetch direto no viewer. Tentando corsproxy.io...', e);
+                            try {
+                                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+                                const rProxy = await fetch(proxyUrl);
+                                if (!rProxy.ok) throw new Error('Proxy 1 HTTP ' + rProxy.status);
+                                return await rProxy.blob();
+                            } catch (e2) {
+                                console.warn('Falha no corsproxy.io no viewer. Tentando codetabs...', e2);
+                                const proxyUrl2 = 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url);
+                                const rProxy2 = await fetch(proxyUrl2);
+                                if (!rProxy2.ok) throw new Error('Proxy 2 HTTP ' + rProxy2.status);
+                                return await rProxy2.blob();
+                            }
+                        }
+                    }
+
+                    // Expõe função de proxy viewer para o fallback
+                    window.fetchBlobWithProxyViewer = fetchBlobWithProxyViewer;
+
+                    fetchBlobWithProxyViewer(doc.link)
+                        .then(blob => heic2any({ blob, toType: 'image/jpeg', quality: 0.85 }))
+                        .then(convertedBlob => {
+                            const url = URL.createObjectURL(convertedBlob);
+                            doc._convertedUrl = url;
+                            img.src = url;
+                            img.alt = doc.nome;
+                            if (loadingEl) loadingEl.style.display = 'none';
+                        })
+                        .catch(err => {
+                            console.error('Erro na conversão HEIC do viewer:', err);
+                            if (loadingEl) loadingEl.style.display = 'none';
+                            img.alt = 'Erro ao converter HEIC';
+                            Swal.fire('Erro', 'Não foi possível converter o HEIC. Detalhe: ' + err.message, 'error');
+                        });
+                }
+            } else if (isImg) {
                 frame.style.display = 'none';
                 img.style.display = 'block';
-                img.src = doc.link;
+                img.src = doc._convertedUrl || doc.link;
+                img.onerror = function() {
+                    if (!doc._convertedUrl) {
+                        img.src = '';
+                        img.alt = 'Recuperando imagem...';
+                        const loadingEl = document.getElementById('viewer-loading-heic');
+                        if (loadingEl) loadingEl.style.display = 'flex';
+                        if (window.fetchBlobWithProxyViewer) {
+                            window.fetchBlobWithProxyViewer(doc.link).then(blob => {
+                                const objectUrl = URL.createObjectURL(blob);
+                                doc._convertedUrl = objectUrl;
+                                img.src = objectUrl;
+                                img.alt = doc.nome;
+                                if (loadingEl) loadingEl.style.display = 'none';
+                            }).catch(err => {
+                                if (loadingEl) loadingEl.style.display = 'none';
+                                img.alt = 'Erro ao carregar imagem';
+                                Swal.fire('Erro', 'Não foi possível carregar a imagem.', 'error');
+                            });
+                        }
+                    }
+                };
+                viewerModal.show();
             } else {
                 img.style.display = 'none';
                 frame.style.display = 'block';
                 // Usa o Google Docs Viewer para evitar o bloqueio (X-Frame-Options) do Chrome em PDFs
                 frame.src = `https://docs.google.com/viewer?url=${encodeURIComponent(doc.link)}&embedded=true`;
+                viewerModal.show();
             }
-
-            const btnOpenNewTab = document.getElementById('btn-open-new-tab');
-            if (btnOpenNewTab) btnOpenNewTab.href = doc.link;
-
-            viewerModal.show();
         };
 
         window.changeZoom = function (delta) {
@@ -4257,6 +5194,126 @@
                 Swal.fire('Erro na Remoção', error.message, 'error');
             }
         }
+
+        // ==========================================
+        // Exportação: Resultado Homologação
+        // ==========================================
+        function exportHomologacaoXLS() {
+            const list = window._lastHomologacaoList || [];
+            if (!list.length) { Swal.fire('Aviso', 'Nenhum dado para exportar.', 'warning'); return; }
+            const data = list.map(e => ({
+                'Inscrição': e.inscricao || '---',
+                'Nome Completo': e.nomecompleto || '',
+                'CPF': e.cpf || '',
+                'CPF LGPD': maskCPF(e.cpf),
+                'Resultado': getHomologacaoStatus(e)
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Resultado Homologação');
+            XLSX.writeFile(wb, `Resultado_Homologacao_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        function exportHomologacaoPDF() {
+            const list = window._lastHomologacaoList || [];
+            if (!list.length) { Swal.fire('Aviso', 'Nenhum dado para exportar.', 'warning'); return; }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('Resultado Homologação - CNH Social', 14, 15);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 22);
+            doc.text(`Total de registros: ${list.length}`, 14, 27);
+
+            const headers = [['Inscrição', 'Nome Completo', 'CPF', 'Resultado']];
+            const rows = list.map(e => [
+                e.inscricao || '---',
+                e.nomecompleto || '',
+                maskCPF(e.cpf),
+                getHomologacaoStatus(e)
+            ]);
+
+            doc.autoTable({
+                head: headers, body: rows, startY: 32,
+                styles: { fontSize: 8, cellPadding: 2 },
+                headStyles: { fillColor: [0, 70, 173], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [245, 247, 255] },
+                margin: { left: 14, right: 14 }
+            });
+
+            doc.save(`Resultado_Homologacao_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+
+        // ==========================================
+        // Exportação: Resultado Pontuação
+        // ==========================================
+        function exportPontuacaoXLS() {
+            const list = window._lastPontuacaoList || [];
+            if (!list.length) { Swal.fire('Aviso', 'Nenhum dado para exportar.', 'warning'); return; }
+            const data = list.map(e => {
+                const scores = calculateDetailedPoints(e);
+                return {
+                    'Inscrição': e.inscricao || '---',
+                    'Nome Completo': e.nomecompleto || '',
+                    'CPF': e.cpf || '',
+                    'CPF LGPD': maskCPF(e.cpf),
+                    'Categoria': formatCategoria(e.categoria) || '',
+                    'Status Doc.': getHomologacaoStatus(e),
+                    'Pts Básicos': scores.base,
+                    'Pts Humanos': scores.human,
+                    'Total': scores.total
+                };
+            });
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Resultado Pontuação');
+            XLSX.writeFile(wb, `Resultado_Pontuacao_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        function exportPontuacaoPDF() {
+            const list = window._lastPontuacaoList || [];
+            if (!list.length) { Swal.fire('Aviso', 'Nenhum dado para exportar.', 'warning'); return; }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('Resultado Preliminar da Pontuação - CNH Social', 14, 15);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 22);
+            doc.text(`Total de registros: ${list.length}`, 14, 27);
+
+            const headers = [['Inscrição', 'Nome Completo', 'CPF', 'Categoria', 'Status Doc.', 'Pts Básicos', 'Pts Humanos', 'Total']];
+            const rows = list.map(e => {
+                const scores = calculateDetailedPoints(e);
+                return [
+                    e.inscricao || '---',
+                    e.nomecompleto || '',
+                    maskCPF(e.cpf),
+                    formatCategoria(e.categoria) || '',
+                    getHomologacaoStatus(e),
+                    scores.base,
+                    scores.human,
+                    scores.total
+                ];
+            });
+
+            doc.autoTable({
+                head: headers, body: rows, startY: 32,
+                styles: { fontSize: 7, cellPadding: 2 },
+                headStyles: { fillColor: [0, 70, 173], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [245, 247, 255] },
+                margin: { left: 14, right: 14 }
+            });
+
+            doc.save(`Resultado_Pontuacao_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
     </script>
 
     <!-- Modal: Gráfico Ampliado -->
@@ -4372,6 +5429,40 @@
                                     <div class="col-md-4">
                                         <label class="small text-muted d-block">Renda per Capita</label>
                                         <span class="fw-medium text-primary fw-bold" id="det-renda-capita">---</span>
+                                    </div>
+
+                                    <!-- Endereço -->
+                                    <div class="col-12 mt-3">
+                                        <h6 class="fw-bold text-secondary mb-2" style="font-size: 0.85rem; letter-spacing: 0.5px;"><i class="fas fa-map-marked-alt me-2"></i>ENDEREÇO</h6>
+                                        <hr class="my-1 opacity-25">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small text-muted d-block">CEP</label>
+                                        <span class="fw-medium" id="det-cep">---</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small text-muted d-block">Logradouro</label>
+                                        <span class="fw-medium" id="det-logradouro">---</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small text-muted d-block">Número</label>
+                                        <span class="fw-medium" id="det-numero">---</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small text-muted d-block">Complemento</label>
+                                        <span class="fw-medium" id="det-complemento">---</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small text-muted d-block">Bairro</label>
+                                        <span class="fw-medium" id="det-bairro">---</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small text-muted d-block">Cidade</label>
+                                        <span class="fw-medium" id="det-cidade">---</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="small text-muted d-block">UF</label>
+                                        <span class="fw-medium" id="det-uf">---</span>
                                     </div>
                                 </div>
                             </div>
@@ -4569,6 +5660,12 @@
                             style="width: 100%; height: 80vh; border: none; display: none;"></iframe>
                         <img id="viewerImage" src=""
                             style="max-width: 90%; max-height: 80vh; display: none; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));">
+                        <!-- Overlay de conversão HEIC -->
+                        <div id="viewer-loading-heic"
+                            style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.6); flex-direction:column; align-items:center; justify-content:center; gap:16px; z-index:10;">
+                            <div class="spinner-border text-light" style="width:3rem;height:3rem;" role="status"></div>
+                            <span class="text-white fw-semibold" style="font-size:0.95rem;">Convertendo arquivo HEIC…</span>
+                        </div>
                     </div>
                 </div>
             </div>
