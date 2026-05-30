@@ -4327,9 +4327,10 @@
                     }
                 });
 
-                // Also show cronograma modal if it's the first time and we are out of period
-                if (isOutOfPeriod && !window._periodModalShown) {
-                    window._periodModalShown = true;
+                // Also show cronograma modal if it's the first time, we are out of period, and active tab is inscricao or documentacao
+                const currentTab = window.location.hash ? window.location.hash.substring(1) : 'inscricao';
+                if (isOutOfPeriod && !sessionStorage.getItem('periodModalShown') && (currentTab === 'inscricao' || currentTab === 'documentacao')) {
+                    sessionStorage.setItem('periodModalShown', 'true');
                     new bootstrap.Modal(document.getElementById('modalPrazoInscricao')).show();
                 }
 
