@@ -3606,7 +3606,7 @@
                 if (tabId === 'matricula') checkMatriculaStatus();
                 if (tabId === 'situacao') { updateStatusTab(); fetchWorkflowStatus(); }
                 if (tabId === 'cronograma') { renderTimeline(); updateProgress(); }
-                if (tabId === 'recursos') { checkRecurso(); }
+                if (tabId === 'recursos') { checkRecurso(); fetchWorkflowStatus(); }
             }
             if (window.innerWidth < 992) {
                 const sidebar = document.getElementById('sidebar');
@@ -3842,6 +3842,7 @@
                         if (input) {
                             input.value = data.workflowStatus;
                             updateStatusTab(); // Atualiza a UI com o novo valor
+                            checkRecurso(); // Atualiza a aba de recursos com o novo valor
                         }
                     }
                 }
@@ -3870,7 +3871,7 @@
 
             // SPA Navigation
             const isRecursosDisponiveis = () => {
-                const now = new Date();
+                const now = AppState.currentDate;
                 const etapasRecurso = AppState.cronograma.filter(s => s.etapa.toLowerCase().includes('recurso'));
                 if (etapasRecurso.length === 0) return true;
                 const dataInicioPrimeiroRecurso = etapasRecurso.reduce((min, curr) => {
@@ -3925,15 +3926,9 @@
                         return;
                     }
 
-                    // Comportamento especial para Recursos: recarrega a página para garantir dados frescos do backend
-                    if (targetTab === 'recursos') {
-                        window.location.hash = '#recursos';
-                        window.location.reload();
-                    } else {
-                        showTab(targetTab);
-                        // Atualiza hash sem recarregar para as demais abas
-                        window.history.pushState(null, null, '#' + targetTab);
-                    }
+                    showTab(targetTab);
+                    // Atualiza hash sem recarregar para as demais abas
+                    window.history.pushState(null, null, '#' + targetTab);
                 };
             });
 

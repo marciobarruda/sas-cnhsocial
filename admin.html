@@ -1099,7 +1099,7 @@
                                     <span class="input-group-text bg-white border-end-0"><i
                                             class="fas fa-search text-muted" style="font-size: 0.8rem;"></i></span>
                                     <input type="text" class="form-control border-start-0 global-search"
-                                        placeholder="Buscar..." style="font-size: 0.85rem;">
+                                        placeholder="Buscar por CPF, nome, inscrição ou categoria..." style="font-size: 0.85rem;">
                                 </div>
                             </div>
                         </div>
@@ -1159,7 +1159,7 @@
                             <span class="input-group-text bg-white border-end-0"><i
                                     class="fas fa-search text-muted"></i></span>
                             <input type="text" class="form-control border-start-0 global-search"
-                                placeholder="Buscar por CPF, nome, inscrição, categoria ou cidade...">
+                                placeholder="Buscar por CPF, nome, inscrição ou categoria...">
                         </div>
                         <div class="d-flex align-items-center gap-1 bg-white border rounded px-2" style="height: 38px;">
                             <span class="text-muted small px-1" title="Filtro Alfabético"><i class="fas fa-sort-alpha-down"></i></span>
@@ -1301,7 +1301,7 @@
                     <div class="d-flex gap-2 align-items-center flex-wrap">
                         <div class="input-group" style="max-width: 380px;">
                             <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 global-search" placeholder="Buscar por CPF, nome ou inscrição...">
+                            <input type="text" class="form-control border-start-0 global-search" placeholder="Buscar por CPF, nome, inscrição ou categoria...">
                         </div>
                         <button class="btn btn-sm btn-success d-flex align-items-center gap-2" onclick="exportHomologacaoXLS()" title="Exportar para XLS" style="border-radius: 10px; font-size: 0.82rem;">
                             <i class="fas fa-file-excel"></i> XLS
@@ -1523,9 +1523,11 @@
                                         class="fas fa-sort small opacity-50"></i></th>
                                 <th onclick="sortTable('human-table', 2)" style="cursor:pointer">CPF <i
                                         class="fas fa-sort small opacity-50"></i></th>
-                                <th onclick="sortTable('human-table', 3)" style="cursor:pointer">Critérios <i
+                                <th onclick="sortTable('human-table', 3)" style="cursor:pointer">Categoria <i
                                         class="fas fa-sort small opacity-50"></i></th>
-                                <th onclick="sortTable('human-table', 4)" style="cursor:pointer">Pontos <i
+                                <th onclick="sortTable('human-table', 4)" style="cursor:pointer">Critérios <i
+                                        class="fas fa-sort small opacity-50"></i></th>
+                                <th onclick="sortTable('human-table', 5)" style="cursor:pointer">Pontos <i
                                         class="fas fa-sort small opacity-50"></i></th>
                                 <th>Analista</th>
                                 <th>Ações</th>
@@ -1585,7 +1587,7 @@
                     <div class="d-flex gap-2 align-items-center flex-wrap">
                         <div class="input-group" style="max-width: 380px;">
                             <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                            <input type="text" class="form-control border-start-0 global-search" placeholder="Buscar por candidato, CPF ou inscrição...">
+                            <input type="text" class="form-control border-start-0 global-search" placeholder="Buscar por CPF, nome, inscrição ou categoria...">
                         </div>
                         <button class="btn btn-sm btn-success d-flex align-items-center gap-2" onclick="exportPontuacaoXLS()" title="Exportar para XLS" style="border-radius: 10px; font-size: 0.82rem;">
                             <i class="fas fa-file-excel"></i> XLS
@@ -1622,20 +1624,198 @@
 
         <!-- Tab: Recursos -->
         <section id="tab-recursos" class="tab-pane animate__animated animate__fadeIn">
-            <div class="page-header">
-                <h1>Interposição de Recursos</h1>
+            <div class="page-header d-flex flex-column gap-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h1>Interposição de Recursos</h1>
+                        <p class="text-muted small mb-0">Julgamento e acompanhamento de recursos de inscrições e critérios.</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 flex-wrap w-100 justify-content-between">
+                    <!-- Card 1: Inscrição -->
+                    <div class="stat-card bg-white shadow-sm border-0 p-3" style="border-radius: 15px; min-width: 190px; flex: 1;">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="icon-wrapper bg-primary bg-opacity-10 text-primary" style="width: 36px; height: 36px; font-size: 1rem; flex-shrink: 0; border-radius: 8px;">
+                                <i class="fas fa-file-signature"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem; letter-spacing: 0.2px;">Inscrição</h6>
+                        </div>
+                        <div class="d-flex flex-column gap-2" style="font-size: 0.85rem;">
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-secondary fw-semibold">Apresentados:</span>
+                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-inscr-apresentados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-primary fw-semibold">Julgados:</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-inscr-julgados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-success fw-semibold">Acatados:</span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-inscr-accepted">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-danger fw-semibold">Não Acatados:</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-inscr-rejected">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Trabalhador App -->
+                    <div class="stat-card bg-white shadow-sm border-0 p-3" style="border-radius: 15px; min-width: 190px; flex: 1;">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="icon-wrapper bg-info bg-opacity-10 text-info" style="width: 36px; height: 36px; font-size: 1rem; flex-shrink: 0; border-radius: 8px;">
+                                <i class="fas fa-motorcycle"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem; letter-spacing: 0.2px;">Trabalhador App</h6>
+                        </div>
+                        <div class="d-flex flex-column gap-2" style="font-size: 0.85rem;">
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-secondary fw-semibold">Apresentados:</span>
+                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-app-apresentados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-primary fw-semibold">Julgados:</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-app-julgados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-success fw-semibold">Acatados:</span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-app-accepted">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-danger fw-semibold">Não Acatados:</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-app-rejected">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Vítima Violência -->
+                    <div class="stat-card bg-white shadow-sm border-0 p-3" style="border-radius: 15px; min-width: 190px; flex: 1;">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="icon-wrapper bg-danger bg-opacity-10 text-danger" style="width: 36px; height: 36px; font-size: 1rem; flex-shrink: 0; border-radius: 8px;">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem; letter-spacing: 0.2px;">Vít. Violência</h6>
+                        </div>
+                        <div class="d-flex flex-column gap-2" style="font-size: 0.85rem;">
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-secondary fw-semibold">Apresentados:</span>
+                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-violencia-apresentados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-primary fw-semibold">Julgados:</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-violencia-julgados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-success fw-semibold">Acatados:</span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-violencia-accepted">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-danger fw-semibold">Não Acatados:</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-violencia-rejected">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Mãe Atípica -->
+                    <div class="stat-card bg-white shadow-sm border-0 p-3" style="border-radius: 15px; min-width: 190px; flex: 1;">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="icon-wrapper bg-warning bg-opacity-10 text-warning" style="width: 36px; height: 36px; font-size: 1rem; flex-shrink: 0; border-radius: 8px;">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem; letter-spacing: 0.2px;">Mãe Atípica</h6>
+                        </div>
+                        <div class="d-flex flex-column gap-2" style="font-size: 0.85rem;">
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-secondary fw-semibold">Apresentados:</span>
+                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-atipica-apresentados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-primary fw-semibold">Julgados:</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-atipica-julgados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-success fw-semibold">Acatados:</span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-atipica-accepted">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-danger fw-semibold">Não Acatados:</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-atipica-rejected">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Acolhimento -->
+                    <div class="stat-card bg-white shadow-sm border-0 p-3" style="border-radius: 15px; min-width: 190px; flex: 1;">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="icon-wrapper bg-secondary bg-opacity-10 text-secondary" style="width: 36px; height: 36px; font-size: 1rem; flex-shrink: 0; border-radius: 8px;">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem; letter-spacing: 0.2px;">Acolhimento</h6>
+                        </div>
+                        <div class="d-flex flex-column gap-2" style="font-size: 0.85rem;">
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-secondary fw-semibold">Apresentados:</span>
+                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-acolhimento-apresentados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-primary fw-semibold">Julgados:</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-acolhimento-julgados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-success fw-semibold">Acatados:</span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-acolhimento-accepted">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-danger fw-semibold">Não Acatados:</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-acolhimento-rejected">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Dep. Terapêutico -->
+                    <div class="stat-card bg-white shadow-sm border-0 p-3" style="border-radius: 15px; min-width: 190px; flex: 1;">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="icon-wrapper bg-success bg-opacity-10 text-success" style="width: 36px; height: 36px; font-size: 1rem; flex-shrink: 0; border-radius: 8px;">
+                                <i class="fas fa-briefcase-medical"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem; letter-spacing: 0.2px;">Dep. Terapêutico</h6>
+                        </div>
+                        <div class="d-flex flex-column gap-2" style="font-size: 0.85rem;">
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-secondary fw-semibold">Apresentados:</span>
+                                <span class="badge bg-secondary bg-opacity-10 text-dark fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-tratamento-apresentados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-primary fw-semibold">Julgados:</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-tratamento-julgados">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-1 border-bottom border-light">
+                                <span class="text-success fw-semibold">Acatados:</span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-tratamento-accepted">0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-danger fw-semibold">Não Acatados:</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" id="rec-tratamento-rejected">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-container p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3" style="flex-direction: row !important; display: flex !important;">
                     <h5 class="fw-bold mb-0">Recursos Registrados</h5>
-                    <div class="d-flex gap-2">
-                        <select class="form-select status-filter-recursos" style="min-width: 180px; font-size: 0.85rem;" onchange="renderDataForTab('recursos')">
+                    <div class="d-flex align-items-center gap-2 flex-nowrap" style="display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; align-items: center !important; gap: 8px !important;">
+                        <div class="input-group" style="width: 280px !important;">
+                            <span class="input-group-text bg-white border-end-0" style="padding: 6px 10px;"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 global-search" placeholder="Buscar por CPF, nome, inscrição ou categoria..." style="padding: 6px 12px; font-size: 0.85rem;">
+                        </div>
+                        <select class="form-select status-filter-recursos" style="width: 190px !important; min-width: 190px !important; font-size: 0.85rem; padding: 6px 12px;" onchange="renderDataForTab('recursos')">
                             <option value="">Todos os Julgamentos</option>
                             <option value="Pendente">Pendente</option>
                             <option value="Deferido">Deferido</option>
                             <option value="Indeferido">Indeferido</option>
                         </select>
-                        <button class="btn btn-outline-primary" onclick="refreshData(this)" title="Atualizar Tabela">
+                        <button class="btn btn-outline-primary d-flex align-items-center gap-2" onclick="refreshData(this)" title="Atualizar Tabela" style="padding: 6px 14px; font-size: 0.85rem; white-space: nowrap !important;">
                             <i class="fas fa-sync-alt"></i> Atualizar
                         </button>
                     </div>
@@ -1646,14 +1826,16 @@
                             <tr>
                                 <th onclick="sortTable('resource-table', 0)" style="cursor:pointer">Inscrição <i
                                         class="fas fa-sort small opacity-50"></i></th>
-                                <th onclick="sortTable('resource-table', 1)" style="cursor:pointer">Tipo <i
+                                <th onclick="sortTable('resource-table', 1)" style="cursor:pointer">Tipo de Recurso <i
                                         class="fas fa-sort small opacity-50"></i></th>
                                 <th onclick="sortTable('resource-table', 2)" style="cursor:pointer">Candidato <i
                                         class="fas fa-sort small opacity-50"></i></th>
-                                <th onclick="sortTable('resource-table', 3)" style="cursor:pointer">Justificativa <i
+                                <th onclick="sortTable('resource-table', 3)" style="cursor:pointer">CPF <i
                                         class="fas fa-sort small opacity-50"></i></th>
-                                <th onclick="sortTable('resource-table', 4)" style="cursor:pointer">Data <i
+                                <th onclick="sortTable('resource-table', 4)" style="cursor:pointer">Categoria <i
                                         class="fas fa-sort small opacity-50"></i></th>
+                                <th>Critérios</th>
+                                <th>Analista</th>
                                 <th>Julgamento</th>
                             </tr>
                         </thead>
@@ -1679,7 +1861,7 @@
                             <span class="input-group-text bg-white border-end-0"><i
                                     class="fas fa-search text-muted"></i></span>
                             <input type="text" class="form-control border-start-0 global-search"
-                                placeholder="Buscar por candidato...">
+                                placeholder="Buscar por CPF, nome, inscrição ou categoria...">
                         </div>
                     </div>
                 </div>
@@ -2422,6 +2604,102 @@
             if (document.getElementById('tab-pontuacao-reprovados-count')) {
                 document.getElementById('tab-pontuacao-reprovados-count').innerText = rejectedCount;
             }
+            // Recurso de Inscrição
+            let inscrPending = 0, inscrAccepted = 0, inscrRejected = 0;
+            // Trabalhador App
+            let appPending = 0, appAccepted = 0, appRejected = 0;
+            // Vítima Violência
+            let violPending = 0, violAccepted = 0, violRejected = 0;
+            // Mãe/Pai Atípico
+            let atipicaPending = 0, atipicaAccepted = 0, atipicaRejected = 0;
+            // Acolhimento Inst.
+            let acolPending = 0, acolAccepted = 0, acolRejected = 0;
+            // Dependente Terapêutico
+            let tratPending = 0, tratAccepted = 0, tratRejected = 0;
+
+            const checkAppealStats = (candJust, switchVal) => {
+                if (!candJust || candJust.trim() === '' || candJust.trim().toLowerCase() === 'null' || candJust.trim().toLowerCase() === 'undefined') {
+                    return null;
+                }
+                if (switchVal === null || switchVal === undefined || switchVal === '') {
+                    return 'pending';
+                }
+                return isTrue(switchVal) ? 'accepted' : 'rejected';
+            };
+
+            for (const e of allEnrollments) {
+                // Inscrição
+                let statInscr = checkAppealStats(e.justandocusuar, e.julinscricao);
+                if (statInscr === 'pending') inscrPending++;
+                else if (statInscr === 'accepted') inscrAccepted++;
+                else if (statInscr === 'rejected') inscrRejected++;
+
+                // Trabalhador App
+                let statApp = checkAppealStats(e.justusurtrabapp, e.julsocioocupacional);
+                if (statApp === 'pending') appPending++;
+                else if (statApp === 'accepted') appAccepted++;
+                else if (statApp === 'rejected') appRejected++;
+
+                // Vítima Violência
+                let statViol = checkAppealStats(e.justusurredep, e.julredeprotecao);
+                if (statViol === 'pending') violPending++;
+                else if (statViol === 'accepted') violAccepted++;
+                else if (statViol === 'rejected') violRejected++;
+
+                // Mãe/Pai Atípico
+                let statAtipica = checkAppealStats(e.justusurmaepai, e.julsociofamiliar);
+                if (statAtipica === 'pending') atipicaPending++;
+                else if (statAtipica === 'accepted') atipicaAccepted++;
+                else if (statAtipica === 'rejected') atipicaRejected++;
+
+                // Acolhimento Inst.
+                let statAcol = checkAppealStats(e.justusuracol, e.julsocioassistencial);
+                if (statAcol === 'pending') acolPending++;
+                else if (statAcol === 'accepted') acolAccepted++;
+                else if (statAcol === 'rejected') acolRejected++;
+
+                // Dependente Terapêutico
+                let statTrat = checkAppealStats(e.justusurdepterap, e.juldepterapeutica);
+                if (statTrat === 'pending') tratPending++;
+                else if (statTrat === 'accepted') tratAccepted++;
+                else if (statTrat === 'rejected') tratRejected++;
+            }
+
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
+
+            setVal('rec-inscr-apresentados', inscrPending + inscrAccepted + inscrRejected);
+            setVal('rec-inscr-julgados', inscrAccepted + inscrRejected);
+            setVal('rec-inscr-accepted', inscrAccepted);
+            setVal('rec-inscr-rejected', inscrRejected);
+
+            setVal('rec-app-apresentados', appPending + appAccepted + appRejected);
+            setVal('rec-app-julgados', appAccepted + appRejected);
+            setVal('rec-app-accepted', appAccepted);
+            setVal('rec-app-rejected', appRejected);
+
+            setVal('rec-violencia-apresentados', violPending + violAccepted + violRejected);
+            setVal('rec-violencia-julgados', violAccepted + violRejected);
+            setVal('rec-violencia-accepted', violAccepted);
+            setVal('rec-violencia-rejected', violRejected);
+
+            setVal('rec-atipica-apresentados', atipicaPending + atipicaAccepted + atipicaRejected);
+            setVal('rec-atipica-julgados', atipicaAccepted + atipicaRejected);
+            setVal('rec-atipica-accepted', atipicaAccepted);
+            setVal('rec-atipica-rejected', atipicaRejected);
+
+            setVal('rec-acolhimento-apresentados', acolPending + acolAccepted + acolRejected);
+            setVal('rec-acolhimento-julgados', acolAccepted + acolRejected);
+            setVal('rec-acolhimento-accepted', acolAccepted);
+            setVal('rec-acolhimento-rejected', acolRejected);
+
+            setVal('rec-tratamento-apresentados', tratPending + tratAccepted + tratRejected);
+            setVal('rec-tratamento-julgados', tratAccepted + tratRejected);
+            setVal('rec-tratamento-accepted', tratAccepted);
+            setVal('rec-tratamento-rejected', tratRejected);
+
             document.getElementById('count-human').innerText = humanCriteria;
             document.getElementById('count-approved').innerText = approvedCount;
             document.getElementById('last-update').innerText = new Date().toLocaleTimeString();
@@ -3268,6 +3546,19 @@
             return `<span class="small">${cidade}</span>`;
         }
 
+        function matchEnrollmentQuery(e, query) {
+            if (!query) return true;
+            const cat = formatCategoria(e.categoria || '').toLowerCase();
+            const cidade = (e.cidade || e.cidadeuc || '').toLowerCase();
+            const situacao = (e.situacao_final || '').toLowerCase();
+            return (e.nomecompleto || '').toLowerCase().includes(query) ||
+                (e.cpf || '').includes(query) ||
+                (e.inscricao || '').toLowerCase().includes(query) ||
+                cat.includes(query) ||
+                cidade.includes(query) ||
+                situacao.includes(query);
+        }
+
         function renderDataForTab(tabId) {
             if (tabId === 'cronograma') {
                 renderTimeline();
@@ -3277,16 +3568,7 @@
 
             const query = (window.currentSearchQuery || '').toLowerCase();
             const filtered = allEnrollments.filter(e => {
-                if (query) {
-                    const cat = formatCategoria(e.categoria).toLowerCase();
-                    const cidadeSearch = (e.cidade || e.cidadeuc || '').toLowerCase();
-                    const matchesSearch = (e.nomecompleto || '').toLowerCase().includes(query) ||
-                        (e.cpf || '').includes(query) ||
-                        (e.inscricao || '').toLowerCase().includes(query) ||
-                        cat.includes(query) ||
-                        cidadeSearch.includes(query);
-                    if (!matchesSearch) return false;
-                }
+                if (!matchEnrollmentQuery(e, query)) return false;
 
                 if (window.letterFilterStart || window.letterFilterEnd) {
                     const name = (e.nomecompleto || '').trim().toUpperCase();
@@ -3505,6 +3787,7 @@
                         <td class="small fw-bold">${e.inscricao || '---'}</td>
                         <td>${e.nomecompleto}</td>
                         <td>${e.cpf}</td>
+                        <td><span class="badge bg-primary bg-opacity-75">${formatCategoria(e.categoria) || '---'}</span></td>
                         <td>${renderBadges(e)}</td>
                         <td>${calculatePoints(e)} pts</td>
                         <td>${renderAnalystTag(e)}</td>
@@ -3526,7 +3809,7 @@
                 resourceList.sort(prioritySort);
 
                 if (resourceList.length === 0) {
-                    resourceBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">Nenhum recurso correspondente ao filtro.</td></tr>';
+                    resourceBody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-5">Nenhum recurso correspondente ao filtro.</td></tr>';
                 } else {
                     resourceBody.innerHTML = resourceList.map(e => {
                         const status = getRecursoStatus(e);
@@ -3534,17 +3817,27 @@
                         if (status === 'Deferido') badgeClass = 'bg-success';
                         else if (status === 'Indeferido') badgeClass = 'bg-danger';
 
+                        const me = getCurrentAnalyst().trim();
+                        const isMeOrFree = !e.analista || e.analista === me;
+                        const isReadOnly = !isMeOrFree;
+
+                        const actionBtn = isReadOnly 
+                            ? `<button class="btn btn-outline-secondary btn-sm" onclick="openAnalyzer('${e.id_cadastro}', true, 'recursos')" title="Apenas Visualizar"><i class="fas fa-eye me-1"></i> Visualizar</button>`
+                            : `<button class="btn btn-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro}', false, 'recursos')">${status === 'Pendente' ? 'Julgar' : 'Visualizar'}</button>`;
+
                         return `
                             <tr>
                                 <td class="small fw-bold">${e.inscricao || '---'}</td>
                                 <td><span class="badge bg-secondary opacity-75">${e.atividade_habilitada === 'ATV-007' ? 'Inscrição' : 'Pontuação'}</span></td>
                                 <td>${e.nomecompleto}</td>
-                                <td class="small text-truncate" style="max-width: 200px;" title="${e.justificativa_recurso || ''}">${e.justificativa_recurso || '---'}</td>
-                                <td>${formatDate(e.created_at, true)}</td>
+                                <td>${e.cpf}</td>
+                                <td><span class="badge bg-primary bg-opacity-75">${formatCategoria(e.categoria) || '---'}</span></td>
+                                <td>${renderBadges(e)}</td>
+                                <td>${renderAnalystTag(e)}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="badge ${badgeClass}">${status}</span>
-                                        <button class="btn btn-primary btn-sm" onclick="openAnalyzer('${e.id_cadastro}')">${status === 'Pendente' ? 'Julgar' : 'Visualizar'}</button>
+                                        ${actionBtn}
                                     </div>
                                 </td>
                             </tr>
@@ -3561,11 +3854,7 @@
                 const rankingBody = document.getElementById('ranking-table-body');
                 const query = (window.currentSearchQuery || '').toLowerCase();
 
-                let filteredRanking = rankingData.filter(e =>
-                    (e.nomecompleto || '').toLowerCase().includes(query) ||
-                    (e.inscricao || '').toLowerCase().includes(query) ||
-                    (e.cpf || '').includes(query)
-                );
+                let filteredRanking = rankingData.filter(e => matchEnrollmentQuery(e, query));
 
                 // Ordenação dinâmica: Selecionados > Top 300 (Verde) > Convocados (Cinza) > Restante
                 filteredRanking.sort((a, b) => {
@@ -4227,7 +4516,12 @@
             let currentLock = isRestricted ? "Você possui apenas permissão de visualização (Leitura)." : "Inscrição em modo de visualização (Somente Leitura)";
 
             // Determina a aba de origem para recarregar após análise
-            const resolvedSourceTab = sourceTab || (e.atividade_habilitada === 'ATV-001' ? 'homologacao' : 'humano');
+            let resolvedSourceTab = sourceTab;
+            if (!resolvedSourceTab) {
+                if (e.atividade_habilitada === 'ATV-001') resolvedSourceTab = 'homologacao';
+                else if (e.atividade_habilitada === 'ATV-007' || e.atividade_habilitada === 'ATV-010') resolvedSourceTab = 'recursos';
+                else resolvedSourceTab = 'humano';
+            }
 
             if (!forceReadOnly && !isRestricted) {
                 if (e.analista) {
@@ -4436,12 +4730,17 @@
             // 3. Alternar visibilidade de cards conforme atividade
             const cardDoc = document.getElementById('card-homologacao-documental');
             const cardHuman = document.getElementById('card-criterios-humanos');
+            const cardRecursos = document.getElementById('card-analise-recursos');
             const sidebarPoints = document.querySelector('.col-lg-4');
 
-            if (e.atividade_habilitada === "ATV-001" || resolvedSourceTab === "resultado_homologacao" || resolvedSourceTab === "homologacao") {
+            if (e.atividade_habilitada === "ATV-007" || e.atividade_habilitada === "ATV-010") {
+                if (cardDoc) cardDoc.style.display = 'none';
+                if (cardHuman) cardHuman.style.display = 'none';
+                if (sidebarPoints) sidebarPoints.style.display = 'block';
+            } else if (e.atividade_habilitada === "ATV-001" || resolvedSourceTab === "resultado_homologacao" || resolvedSourceTab === "homologacao") {
                 if (cardDoc) cardDoc.style.display = 'block';
                 if (cardHuman) cardHuman.style.display = 'none';
-                // Sidebar de pontos permanece visível a pedido do usuário
+                if (cardRecursos) cardRecursos.style.display = 'none';
                 if (sidebarPoints) sidebarPoints.style.display = 'block';
 
                 const acatarSwitch = document.getElementById('val_acatar_inscricao');
@@ -4459,6 +4758,7 @@
             } else {
                 if (cardDoc) cardDoc.style.display = 'none';
                 if (cardHuman) cardHuman.style.display = 'block';
+                if (cardRecursos) cardRecursos.style.display = 'none';
                 if (sidebarPoints) sidebarPoints.style.display = 'block';
             }
 
@@ -4517,6 +4817,142 @@
 
             // Vincular funções de cálculo ao escopo do modal
             window.getAppPoints = getAppPoints;
+            window.toggleRecursoAnalystJustification = function(switchId, textareaId) {
+                const sw = document.getElementById(switchId);
+                const wrapper = document.getElementById(`wrapper-${textareaId}`);
+                if (sw && wrapper) {
+                    wrapper.style.display = sw.checked ? 'none' : 'block';
+                }
+            };
+
+            // 5. Configurar e Renderizar Painel de Recursos
+            const recursosContainer = document.getElementById('card-analise-recursos');
+            const recursosItemsContainer = document.getElementById('recursos-analise-items');
+            
+            if (recursosContainer && recursosItemsContainer) {
+                recursosItemsContainer.innerHTML = '';
+                let hasAnyRecurso = false;
+
+                const checkAndRenderRecurso = (title, candJust, switchField, analystJustField, switchHtmlId, analystJustHtmlId, motivoIndeferimento) => {
+                    if (!candJust || candJust.trim() === '' || candJust.trim().toLowerCase() === 'null' || candJust.trim().toLowerCase() === 'undefined') {
+                        return;
+                    }
+                    
+                    hasAnyRecurso = true;
+                    
+                    // Determina o valor inicial do switch
+                    const isChecked = isTrue(e[switchField]);
+                    const justValue = e[analystJustField] || '';
+                    
+                    let motivoHtml = '';
+                    if (motivoIndeferimento && motivoIndeferimento.trim() !== '' && motivoIndeferimento.trim().toLowerCase() !== 'null' && motivoIndeferimento.trim().toLowerCase() !== 'undefined') {
+                        motivoHtml = `
+                            <div class="mb-3">
+                                <label class="small fw-bold text-danger mb-1"><i class="fas fa-exclamation-triangle text-danger me-1"></i>MOTIVO DO INDEFERIMENTO ANTERIOR</label>
+                                <p class="mb-0 bg-white p-2 rounded border small text-danger" style="white-space: pre-wrap; border-color: rgba(220, 53, 69, 0.25) !important; background-color: rgba(220, 53, 69, 0.03) !important;">${motivoIndeferimento}</p>
+                            </div>
+                        `;
+                    }
+                    
+                    const itemHtml = `
+                        <div class="recurso-item mb-4 p-3 border rounded bg-light" data-switch-field="${switchField}" data-just-field="${analystJustField}">
+                            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-chevron-right text-primary me-2"></i>${title}</h6>
+                            
+                            ${motivoHtml}
+                            
+                            <div class="mb-3">
+                                <label class="small fw-bold text-muted mb-1">JUSTIFICATIVA DO CANDIDATO</label>
+                                <p class="mb-0 bg-white p-2 rounded border small text-dark" style="white-space: pre-wrap;">${candJust}</p>
+                            </div>
+                            
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch p-0 m-0 d-flex align-items-center gap-3">
+                                        <label class="form-check-label fw-bold text-success" for="${switchHtmlId}">ACATAR RECURSO?</label>
+                                        <input class="form-check-input ms-0 recurso-switch-input" type="checkbox" id="${switchHtmlId}"
+                                            style="width: 3.5em; height: 1.75em;" ${isChecked ? 'checked' : ''} ${isReadOnly ? 'disabled' : ''}
+                                            onchange="toggleRecursoAnalystJustification('${switchHtmlId}', '${analystJustHtmlId}')">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="wrapper-${analystJustHtmlId}" style="display: ${isChecked ? 'none' : 'block'};">
+                                <label class="small fw-bold text-danger mb-2">JUSTIFICATIVA DO ANALISTA (OBRIGATÓRIA CASO NÃO ACATE)</label>
+                                <textarea id="${analystJustHtmlId}" class="form-control recurso-justification-input" rows="2"
+                                    placeholder="Descreva o motivo do indeferimento do recurso..." ${isReadOnly ? 'disabled' : ''}>${justValue}</textarea>
+                            </div>
+                        </div>
+                    `;
+                    recursosItemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+                };
+
+                // Executa a verificação para cada um dos 6 tipos de recursos
+                checkAndRenderRecurso(
+                    'Recurso quanto ao Indeferimento da Inscrição',
+                    e.justandocusuar,
+                    'julinscricao',
+                    'recinscricao',
+                    'jul_inscricao',
+                    'rec_inscricao',
+                    e.justinscricao
+                );
+
+                checkAndRenderRecurso(
+                    'Recurso de Vítima de Violência Doméstica',
+                    e.justusurredep,
+                    'julredeprotecao',
+                    'justrecredpro',
+                    'jul_redeprotecao',
+                    'just_recredpro',
+                    e.justredprotecao
+                );
+
+                checkAndRenderRecurso(
+                    'Recurso de Trabalhador de Aplicativo',
+                    e.justusurtrabapp,
+                    'julsocioocupacional',
+                    'justrecsocioocup',
+                    'jul_socioocupacional',
+                    'just_recsocioocup',
+                    e.justsocioocup
+                );
+
+                checkAndRenderRecurso(
+                    'Recurso de Mãe/Pai Atípico',
+                    e.justusurmaepai,
+                    'julsociofamiliar',
+                    'justrecsociofami',
+                    'jul_sociofamiliar',
+                    'just_recsociofami',
+                    e.justsociofamili
+                );
+
+                checkAndRenderRecurso(
+                    'Recurso de Acolhimento Institucional',
+                    e.justusuracol,
+                    'julsocioassistencial',
+                    'justrecsocioassi',
+                    'jul_socioassistencial',
+                    'just_recsocioassi',
+                    e.justsocioassis
+                );
+
+                checkAndRenderRecurso(
+                    'Recurso de Dependente em Tratamento Terapêutico',
+                    e.justusurdepterap,
+                    'juldepterapeutica',
+                    'justrecdepterap',
+                    'jul_depterapeutica',
+                    'just_recdepterap',
+                    e.justdepterap
+                );
+
+                if (hasAnyRecurso && (e.atividade_habilitada === "ATV-007" || e.atividade_habilitada === "ATV-010")) {
+                    recursosContainer.style.display = 'block';
+                } else {
+                    recursosContainer.style.display = 'none';
+                }
+            }
 
             const analyzerModalEl = document.getElementById('analyzerModal');
             let analyzerModal = bootstrap.Modal.getInstance(analyzerModalEl);
@@ -4525,15 +4961,19 @@
 
             // 1. Limpar cache de documentos da inscrição anterior
             const docsContainer = document.getElementById('docs-container');
+            const docsRecursosContainer = document.getElementById('docs-recursos-container');
+            const wrapperDocsRecursos = document.getElementById('wrapper-docs-recursos');
             const docsLoader = document.getElementById('docs-loader');
-            docsContainer.innerHTML = '';
+            if (docsContainer) docsContainer.innerHTML = '';
+            if (docsRecursosContainer) docsRecursosContainer.innerHTML = '';
+            if (wrapperDocsRecursos) wrapperDocsRecursos.classList.add('d-none');
             docsLoader.classList.remove('d-none');
             window.currentDocs = [];
 
             fetchDocs(e.inscricao).then(docs => {
                 docsLoader.classList.add('d-none');
                 if (!docs || docs.length === 0) {
-                    docsContainer.innerHTML = '<div class="alert alert-info w-100 py-2 small">Nenhum anexo encontrado para esta inscrição.</div>';
+                    if (docsContainer) docsContainer.innerHTML = '<div class="alert alert-info w-100 py-2 small">Nenhum anexo encontrado para esta inscrição.</div>';
                     window.currentDocs = [];
                     return;
                 }
@@ -4566,16 +5006,21 @@
                         return null;
                     }
 
-                    return { link, nome, nomeRaw };
+                    return { link, nome, nomeRaw, categoria_doc: doc.categoria_doc || '' };
                 }).filter(x => x !== null);
 
                 // Se todos os documentos foram filtrados, mostra a mensagem de vazio
                 if (window.currentDocs.length === 0) {
-                    docsContainer.innerHTML = '<div class="alert alert-info w-100 py-2 small">Nenhum anexo suportado encontrado para esta inscrição. (Apenas PDF, PNG, JPEG/JPG e HEIC são aceitos)</div>';
+                    if (docsContainer) docsContainer.innerHTML = '<div class="alert alert-info w-100 py-2 small">Nenhum anexo suportado encontrado para esta inscrição. (Apenas PDF, PNG, JPEG/JPG e HEIC são aceitos)</div>';
+                    if (wrapperDocsRecursos) wrapperDocsRecursos.classList.add('d-none');
                     return;
                 }
 
-                docsContainer.innerHTML = window.currentDocs.map((doc, idx) => {
+                const docsGerais = [];
+                const docsRecursos = [];
+
+                window.currentDocs.forEach((doc, idx) => {
+                    const isRecurso = doc.categoria_doc && doc.categoria_doc.toLowerCase().includes('recurso');
                     const isImg = /\.(jpg|jpeg|png)(\?.*)?$/i.test(doc.link) || /\.(jpg|jpeg|png)$/i.test(doc.nomeRaw);
                     const isHeic = /\.heic(\?.*)?$/i.test(doc.link) || /\.heic$/i.test(doc.nomeRaw);
                     const isPdf = /\.pdf(\?.*)?$/i.test(doc.link) || /\.pdf$/i.test(doc.nomeRaw) || doc.nome.toLowerCase().includes('pdf') || (doc.nomeRaw && doc.nomeRaw.toLowerCase().includes('pdf'));
@@ -4594,7 +5039,7 @@
                         thumbContent = `<div class="thumb-doc d-flex justify-content-center align-items-center" style="font-size: 3rem; background: #f8fafc; cursor: pointer;" onclick="viewDocument(${idx})"><i class="fas ${iconClass}"></i></div>`;
                     }
 
-                    return `
+                    const html = `
                         <div class="d-flex flex-column align-items-center">
                             <div class="position-relative">
                                 ${thumbContent}
@@ -4605,7 +5050,27 @@
                             <span class="doc-label" title="${doc.nome}">${doc.nome}</span>
                         </div>
                     `;
-                }).join('');
+
+                    if (isRecurso) {
+                        docsRecursos.push(html);
+                    } else {
+                        docsGerais.push(html);
+                    }
+                });
+
+                if (docsGerais.length > 0) {
+                    if (docsContainer) docsContainer.innerHTML = docsGerais.join('');
+                } else {
+                    if (docsContainer) docsContainer.innerHTML = '<div class="alert alert-info w-100 py-2 small">Nenhum documento geral anexado.</div>';
+                }
+
+                if (docsRecursos.length > 0) {
+                    if (docsRecursosContainer) docsRecursosContainer.innerHTML = docsRecursos.join('');
+                    if (wrapperDocsRecursos) wrapperDocsRecursos.classList.remove('d-none');
+                } else {
+                    if (docsRecursosContainer) docsRecursosContainer.innerHTML = '';
+                    if (wrapperDocsRecursos) wrapperDocsRecursos.classList.add('d-none');
+                }
 
                 // Função auxiliar para buscar blob com fallback de CORS proxy
                 async function fetchBlobWithProxy(url) {
@@ -4812,6 +5277,74 @@
                         acatado: acatado
                     };
                     if (!acatado) payload.justificativa = justificativa;
+                } else if (e.atividade_habilitada === "ATV-007" || e.atividade_habilitada === "ATV-010") {
+                    payload = {
+                        atividade_habilitada: e.atividade_habilitada,
+                        inscricao: e.inscricao,
+                        analista: loggedUser
+                    };
+
+                    const checkAndAddPayload = (candJust, switchHtmlId, switchField, analystJustHtmlId, analystJustField, labelName) => {
+                        if (candJust && candJust.trim() !== '' && candJust.trim().toLowerCase() !== 'null' && candJust.trim().toLowerCase() !== 'undefined') {
+                            const swEl = document.getElementById(switchHtmlId);
+                            const justEl = document.getElementById(analystJustHtmlId);
+                            
+                            if (swEl && justEl) {
+                                const acatado = swEl.checked;
+                                const justVal = justEl.value.trim();
+                                
+                                if (!acatado && !justVal) {
+                                    throw new Error(`A justificativa é obrigatória para o recurso "${labelName}" não acatado.`);
+                                }
+                                
+                                payload[switchField] = acatado;
+                                payload[analystJustField] = justVal;
+                            }
+                        }
+                    };
+
+                    try {
+                        checkAndAddPayload(e.justandocusuar, 'jul_inscricao', 'julinscricao', 'rec_inscricao', 'recinscricao', 'Recurso de Inscrição');
+                        checkAndAddPayload(e.justusurredep, 'jul_redeprotecao', 'julredeprotecao', 'just_recredpro', 'justrecredpro', 'Recurso Vítima Violência');
+                        checkAndAddPayload(e.justusurtrabapp, 'jul_socioocupacional', 'julsocioocupacional', 'just_recsocioocup', 'justrecsocioocup', 'Recurso Trabalhador App');
+                        checkAndAddPayload(e.justusurmaepai, 'jul_sociofamiliar', 'julsociofamiliar', 'just_recsociofami', 'justrecsociofami', 'Recurso Mãe/Pai Atípico');
+                        checkAndAddPayload(e.justusuracol, 'jul_socioassistencial', 'julsocioassistencial', 'just_recsocioassi', 'justrecsocioassi', 'Recurso Acolhimento Inst.');
+                        checkAndAddPayload(e.justusurdepterap, 'jul_depterapeutica', 'juldepterapeutica', 'just_recdepterap', 'justrecdepterap', 'Recurso Dependente Tratamento Terapêutico');
+                    } catch (validationError) {
+                        Swal.fire('Atenção', validationError.message, 'warning');
+                        this.disabled = false;
+                        this.innerText = 'Concluir análise';
+                        return;
+                    }
+
+                    if (e.atividade_habilitada === "ATV-010") {
+                        const switchesPontuacao = [
+                            { candJust: e.justusurredep, htmlId: 'jul_redeprotecao' },
+                            { candJust: e.justusurtrabapp, htmlId: 'jul_socioocupacional' },
+                            { candJust: e.justusurmaepai, htmlId: 'jul_sociofamiliar' },
+                            { candJust: e.justusuracol, htmlId: 'jul_socioassistencial' },
+                            { candJust: e.justusurdepterap, htmlId: 'jul_depterapeutica' }
+                        ];
+                        
+                        let totalChecked = 0;
+                        let totalRendered = 0;
+                        
+                        switchesPontuacao.forEach(item => {
+                            if (item.candJust && item.candJust.trim() !== '' && item.candJust.trim().toLowerCase() !== 'null' && item.candJust.trim().toLowerCase() !== 'undefined') {
+                                const swEl = document.getElementById(item.htmlId);
+                                if (swEl) {
+                                    totalRendered++;
+                                    if (swEl.checked) {
+                                        totalChecked++;
+                                    }
+                                }
+                            }
+                        });
+                        
+                        if (totalRendered > 0) {
+                            payload.julpontuacao = (totalChecked > 0);
+                        }
+                    }
                 } else {
                     payload = {
                         atividade_habilitada: "ATV-002",
@@ -5527,13 +6060,31 @@
                                     </table>
                                 </div>
                             </div>
+                            <!-- Card de Análise de Recursos -->
+                            <div class="card-container p-4 mb-4 border-warning border-start border-4"
+                                id="card-analise-recursos" style="display: none;">
+                                <h6 class="fw-bold text-warning mb-4 border-bottom pb-2">
+                                    <i class="fas fa-gavel me-2"></i>ANÁLISE DE RECURSOS APRESENTADOS
+                                </h6>
+                                <div id="recursos-analise-items">
+                                    <!-- Itens de recursos serão preenchidos via JS -->
+                                </div>
+                            </div>
+
                             <div class="card-container p-4">
                                 <h6 class="fw-bold text-primary mb-4 border-bottom pb-2">DOCUMENTAÇÃO DO CANDIDATO</h6>
                                 <div id="docs-loader" class="text-center py-4">
                                     <div class="spinner-border text-primary spinner-border-sm"></div>
                                     <span class="ms-2 small text-muted">Buscando anexos...</span>
                                 </div>
-                                <div id="docs-container" class="d-flex flex-wrap gap-3"></div>
+                                <div id="wrapper-docs-gerais" class="mb-4">
+                                    <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-folder me-2"></i>Documentos Gerais</h6>
+                                    <div id="docs-container" class="d-flex flex-wrap gap-3"></div>
+                                </div>
+                                <div id="wrapper-docs-recursos" class="mb-4 d-none">
+                                    <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-gavel me-2"></i>Documentação de Recursos</h6>
+                                    <div id="docs-recursos-container" class="d-flex flex-wrap gap-3"></div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-4">
