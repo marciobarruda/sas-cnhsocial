@@ -1,0 +1,4 @@
+# Diretrizes do Assistente (AI Rules)
+
+1. **Idioma**: Todas as comunicações no chat, respostas, explicações e planos de implementação devem ser escritos obrigatoriamente em português do Brasil (pt-BR).
+2. **Deploy Automático no GitHub**: Sempre que o assistente editar algum arquivo de projeto, ele DEVE, ao final da edição, realizar automaticamente o fluxo de deploy no GitHub executando os comandos equivalentes a `git add .`, `git commit -m "..."` e `git push`.
